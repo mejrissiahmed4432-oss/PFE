@@ -19,8 +19,10 @@ services:
       - "8080:8080"
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://admin:admin123@mongodb:27017/userdb?authSource=admin
+      - APP_FRONTEND_URL=http://localhost
     depends_on:
       - mongodb
+    restart: always
 
   frontend:
     build:
@@ -31,6 +33,7 @@ services:
       - "80:80"
     depends_on:
       - backend
+    restart: always
 
 volumes:
   mongo-data:

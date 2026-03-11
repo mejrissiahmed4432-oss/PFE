@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary brand colors matching the web UI -->
+    <!-- Brand Colors -->
+    <color name="colorPrimary">#3b82f6</color>
+    <color name="colorPrimaryVariant">#1d4ed8</color>
+    <color name="colorAccent">#60a5fa</color>
+    <color name="colorCyan">#06b6d4</color>
+    
+    <!-- UI Surfaces -->
+    <color name="backgroundColor">#ffffff</color>
+    <color name="surfaceColor">#f8fafc</color>
+    <color name="divider">#e2e8f0</color>
+    
+    <!-- Text Colors -->
+    <color name="textPrimary">#0f172a</color>
+    <color name="textSecondary">#475569</color>
+    <color name="textHint">#94a3b8</color>
+    <color name="textLink">#3b82f6</color>
+    
+    <!-- Inputs -->
+    <color name="inputBackground">#f1f5f9</color>
+    <color name="inputBorder">#e2e8f0</color>
+    <color name="inputBorderFocus">#3b82f6</color>
+    <color name="inputIcon">#94a3b8</color>
+    
+    <!-- Status -->
+    <color name="errorText">#ef4444</color>
+    <color name="errorBackground">#FEE2E2</color>
+    <color name="errorBorder">#FCA5A5</color>
+    <color name="successText">#22c55e</color>
+    <color name="successBackground">#DCFCE7</color>
+
+    <!-- Gradient aliases -->
+    <color name="gradientStart">#1d4ed8</color>
+    <color name="gradientEnd">#06b6d4</color>
+    
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>

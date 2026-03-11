@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-mergeDebugResources-30:\\layout\\activity_login.xml",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\layout\\activity_login.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-30:/layout/activity_reset_password.xml",
+        "source": "com.medina.app-main-33:/layout/activity_reset_password.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-mergeDebugResources-30:\\layout\\activity_forgot_password.xml",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\layout\\activity_forgot_password.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-mergeDebugResources-30:\\layout\\activity_reset_password.xml",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\layout\\activity_reset_password.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-30:/layout/activity_login.xml",
+        "source": "com.medina.app-main-33:/layout/activity_login.xml"
+    }
+]

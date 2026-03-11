@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Medina IT Manage</string>
+    <string name="login_title">Welcome Back</string>
+    <string name="login_subtitle">Sign in to your IT management portal</string>
+    <string name="forgot_password_title">Reset Password</string>
+    <string name="forgot_password_subtitle">Enter your email to receive a recovery link</string>
+    <string name="reset_password_title">Create New Password</string>
+    <string name="reset_password_subtitle">Please enter your new secure password</string>
+    <string name="label_email">EMAIL ADDRESS</string>
+    <string name="label_password">PASSWORD</string>
+    <string name="label_new_password">NEW PASSWORD</string>
+    <string name="label_confirm_password">CONFIRM NEW PASSWORD</string>
+    <string name="hint_email">Enter your email</string>
+    <string name="hint_password">Enter your password</string>
+    <string name="hint_new_password">Enter new password</string>
+    <string name="hint_confirm_password">Confirm new password</string>
+    <string name="btn_sign_in">Sign In</string>
+    <string name="btn_send_reset">Send Reset Link</string>
+    <string name="btn_update_password">Change Password</string>
+    <string name="link_forgot_password">Forgot password?</string>
+    <string name="link_back_to_login">Back to Sign In</string>
+    <string name="link_cancel">Cancel &amp; Back to Sign In</string>
+    <string name="footer">© 2026 ITManage — Enterprise Equipment Management</string>
+</resources>

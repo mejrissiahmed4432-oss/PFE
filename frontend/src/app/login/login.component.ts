@@ -104,7 +104,7 @@ export class LoginComponent implements OnInit {
             },
             error: (err) => {
                 this.isLoading = false;
-                this.errorMessage = err.error || 'Failed to update password. Link may be expired.';
+                this.errorMessage = err.error?.message || err.error || 'Failed to update password. Link may be expired.';
             }
         });
     }

@@ -7,9 +7,14 @@ import org.springframework.context.annotation.Configuration;
 import com.example.usermicroservice.model.Role;
 import com.example.usermicroservice.model.User;
 import com.example.usermicroservice.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
 public class DataInitializer {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Bean
     CommandLineRunner initDatabase(UserRepository repository) {
@@ -20,7 +25,7 @@ public class DataInitializer {
                     "Ahmed", 
                     "Mejrissi", 
                     adminEmail, 
-                    "1234656Aa", 
+                    passwordEncoder.encode("1234656Aa"), 
                     Role.ADMIN
                 );
                 repository.save(admin);

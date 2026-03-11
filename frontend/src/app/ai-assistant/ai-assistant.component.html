@@ -1,0 +1,51 @@
+<div class="ai-assistant-overlay" [class.open]="isOpen">
+  <!-- Header -->
+  <header class="ai-header">
+    <button class="close-btn" (click)="onClose()" title="Close Assistant">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    <div class="ai-header-content">
+      <div class="ai-avatar">
+        <!-- Sparkle icon SVG inside the white circle -->
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3l1.912 5.813a2 2 0 001.275 1.275L21 12l-5.813 1.912a2 2 0 00-1.275 1.275L12 21l-1.912-5.813a2 2 0 00-1.275-1.275L3 12l5.813-1.912a2 2 0 001.275-1.275L12 3z"/>
+        </svg>
+      </div>
+      <div class="ai-header-text">
+        <h2>AI Assistant</h2>
+        <p>Ask anything about your equipment, requests, or licenses</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="ai-body">
+    <div class="chat-bubble">
+      Hello! I'm your AssetFlow AI Assistant. I can help you with equipment requests, 
+      ticket status, and answer questions about your assets. How can I help you today?
+    </div>
+
+    <div class="suggested-section">
+      <div class="suggested-title">Suggested prompts:</div>
+      <div class="prompts-grid">
+        <div class="prompt-pill">What equipment is assigned to me?</div>
+        <div class="prompt-pill">How do I request new software?</div>
+        <div class="prompt-pill">My laptop is slow, what should I do?</div>
+        <div class="prompt-pill">What's the status of my request?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Input -->
+  <footer class="ai-footer">
+    <input type="text" class="chat-input" placeholder="Ask me anything...">
+    <button class="send-btn" title="Send message">
+      <svg viewBox="0 0 24 24" fill="none">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+    <!-- Small dark circular help icon seen in the corner -->
+    <div class="help-icon" title="Help & Feedback">?</div>
+  </footer>
+</div>

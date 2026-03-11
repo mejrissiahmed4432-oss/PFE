@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Animated floating glow circles and squares that mirror the web's background orbs.
+    These are layered behind the hero image content.
+-->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="400dp"
+            android:height="400dp"
+            android:viewportWidth="400"
+            android:viewportHeight="400">
+
+            <!-- Large background circle (orb 1 - blue) -->
+            <group android:name="orb1">
+                <path
+                    android:fillColor="#1a3b82f6"
+                    android:pathData="M60,80 m-100,0 a100,100 0 1,0 200,0 a100,100 0 1,0 -200,0" />
+            </group>
+
+            <!-- Medium circle (orb 2 - cyan) -->
+            <group android:name="orb2">
+                <path
+                    android:fillColor="#1506b6d4"
+                    android:pathData="M340,300 m-70,0 a70,70 0 1,0 140,0 a70,70 0 1,0 -140,0" />
+            </group>
+
+            <!-- Small circle (orb 3 - purple) -->
+            <group android:name="orb3">
+                <path
+                    android:fillColor="#126366f1"
+                    android:pathData="M300,60 m-50,0 a50,50 0 1,0 100,0 a50,50 0 1,0 -100,0" />
+            </group>
+
+            <!-- Decorative squares/diamonds -->
+            <group android:name="sq1">
+                <path
+                    android:fillColor="#0d60a5fa"
+                    android:pathData="M30,320 l20,-20 l20,20 l-20,20 Z" />
+            </group>
+            <group android:name="sq2">
+                <path
+                    android:fillColor="#0a06b6d4"
+                    android:pathData="M360,150 l15,-15 l15,15 l-15,15 Z" />
+            </group>
+            <group android:name="sq3">
+                <path
+                    android:fillColor="#0d3b82f6"
+                    android:pathData="M180,350 l12,-12 l12,12 l-12,12 Z" />
+            </group>
+
+        </vector>
+    </aapt:attr>
+
+    <!-- Orb 1 floating animation -->
+    <target android:name="orb1">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:propertyName="translateY"
+                android:valueFrom="0"
+                android:valueTo="-15"
+                android:duration="3000"
+                android:repeatMode="reverse"
+                android:repeatCount="infinite"
+                android:interpolator="@android:interpolator/accelerate_decelerate" />
+        </aapt:attr>
+    </target>
+
+    <!-- Orb 2 floating animation (offset) -->
+    <target android:name="orb2">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:propertyName="translateY"
+                android:valueFrom="0"
+                android:valueTo="12"
+                android:startOffset="1000"
+                android:duration="3500"
+                android:repeatMode="reverse"
+                android:repeatCount="infinite"
+                android:interpolator="@android:interpolator/accelerate_decelerate" />
+        </aapt:attr>
+    </target>
+
+    <!-- Orb 3 floating animation -->
+    <target android:name="orb3">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:propertyName="translateY"
+                android:valueFrom="0"
+                android:valueTo="-10"
+                android:startOffset="500"
+                android:duration="2800"
+                android:repeatMode="reverse"
+                android:repeatCount="infinite"
+                android:interpolator="@android:interpolator/accelerate_decelerate" />
+        </aapt:attr>
+    </target>
+
+    <!-- Diamond sq1 rotate -->
+    <target android:name="sq1">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:propertyName="rotation"
+                android:valueFrom="0"
+                android:valueTo="45"
+                android:duration="4000"
+                android:repeatMode="reverse"
+                android:repeatCount="infinite"
+                android:interpolator="@android:interpolator/linear" />
+        </aapt:attr>
+    </target>
+
+</animated-vector>

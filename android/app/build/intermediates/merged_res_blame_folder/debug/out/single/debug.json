@@ -1,0 +1,102 @@
+[
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_app_icon.png.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\app_icon.png"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_bg_input_field.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\bg_input_field.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_ic_eye_off.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\ic_eye_off.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_bg_badge.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\bg_badge.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_bg_error_box.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\bg_error_box.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_ic_arrow_right.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\ic_arrow_right.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_login_bg.png.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\login_bg.png"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_bg_login_page.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\bg_login_page.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_ic_lock.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\ic_lock.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_ic_mail.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\ic_mail.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_ic_eye.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\ic_eye.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_bg_animated_orbs.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\bg_animated_orbs.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\layout_activity_login.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\layout\\activity_login.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_logo.png.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\logo.png"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\layout_activity_reset_password.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\layout\\activity_reset_password.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_bg_badge_dot.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\bg_badge_dot.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_bg_hero_overlay.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\bg_hero_overlay.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-31:/layout_activity_reset_password.xml.flat",
+        "source": "com.medina.app-main-33:/layout/activity_reset_password.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_bg_button_gradient.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\bg_button_gradient.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_bg_title_accent.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\bg_title_accent.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\layout_activity_forgot_password.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\layout\\activity_forgot_password.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_bg_form_card.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\bg_form_card.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\anim_fade_in_up.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\anim\\fade_in_up.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-31:/layout_activity_login.xml.flat",
+        "source": "com.medina.app-main-33:/layout/activity_login.xml"
+    },
+    {
+        "merged": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-merged_res-31:\\drawable_bg_success_box.xml.flat",
+        "source": "C:\\Users\\Asus\\.gradle\\daemon\\8.4\\com.medina.app-main-33:\\drawable\\bg_success_box.xml"
+    }
+]
