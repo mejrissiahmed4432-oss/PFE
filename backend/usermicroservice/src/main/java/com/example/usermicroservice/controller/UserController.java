@@ -79,7 +79,7 @@ public class UserController {
                 // Generate secure token
                 String token = UUID.randomUUID().toString();
                 user.setResetToken(token);
-                user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(1));
+                user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(3));
                 userRepository.save(user);
 
                 // Send real link with token

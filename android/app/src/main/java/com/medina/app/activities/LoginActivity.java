@@ -49,11 +49,12 @@ public class LoginActivity extends AppCompatActivity {
         // Toggle password visibility
         btnTogglePassword.setOnClickListener(v -> {
             passwordVisible = !passwordVisible;
-            if (passwordVisible) {
-                etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            if  (!passwordVisible) {
+
+                etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 btnTogglePassword.setImageResource(R.drawable.ic_eye_off);
             } else {
-                etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                 btnTogglePassword.setImageResource(R.drawable.ic_eye);
             }
             etPassword.setSelection(etPassword.length());

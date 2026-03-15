@@ -247,14 +247,14 @@
                             autocomplete="current-password" />
                         <button type="button" class="toggle-password" (click)="togglePasswordVisibility()"
                             [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
-                            @if (!showPassword) {
+                            @if (showPassword) {
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
                                 <circle cx="12" cy="12" r="3" />
                             </svg>
                             }
-                            @if (showPassword) {
+                            @if (!showPassword) {
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path
@@ -313,20 +313,20 @@
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                             </svg>
                         </span>
-                        <input id="new-password" [type]="showPassword ? 'text' : 'password'" class="form-input"
+                        <input id="new-password" [type]="showNewPassword ? 'text' : 'password'" class="form-input"
                             placeholder="Enter new password" [(ngModel)]="newPassword" name="newPassword" required
                             minlength="6" pattern="^(?=.*[a-z])(?=.*[A-Z]).*$" #newPwdRef="ngModel"
                             [class.input-error]="newPwdRef.invalid && (newPwdRef.dirty || newPwdRef.touched)" />
-                        <button type="button" class="toggle-password" (click)="togglePasswordVisibility()"
-                            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
-                            @if (!showPassword) {
+                        <button type="button" class="toggle-password" (click)="toggleNewPasswordVisibility()"
+                            [attr.aria-label]="showNewPassword ? 'Hide password' : 'Show password'">
+                            @if (showNewPassword) {
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
                                 <circle cx="12" cy="12" r="3" />
                             </svg>
                             }
-                            @if (showPassword) {
+                            @if (!showNewPassword) {
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path
@@ -355,20 +355,20 @@
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                             </svg>
                         </span>
-                        <input id="confirm-password" [type]="showPassword ? 'text' : 'password'" class="form-input"
-                            placeholder="Confirm new password" [(ngModel)]="confirmPassword" name="confirmPassword"
-                            required #confirmPwdRef="ngModel"
+                        <input id="confirm-password" [type]="showConfirmPassword ? 'text' : 'password'"
+                            class="form-input" placeholder="Confirm new password" [(ngModel)]="confirmPassword"
+                            name="confirmPassword" required #confirmPwdRef="ngModel"
                             [class.input-error]="(confirmPwdRef.invalid || newPassword !== confirmPassword) && (confirmPwdRef.dirty || confirmPwdRef.touched)" />
-                        <button type="button" class="toggle-password" (click)="togglePasswordVisibility()"
-                            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
-                            @if (!showPassword) {
+                        <button type="button" class="toggle-password" (click)="toggleConfirmPasswordVisibility()"
+                            [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'">
+                            @if (showConfirmPassword) {
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
                                 <circle cx="12" cy="12" r="3" />
                             </svg>
                             }
-                            @if (showPassword) {
+                            @if (!showConfirmPassword) {
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path

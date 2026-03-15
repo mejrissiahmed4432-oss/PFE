@@ -17,6 +17,8 @@ export class LoginComponent implements OnInit {
     newPassword: string = '';
     confirmPassword: string = '';
     showPassword: boolean = false;
+    showNewPassword: boolean = false;
+    showConfirmPassword: boolean = false;
     isLoading: boolean = false;
     isForgotPassword: boolean = false;
     isResetPassword: boolean = false;
@@ -43,6 +45,14 @@ export class LoginComponent implements OnInit {
 
     togglePasswordVisibility(): void {
         this.showPassword = !this.showPassword;
+    }
+
+    toggleNewPasswordVisibility(): void {
+        this.showNewPassword = !this.showNewPassword;
+    }
+
+    toggleConfirmPasswordVisibility(): void {
+        this.showConfirmPassword = !this.showConfirmPassword;
     }
 
     onForgotPassword(): void {

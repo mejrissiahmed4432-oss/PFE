@@ -353,7 +353,7 @@
                     android:layout_height="28dp"
                     android:background="@null"
                     android:contentDescription="Toggle password"
-                    android:src="@drawable/ic_eye"
+                    android:src="@drawable/ic_eye_off"
                     android:scaleType="fitCenter"
                     android:tint="@color/inputIcon"
                     android:padding="4dp" />

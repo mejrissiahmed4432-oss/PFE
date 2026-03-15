@@ -20,7 +20,7 @@ public class ApiClient {
     // private static final String BASE_URL = "http://10.0.2.2:8080/";
 
     // ▶ FOR REAL DEVICE: Replace 192.168.X.X with your PC's IP from ipconfig
-    private static final String BASE_URL = "http://10.16.100.72:8080/";
+    private static final String BASE_URL = "http://192.168.1.15:8080/";
 
     private static Retrofit retrofit = null;
 

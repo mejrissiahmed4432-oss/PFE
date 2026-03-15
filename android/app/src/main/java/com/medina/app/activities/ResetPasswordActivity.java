@@ -94,11 +94,12 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         btnToggleNew.setOnClickListener(v -> {
             newPasswordVisible = !newPasswordVisible;
-            if (newPasswordVisible) {
-                etNewPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            if (!newPasswordVisible) {
+                etNewPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 btnToggleNew.setImageResource(R.drawable.ic_eye_off);
             } else {
-                etNewPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                etNewPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
                 btnToggleNew.setImageResource(R.drawable.ic_eye);
             }
             etNewPassword.setSelection(etNewPassword.length());
@@ -106,11 +107,12 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
         btnToggleConfirm.setOnClickListener(v -> {
             confirmPasswordVisible = !confirmPasswordVisible;
-            if (confirmPasswordVisible) {
-                etConfirmPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            if (!confirmPasswordVisible) {
+                etConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 btnToggleConfirm.setImageResource(R.drawable.ic_eye_off);
             } else {
-                etConfirmPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                etConfirmPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
                 btnToggleConfirm.setImageResource(R.drawable.ic_eye);
             }
             etConfirmPassword.setSelection(etConfirmPassword.length());
