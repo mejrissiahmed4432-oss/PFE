@@ -1,52 +1,80 @@
 <div class="dashboard-layout">
   <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <h1 class="brand-title">NEXASSET</h1>
-      <span class="badge">Stock Manager</span>
+  <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
+    <div class="sidebar-header">
+      <div class="brand-wrapper">
+        <div class="app-logo">
+          <img src="assets/images/app-icon.png" alt="App Logo" class="logo-img">
+        </div>
+        <h1 class="brand-name" *ngIf="!isSidebarCollapsed">Medina It Manage</h1>
+      </div>
+      <button class="sidebar-toggle" (click)="toggleSidebar()">
+        <svg *ngIf="!isSidebarCollapsed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        <svg *ngIf="isSidebarCollapsed" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
     </div>
 
     <nav class="sidebar-nav">
       <!-- Dashboard Active -->
-      <a href="#" class="nav-item active">
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'dashboard'" (click)="activeTab = 'dashboard'" title="Dashboard">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
-        <span>Dashboard</span>
+        <span class="nav-label">Dashboard</span>
       </a>
       <!-- Inventory -->
-      <a href="#" class="nav-item">
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'equipment'" (click)="activeTab = 'equipment'" title="Inventory">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-        <span>Inventory</span>
+        <span class="nav-label">Inventory / Equipment</span>
       </a>
       <!-- Suppliers -->
-      <a href="#" class="nav-item">
+      <a href="#" class="nav-item" title="Suppliers">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-        <span>Suppliers</span>
+        <span class="nav-label">Suppliers</span>
       </a>
       <!-- Orders -->
-      <a href="#" class="nav-item">
+      <a href="#" class="nav-item" title="Orders">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-        <span>Orders</span>
+        <span class="nav-label">Orders</span>
       </a>
       <!-- Alerts -->
-      <a href="#" class="nav-item">
+      <a href="#" class="nav-item" title="Alerts">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>
-        <span>Alerts</span>
+        <span class="nav-label">Alerts</span>
       </a>
       <!-- Reports -->
-      <a href="#" class="nav-item">
+      <a href="javascript:void(0)" class="nav-item" title="Reports">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-        <span>Reports</span>
+        <span class="nav-label">Reports</span>
       </a>
+    
     </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <div class="medina-logo-container" *ngIf="!isSidebarCollapsed">
+        <img src="medina-logo.png" alt="Medina Hotels & Resorts" class="medina-logo">
+      </div>
+      <div class="user-info-wrapper">
+        <div class="user-avatar-circle">
+          <span>{{ ((user?.firstName?.charAt(0) || 'M') + (user?.lastName?.charAt(0) || 'C')) | uppercase }}</span>
+        </div>
+        <div class="user-details" *ngIf="!isSidebarCollapsed">
+          <span class="user-name">{{ ((user?.firstName|| 'M'))  | uppercase}}  {{ ((user?.lastName|| 'C')) | uppercase }}</span>
+          <span class="user-role">{{ user?.role || 'Stock Manager' }}</span>
+        </div>
+           <button class="settings-btn" title="Settings" *ngIf="!isSidebarCollapsed" (click)="activeTab = 'settings'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </button>
+      </div>
+   
+    </div>
   </aside>
 
   <!-- Main Content -->
-  <div class="main-wrapper">
+  <div class="main-wrapper" [class.collapsed]="isSidebarCollapsed">
     <!-- Top Bar -->
     <header class="top-bar">
-      <div class="search-container">
-        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search equipment, tickets, requests... (⌘K)" class="search-input">
+      <div class="page-title-container">
+        <h2 class="top-nav-title">{{ getPageTitle() }}</h2>
       </div>
       
       <div class="top-actions">
@@ -67,27 +95,26 @@
 
         <!-- Language Icon with Flags -->
         <div class="dropdown-wrapper">
-          <button class="action-btn" title="Change Language">
-            <!-- Show default icon if neither matched (fallback), else show selected flag -->
-            <ng-container *ngIf="selectedLanguage === 'en'">
-              <img src="https://flagcdn.com/w20/us.png" alt="English" class="flag-icon-main">
-            </ng-container>
-            <ng-container *ngIf="selectedLanguage === 'fr'">
-              <img src="https://flagcdn.com/w20/fr.png" alt="French" class="flag-icon-main">
-            </ng-container>
+          <button class="action-btn lang-btn" title="Change Language">
+            <svg xmlns="http://www.w3.org/2000/svg" class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span class="lang-code">{{ selectedLanguage | uppercase }}</span>
           </button>
           
           <div class="dropdown-menu">
             <a href="javascript:void(0)" class="dropdown-item lang-item" 
                [class.active-lang]="selectedLanguage === 'en'"
                (click)="selectLanguage('en')">
-              <img src="https://flagcdn.com/w20/us.png" alt="English" class="flag-icon">
+              <span class="lang-code-sm">EN</span>
               English
             </a>
             <a href="javascript:void(0)" class="dropdown-item lang-item"
                [class.active-lang]="selectedLanguage === 'fr'"
                (click)="selectLanguage('fr')">
-              <img src="https://flagcdn.com/w20/fr.png" alt="French" class="flag-icon">
+              <span class="lang-code-sm">FR</span>
               Français
             </a>
           </div>
@@ -105,20 +132,20 @@
         <!-- User Avatar & Profile Dropdown -->
         <div class="dropdown-wrapper">
           <div class="user-avatar-top" title="Profile">
-            <span>MC</span>
+            <span>{{ ((user?.firstName?.charAt(0) || 'M') + (user?.lastName?.charAt(0) || 'C')) | uppercase }}</span>
           </div>
           
           <div class="dropdown-menu profile-menu">
             <div class="profile-header">
-              <span class="profile-name">Michael Chen</span>
-              <span class="profile-role">Stock Manager</span>
+              <span class="profile-name">{{ ((user?.firstName|| 'M'))  | uppercase}}  {{ ((user?.lastName|| 'C')) | uppercase }}</span>
+              <span class="profile-role">{{ user?.role }}</span>
             </div>
             <div class="dropdown-divider"></div>
-            <a href="javascript:void(0)" class="dropdown-item profile-action">
+            <a href="javascript:void(0)" class="dropdown-item profile-action" (click)="activeTab = 'profile'">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
               My Profile
             </a>
-            <a href="javascript:void(0)" class="dropdown-item profile-action">
+            <a href="javascript:void(0)" class="dropdown-item profile-action" (click)="activeTab = 'settings'">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
               Settings
             </a>
@@ -134,16 +161,27 @@
 
     <!-- Page Content Area -->
     <main class="content-area">
-      <!-- Minimal mock header from the screenshot -->
-      <div class="page-header">
-        <div class="greeting-area">
-          <h1 class="greeting">Good morning, {{ user?.firstName || 'Michael' }}</h1>
-          <p class="date">Wednesday, March 11, 2026</p>
-        </div>
-        <div class="header-actions">
-           <button class="primary-btn">Stock Manager</button>
+      <div *ngIf="activeTab === 'dashboard'">
+        <!-- Minimal mock header from the screenshot -->
+        <div class="page-header">
+          <div class="greeting-area">
+            <h1 class="greeting">Good morning, {{ user?.firstName || 'Michael' }}</h1>
+            <p class="date">Wednesday, March 18, 2026</p>
+          </div>
+          <div class="header-actions">
+             <button class="primary-btn">Stock Manager</button>
+          </div>
         </div>
       </div>
+
+      <!-- Equipment Component View -->
+      <app-equipment *ngIf="activeTab === 'equipment'"></app-equipment>
+
+      <!-- Profile Component View -->
+      <app-profile *ngIf="activeTab === 'profile'"></app-profile>
+
+      <!-- Settings Component View -->
+      <app-settings *ngIf="activeTab === 'settings'"></app-settings>
     </main>
     
     <!-- AI Assistant Panel Overlay -->

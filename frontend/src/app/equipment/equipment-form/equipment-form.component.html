@@ -1,0 +1,196 @@
+<div class="form-wrapper" [class.view-mode]="viewOnly && !isEditing">
+  <div class="form-header">
+    <h3>{{ !equipment ? 'Add New Equipment' : (viewOnly && !isEditing ? 'Equipment Details' : 'Edit Equipment') }}</h3>
+    <p class="subtitle">{{ viewOnly && !isEditing ? 'Click "Edit" to modify this equipment.' : 'Fill in the equipment details below.' }}</p>
+  </div>
+
+  <div class="form-grid">
+    <!-- Left Column: Form Fields -->
+    <div class="fields-column">
+      
+      <!-- Basic Information -->
+      <div class="form-section">
+        <h4>Basic Information</h4>
+        <div class="input-grid">
+          <div class="input-group">
+            <label>Equipment Name <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <input type="text" [(ngModel)]="formData.equipmentName" placeholder="Enter equipment name" [disabled]="viewOnly && !isEditing">
+          </div>
+          <div class="input-group">
+            <label>Brand <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <input type="text" [(ngModel)]="formData.brand" placeholder="Enter brand" [disabled]="viewOnly && !isEditing">
+          </div>
+          <div class="input-group">
+            <label>Model <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <input type="text" [(ngModel)]="formData.model" placeholder="Enter model number" [disabled]="viewOnly && !isEditing">
+          </div>
+          <div class="input-group">
+            <label>Serial Number</label>
+            <input type="text" [(ngModel)]="formData.serialNumber" placeholder="Enter serial number" [disabled]="viewOnly && !isEditing">
+          </div>
+          <div class="input-group">
+            <label>Category <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <select [(ngModel)]="formData.category" [disabled]="viewOnly && !isEditing">
+              <option value="" disabled>Select category</option>
+              <option value="Laptops">Laptops</option>
+              <option value="Monitors">Monitors</option>
+              <option value="Computers">Computers</option>
+              <option value="Networking">Networking</option>
+              <option value="Accessories">Accessories</option>
+              <option value="Storage">Storage</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Purchase Information -->
+      <div class="form-section">
+        <h4>Purchase Information</h4>
+        <div class="input-grid">
+          <div class="input-group">
+            <label>Purchase Date <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <input type="date" [(ngModel)]="formData.purchaseDate" [disabled]="viewOnly && !isEditing">
+          </div>
+          <div class="input-group">
+            <label>Supplier <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <select [(ngModel)]="formData.supplier" [disabled]="viewOnly && !isEditing">
+              <option value="" disabled>Select supplier</option>
+              <option value="Tech Solutions Inc.">Tech Solutions Inc.</option>
+              <option value="Office Depot">Office Depot</option>
+              <option value="Network Pro">Network Pro</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Warranty Expiration</label>
+            <input type="date" [(ngModel)]="formData.warrantyExpiration" [disabled]="viewOnly && !isEditing">
+          </div>
+          <div class="input-group">
+            <label>Purchase Price</label>
+            <input type="number" [(ngModel)]="formData.purchasePrice" placeholder="0.00" [disabled]="viewOnly && !isEditing">
+          </div>
+        </div>
+      </div>
+
+      <!-- Location Information -->
+      <div class="form-section">
+        <h4>Location Information</h4>
+        <div class="input-grid">
+          <div class="input-group">
+            <label>Location <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <select [(ngModel)]="formData.location" [disabled]="viewOnly && !isEditing">
+              <option value="" disabled>Select location</option>
+              <option value="Headquarters">Headquarters</option>
+              <option value="Branch Office A">Branch Office A</option>
+              <option value="Branch Office B">Branch Office B</option>
+              <option value="Warehouse">Warehouse</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Department</label>
+            <input type="text" [(ngModel)]="formData.department" placeholder="Enter department" [disabled]="viewOnly && !isEditing">
+          </div>
+        </div>
+      </div>
+
+      <!-- Device Specifications -->
+      <div class="form-section">
+        <h4>Device Specifications</h4>
+        <div class="input-grid">
+          <div class="input-group">
+            <label>CPU</label>
+            <input type="text" [(ngModel)]="formData.cpu" placeholder="e.g. Intel Core i7" [disabled]="viewOnly && !isEditing">
+          </div>
+          <div class="input-group">
+            <label>RAM</label>
+            <input type="text" [(ngModel)]="formData.ram" placeholder="e.g. 16GB" [disabled]="viewOnly && !isEditing">
+          </div>
+          <div class="input-group">
+            <label>Storage (Stockage)</label>
+            <input type="text" [(ngModel)]="formData.storage" placeholder="e.g. 512GB SSD" [disabled]="viewOnly && !isEditing">
+          </div>
+          <div class="input-group">
+            <label>Graphics Card</label>
+            <input type="text" [(ngModel)]="formData.graphicsCard" placeholder="e.g. NVIDIA RTX 3060" [disabled]="viewOnly && !isEditing">
+          </div>
+          <div class="input-group">
+            <label>Operating System</label>
+            <input type="text" [(ngModel)]="formData.operatingSystem" placeholder="e.g. Windows 11" [disabled]="viewOnly && !isEditing">
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Information -->
+      <div class="form-section">
+        <h4>Additional Information</h4>
+        <div class="input-group full-width">
+          <label>Notes</label>
+          <textarea [(ngModel)]="formData.note" rows="4" placeholder="Add any additional notes..." [disabled]="viewOnly && !isEditing"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: QR & Info panel (only for existing equipment) -->
+    <div class="side-column" *ngIf="equipment?.id">
+      <!-- QR Code Panel -->
+      <div class="side-panel qr-panel">
+        <h4>QR Code</h4>
+        <div class="qr-img-wrapper">
+          <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="Equipment QR Code" width="160" height="160" />
+          <div *ngIf="!qrDataUrl" class="qr-loading">Generating...</div>
+        </div>
+        <div class="eq-id">
+          <span class="label">Equipment ID</span>
+          <span class="value id-truncate" [title]="equipment?.id">{{ equipment?.id }}</span>
+        </div>
+        <div class="qr-actions">
+          <button class="btn-outline-secondary" (click)="downloadQR()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download QR
+          </button>
+          <button class="btn-outline-secondary" (click)="printQR()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Print Label
+          </button>
+        </div>
+      </div>
+
+      <!-- System Info Panel -->
+      <div class="side-panel system-panel">
+        <h4>System Information</h4>
+        <div class="sys-info-block">
+          <span class="label">Created At</span>
+          <span class="value">{{ equipment?.createdAt | date:'mediumDate' }}</span>
+        </div>
+        <div class="sys-info-block">
+          <span class="label">Updated At</span>
+          <span class="value">{{ equipment?.updatedAt | date:'mediumDate' }}</span>
+        </div>
+        <div class="sys-info-block">
+          <span class="label">Created By</span>
+          <span class="value">{{ equipment?.createdBy || currentUserName || '—' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="form-footer">
+    <!-- View mode: only Edit button -->
+    <ng-container *ngIf="viewOnly && !isEditing">
+      <button class="btn-cancel" (click)="cancel()">← Back</button>
+      <button class="btn-primary" (click)="enableEdit()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        Edit Equipment
+      </button>
+    </ng-container>
+
+    <!-- Edit / Add mode: Cancel + Save -->
+    <ng-container *ngIf="!viewOnly || isEditing">
+      <button class="btn-cancel" (click)="cancel()">Cancel</button>
+      <button class="btn-primary" [disabled]="isSaving" (click)="saveEquipment()">
+        {{ isSaving ? 'Saving...' : (equipment ? 'Update Equipment' : 'Save Equipment') }}
+      </button>
+    </ng-container>
+  </div>
+</div>

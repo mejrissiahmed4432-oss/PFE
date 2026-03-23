@@ -1,0 +1,4 @@
+/app/src/main/java/com/example/stockmanagermicroservice/controller/EquipmentController.java
+/app/src/main/java/com/example/stockmanagermicroservice/repository/EquipmentRepository.java
+/app/src/main/java/com/example/stockmanagermicroservice/service/EquipmentService.java
+/app/src/main/java/com/example/stockmanagermicroservice/model/Equipment.java

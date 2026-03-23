@@ -1,0 +1,4 @@
+com/example/stockmanagermicroservice/service/EquipmentService.class
+com/example/stockmanagermicroservice/model/Equipment.class
+com/example/stockmanagermicroservice/repository/EquipmentRepository.class
+com/example/stockmanagermicroservice/controller/EquipmentController.class

@@ -24,6 +24,20 @@ services:
       - mongodb
     restart: always
 
+  stock-manager:
+    build:
+      context: ./backend/stock-manager-microservice
+      dockerfile: Dockerfile
+    container_name: stock-manager
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://admin:admin123@mongodb:27017/userdb?authSource=admin
+      - APP_FRONTEND_URL=http://localhost
+    depends_on:
+      - mongodb
+    restart: always
+
   frontend:
     build:
       context: ./frontend

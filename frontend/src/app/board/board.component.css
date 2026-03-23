@@ -45,99 +45,287 @@
    SIDEBAR
    ────────────────────────────────────────────────────────── */
 .sidebar {
-  width: 250px;
+  width: 320px;
   background-color: var(--c-white);
   border-right: 1px solid var(--c-border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  z-index: 10;
+  z-index: 100;
+  transition: width var(--transition);
+  position: relative;
 }
 
-.sidebar-brand {
-  padding: 32px 24px 40px;
+.sidebar.collapsed {
+  width: 80px;
+}
+
+/* ──────────────────────────────────────────────────────────
+   SIDEBAR HEADER
+   ────────────────────────────────────────────────────────── */
+.sidebar-header {
+  height: 80px;
+  padding: 0 20px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.brand-title {
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.app-logo {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 8px; /* Matching the icon's inner curvature */
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Cover ensures it fills the 44px box */
+}
+
+.brand-name {
   font-family: 'Playfair Display', serif;
-  margin: 0;
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 800;
   color: var(--c-blue-950);
-  letter-spacing: -0.02em;
+  margin: 0;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
-.badge {
-  background: linear-gradient(135deg, var(--c-accent) 0%, var(--c-cyan) 100%);
-  color: var(--c-white);
-  padding: 6px 14px;
-  border-radius: 100px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  box-shadow: 0 4px 10px var(--c-accent-glow);
+.sidebar-toggle {
+  background: var(--c-input-bg);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--c-text-body);
+  transition: all var(--transition);
 }
 
+.sidebar-toggle:hover {
+  background-color: var(--c-accent);
+  color: white;
+  transform: scale(1.05);
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+  padding: 0;
+}
+
+.sidebar.collapsed .brand-wrapper {
+  gap: 0;
+  justify-content: center;
+}
+
+.sidebar.collapsed .sidebar-toggle {
+  position: absolute;
+  right: -16px;
+  top: 24px;
+  background: var(--c-white);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 1px solid var(--c-border);
+  z-index: 110;
+  width: 32px;
+  height: 32px;
+}
+
+/* ──────────────────────────────────────────────────────────
+   SIDEBAR NAVIGATION
+   ────────────────────────────────────────────────────────── */
 .sidebar-nav {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 0 16px;
+  gap: 6px;
+  padding: 24px 14px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: padding var(--transition);
+}
+
+.sidebar.collapsed .sidebar-nav {
+  padding: 24px 0;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 14px 12px 18px;
+  gap: 16px;
+  padding: 12px 16px;
   border-radius: 12px;
-  color: var(--c-blue-900);
+  color: var(--c-text-body);
   text-decoration: none;
   font-weight: 500;
-  font-size: 0.98rem;
-  transition: background var(--transition), color var(--transition), transform var(--transition);
-  position: relative;
+  font-size: 0.95rem;
+  transition: all var(--transition);
+  white-space: nowrap;
 }
 
 .nav-item:hover {
-  background-color: var(--c-input-hover);
+  background-color: var(--c-bg-hover);
   color: var(--c-accent);
-  transform: translateX(2px);
 }
 
-/* Active State matching user image (solid blue sidebar element) */
 .nav-item.active {
   background-color: var(--c-active-bg);
   color: var(--c-accent);
   font-weight: 600;
 }
 
-.nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 15%;
-  height: 70%;
-  width: 4px;
-  background: var(--c-accent);
-  /* The active state border only curves on the right (like photo) */
-  border-radius: 0 4px 4px 0;
-}
-
 .nav-icon {
   width: 22px;
   height: 22px;
-  stroke: #64748b; /* A lighter gray for icons from the photo */
+  min-width: 22px;
+  stroke: var(--c-text-mute);
   transition: stroke var(--transition);
 }
 
-.nav-item.active .nav-icon,
-.nav-item:hover .nav-icon {
+.nav-item.active .nav-icon {
   stroke: var(--c-accent);
+}
+
+.nav-label {
+  transition: opacity var(--transition);
+}
+
+.sidebar.collapsed .nav-label {
+  display: none;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 12px 0;
+  width: 100%;
+  gap: 0;
+}
+
+.sidebar.collapsed .nav-icon {
+  margin: 0 auto;
+}
+
+/* ──────────────────────────────────────────────────────────
+   SIDEBAR FOOTER
+   ────────────────────────────────────────────────────────── */
+.sidebar-footer {
+  padding: 20px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  flex-direction: column;
+  gap: 16px;
+}
+
+.medina-logo-container {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: 8px;
+}
+
+.medina-logo {
+  max-width: 50%;
+  height: auto;
+  object-fit: contain;
+  transition: opacity var(--transition);
+ 
+  margin-bottom: 50px;
+}
+
+.sidebar.collapsed .medina-logo-container {
+  display: none;
+}
+
+.user-info-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.user-avatar-circle {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--c-accent), var(--c-cyan));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--c-text-h);
+  white-space: nowrap;
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: var(--c-text-mute);
+  white-space: nowrap;
+}
+
+.settings-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--c-text-mute);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.settings-btn:hover {
+  background-color: var(--c-bg-hover);
+  color: var(--c-accent);
+}
+
+.sidebar.collapsed .sidebar-footer {
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.sidebar.collapsed .user-info-wrapper {
+  justify-content: center;
+  width: 100%;
+  padding: 0;
 }
 
 /* Badge distinct colors */
@@ -149,8 +337,8 @@
 .user-avatar-top {
   width: 40px;
   height: 40px;
-  border-radius: var(--r-sm);
-  background: linear-gradient(135deg, var(--c-accent), var(--c-cyan));
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--c-accent), var(--c-cyan)) !important;
   color: var(--c-white);
   display: flex;
   align-items: center;
@@ -159,7 +347,7 @@
   font-size: 0.9rem;
   margin-left: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 12px var(--c-accent-glow);
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3) !important;
   transition: transform var(--transition), box-shadow var(--transition);
 }
 
@@ -227,30 +415,45 @@
   color: var(--c-accent);
 }
 
-/* Language item specific */
-.lang-item {
-  gap: 12px;
+.lang-btn {
+  background-color: var(--c-input-bg) !important;
+  border-radius: 100px !important; /* Pill shape to fit icon + text */
+  padding: 0 12px 0 8px !important;
+  width: auto !important; /* Allow width to grow with text */
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: all var(--transition);
 }
 
-.flag-icon {
-  width: 20px;
-  height: 15px;
-  border-radius: 2px;
-  object-fit: cover;
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+.lang-btn:hover {
+  background-color: var(--c-border) !important;
 }
 
-.flag-icon-main {
+.lang-code {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--c-text-body);
+}
+
+.lang-code-sm {
   width: 24px;
   height: 18px;
-  border-radius: 3px;
-  object-fit: cover;
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
-  transition: transform var(--transition);
+  background: var(--c-input-bg);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--c-text-mute);
+  text-transform: uppercase;
 }
 
-.action-btn:hover .flag-icon-main {
-  transform: scale(1.1);
+.active-lang .lang-code-sm {
+  background: var(--c-accent);
+  color: var(--c-white);
 }
 
 .active-lang {
@@ -327,6 +530,19 @@
   height: 72px;
 }
 
+.page-title-container {
+  display: flex;
+  align-items: center;
+}
+
+.top-nav-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--c-blue-950);
+  margin: 0;
+}
+
 .search-container {
   display: flex;
   align-items: center;
@@ -401,6 +617,7 @@
   color: var(--c-accent);
 }
 
+
 /* Action Buttons and Icons Refinement */
 .action-icon {
   width: 20px;
@@ -431,27 +648,9 @@
   box-shadow: 0 2px 4px var(--c-accent-glow);
 }
 
-.user-avatar-top {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%; /* Back to perfect circle as requested */
-  background: linear-gradient(135deg, #3b82f6, #06b6d4); /* Solid vibrant blue/cyan gradient */
-  color: var(--c-white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Playfair Display', serif; /* Elegant serif font for avatar if matching old logo, or bold inter */
-  font-weight: 800;
-  font-size: 1rem;
-  margin-left: 12px;
-  cursor: pointer;
-  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.25);
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-
 .user-avatar-top:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
 }
 
 /* EXAMPLE CONTENT AREA (Matching the mock) */

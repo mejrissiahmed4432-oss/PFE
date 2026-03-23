@@ -1,0 +1,40 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            maxAge: 3600
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: user-microservice
+          uri: lb://user-microservice
+          predicates:
+            - Path=/api/users/**
+        - id: stock-manager-microservice
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/equipment/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
