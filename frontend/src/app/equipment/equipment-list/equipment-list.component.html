@@ -53,9 +53,7 @@
       <label>Supplier</label>
       <select [(ngModel)]="filterSupplier" (change)="applyFilters()">
         <option value="">All Suppliers</option>
-        <option value="Tech Solutions Inc.">Tech Solutions Inc.</option>
-        <option value="Office Depot">Office Depot</option>
-        <option value="Network Pro">Network Pro</option>
+        <option *ngFor="let s of suppliers" [value]="s.name">{{ s.name }}</option>
       </select>
     </div>
     <div class="filter-group">

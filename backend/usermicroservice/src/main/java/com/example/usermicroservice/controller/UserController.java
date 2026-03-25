@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.usermicroservice.config.JwtUtils;
+import com.example.usermicroservice.dto.UpdateEmailRequest;
+import com.example.usermicroservice.dto.ChangePasswordRequest;
 import com.example.usermicroservice.dto.ForgotPasswordRequest;
 import com.example.usermicroservice.dto.LoginRequest;
 import com.example.usermicroservice.dto.LoginResponse;
@@ -31,7 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = {"http://localhost:4200", "http://localhost"}) // Allow Angular dev server and Docker Nginx
+@CrossOrigin(origins = { "http://localhost:4200", "http://localhost" }) // Allow Angular dev server and Docker Nginx
 public class UserController {
 
     @Autowired
@@ -62,8 +66,7 @@ public class UserController {
                     user.getEmail(),
                     user.getRole(),
                     user.getPhoto(),
-                    token
-            ));
+                    token));
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid email or password"));
@@ -88,7 +91,8 @@ public class UserController {
                 emailService.sendResetPasswordEmail(request.getEmail(), resetLink);
                 return ResponseEntity.ok(Map.of("message", "Reset link sent successfully"));
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error sending email: " + e.getMessage()));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("message", "Error sending email: " + e.getMessage()));
             }
         }
 
@@ -102,7 +106,8 @@ public class UserController {
         Optional<User> userOpt = userRepository.findByResetToken(request.getToken());
 
         if (userOpt.isEmpty()) {
-            System.out.println("User not found for token: [" + request.getToken() + "]. Possible token mismatch or database sync issue.");
+            System.out.println("User not found for token: [" + request.getToken()
+                    + "]. Possible token mismatch or database sync issue.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Invalid or expired token"));
         }
 
@@ -110,7 +115,8 @@ public class UserController {
         System.out.println("Found user: " + user.getEmail() + ". Link expiry: " + user.getResetTokenExpiry());
 
         if (user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
-            System.out.println("Token expired for user: " + user.getEmail() + ". Expiry was: " + user.getResetTokenExpiry());
+            System.out.println(
+                    "Token expired for user: " + user.getEmail() + ". Expiry was: " + user.getResetTokenExpiry());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Token has expired"));
         }
 
@@ -123,6 +129,72 @@ public class UserController {
         System.out.println("Password successfully updated and hashed for user: " + user.getEmail());
 
         return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Session expired. Please log in again."));
+        }
+
+        String email = auth.getPrincipal().toString();
+        Optional<User> userOpt = userRepository.findByEmail(email);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "User not found in current session."));
+        }
+
+        User user = userOpt.get();
+
+        // Verify current password
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            return ResponseEntity.ok(Map.of("success", false, "message", "Incorrect current password"));
+        }
+
+        // Update to new password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("success", true, "message", "Password updated successfully"));
+    }
+
+    @PostMapping("/change-email")
+    public ResponseEntity<?> changeEmail(@Valid @RequestBody UpdateEmailRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Session expired. Please log in again."));
+        }
+
+        String currentEmail = auth.getPrincipal().toString();
+
+        // Check if new email is already taken
+        if (userRepository.findByEmail(request.getNewEmail()).isPresent()) {
+            return ResponseEntity.ok(Map.of("success", false, "message", "Email address already in use"));
+        }
+
+        Optional<User> userOpt = userRepository.findByEmail(currentEmail);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "User not found in current session."));
+        }
+
+        User user = userOpt.get();
+        
+        // Verify current password
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return ResponseEntity.ok(Map.of("success", false, "message", "Invalid password. Email update denied."));
+        }
+
+        user.setEmail(request.getNewEmail());
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("success", true, "message", "Email updated successfully. Please log in again with your new email."));
     }
 
     @PostMapping

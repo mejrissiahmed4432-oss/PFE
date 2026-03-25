@@ -1,0 +1,141 @@
+<div class="dashboard-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Loading dashboard stats...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!isLoading && stats" class="dashboard-content">
+    
+    <!-- Stat Cards -->
+    <div class="stats-row">
+      <div class="stat-card total-eq">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Total Equipment</span>
+          <h3 class="stat-number">{{ stats.totalEquipment }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card total-sup">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Active Suppliers</span>
+          <h3 class="stat-number">{{ stats.totalSuppliers }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card warranty-warning" [class.alert-active]="stats.warrantyExpiringSoon > 0">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Warranty Alerts</span>
+          <h3 class="stat-number">{{ stats.warrantyExpiringSoon }}</h3>
+        </div>
+      </div>
+
+      <div class="stat-card stock-alert">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">Pending Orders</span>
+          <h3 class="stat-number">{{ stats.lowStockAlerts }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+      <div class="chart-container card">
+        <h4 class="chart-title">Equipment by Category</h4>
+        <canvas baseChart
+          [data]="pieChartData"
+          [options]="pieChartOptions"
+          [type]="pieChartType">
+        </canvas>
+      </div>
+
+      <div class="chart-container card">
+        <h4 class="chart-title">Stock by Location</h4>
+        <canvas baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="barChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Bottom Row: Recent Activity & Alerts -->
+    <div class="data-row">
+      <!-- Recent Equipment -->
+      <div class="recent-card card">
+        <div class="card-header-flex">
+          <h4 class="card-title">Recently Added Equipment</h4>
+          <button class="text-btn">View All</button>
+        </div>
+        <div class="table-responsive">
+          <table class="recent-table">
+            <thead>
+              <tr>
+                <th>Equipment</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Added Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let eq of stats.recentEquipment">
+                <td class="eq-cell">
+                  <span class="eq-name">{{ eq.equipmentName }}</span>
+                  <span class="eq-brand">{{ eq.brand }}</span>
+                </td>
+                <td><span class="badge category-badge">{{ eq.category }}</span></td>
+                <td>{{ eq.location }}</td>
+                <td class="date-cell">{{ eq.createdAt | date:'mediumDate' }}</td>
+              </tr>
+              <tr *ngIf="stats.recentEquipment.length === 0">
+                <td colspan="4" class="empty-cell">No recent equipment found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Quick Actions / Alerts -->
+      <div class="alerts-card card">
+        <h4 class="card-title">Critical Alerts</h4>
+        <div class="alert-list">
+          <div class="alert-item error" *ngIf="stats.warrantyExpiringSoon > 0">
+            <div class="alert-icon">!</div>
+            <div class="alert-content">
+              <span class="alert-msg">{{ stats.warrantyExpiringSoon }} items have warranties expiring within 30 days.</span>
+              <span class="alert-time">Check details in Inventory</span>
+            </div>
+          </div>
+          <div class="alert-item warning">
+            <div class="alert-icon">!</div>
+            <div class="alert-content">
+              <span class="alert-msg">Stock level for "Laptops" is getting low.</span>
+              <span class="alert-time">1 hour ago</span>
+            </div>
+          </div>
+          <div class="alert-item info">
+            <div class="alert-icon">i</div>
+            <div class="alert-content">
+              <span class="alert-msg">Monthly inventory report is ready.</span>
+              <span class="alert-time">Today, 09:00 AM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

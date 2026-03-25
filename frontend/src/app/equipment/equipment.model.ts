@@ -12,6 +12,7 @@ export interface Equipment {
   serialNumber?: string;
   category?: string;
   supplier?: string;
+  supplierId?: string;
   warrantyExpiration?: string;
   location?: string;
   note?: string;

@@ -19,6 +19,7 @@ public class Equipment {
     private String serialNumber;
     private String category;
     private String supplier;
+    private String supplierId;
     private String location;
     private String department;
     
@@ -71,6 +72,9 @@ public class Equipment {
     
     public String getSupplier() { return supplier; }
     public void setSupplier(String supplier) { this.supplier = supplier; }
+    
+    public String getSupplierId() { return supplierId; }
+    public void setSupplierId(String supplierId) { this.supplierId = supplierId; }
     
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }

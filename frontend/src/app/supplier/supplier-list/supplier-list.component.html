@@ -1,0 +1,120 @@
+<div class="list-wrapper">
+  <!-- Top Controls -->
+  <div class="controls-bar">
+    <div class="search-box">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search suppliers...">
+    </div>
+    
+    <div class="actions-group">
+      <button class="icon-toggle-btn" [class.active]="showFilters" (click)="toggleFilters()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        Filters
+      </button>
+      
+      <div class="view-toggles">
+        <button class="view-btn" [class.active]="viewMode === 'table'" (click)="toggleViewMode('table')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        </button>
+        <button class="view-btn" [class.active]="viewMode === 'card'" (click)="toggleViewMode('card')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Panel -->
+  <div class="filters-panel" *ngIf="showFilters">
+    <div class="filter-group">
+      <label>Category</label>
+      <select [(ngModel)]="filterCategory" (change)="applyFilters()">
+        <option value="">All Categories</option>
+        <option value="Hardware">Hardware</option>
+        <option value="Software">Software</option>
+        <option value="Services">Services</option>
+        <option value="Network">Network</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table View -->
+  <div class="table-container" *ngIf="viewMode === 'table'">
+    <table class="premium-table">
+      <thead>
+        <tr>
+          <th><input type="checkbox"></th>
+          <th>Name</th>
+          <th>Company</th>
+          <th>Contact Person</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Category</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of paginatedSuppliers" class="table-row-animate">
+          <td><input type="checkbox"></td>
+          <td class="font-medium text-dark">{{ s.name }}</td>
+          <td>{{ s.companyName }}</td>
+          <td>{{ s.contactPerson }}</td>
+          <td>{{ s.email }}</td>
+          <td>{{ s.phoneNumber }}</td>
+          <td><span class="badge" [ngClass]="s.category ? s.category.toLowerCase() : 'default'">{{ s.category }}</span></td>
+          <td class="actions-cell">
+            <button class="action-icon view" (click)="viewEvent.emit(s)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+            <button class="action-icon edit" (click)="editEvent.emit(s)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+            <button class="action-icon delete" (click)="deleteSupplier(s.id)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Card View -->
+  <div class="card-grid" *ngIf="viewMode === 'card'">
+    <div class="equipment-card card-animate" *ngFor="let s of paginatedSuppliers">
+      <div class="card-header">
+        <div class="card-title-group">
+          <h3 class="font-medium text-dark">{{ s.name }}</h3>
+          <span class="card-subtitle">{{ s.companyName }}</span>
+        </div>
+        <input type="checkbox" class="card-checkbox">
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="label">Contact:</span>
+          <span class="value">{{ s.contactPerson }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Email:</span>
+          <span class="value">{{ s.email }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Phone:</span>
+          <span class="value">{{ s.phoneNumber }}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Category:</span>
+          <span class="badge" [ngClass]="s.category ? s.category.toLowerCase() : 'default'">{{ s.category }}</span>
+        </div>
+      </div>
+      <div class="card-footer card-actions-dual">
+        <button class="btn-outline" (click)="viewEvent.emit(s)">View</button>
+        <button class="btn-primary-solid" (click)="editEvent.emit(s)">Edit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="totalPages > 0">
+    <div class="page-info">
+      Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ (currentPage * itemsPerPage > filteredSuppliers.length) ? filteredSuppliers.length : currentPage * itemsPerPage }} of {{ filteredSuppliers.length }} results
+    </div>
+    <div class="pagination">
+      <button class="page-btn text-btn" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">Previous</button>
+      <button *ngFor="let p of pages" class="page-btn num-btn" [class.active]="p === currentPage" (click)="changePage(p)">{{ p }}</button>
+      <button class="page-btn text-btn" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">Next</button>
+    </div>
+  </div>
+</div>

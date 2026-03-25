@@ -17,128 +17,147 @@
 
   <div class="settings-stack">
 
-    <!-- ── Change Password Card ─────────────────────────────── -->
-    <div class="settings-card">
+    <!-- ── Combined Security Settings Card ────────────────────────── -->
+    <div class="settings-card security-card">
       <div class="card-header">
         <div class="card-icon-wrap">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         </div>
         <div>
-          <h3 class="card-title">Change Password</h3>
-          <p class="card-subtitle">Update your password to keep your account secure</p>
+          <h3 class="card-title">Account Security</h3>
+          <p class="card-subtitle">Manage your login credentials and secondary authentication</p>
         </div>
       </div>
 
-      <div class="password-fields">
-
-        <!-- Current Password -->
-        <div class="field-group">
-          <label for="currentPwd">Current Password</label>
-          <div class="input-wrapper">
-            <input
-              id="currentPwd"
-              [type]="showCurrent ? 'text' : 'password'"
-              [(ngModel)]="currentPassword"
-              placeholder="Enter your current password">
-            <button type="button" class="eye-btn" (click)="showCurrent = !showCurrent" tabindex="-1">
-              <svg *ngIf="!showCurrent" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              <svg *ngIf="showCurrent" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-            </button>
+      <div class="security-actions" *ngIf="!isChangingPassword && !isChangingEmail">
+        <button class="action-btn-large" (click)="togglePasswordChange()">
+          <div class="btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
           </div>
+          <div class="btn-text">
+            <span class="btn-title">Change Password</span>
+            <span class="btn-desc">Update your login password</span>
+          </div>
+          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+
+        <button class="action-btn-large" (click)="toggleEmailChange()">
+          <div class="btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          </div>
+          <div class="btn-text">
+            <span class="btn-title">Change Email Address</span>
+            <span class="btn-desc"> {{ currentEmailAddress }}</span>
+          </div>
+          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+
+      <!-- Password Change Form -->
+      <div class="expand-section" *ngIf="isChangingPassword">
+        <div class="section-title-row">
+          <h4 class="section-title">Update Password</h4>
+         
         </div>
 
-        <!-- New Password -->
-        <div class="field-group">
-          <label for="newPwd">New Password</label>
-          <div class="input-wrapper">
-            <input
-              id="newPwd"
-              [type]="showNew ? 'text' : 'password'"
-              [(ngModel)]="newPassword"
-              placeholder="Enter a new password">
-            <button type="button" class="eye-btn" (click)="showNew = !showNew" tabindex="-1">
-              <svg *ngIf="!showNew" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              <svg *ngIf="showNew" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-            </button>
-          </div>
-          <!-- Strength Meter -->
-          <div class="strength-meter" *ngIf="newPassword">
-            <div class="strength-bars">
-              <div class="bar" [class.filled]="passwordStrength >= 1" [class]="passwordStrength >= 1 ? strengthClass : ''"></div>
-              <div class="bar" [class.filled]="passwordStrength >= 2" [class]="passwordStrength >= 2 ? strengthClass : ''"></div>
-              <div class="bar" [class.filled]="passwordStrength >= 3" [class]="passwordStrength >= 3 ? strengthClass : ''"></div>
-              <div class="bar" [class.filled]="passwordStrength >= 4" [class]="passwordStrength >= 4 ? strengthClass : ''"></div>
+        <div class="password-fields">
+          <div class="field-group">
+            <label for="currentPwd">Current Password</label>
+            <div class="input-wrapper">
+              <input id="currentPwd" [type]="showCurrent ? 'text' : 'password'" [(ngModel)]="currentPassword" placeholder="Enter current password">
+              <button type="button" class="eye-btn" (click)="showCurrent = !showCurrent" tabindex="-1">
+                <svg *ngIf="!showCurrent" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg *ngIf="showCurrent" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
             </div>
-            <span class="strength-label" [class]="strengthClass">{{ strengthLabel }}</span>
+          </div>
+
+          <div class="field-group">
+            <label for="newPwd">New Password</label>
+            <div class="input-wrapper">
+              <input id="newPwd" [type]="showNew ? 'text' : 'password'" [(ngModel)]="newPassword" placeholder="Minimum 8 characters">
+              <button type="button" class="eye-btn" (click)="showNew = !showNew" tabindex="-1">
+                <svg *ngIf="!showNew" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg *ngIf="showNew" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
+            </div>
+            <div class="strength-meter" *ngIf="newPassword">
+              <div class="strength-bars">
+                <div class="bar" [class.filled]="passwordStrength >= 1" [class]="passwordStrength >= 1 ? strengthClass : ''"></div>
+                <div class="bar" [class.filled]="passwordStrength >= 2" [class]="passwordStrength >= 2 ? strengthClass : ''"></div>
+                <div class="bar" [class.filled]="passwordStrength >= 3" [class]="passwordStrength >= 3 ? strengthClass : ''"></div>
+                <div class="bar" [class.filled]="passwordStrength >= 4" [class]="passwordStrength >= 4 ? strengthClass : ''"></div>
+              </div>
+              <span class="strength-label" [class]="strengthClass">{{ strengthLabel }}</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="confirmPwd">Confirm New Password</label>
+            <div class="input-wrapper" [class.mismatch]="confirmPassword && newPassword !== confirmPassword">
+              <input id="confirmPwd" [type]="showConfirm ? 'text' : 'password'" [(ngModel)]="confirmPassword" placeholder="Confirm your new password">
+              <button type="button" class="eye-btn" (click)="showConfirm = !showConfirm" tabindex="-1">
+                <svg *ngIf="!showConfirm" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg *ngIf="showConfirm" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Confirm Password -->
-        <div class="field-group">
-          <label for="confirmPwd">Confirm New Password</label>
-          <div class="input-wrapper" [class.mismatch]="confirmPassword && newPassword !== confirmPassword">
-            <input
-              id="confirmPwd"
-              [type]="showConfirm ? 'text' : 'password'"
-              [(ngModel)]="confirmPassword"
-              placeholder="Repeat your new password">
-            <button type="button" class="eye-btn" (click)="showConfirm = !showConfirm" tabindex="-1">
-              <svg *ngIf="!showConfirm" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              <svg *ngIf="showConfirm" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-            </button>
+        <div class="section-actions">
+          <button class="btn-primary" (click)="changePassword()" [disabled]="isSavingPassword">
+            <span *ngIf="!isSavingPassword">Save Password</span>
+            <span *ngIf="isSavingPassword" class="saving-spinner"></span>
+          </button>
+          <button class="btn-ghost" (click)="cancelPasswordChange()">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Email Change Form -->
+      <div class="expand-section" *ngIf="isChangingEmail">
+        <div class="section-title-row">
+          <h4 class="section-title">Change Email Address</h4>
+ 
+        </div>
+
+        <div class="password-fields">
+          <div class="field-group">
+            <label for="newEmail">New Email Address</label>
+            <div class="input-wrapper">
+              <input id="newEmail" type="email" [(ngModel)]="newEmail" placeholder="Enter new email address">
+              <div class="icon-suffix">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              </div>
+            </div>
           </div>
-          <span class="error-hint" *ngIf="confirmPassword && newPassword !== confirmPassword">Passwords do not match</span>
-        </div>
 
-      </div>
-
-      <button class="btn-update-pwd" (click)="changePassword()" [disabled]="isSavingPassword">
-        <span *ngIf="!isSavingPassword">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          Update Password
-        </span>
-        <span *ngIf="isSavingPassword" class="saving-spinner"></span>
-      </button>
-    </div>
-
-    <!-- ── Change Email Card ────────────────────────────────── -->
-    <div class="settings-card">
-      <div class="card-header">
-        <div class="card-icon-wrap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-        </div>
-        <div>
-          <h3 class="card-title">Change Email Address</h3>
-          <p class="card-subtitle">Update your account email for notifications and login</p>
-        </div>
-      </div>
-
-      <div class="password-fields">
-        <div class="field-group">
-          <label for="newEmail">New Email Address</label>
-          <input
-            id="newEmail"
-            type="email"
-            [(ngModel)]="newEmail"
-            placeholder="Enter your new email address">
-        </div>
-        <div class="field-group">
-          <label for="confirmEmail">Confirm New Email</label>
-          <div class="input-wrapper" [class.mismatch]="confirmEmail && newEmail !== confirmEmail">
-            <input
-              id="confirmEmail"
-              type="email"
-              [(ngModel)]="confirmEmail"
-              placeholder="Repeat your new email address">
+          <div class="field-group">
+            <label for="confirmEmail">Confirm New Email</label>
+            <div class="input-wrapper" [class.mismatch]="confirmEmail && newEmail !== confirmEmail">
+              <input id="confirmEmail" type="email" [(ngModel)]="confirmEmail" placeholder="Repeat new email address">
+            </div>
           </div>
-          <span class="error-hint" *ngIf="confirmEmail && newEmail !== confirmEmail">Emails do not match</span>
+
+          <div class="field-group">
+            <label for="emailPwd">Confirm with Password</label>
+            <div class="input-wrapper">
+              <input id="emailPwd" type="password" [(ngModel)]="emailPassword" placeholder="Enter your password to authorize change">
+              <div class="icon-suffix">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </div>
+            </div>
+            <p class="field-hint">Your password is required to securely update your account email.</p>
+          </div>
+        </div>
+
+        <div class="section-actions">
+          <button class="btn-primary" (click)="changeEmail()" [disabled]="isSavingEmail">
+            <span *ngIf="!isSavingEmail">Save Email Address</span>
+            <span *ngIf="isSavingEmail" class="saving-spinner"></span>
+          </button>
+          <button class="btn-ghost" (click)="cancelEmailChange()">Cancel</button>
         </div>
       </div>
-
-      <button class="btn-save-prefs" (click)="changeEmail()" [disabled]="isSavingEmail">
-        <span *ngIf="!isSavingEmail">Update Email Address</span>
-        <span *ngIf="isSavingEmail" class="saving-spinner"></span>
-      </button>
     </div>
 
     <!-- ── Email Preferences Card ──────────────────────────── -->

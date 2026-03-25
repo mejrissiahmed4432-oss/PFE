@@ -6,11 +6,15 @@ import { AiAssistantComponent } from '../ai-assistant/ai-assistant.component';
 import { EquipmentComponent } from '../equipment/equipment.component';
 import { ProfileComponent } from '../profile/profile.component';
 import { SettingsComponent } from '../settings/settings.component';
+import { SupplierComponent } from '../supplier/supplier.component';
+import { DashboardComponent } from '../dashboard/dashboard.component';
+import { AlertsComponent } from '../alerts/alerts.component';
+import { AlertService } from '../alerts/alert.service';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
 })
@@ -19,15 +23,28 @@ export class BoardComponent implements OnInit {
   selectedLanguage: 'en' | 'fr' = 'en'; // Default is English
   isAssistantOpen: boolean = false;
   isSidebarCollapsed: boolean = false;
-  activeTab: string = 'equipment'; // Defaulting to equipment for view
+  activeTab: string = 'dashboard'; // Defaulting to dashboard for view
+  unreadAlertsCount: number = 0;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService, 
+    private router: Router,
+    private alertService: AlertService
+  ) { }
 
   ngOnInit(): void {
     this.user = this.authService.getCurrentUser();
     if (!this.user) {
       this.router.navigate(['/login']);
+    } else {
+      this.loadUnreadCount();
     }
+  }
+
+  loadUnreadCount(): void {
+    this.alertService.getUnreadAlerts().subscribe(alerts => {
+      this.unreadAlertsCount = alerts.length;
+    });
   }
 
   selectLanguage(lang: 'en' | 'fr'): void {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings',
@@ -20,11 +21,15 @@ export class SettingsComponent implements OnInit {
   showCurrent = false;
   showNew = false;
   showConfirm = false;
+  isChangingPassword = false;
 
   // Email change
+  currentEmailAddress = '';
   newEmail = '';
   confirmEmail = '';
+  emailPassword = '';
   isSavingEmail = false;
+  isChangingEmail = false;
 
   // Email Preferences
   emailNotifications = true;
@@ -57,9 +62,52 @@ export class SettingsComponent implements OnInit {
     return classes[this.passwordStrength] || '';
   }
 
-  constructor(private authService: AuthService, private http: HttpClient) {}
+  constructor(
+    private authService: AuthService, 
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.currentEmailAddress = user.email || 'user&#64;example.com';
+    }
+  }
+
+  togglePasswordChange(): void {
+    this.isChangingPassword = !this.isChangingPassword;
+    if (this.isChangingPassword) {
+      this.isChangingEmail = false;
+      this.cancelEmailChange();
+    } else {
+      this.cancelPasswordChange();
+    }
+  }
+
+  toggleEmailChange(): void {
+    this.isChangingEmail = !this.isChangingEmail;
+    if (this.isChangingEmail) {
+      this.isChangingPassword = false;
+      this.cancelPasswordChange();
+    } else {
+      this.cancelEmailChange();
+    }
+  }
+
+  cancelPasswordChange(): void {
+    this.isChangingPassword = false;
+    this.currentPassword = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
+  }
+
+  cancelEmailChange(): void {
+    this.isChangingEmail = false;
+    this.newEmail = '';
+    this.confirmEmail = '';
+    this.emailPassword = '';
+  }
 
   changePassword(): void {
     if (!this.currentPassword || !this.newPassword || !this.confirmPassword) {
@@ -83,23 +131,29 @@ export class SettingsComponent implements OnInit {
       currentPassword: this.currentPassword,
       newPassword: this.newPassword
     }, { headers }).subscribe({
-      next: () => {
+      next: (res: any) => {
+        if (res && res.success === false) {
+          this.isSavingPassword = false;
+          this.showNotification(res.message || 'Failed to update password.', 'error');
+          return;
+        }
         this.isSavingPassword = false;
         this.currentPassword = '';
         this.newPassword = '';
         this.confirmPassword = '';
         this.showNotification('Password updated successfully!', 'success');
       },
-      error: () => {
+      error: (err) => {
         this.isSavingPassword = false;
-        this.showNotification('Failed to update password. Please check your current password.', 'error');
+        const errMsg = err.error?.message || 'Failed to update password. Please check your connection.';
+        this.showNotification(errMsg, 'error');
       }
     });
   }
 
   changeEmail(): void {
-    if (!this.newEmail || !this.confirmEmail) {
-      this.showNotification('Please fill in both email fields.', 'error');
+    if (!this.newEmail || !this.confirmEmail || !this.emailPassword) {
+      this.showNotification('Please fill in all email change fields, including your password.', 'error');
       return;
     }
     if (this.newEmail !== this.confirmEmail) {
@@ -117,24 +171,29 @@ export class SettingsComponent implements OnInit {
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
     this.http.post('/api/users/change-email', {
-      newEmail: this.newEmail
+      newEmail: this.newEmail,
+      password: this.emailPassword
     }, { headers }).subscribe({
-      next: () => {
-        this.isSavingEmail = false;
-        // Update local user data
-        const userData = localStorage.getItem('user_data');
-        if (userData) {
-          const user = JSON.parse(userData);
-          user.email = this.newEmail;
-          localStorage.setItem('user_data', JSON.stringify(user));
+      next: (res: any) => {
+        if (res && res.success === false) {
+          this.isSavingEmail = false;
+          this.showNotification(res.message || 'Failed to update email.', 'error');
+          return;
         }
-        this.newEmail = '';
-        this.confirmEmail = '';
-        this.showNotification('Email updated successfully!', 'success');
-      },
-      error: () => {
+        
         this.isSavingEmail = false;
-        this.showNotification('Failed to update email. Please try again.', 'error');
+        this.showNotification('Email updated successfully! logging you out...', 'success');
+        
+        // Log out after a short delay
+        setTimeout(() => {
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        }, 2000);
+      },
+      error: (err) => {
+        this.isSavingEmail = false;
+        const errMsg = err.error?.message || 'Failed to update email. Please check your connection.';
+        this.showNotification(errMsg, 'error');
       }
     });
   }

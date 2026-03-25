@@ -27,10 +27,22 @@ spring:
           uri: lb://user-microservice
           predicates:
             - Path=/api/users/**
-        - id: stock-manager-microservice
+        - id: equipment-route
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/equipment/**
+        - id: supplier-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/suppliers/**
+        - id: dashboard-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/dashboard/**
+        - id: alerts-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/alerts/**, /api/alerts
 
 eureka:
   client:

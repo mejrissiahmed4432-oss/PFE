@@ -211,57 +211,179 @@
 .strength-label.good   { color: #3b82f6; }
 .strength-label.strong { color: #22c55e; }
 
-/* Update Password Button */
-.btn-update-pwd {
+/* ── Security Card ─────────────────── */
+.security-card {
+  border: 1px solid var(--c-border);
+}
+
+.security-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.action-btn-large {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: #fff;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border: 1.5px solid var(--c-border);
+  border-radius: 16px;
   cursor: pointer;
-  transition: all var(--transition);
-  box-shadow: 0 4px 14px rgba(15,23,42,0.25);
+  text-align: left;
+  transition: all 0.25s ease;
+  width: 100%;
 }
-.btn-update-pwd:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(15,23,42,0.3); }
-.btn-update-pwd:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
-/* ── Save Preferences Button ─────────────────── */
-.btn-save-prefs {
-  margin-top: 20px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 60%, #06b6d4 100%);
-  color: #fff;
-  border: none;
-  padding: 11px 22px;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  font-family: 'Inter', sans-serif;
-  cursor: pointer;
-  transition: all var(--transition);
-  box-shadow: 0 4px 14px rgba(59,130,246,0.3);
+.action-btn-large:hover {
+  border-color: var(--c-accent);
+  background: rgba(59, 130, 246, 0.03);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
-.btn-save-prefs:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59,130,246,0.4); }
+
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  background: #f1f5f9;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-accent);
+  flex-shrink: 0;
+}
+
+.btn-text {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.btn-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--c-text-h);
+}
+
+.btn-desc {
+  font-size: 0.8rem;
+  color: var(--c-text-mute);
+}
+
+.chevron {
+  color: var(--c-text-mute);
+  opacity: 0.5;
+}
+
+/* ── Expandable Section ── */
+.expand-section {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--c-text-h);
+}
+
+.text-cancel-btn {
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ef4444;
+  cursor: pointer;
+}
+
+.section-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn-primary {
+  background: var(--c-text-h);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #1e293b;
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  background: none;
+  border: 1px solid var(--c-border);
+  color: var(--c-text-body);
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-ghost:hover {
+  background: #f8fafc;
+}
+
+.field-hint {
+  font-size: 0.75rem;
+  color: var(--c-text-mute);
+  margin-top: 4px;
+}
 
 /* Spinner */
 .saving-spinner {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2.5px solid rgba(255,255,255,0.4);
-  border-top-color: #fff;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
+
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .security-actions {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* ── Email Preferences ───────────────────────────────────── */
 .pref-list {

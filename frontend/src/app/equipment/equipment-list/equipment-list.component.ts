@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EquipmentService } from '../equipment.service';
 import { Equipment } from '../equipment.model';
+import { SupplierService } from '../../supplier/supplier.service';
+import { Supplier } from '../../supplier/supplier.model';
 
 @Component({
   selector: 'app-equipment-list',
@@ -18,6 +20,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
 
   equipments: Equipment[] = [];
   filteredEquipments: Equipment[] = [];
+  suppliers: Supplier[] = [];
   
   viewMode: 'table' | 'card' = 'table';
   searchQuery: string = '';
@@ -34,10 +37,14 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   filterLocation: string = '';
   filterPurchaseDate: string = '';
 
-  constructor(private equipmentService: EquipmentService) {}
+  constructor(
+    private equipmentService: EquipmentService,
+    private supplierService: SupplierService
+  ) {}
 
   ngOnInit(): void {
     this.loadEquipments();
+    this.loadSuppliers();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -53,6 +60,13 @@ export class EquipmentListComponent implements OnInit, OnChanges {
         this.applyFilters();
       },
       error: (err) => console.error('Error fetching equipments', err)
+    });
+  }
+
+  loadSuppliers(): void {
+    this.supplierService.getAllSuppliers().subscribe({
+      next: (data) => this.suppliers = data,
+      error: (err) => console.error('Error fetching suppliers', err)
     });
   }
 

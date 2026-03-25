@@ -26,7 +26,7 @@
         <span class="nav-label">Inventory / Equipment</span>
       </a>
       <!-- Suppliers -->
-      <a href="#" class="nav-item" title="Suppliers">
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'suppliers'" (click)="activeTab = 'suppliers'" title="Suppliers">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
         <span class="nav-label">Suppliers</span>
       </a>
@@ -36,7 +36,7 @@
         <span class="nav-label">Orders</span>
       </a>
       <!-- Alerts -->
-      <a href="#" class="nav-item" title="Alerts">
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'alerts'" (click)="activeTab = 'alerts'" title="Alerts">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>
         <span class="nav-label">Alerts</span>
       </a>
@@ -121,12 +121,12 @@
         </div>
 
         <!-- Notification -->
-        <button class="action-btn notification-btn" title="Notifications">
+        <button class="action-btn notification-btn" title="Notifications" (click)="activeTab = 'alerts'">
           <svg xmlns="http://www.w3.org/2000/svg" class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
             <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
           </svg>
-          <span class="badge-count">2</span>
+          <span class="badge-count" *ngIf="unreadAlertsCount > 0">{{ unreadAlertsCount }}</span>
         </button>
 
         <!-- User Avatar & Profile Dropdown -->
@@ -172,16 +172,23 @@
              <button class="primary-btn">Stock Manager</button>
           </div>
         </div>
+        <app-dashboard></app-dashboard>
       </div>
 
       <!-- Equipment Component View -->
       <app-equipment *ngIf="activeTab === 'equipment'"></app-equipment>
+
+      <!-- Supplier Component View -->
+      <app-supplier *ngIf="activeTab === 'suppliers'"></app-supplier>
 
       <!-- Profile Component View -->
       <app-profile *ngIf="activeTab === 'profile'"></app-profile>
 
       <!-- Settings Component View -->
       <app-settings *ngIf="activeTab === 'settings'"></app-settings>
+
+      <!-- Alerts Component View -->
+      <app-alerts *ngIf="activeTab === 'alerts'"></app-alerts>
     </main>
     
     <!-- AI Assistant Panel Overlay -->

@@ -15,6 +15,9 @@ public class EquipmentService {
     @Autowired
     private EquipmentRepository equipmentRepository;
 
+    @Autowired
+    private AlertService alertService;
+
     public List<Equipment> getAllEquipment() {
         return equipmentRepository.findAll();
     }
@@ -30,7 +33,14 @@ public class EquipmentService {
         if (equipment.getQrCode() == null || equipment.getQrCode().isEmpty()) {
             equipment.setQrCode("QR-" + System.currentTimeMillis());
         }
-        return equipmentRepository.save(equipment);
+        Equipment saved = equipmentRepository.save(equipment);
+        
+        // Generate alert for new equipment
+        alertService.createAlert("New Equipment Added", 
+                                "A new " + saved.getCategory() + " (" + saved.getEquipmentName() + ") has been registered in " + saved.getLocation(),
+                                "SUCCESS", "INVENTORY", saved.getId());
+        
+        return saved;
     }
 
     public Equipment updateEquipment(String id, Equipment equipmentDetails) {

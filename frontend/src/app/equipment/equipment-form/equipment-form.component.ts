@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Equipment } from '../equipment.model';
 import { EquipmentService } from '../equipment.service';
 import { AuthService } from '../../auth.service';
+import { SupplierService } from '../../supplier/supplier.service';
+import { Supplier } from '../../supplier/supplier.model';
 import * as QRCode from 'qrcode';
 
 @Component({
@@ -21,13 +23,16 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   formData: Partial<Equipment> = {};
   isSaving: boolean = false;
   qrDataUrl: string = '';
-  currentUserName: string = '';
+  isUserName: string = '';
   isEditing: boolean = false;
+  suppliers: Supplier[] = [];
+  currentUserName: string = '';
 
 
   constructor(
     private equipmentService: EquipmentService,
-    private authService: AuthService
+    private authService: AuthService,
+    private supplierService: SupplierService
   ) {}
 
   ngOnInit(): void {
@@ -35,6 +40,8 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     this.currentUserName = userData?.firstName
       ? `${userData.firstName} ${userData.lastName || ''}`.trim()
       : (userData?.email || 'Unknown');
+
+    this.loadSuppliers();
 
     if (this.equipment) {
       this.formData = { ...this.equipment };
@@ -62,6 +69,20 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     }
   }
 
+  loadSuppliers(): void {
+    this.supplierService.getAllSuppliers().subscribe({
+      next: (data) => this.suppliers = data,
+      error: (err) => console.error('Error fetching suppliers', err)
+    });
+  }
+
+  onSupplierChange(): void {
+    const selectedSupplier = this.suppliers.find(s => s.id === this.formData.supplierId);
+    if (selectedSupplier) {
+      this.formData.supplier = selectedSupplier.name;
+    }
+  }
+
   ngAfterViewInit(): void {
     if (this.equipment?.id) {
       this.generateQRCode();
@@ -77,8 +98,8 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
       location: this.equipment.location
     });
     QRCode.toDataURL(qrData, { width: 160, margin: 1, color: { dark: '#1e293b', light: '#ffffff' } })
-      .then(url => { this.qrDataUrl = url; })
-      .catch(err => console.error('QR generation failed', err));
+      .then((url: string) => { this.qrDataUrl = url; })
+      .catch((err: any) => console.error('QR generation failed', err));
   }
 
   downloadQR(): void {

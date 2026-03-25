@@ -53,11 +53,9 @@
           </div>
           <div class="input-group">
             <label>Supplier <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
-            <select [(ngModel)]="formData.supplier" [disabled]="viewOnly && !isEditing">
+            <select [(ngModel)]="formData.supplierId" (change)="onSupplierChange()" [disabled]="viewOnly && !isEditing">
               <option value="" disabled>Select supplier</option>
-              <option value="Tech Solutions Inc.">Tech Solutions Inc.</option>
-              <option value="Office Depot">Office Depot</option>
-              <option value="Network Pro">Network Pro</option>
+              <option *ngFor="let s of suppliers" [value]="s.id">{{ s.name }}</option>
             </select>
           </div>
           <div class="input-group">
