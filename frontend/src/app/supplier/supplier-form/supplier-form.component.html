@@ -1,8 +1,23 @@
-<div class="form-wrapper" [class.view-mode]="viewOnly && !isEditing">
-  <div class="form-header">
-    <h3>{{ !supplier ? 'Add New Supplier' : (viewOnly && !isEditing ? 'Supplier Details' : 'Edit Supplier') }}</h3>
-    <p class="subtitle">{{ viewOnly && !isEditing ? 'Click "Edit" to modify this supplier.' : 'Fill in the supplier details below.' }}</p>
-  </div>
+<div class="wizard-overlay" *ngIf="visible">
+  <div class="wizard-panel" [class.view-mode]="viewOnly && !isEditing" [formGroup]="supplierForm">
+    
+    <!-- Header -->
+    <div class="wizard-header">
+      <div class="wizard-header-left">
+        <div class="wizard-icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <div>
+          <h3 class="wizard-title">{{ !supplier ? 'Add New Supplier' : (viewOnly && !isEditing ? 'Supplier Details' : 'Edit Supplier') }}</h3>
+          <p class="wizard-subtitle">{{ viewOnly && !isEditing ? 'Click "Edit" to modify this supplier.' : 'Fill in the supplier details below.' }}</p>
+        </div>
+      </div>
+      <button class="wizard-close" (click)="cancel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <div class="wizard-body">
 
   <div class="form-grid">
     <div class="fields-column">
@@ -12,22 +27,34 @@
         <h4>Basic Information</h4>
         <div class="input-grid">
           <div class="input-group">
-            <label>Name <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
-            <input type="text" [(ngModel)]="formData.name" placeholder="Enter supplier name" [disabled]="viewOnly && !isEditing">
-          </div>
-          <div class="input-group">
             <label>Company Name <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
-            <input type="text" [(ngModel)]="formData.companyName" placeholder="Enter company name" [disabled]="viewOnly && !isEditing">
+            <input type="text" formControlName="companyName" placeholder="Enter company name">
+            <div class="error-msg" *ngIf="f['companyName'].touched && f['companyName'].errors">
+              <span *ngIf="f['companyName'].errors?.['required']">Company name is required</span>
+              <span *ngIf="f['companyName'].errors?.['minlength']">Minimum 2 characters</span>
+            </div>
           </div>
           <div class="input-group">
             <label>Category <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
-            <select [(ngModel)]="formData.category" [disabled]="viewOnly && !isEditing">
+            <select formControlName="category">
               <option value="" disabled>Select category</option>
               <option value="Hardware">Hardware</option>
               <option value="Software">Software</option>
               <option value="Services">Services</option>
               <option value="Network">Network</option>
             </select>
+            <div class="error-msg" *ngIf="f['category'].touched && f['category'].errors">
+              Category is required
+            </div>
+          </div>
+          <div class="input-group" *ngIf="supplier">
+            <label>Service Rating <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <div class="star-rating">
+              <span *ngFor="let star of [1,2,3,4,5]" 
+                    (click)="setRating(star)"
+                    [class.filled]="star <= supplierForm.get('rating')?.value"
+                    class="star">★</span>
+            </div>
           </div>
         </div>
       </div>
@@ -38,19 +65,34 @@
         <div class="input-grid">
           <div class="input-group">
             <label>Contact Person <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
-            <input type="text" [(ngModel)]="formData.contactPerson" placeholder="Enter contact person" [disabled]="viewOnly && !isEditing">
+            <input type="text" formControlName="contactPerson" placeholder="Enter contact person">
+            <div class="error-msg" *ngIf="f['contactPerson'].touched && f['contactPerson'].errors">
+              Contact person is required
+            </div>
           </div>
           <div class="input-group">
             <label>Email <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
-            <input type="email" [(ngModel)]="formData.email" placeholder="Enter email" [disabled]="viewOnly && !isEditing">
+            <input type="email" formControlName="email" placeholder="Enter email">
+            <div class="error-msg" *ngIf="f['email'].touched && f['email'].errors">
+              <span *ngIf="f['email'].errors?.['required']">Email is required</span>
+              <span *ngIf="f['email'].errors?.['email']">Invalid email format</span>
+            </div>
           </div>
           <div class="input-group">
             <label>Phone Number <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
-            <input type="text" [(ngModel)]="formData.phoneNumber" placeholder="Enter phone number" [disabled]="viewOnly && !isEditing">
+            <input type="text" formControlName="phoneNumber" placeholder="Enter phone number">
+            <div class="error-msg" *ngIf="f['phoneNumber'].touched && f['phoneNumber'].errors">
+              <span *ngIf="f['phoneNumber'].errors?.['required']">Phone is required</span>
+              <span *ngIf="f['phoneNumber'].errors?.['pattern']">Numeric only</span>
+            </div>
           </div>
           <div class="input-group">
-            <label>Website</label>
-            <input type="text" [(ngModel)]="formData.website" placeholder="https://example.com" [disabled]="viewOnly && !isEditing">
+            <label>Website <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <input type="text" formControlName="website" placeholder="https://example.com">
+            <div class="error-msg" *ngIf="f['website'].touched && f['website'].errors">
+              <span *ngIf="f['website'].errors?.['required']">Website is required</span>
+              <span *ngIf="f['website'].errors?.['pattern']">Invalid URL format</span>
+            </div>
           </div>
         </div>
       </div>
@@ -59,8 +101,11 @@
       <div class="form-section">
         <h4>Address Information</h4>
         <div class="input-group full-width">
-          <label>Address</label>
-          <textarea [(ngModel)]="formData.address" rows="2" placeholder="Enter full address..." [disabled]="viewOnly && !isEditing"></textarea>
+          <label>Address <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+          <textarea formControlName="address" rows="2" placeholder="Enter full address..."></textarea>
+          <div class="error-msg" *ngIf="f['address'].touched && f['address'].errors">
+            Address is required
+          </div>
         </div>
       </div>
 
@@ -69,7 +114,7 @@
         <h4>Additional Information</h4>
         <div class="input-group full-width">
           <label>Notes</label>
-          <textarea [(ngModel)]="formData.note" rows="4" placeholder="Add any additional notes..." [disabled]="viewOnly && !isEditing"></textarea>
+          <textarea formControlName="note" rows="4" placeholder="Add any additional notes..."></textarea>
         </div>
       </div>
 
@@ -89,20 +134,22 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
 
-  <!-- Footer Actions -->
-  <div class="form-footer">
-    <ng-container *ngIf="viewOnly && !isEditing">
-      <button class="btn-cancel" (click)="cancel()">← Back</button>
-      <button class="btn-primary" (click)="enableEdit()">Edit Supplier</button>
-    </ng-container>
+    <!-- Footer Actions -->
+    <div class="wizard-footer">
+      <div style="flex: 1;"></div>
+      <ng-container *ngIf="viewOnly && !isEditing">
+        <button class="btn-cancel" (click)="cancel()">← Back</button>
+        <button class="btn-primary" (click)="enableEdit()">Edit Supplier</button>
+      </ng-container>
 
-    <ng-container *ngIf="!viewOnly || isEditing">
-      <button class="btn-cancel" (click)="cancel()">Cancel</button>
-      <button class="btn-primary" [disabled]="isSaving" (click)="saveSupplier()">
-        {{ isSaving ? 'Saving...' : (supplier ? 'Update Supplier' : 'Save Supplier') }}
-      </button>
-    </ng-container>
+      <ng-container *ngIf="!viewOnly || isEditing">
+        <button class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button class="btn-primary" [disabled]="isSaving" (click)="saveSupplier()">
+          {{ isSaving ? 'Saving...' : (supplier ? 'Update Supplier' : 'Save Supplier') }}
+        </button>
+      </ng-container>
+    </div>
   </div>
 </div>

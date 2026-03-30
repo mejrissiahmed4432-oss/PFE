@@ -1,6 +1,5 @@
 export interface Supplier {
   id?: string;
-  name: string;
   companyName: string;
   address: string;
   phoneNumber: string;
@@ -8,6 +7,7 @@ export interface Supplier {
   website: string;
   category: string;
   contactPerson: string;
+  rating: number;
   note: string;
   createdAt?: Date;
   updatedAt?: Date;

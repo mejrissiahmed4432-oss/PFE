@@ -1,0 +1,17 @@
+com\example\usermicroservice\dto\LoginResponse.class
+com\example\usermicroservice\config\JwtUtils.class
+com\example\usermicroservice\service\EmailService.class
+com\example\usermicroservice\controller\UserController.class
+com\example\usermicroservice\exception\GlobalExceptionHandler.class
+com\example\usermicroservice\UsermicroserviceApplication.class
+com\example\usermicroservice\config\SecurityConfig.class
+com\example\usermicroservice\dto\LoginRequest.class
+com\example\usermicroservice\dto\ChangePasswordRequest.class
+com\example\usermicroservice\model\Role.class
+com\example\usermicroservice\dto\ForgotPasswordRequest.class
+com\example\usermicroservice\dto\ResetPasswordRequest.class
+com\example\usermicroservice\model\User.class
+com\example\usermicroservice\config\DataInitializer.class
+com\example\usermicroservice\config\JwtRequestFilter.class
+com\example\usermicroservice\repository\UserRepository.class
+com\example\usermicroservice\dto\UpdateEmailRequest.class

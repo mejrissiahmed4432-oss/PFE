@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: api-gateway
+  codec:
+    max-in-memory-size: 50MB
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
   cloud:
     gateway:
       globalcors:
@@ -22,6 +28,8 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
       routes:
         - id: user-microservice
           uri: lb://user-microservice
@@ -35,6 +43,10 @@ spring:
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/suppliers/**
+        - id: shelf-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/shelves/**
         - id: dashboard-route
           uri: lb://stock-manager-microservice
           predicates:

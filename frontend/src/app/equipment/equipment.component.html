@@ -15,17 +15,26 @@
     <app-equipment-list
       [refreshTrigger]="refreshFlag"
       (editEvent)="openEdit($event)"
-      (viewEvent)="openView($event)">
+      (viewEvent)="openView($event)"
+      (addSimilarEvent)="openAddSimilar($event)">
     </app-equipment-list>
   </div>
 
-  <!-- Form (Add / Edit / View) -->
+  <!-- Form (Edit / View only — Add now uses wizard) -->
   <div class="content" *ngIf="mode === 'form'">
     <app-equipment-form
       [equipment]="equipmentToEdit"
       [viewOnly]="formViewOnly"
+      [isAddSimilar]="isAddSimilar"
       (closeEvent)="closeForm($event)">
     </app-equipment-form>
   </div>
+
+  <!-- Add Equipment Wizard (slide-in panel) -->
+  <app-equipment-wizard
+    [visible]="showWizard"
+    [prefillData]="wizardPrefillData"
+    (closeEvent)="onWizardClose($event)">
+  </app-equipment-wizard>
 
 </div>

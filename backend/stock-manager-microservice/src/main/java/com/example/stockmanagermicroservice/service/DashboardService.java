@@ -41,10 +41,10 @@ public class DashboardService {
                 .collect(Collectors.groupingBy(e -> e.getCategory() != null ? e.getCategory() : "Uncategorized", Collectors.counting()));
         stats.setEquipmentByCategory(byCategory);
 
-        // Location distribution
-        Map<String, Long> byLocation = allEquipment.stream()
-                .collect(Collectors.groupingBy(e -> e.getLocation() != null ? e.getLocation() : "Unknown", Collectors.counting()));
-        stats.setEquipmentByLocation(byLocation);
+        // Shelf distribution
+        Map<String, Long> byShelf = allEquipment.stream()
+                .collect(Collectors.groupingBy(e -> e.getShelfId() != null ? e.getShelfId() : "Unknown", Collectors.counting()));
+        stats.setEquipmentByLocation(byShelf);
 
         // Recent equipment (last 5)
         stats.setRecentEquipment(allEquipment.stream()

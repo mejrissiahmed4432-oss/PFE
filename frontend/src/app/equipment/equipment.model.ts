@@ -10,10 +10,17 @@ export interface Equipment {
   equipmentName?: string;
   model?: string;
   serialNumber?: string;
+  type?: string;
   category?: string;
+  qte?: number;
   supplier?: string;
   supplierId?: string;
+  invoiceFileName?: string;
+  invoiceFileData?: string;
   warrantyExpiration?: string;
+  warrantyFileName?: string;
+  warrantyFileData?: string;
+  shelfId?: string;
   location?: string;
   note?: string;
   locationChangeAt?: string;

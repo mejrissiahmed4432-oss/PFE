@@ -2,6 +2,7 @@ package com.example.stockmanagermicroservice.controller;
 
 import com.example.stockmanagermicroservice.model.Supplier;
 import com.example.stockmanagermicroservice.service.SupplierService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +30,12 @@ public class SupplierController {
     }
 
     @PostMapping
-    public Supplier createSupplier(@RequestBody Supplier supplier) {
+    public Supplier createSupplier(@Valid @RequestBody Supplier supplier) {
         return supplierService.createSupplier(supplier);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Supplier> updateSupplier(@PathVariable String id, @RequestBody Supplier supplier) {
+    public ResponseEntity<Supplier> updateSupplier(@PathVariable String id, @Valid @RequestBody Supplier supplier) {
         try {
             return ResponseEntity.ok(supplierService.updateSupplier(id, supplier));
         } catch (RuntimeException e) {

@@ -10,11 +10,13 @@ import { SupplierComponent } from '../supplier/supplier.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { AlertsComponent } from '../alerts/alerts.component';
 import { AlertService } from '../alerts/alert.service';
+import { ShelfListComponent } from '../shelf/shelf-list/shelf-list.component';
+import { EquipmentService } from '../equipment/equipment.service';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
 })
@@ -29,7 +31,8 @@ export class BoardComponent implements OnInit {
   constructor(
     private authService: AuthService, 
     private router: Router,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private equipmentService: EquipmentService
   ) { }
 
   ngOnInit(): void {
@@ -62,6 +65,7 @@ export class BoardComponent implements OnInit {
   getPageTitle(): string {
     switch (this.activeTab) {
       case 'dashboard': return 'Dashboard';
+      case 'stock': return 'Stock (Shelves)';
       case 'equipment': return 'Equipment Management';
       case 'suppliers': return 'Suppliers';
       case 'orders': return 'Orders';
@@ -71,6 +75,11 @@ export class BoardComponent implements OnInit {
       case 'settings': return 'Account Settings';
       default: return 'Medina It Manage';
     }
+  }
+
+  clearFiltersAndGoToEquipment(): void {
+    this.equipmentService.setShelfFilter(null, null);
+    this.activeTab = 'equipment';
   }
 
   logout(): void {

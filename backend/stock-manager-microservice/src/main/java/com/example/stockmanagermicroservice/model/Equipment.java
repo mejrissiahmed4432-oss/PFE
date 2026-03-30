@@ -18,14 +18,22 @@ public class Equipment {
     private String model;
     private String serialNumber;
     private String category;
+    private String type;
+    private Integer qte;
     private String supplier;
     private String supplierId;
-    private String location;
+    private String shelfId;
     private String department;
     
     private LocalDate purchaseDate;
     private LocalDate warrantyExpiration;
     private Double purchasePrice;
+    
+    // File Documents (Base64 encoded)
+    private String invoiceFileName;
+    private String invoiceFileData;
+    private String warrantyFileName;
+    private String warrantyFileData;
     
     private String qrCode;
     private String icon;
@@ -70,14 +78,20 @@ public class Equipment {
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
     
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+    
+    public Integer getQte() { return qte; }
+    public void setQte(Integer qte) { this.qte = qte; }
+    
     public String getSupplier() { return supplier; }
     public void setSupplier(String supplier) { this.supplier = supplier; }
     
     public String getSupplierId() { return supplierId; }
     public void setSupplierId(String supplierId) { this.supplierId = supplierId; }
     
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
+    public String getShelfId() { return shelfId; }
+    public void setShelfId(String shelfId) { this.shelfId = shelfId; }
     
     public LocalDate getPurchaseDate() { return purchaseDate; }
     public void setPurchaseDate(LocalDate purchaseDate) { this.purchaseDate = purchaseDate; }
@@ -87,6 +101,18 @@ public class Equipment {
     
     public Double getPurchasePrice() { return purchasePrice; }
     public void setPurchasePrice(Double purchasePrice) { this.purchasePrice = purchasePrice; }
+    
+    public String getInvoiceFileName() { return invoiceFileName; }
+    public void setInvoiceFileName(String invoiceFileName) { this.invoiceFileName = invoiceFileName; }
+    
+    public String getInvoiceFileData() { return invoiceFileData; }
+    public void setInvoiceFileData(String invoiceFileData) { this.invoiceFileData = invoiceFileData; }
+    
+    public String getWarrantyFileName() { return warrantyFileName; }
+    public void setWarrantyFileName(String warrantyFileName) { this.warrantyFileName = warrantyFileName; }
+    
+    public String getWarrantyFileData() { return warrantyFileData; }
+    public void setWarrantyFileData(String warrantyFileData) { this.warrantyFileData = warrantyFileData; }
     
     public String getQrCode() { return qrCode; }
     public void setQrCode(String qrCode) { this.qrCode = qrCode; }

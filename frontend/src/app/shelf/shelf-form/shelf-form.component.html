@@ -1,0 +1,56 @@
+<div class="modal-overlay" (click)="closeForm()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ shelf ? 'Edit Shelf' : 'Add New Shelf' }}</h2>
+      <button class="close-btn" (click)="closeForm()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <form [formGroup]="shelfForm" (ngSubmit)="onSubmit()" class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Shelf NB / Identifier *</label>
+          <input type="text" formControlName="nb" class="form-control" placeholder="e.g. A1, B2">
+          <div class="error-msg" *ngIf="shelfForm.get('nb')?.invalid && shelfForm.get('nb')?.touched">
+            Identifier is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Equipment Type *</label>
+          <select formControlName="equipmentType" class="form-control">
+            <option value="" disabled selected>Select Type</option>
+            <option *ngFor="let type of equipmentTypes" [value]="type">{{ type | titlecase }}</option>
+          </select>
+          <div class="error-msg" *ngIf="shelfForm.get('equipmentType')?.invalid && shelfForm.get('equipmentType')?.touched">
+            Equipment type is required
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Max Quantity (Capacity) *</label>
+          <input type="number" formControlName="maxQte" class="form-control" min="1">
+          <div class="error-msg" *ngIf="shelfForm.get('maxQte')?.invalid && shelfForm.get('maxQte')?.touched">
+            Valid capacity is required
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="shelf">
+          <label>Current Quantity</label>
+          <input type="number" formControlName="currentQte" class="form-control" min="0">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || shelfForm.invalid">
+          <span *ngIf="isSubmitting" class="spinner"></span>
+          {{ shelf ? 'Update Shelf' : 'Add Shelf' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -36,11 +36,11 @@ public class SupplierService {
 
     public Supplier updateSupplier(String id, Supplier supplierDetails) {
         return supplierRepository.findById(id).map(supplier -> {
-            String oldName = supplier.getName();
-            String newName = supplierDetails.getName();
+            String oldCompanyName = supplier.getCompanyName();
+            String newCompanyName = supplierDetails.getCompanyName();
 
-            supplier.setName(newName);
-            supplier.setCompanyName(supplierDetails.getCompanyName());
+            supplier.setCompanyName(newCompanyName);
+            supplier.setRating(supplierDetails.getRating());
             supplier.setAddress(supplierDetails.getAddress());
             supplier.setPhoneNumber(supplierDetails.getPhoneNumber());
             supplier.setEmail(supplierDetails.getEmail());
@@ -52,12 +52,13 @@ public class SupplierService {
             
             Supplier updatedSupplier = supplierRepository.save(supplier);
 
-            // Cascade update to Equipment if name changed - using ID for safety
-            if (oldName != null && !oldName.equals(newName)) {
+            // Cascade update to Equipment if companyName changed
+            if (oldCompanyName != null && !oldCompanyName.equals(newCompanyName)) {
+                // We use findBySupplierId to identify equipments belonging to this supplier
                 List<Equipment> relatedEquipments = equipmentRepository.findBySupplierId(id);
                 if (!relatedEquipments.isEmpty()) {
                     for (Equipment eq : relatedEquipments) {
-                        eq.setSupplier(newName);
+                        eq.setSupplier(newCompanyName);
                     }
                     equipmentRepository.saveAll(relatedEquipments);
                 }

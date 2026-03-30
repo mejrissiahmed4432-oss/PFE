@@ -1,0 +1,17 @@
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\controller\UserController.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\exception\GlobalExceptionHandler.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\dto\LoginResponse.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\config\DataInitializer.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\dto\ForgotPasswordRequest.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\dto\LoginRequest.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\config\JwtRequestFilter.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\dto\UpdateEmailRequest.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\model\Role.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\repository\UserRepository.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\config\SecurityConfig.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\dto\ChangePasswordRequest.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\dto\ResetPasswordRequest.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\service\EmailService.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\UsermicroserviceApplication.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\config\JwtUtils.java
+C:\Users\Asus\Desktop\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\model\User.java

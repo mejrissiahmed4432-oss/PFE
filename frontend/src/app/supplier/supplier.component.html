@@ -1,7 +1,7 @@
 <div class="supplier-container">
 
   <!-- List Mode Header -->
-  <div class="header" *ngIf="mode === 'list'">
+  <div class="header">
     <div class="actions">
       <button class="primary-btn btn-premium" (click)="openAdd()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -11,7 +11,7 @@
   </div>
 
   <!-- List -->
-  <div class="content" *ngIf="mode === 'list'">
+  <div class="content">
     <app-supplier-list
       [refreshTrigger]="refreshFlag"
       (editEvent)="openEdit($event)"
@@ -19,13 +19,12 @@
     </app-supplier-list>
   </div>
 
-  <!-- Form (Add / Edit / View) -->
-  <div class="content" *ngIf="mode === 'form'">
-    <app-supplier-form
-      [supplier]="supplierToEdit"
-      [viewOnly]="formViewOnly"
-      (closeEvent)="closeForm($event)">
-    </app-supplier-form>
-  </div>
+  <!-- Form Modal -->
+  <app-supplier-form *ngIf="mode === 'form'"
+    [visible]="true"
+    [supplier]="supplierToEdit"
+    [viewOnly]="formViewOnly"
+    (closeEvent)="closeForm($event)">
+  </app-supplier-form>
 
 </div>

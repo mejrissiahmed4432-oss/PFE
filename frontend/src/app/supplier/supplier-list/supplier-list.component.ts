@@ -63,8 +63,7 @@ export class SupplierListComponent implements OnInit, OnChanges {
   applyFilters(): void {
     this.filteredSuppliers = this.suppliers.filter(s => {
       const matchSearch = this.searchQuery ? 
-        (s.name?.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
-         s.companyName?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        (s.companyName?.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
          s.contactPerson?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
          s.email?.toLowerCase().includes(this.searchQuery.toLowerCase())) : true;
       
@@ -73,6 +72,24 @@ export class SupplierListComponent implements OnInit, OnChanges {
       return matchSearch && matchCategory;
     });
     this.currentPage = 1;
+  }
+
+  updateRating(supplier: Supplier, newRating: number): void {
+    if (!supplier.id) return;
+    
+    // Optimistic update
+    const oldRating = supplier.rating;
+    supplier.rating = newRating;
+
+    this.supplierService.updateSupplier(supplier.id, supplier).subscribe({
+      next: () => {
+        // Success
+      },
+      error: (err) => {
+        console.error('Error updating rating', err);
+        supplier.rating = oldRating; // Rollback
+      }
+    });
   }
 
   deleteSupplier(id?: string): void {

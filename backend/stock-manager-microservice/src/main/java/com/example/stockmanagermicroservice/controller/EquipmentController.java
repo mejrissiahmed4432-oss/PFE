@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/equipment")
-@CrossOrigin(origins = {"http://localhost:4200", "http://localhost"}) 
 public class EquipmentController {
 
     @Autowired
@@ -19,6 +18,11 @@ public class EquipmentController {
     @GetMapping
     public List<Equipment> getAllEquipment() {
         return equipmentService.getAllEquipment();
+    }
+
+    @GetMapping("/shelf/{shelfId}")
+    public List<Equipment> getEquipmentByShelfId(@PathVariable String shelfId) {
+        return equipmentService.getEquipmentByShelfId(shelfId);
     }
 
     @GetMapping("/{id}")

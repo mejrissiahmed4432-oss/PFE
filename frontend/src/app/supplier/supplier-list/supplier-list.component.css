@@ -204,8 +204,59 @@
 .badge.default { background: #f1f5f9; color: #64748b; }
 
 .actions-cell {
+  text-align: right;
+  white-space: nowrap;
   display: flex;
+  justify-content: flex-end;
   gap: 8px;
+  align-items: center;
+}
+
+.actions-header {
+  text-align: right !important;
+}
+
+.rating-stars {
+  color: #cbd5e1;
+  font-size: 1.1rem;
+  display: flex;
+  gap: 2px;
+}
+
+.rating-stars span {
+  cursor: pointer;
+  transition: transform 0.1s, color 0.2s;
+}
+
+.rating-stars span:hover {
+  transform: scale(1.2);
+}
+
+.rating-stars .filled {
+  color: #fbbf24 !important;
+}
+
+.rating-stars.mini {
+  font-size: 0.9rem;
+}
+
+.website-link {
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.website-link:hover {
+  color: #4338ca;
+  text-decoration: underline;
+}
+
+.link-inline {
+  color: #4f46e5 !important;
+  text-decoration: underline;
 }
 
 .action-icon {
