@@ -28,6 +28,7 @@ export class SettingsComponent implements OnInit {
   newEmail = '';
   confirmEmail = '';
   emailPassword = '';
+  showEmailPwd = false;
   isSavingEmail = false;
   isChangingEmail = false;
 
@@ -141,7 +142,13 @@ export class SettingsComponent implements OnInit {
         this.currentPassword = '';
         this.newPassword = '';
         this.confirmPassword = '';
-        this.showNotification('Password updated successfully!', 'success');
+        this.showNotification('Password updated successfully! logging you out...', 'success');
+        
+        // Log out after a short delay
+        setTimeout(() => {
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        }, 2000);
       },
       error: (err) => {
         this.isSavingPassword = false;

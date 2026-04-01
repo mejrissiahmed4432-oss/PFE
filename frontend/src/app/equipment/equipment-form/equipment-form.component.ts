@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Equipment } from '../equipment.model';
 import { EquipmentService } from '../equipment.service';
 import { AuthService } from '../../auth.service';
@@ -20,6 +22,7 @@ import * as QRCode from 'qrcode';
 export class EquipmentFormComponent implements OnInit, AfterViewInit {
   @Input() equipment: Equipment | null = null;
   @Input() viewOnly: boolean = false;
+  @Input() isAddSimilar: boolean = false;
   @Output() closeEvent = new EventEmitter<boolean>();
 
   formData: Partial<Equipment> = {};
@@ -32,6 +35,10 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   allShelves: Shelf[] = [];
   currentUserName: string = '';
   activeTab: string = 'overview';
+  isSNAvailable: boolean = true;
+  isCheckingSN: boolean = false;
+  originalSN: string = '';
+  private snSubject = new Subject<string>();
 
   equipmentTypes = [
     'pc', 'laptop', 'server', 'monitor', 'printer', 'scanner', 
@@ -39,6 +46,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     'ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'
   ];
   consumables = ['ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'];
+  statusOptions = ['In Stock', 'Broken', 'Maintenance', 'Out of Stock'];
 
 
   constructor(
@@ -57,10 +65,22 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     this.loadSuppliers();
     this.loadAllShelves();
 
+    // Setup debounced SN uniqueness check
+    this.snSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(sn => {
+      this.performSNUniquenessCheck(sn);
+    });
+
     if (this.equipment && this.equipment.id) {
       this.equipmentService.getEquipmentById(this.equipment.id).subscribe({
         next: (fullEq) => {
           this.formData = { ...fullEq };
+          // If editing existing equipment, remember original SN to skip uniqueness check if unchanged
+          // If adding similar, we ignore original SN as we need a NEW unique one
+          this.originalSN = !this.isAddSimilar ? (fullEq.serialNumber || '') : '';
+          
           if (this.formData.type) {
             this.loadAvailableShelves();
           }
@@ -92,7 +112,8 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
         ram: '',
         storage: '',
         graphicsCard: '',
-        operatingSystem: ''
+        operatingSystem: '',
+        status: 'In Stock'
       };
     }
   }
@@ -112,6 +133,25 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     }
   }
 
+  onStatusChange(): void {
+    const status = this.formData.status;
+    if (status === 'Maintenance') {
+      this.formData.shelfId = 'MAINTENANCE_AREA';
+    } else if (status === 'Broken') {
+      this.formData.shelfId = 'SCRAP_YARD';
+    } else if (status === 'Out of Stock') {
+      this.formData.shelfId = 'OUT_OF_STOCK';
+    } else if (status === 'In Stock') {
+      // If switching back to In Stock from a virtual area, reset shelf
+      if (this.formData.shelfId === 'MAINTENANCE_AREA' || 
+          this.formData.shelfId === 'SCRAP_YARD' || 
+          this.formData.shelfId === 'OUT_OF_STOCK') {
+        this.formData.shelfId = '';
+        this.loadAvailableShelves(); // Refresh available options
+      }
+    }
+  }
+
 
   loadAvailableShelves(): void {
     if (!this.formData.type) return;
@@ -122,6 +162,106 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
       },
       error: (err) => console.error('Error fetching shelves', err)
     });
+  }
+
+  suggestSerialNumber(): void {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const digits = '0123456789';
+    let result = '';
+    
+    // Generate exactly 10 random alphanumeric chars
+    const chars = letters + digits;
+    for (let i = 0; i < 10; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    
+    // Ensure it's never just letters or just digits (force at least one of each)
+    if (!/\d/.test(result)) {
+      result = result.substring(0, 9) + digits.charAt(Math.floor(Math.random() * digits.length));
+    }
+    if (!/[a-zA-Z]/.test(result)) {
+      result = result.substring(0, 9) + letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    
+    this.formData.serialNumber = result;
+    this.onSerialNumberChange(); // Trigger uniqueness check for suggested SN
+  }
+
+  onSerialNumberChange(): void {
+    if (this.formData.serialNumber) {
+      // Force uppercase and trim
+      this.formData.serialNumber = this.formData.serialNumber.toUpperCase().trim();
+      
+      const currentSN = this.formData.serialNumber;
+
+      // If it's the same as the original, it's valid by default
+      if (currentSN === this.originalSN) {
+        this.isSNAvailable = true;
+        this.isCheckingSN = false;
+        return;
+      }
+
+      // Reset availability while checking
+      if (this.isSerialNumberValid()) {
+        this.snSubject.next(currentSN);
+      } else {
+        this.isSNAvailable = true; // Don't show "not unique" if it's already invalid for other reasons
+      }
+    }
+  }
+
+  private performSNUniquenessCheck(sn: string): void {
+    if (!sn || sn.length !== 10) return;
+
+    this.isCheckingSN = true;
+    const excludeId = this.equipment?.id || undefined;
+
+    this.equipmentService.checkSerialNumberUnique(sn, excludeId).subscribe({
+      next: (isUnique) => {
+        this.isSNAvailable = isUnique;
+        this.isCheckingSN = false;
+      },
+      error: (err) => {
+        console.error('Error checking SN uniqueness', err);
+        this.isCheckingSN = false;
+        this.isSNAvailable = true; // Assume available on error to not block user
+      }
+    });
+  }
+
+  get isSNInvalidLength(): boolean {
+    const sn = this.formData.serialNumber || '';
+    return sn.length > 0 && sn.length !== 10;
+  }
+
+  get isSNInvalidFormat(): boolean {
+    const sn = this.formData.serialNumber || '';
+    if (sn.length === 0) return false;
+    return !/^[a-zA-Z0-9]+$/.test(sn);
+  }
+
+  get isSNMissingChars(): boolean {
+    const sn = this.formData.serialNumber || '';
+    if (sn.length !== 10 || this.isSNInvalidFormat) return false;
+    return !/[a-zA-Z]/.test(sn) || !/\d/.test(sn);
+  }
+
+  isSerialNumberValid(): boolean {
+    const sn = this.formData.serialNumber || '';
+    if (!sn) return false;
+    
+    const hasExactLength = sn.length === 10;
+    const onlyAlphanumeric = /^[a-zA-Z0-9]+$/.test(sn);
+    const hasLetter = /[a-zA-Z]/.test(sn);
+    const hasDigit = /\d/.test(sn);
+    
+    return hasExactLength && onlyAlphanumeric && hasLetter && hasDigit;
+  }
+
+  get isFormInvalid(): boolean {
+    const isBasicInfoMissing = !this.formData.equipmentName || !this.formData.brand || !this.isSerialNumberValid();
+    const isShelfMissingForInStock = this.formData.status === 'In Stock' && (!this.formData.shelfId || this.formData.shelfId === '');
+    return isBasicInfoMissing || isShelfMissingForInStock || !this.isSNAvailable || this.isCheckingSN;
   }
 
   loadAllShelves(): void {
@@ -277,7 +417,11 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   }
 
   getShelfLocation(shelfId?: string): string {
-    if (!shelfId) return 'Unassigned';
+    if (!shelfId || shelfId === '') return 'Unassigned';
+    if (shelfId === 'MAINTENANCE_AREA') return 'Maintenance Area';
+    if (shelfId === 'SCRAP_YARD') return 'Scrap Yard';
+    if (shelfId === 'OUT_OF_STOCK') return 'Out of Stock';
+    
     const s = this.allShelves.find(x => x.id === shelfId);
     return s ? `Shelf ${s.nb}` : shelfId;
   }

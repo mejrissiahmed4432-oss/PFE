@@ -3,7 +3,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, Subject, of, from, EMPTY } from 'rxjs';
+import { debounceTime, distinctUntilChanged, groupBy, mergeMap, filter, switchMap, map, catchError, timeout } from 'rxjs/operators';
 import { Equipment } from '../equipment.model';
 import { EquipmentService } from '../equipment.service';
 import { SupplierService } from '../../supplier/supplier.service';
@@ -39,6 +40,7 @@ export interface UnitRow {
   selectedForWarranty?: boolean;
   selectedForGeneralSync?: boolean;
   selectedForSpecSync?: boolean;
+  selectedForSN?: boolean;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────
@@ -58,6 +60,12 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   currentStep: number = 0;
   isSaving: boolean = false;
   saveError: string = '';
+  capacityError: string = '';
+  isCheckingCapacity: boolean = false;
+  
+  // Serial Number Uniqueness State
+  snStatusMap: Map<string, { checking: boolean, unique: boolean, error?: string }> = new Map();
+  private snSubject = new Subject<{ sn: string, index?: number }>();
 
   // ── External data ──────────────────────────────────────────────────────
   suppliers: Supplier[] = [];
@@ -135,6 +143,40 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.supplierService.getAllSuppliers().subscribe({ next: d => this.suppliers = d });
     this.sharedPurchaseDate = new Date().toISOString().split('T')[0];
+    
+    // ─── SN Uniqueness Validation Pipeline (Robust) ────────────────────────
+    // We group by SN to allow multiple concurrent debounced checks.
+    // We use switchMap inside the group to cancel previous checks if the same SN is typed quickly.
+    this.snSubject.pipe(
+      filter(data => !!data.sn && data.sn.length === 10),
+      groupBy(data => data.sn),
+      mergeMap(group => group.pipe(
+        debounceTime(500),
+        switchMap(data => {
+          // One final internal duplicate check before touching the server
+          const allSNs = this.quantity === 1 ? [this.sharedSerial] : this.units.map(u => u.serialNumber);
+          const duplicates = allSNs.filter(s => s === data.sn).length;
+          
+          if (duplicates > 1) {
+            this.snStatusMap.set(data.sn, { checking: false, unique: false, error: 'Duplicate in current batch' });
+            return EMPTY;
+          }
+
+          // Trigger server check
+          return this.equipmentService.checkSerialNumberUnique(data.sn).pipe(
+            map(isUnique => ({ sn: data.sn, isUnique })),
+            timeout(5000), // Safety timeout to clear "Checking..." labels
+            catchError(err => {
+              console.error('SN Check Error:', err);
+              return of({ sn: data.sn, isUnique: true }); // Fallback to unique to allow save
+            })
+          );
+        })
+      ))
+    ).subscribe(res => {
+      // Final state update
+      this.snStatusMap.set(res.sn, { checking: false, unique: res.isUnique });
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -180,6 +222,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.purchaseMode = 'same';
     this.warrantyMode = 'shared';
     this.currentStep = 0;
+    this.validateStockCapacity();
   }
 
   // ── Computed helpers ──────────────────────────────────────────────────
@@ -199,10 +242,42 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     } else {
       this.category = 'Asset';
     }
+    this.validateStockCapacity();
   }
 
   onQuantityChange(): void {
     this.rebuildUnits();
+    this.validateStockCapacity();
+  }
+
+  private validateStockCapacity(): void {
+    if (!this.type || this.quantity < 1) {
+      this.capacityError = '';
+      return;
+    }
+
+    this.isCheckingCapacity = true;
+    this.capacityError = '';
+
+    this.shelfService.getShelvesByType(this.type).subscribe({
+      next: shelves => {
+        const totalSpace = shelves.reduce((sum, s) => sum + (s.maxQte - s.currentQte), 0);
+        
+        if (shelves.length === 0) {
+          this.capacityError = `No shelves found for type "${this.type}". Please create a shelf first.`;
+        } else if (totalSpace < this.quantity) {
+          this.capacityError = `Insufficient storage! Available space for ${this.type}: ${totalSpace} units. (Requested: ${this.quantity})`;
+        } else {
+          this.capacityError = '';
+        }
+        this.isCheckingCapacity = false;
+      },
+      error: err => {
+        console.error('Capacity check failed', err);
+        this.capacityError = 'Could not verify stock capacity. Please try again.';
+        this.isCheckingCapacity = false;
+      }
+    });
   }
 
   private rebuildUnits(): void {
@@ -219,7 +294,8 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
       purchaseDate: this.sharedPurchaseDate, supplierId: '', supplier: '', purchasePrice: 0, invoiceRef: '',
       warrantyEnd: '',
       selectedForInvoice: false, selectedForWarranty: false,
-      selectedForGeneralSync: false, selectedForSpecSync: false
+      selectedForGeneralSync: false, selectedForSpecSync: false,
+      selectedForSN: false
     };
   }
 
@@ -234,19 +310,173 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     unit.supplier = s?.companyName || '';
   }
 
+  // ── Step 3 Serial handles ─────────────────────────────────────────────
+  isValidSerialNumber(sn: string): boolean {
+    // Exactly 10 chars, alphanumeric, min 1 letter, min 1 digit
+    const regex = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{10}$/;
+    return regex.test(sn || '');
+  }
+
+  onSNChange(val: string, index?: number): void {
+    const sn = (val || '').toUpperCase().trim();
+    if (index !== undefined) {
+      if (this.units[index]) this.units[index].serialNumber = sn;
+    } else {
+      this.sharedSerial = sn;
+    }
+
+    this.revalidateBatchSNs();
+  }
+
+  private revalidateBatchSNs(): void {
+    const allSNs = this.quantity === 1 ? [this.sharedSerial] : this.units.map(u => u.serialNumber);
+    
+    allSNs.forEach((sn, idx) => {
+      if (!sn || sn.length === 0) return;
+
+      if (sn.length === 10 && this.isValidSerialNumber(sn)) {
+        // Check for internal duplicates in current batch
+        const count = allSNs.filter(s => s === sn).length;
+        if (count > 1) {
+          this.snStatusMap.set(sn, { checking: false, unique: false, error: 'Duplicate in current batch' });
+        } else {
+          // Internally unique. Always push to subject to let RxJS handle the state
+          const status = this.snStatusMap.get(sn);
+          // Only trigger if we don't already have a valid unique status or if it was an error
+          if (!status || status.error || status.checking || !status.unique) {
+             this.snStatusMap.set(sn, { checking: true, unique: true });
+             this.snSubject.next({ sn, index: idx });
+          }
+        }
+      } else {
+        this.snStatusMap.delete(sn);
+      }
+    });
+
+    // Final cleanup: remove status for SNs no longer present in allSNs
+    const currentSNSet = new Set(allSNs);
+    Array.from(this.snStatusMap.keys()).forEach(key => {
+      if (!currentSNSet.has(key)) {
+        this.snStatusMap.delete(key);
+      }
+    });
+  }
+
+  isSNChecking(sn: string): boolean {
+    return this.snStatusMap.get(sn)?.checking || false;
+  }
+
+  isSNUnique(sn: string): boolean {
+    const status = this.snStatusMap.get(sn);
+    return status ? status.unique : true;
+  }
+
+  getSNError(sn: string): string | undefined {
+    return this.snStatusMap.get(sn)?.error;
+  }
+
+  generateRandomSN(): string {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const digits = '0123456789';
+    const all = letters + digits;
+    let result = '';
+    
+    // Exactly 10 random alphanumeric chars
+    for (let i = 0; i < 10; i++) {
+      result += all.charAt(Math.floor(Math.random() * all.length));
+    }
+    
+    // Ensure at least one letter and one digit
+    if (!/\d/.test(result)) {
+      result = result.substring(0, 9) + digits.charAt(Math.floor(Math.random() * digits.length));
+    }
+    if (!/[a-zA-Z]/.test(result)) {
+      result = result.substring(0, 9) + letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    
+    return result;
+  }
+
+  suggestSerials(): void {
+    const generateUniqueSN = () => {
+      let sn = this.generateRandomSN();
+      // Simple loop to avoid internal batch collision (not fully robust but better than nothing)
+      return sn;
+    };
+
+    if (this.currentStep === 3 && this.quantity === 1) {
+      this.sharedSerial = generateUniqueSN();
+      this.onSNChange(this.sharedSerial);
+    } else {
+      const selected = this.units.filter(u => u.selectedForSN);
+      if (selected.length > 0) {
+        selected.forEach(u => {
+          u.serialNumber = generateUniqueSN();
+          const idx = this.units.indexOf(u);
+          this.onSNChange(u.serialNumber, idx);
+          u.selectedForSN = false;
+        });
+      }
+    }
+  }
+
+  onSNSelectAll(event: any): void {
+    const checked = event.target.checked;
+    this.units.forEach(u => u.selectedForSN = checked);
+  }
+
+  hasSelectedSN(): boolean {
+    return this.units.some(u => u.selectedForSN);
+  }
+
+  hasSelectedSpec(): boolean {
+    return this.units.some(u => u.selectedForSpecSync);
+  }
+
+  hasSelectedGeneral(): boolean {
+    return this.units.some(u => u.selectedForGeneralSync);
+  }
+
+  onGeneralSelectAll(event: any): void {
+    const checked = event.target.checked;
+    this.units.forEach(u => u.selectedForGeneralSync = checked);
+  }
+
+  onSpecSelectAll(event: any): void {
+    const checked = event.target.checked;
+    this.units.forEach(u => u.selectedForSpecSync = checked);
+  }
+
+  clearSelectedSerials(): void {
+    if (this.currentStep === 3 && this.quantity === 1) {
+      this.sharedSerial = '';
+    } else {
+      const isStep2 = this.currentStep === 2;
+      this.units.forEach(u => {
+        if (isStep2 ? u.selectedForSpecSync : u.selectedForSN) {
+          u.serialNumber = '';
+        }
+      });
+    }
+  }
+
   // ── Validation ────────────────────────────────────────────────────────
   isStepValid(): boolean {
     switch (this.currentStep) {
-      case 0: return !!this.type && this.quantity >= 1;
+      case 0: return !!this.type && this.quantity >= 1 && !this.capacityError && !this.isCheckingCapacity;
       case 1: return this.configMode === 'same'
         ? !!this.sharedName && !!this.sharedBrand
         : this.units.every(u => !!u.name && !!u.brand);
       case 2:
-        return true;
+        if (this.specMode === 'same' || this.quantity === 1) return true;
+        return this.units.every(u => {
+          const sn = u.serialNumber;
+          if (!sn) return false;
+          return this.isValidSerialNumber(sn) && this.isSNUnique(sn) && !this.isSNChecking(sn);
+        });
       case 3:
-        if (this.category === 'Consumable') return true;
-        if (this.quantity === 1) return !!this.sharedSerial;
-        return this.units.length > 0 && this.units.every(u => !!u.serialNumber);
+        if (this.quantity === 1) return this.isValidSerialNumber(this.sharedSerial) && this.isSNUnique(this.sharedSerial) && !this.isSNChecking(this.sharedSerial);
+        return this.units.length > 0 && this.units.every(u => this.isValidSerialNumber(u.serialNumber) && this.isSNUnique(u.serialNumber) && !this.isSNChecking(u.serialNumber));
       case 4: return this.purchaseMode === 'same'
         ? !!this.sharedSupplierId && !!this.sharedPurchaseDate
         : this.units.every(u => !!u.supplierId && !!u.purchaseDate);
@@ -335,6 +565,37 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     }
   }
 
+  onlyNumbers(event: any): boolean {
+    const charCode = (event.which) ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      event.preventDefault();
+      return false;
+    }
+    return true;
+  }
+
+  onAssignCountInput(index: number, event: any): void {
+    let val = parseInt(event.target.value, 10);
+    if (isNaN(val) || val < 0) val = 0;
+    
+    const assignment = this.shelfAssignments[index];
+    const available = assignment.shelf.maxQte - assignment.shelf.currentQte;
+    
+    // First, temporarily set it to 0 to calculate the current assigned excluding this shelf
+    const otherAssignedTotal = this.getTotalAssigned() - assignment.assignCount;
+    
+    // Max we can assign to this shelf is the minimum of (available on shelf) and (remaining to be assigned)
+    const remainingToAssignOverall = this.quantity - otherAssignedTotal;
+    const maxPossibleOnThisShelf = Math.min(available, remainingToAssignOverall);
+    
+    if (val > maxPossibleOnThisShelf) {
+      val = maxPossibleOnThisShelf;
+      event.target.value = val;
+    }
+    
+    assignment.assignCount = val;
+  }
+
   close(): void {
     this.closeEvent.emit(false);
     this.reset();
@@ -348,8 +609,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     const payloads = Array.from({ length: n }, (_, i) => {
       const u = this.units[i] || this.emptyUnit();
 
-      const serial = this.isConsumable ? this.sharedSerial
-        : (n === 1 ? this.sharedSerial : u.serialNumber);
+      const serial = n === 1 ? this.sharedSerial : u.serialNumber;
 
       const price = this.sharedPriceMode === 'total'
         ? (this.sharedPrice / n) : this.sharedPrice;
@@ -378,6 +638,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         graphicsCard: same ? this.sharedGpu : u.graphicsCard,
         operatingSystem: same ? this.sharedOs : u.operatingSystem,
         department: 'stock',
+        status: 'In Stock',
         shelfId: '' // assigned below
       } as Equipment;
     });
@@ -439,8 +700,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   get reviewUnits(): { name: string; serial: string }[] {
     return Array.from({ length: this.quantity }, (_, i) => {
       const u = this.units[i];
-      const serial = this.isConsumable ? this.sharedSerial
-        : (this.quantity === 1 ? this.sharedSerial : (u?.serialNumber || '—'));
+      const serial = this.quantity === 1 ? this.sharedSerial : (u?.serialNumber || '—');
       return {
         name: this.configMode === 'same' ? this.sharedName : (u?.name || `Unit ${i + 1}`),
         serial: serial
@@ -595,6 +855,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
           if (u.selectedForSpecSync) {
             u.cpu = ''; u.ram = ''; u.storage = '';
             u.graphicsCard = ''; u.operatingSystem = ''; u.networkInterface = '';
+            u.serialNumber = '';
           }
           break;
         case 'purchase':

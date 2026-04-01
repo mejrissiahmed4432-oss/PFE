@@ -9,14 +9,16 @@ public class LoginResponse {
     private Role role;
     private String photo;
     private String token;
+    private String phoneNumber;
 
-    public LoginResponse(String firstName, String lastName, String email, Role role, String photo, String token) {
+    public LoginResponse(String firstName, String lastName, String email, Role role, String photo, String token, String phoneNumber) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.role = role;
         this.photo = photo;
         this.token = token;
+        this.phoneNumber = phoneNumber;
     }
 
     // Getters and Setters
@@ -37,4 +39,7 @@ public class LoginResponse {
 
     public String getToken() { return token; }
     public void setToken(String token) { this.token = token; }
+
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 }

@@ -28,6 +28,7 @@ export interface Equipment {
   qrCode?: string;
   department?: string;
   createdBy?: string;
+  status?: string;
   // Device Specifications
   cpu?: string;
   ram?: string;

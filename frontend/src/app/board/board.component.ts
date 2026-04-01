@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import { AiAssistantComponent } from '../ai-assistant/ai-assistant.component';
@@ -27,6 +28,7 @@ export class BoardComponent implements OnInit {
   isSidebarCollapsed: boolean = false;
   activeTab: string = 'dashboard'; // Defaulting to dashboard for view
   unreadAlertsCount: number = 0;
+  private userSub: Subscription | undefined;
 
   constructor(
     private authService: AuthService, 
@@ -36,11 +38,19 @@ export class BoardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.user = this.authService.getCurrentUser();
-    if (!this.user) {
-      this.router.navigate(['/login']);
-    } else {
-      this.loadUnreadCount();
+    this.userSub = this.authService.user$.subscribe(user => {
+      this.user = user;
+      if (!this.user) {
+        this.router.navigate(['/login']);
+      } else {
+        this.loadUnreadCount();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.userSub) {
+      this.userSub.unsubscribe();
     }
   }
 

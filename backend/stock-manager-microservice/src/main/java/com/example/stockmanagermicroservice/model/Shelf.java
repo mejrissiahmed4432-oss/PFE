@@ -10,6 +10,7 @@ public class Shelf {
     
     private String nb;
     private Integer maxQte;
+    private Integer minQte;
     private Integer currentQte;
     private String status; // EMPTY, NORMAL, FULL
     private String equipmentType;
@@ -27,6 +28,9 @@ public class Shelf {
 
     public Integer getMaxQte() { return maxQte; }
     public void setMaxQte(Integer maxQte) { this.maxQte = maxQte; }
+
+    public Integer getMinQte() { return minQte; }
+    public void setMinQte(Integer minQte) { this.minQte = minQte; }
 
     public Integer getCurrentQte() { return currentQte; }
     public void setCurrentQte(Integer currentQte) { this.currentQte = currentQte; }

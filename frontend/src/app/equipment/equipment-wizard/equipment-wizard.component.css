@@ -395,7 +395,10 @@
 }
 .unit-table tbody tr:last-child { border-bottom: none; }
 .unit-table tbody tr:hover { background: #fafbff; }
-.unit-table td { padding: 8px 10px; vertical-align: middle; }
+.unit-table td { 
+  padding: 12px 10px; 
+  vertical-align: top; 
+}
 
 .col-unit { width: 50px; text-align: center; }
 .unit-badge {
@@ -437,6 +440,17 @@
   box-sizing: border-box;
 }
 .tbl-select:focus { outline: none; border-color: #4f46e5; }
+
+/* Error states for table inputs */
+.tbl-input.field-error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+.field-input.field-error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
 
 /* ─── Serial preview ──────────────────────────────────────── */
 .serial-preview-box {
@@ -823,8 +837,45 @@
 .btn-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,0.4); }
 .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-/* ─── Responsive ──────────────────────────────────────────── */
-@media (max-width: 720px) {
-  .wizard-panel { width: 100vw; }
-  .two-col, .spec-grid, .review-grid, .shelf-cards-grid { grid-template-columns: 1fr; }
+/* ─── Suggest SN Button ───────────────────────────────────── */
+.btn-suggest-sn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: white;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  color: #4f46e5;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  margin-left: auto;
+}
+.btn-suggest-sn:hover {
+  background: #f5f3ff;
+  border-color: #c7d2fe;
+  transform: translateY(-1px);
+}
+.btn-suggest-sn svg { color: #6366f1; }
+
+.field-input.field-error, .tbl-input.field-error {
+  border-color: #ef4444 !important;
+  background-color: #fff9f9 !important;
+}
+.field-input.field-error:focus, .tbl-input.field-error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+.field-hint.error { color: #ef4444; font-weight: 600; margin-top: 6px; }
+
+.unit-table tr.selected-row { background-color: #f5f3ff !important; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
 }

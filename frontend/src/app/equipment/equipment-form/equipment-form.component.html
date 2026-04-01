@@ -246,6 +246,17 @@
               <span class="info-value">{{ equipment?.model || '—' }}</span>
             </div>
             <div class="info-row">
+              <span class="info-label">Status</span>
+              <span class="info-value">
+                <span class="tag" [ngClass]="{
+                  'tag-active': equipment?.status === 'In Stock',
+                  'tag-expired': equipment?.status === 'Broken',
+                  'tag-maintenance': equipment?.status === 'Maintenance',
+                  'tag-unassigned': equipment?.status === 'Out of Stock'
+                }">{{ equipment?.status || 'In Stock' }}</span>
+              </span>
+            </div>
+            <div class="info-row">
               <span class="info-label">Serial Number</span>
               <span class="info-value mono">{{ equipment?.serialNumber || '—' }}</span>
             </div>
@@ -665,18 +676,59 @@
           <div class="input-group">
             <label>Equipment Name <span class="required">*</span></label>
             <input type="text" [(ngModel)]="formData.equipmentName" placeholder="Enter equipment name">
+            <div *ngIf="!formData.equipmentName" style="font-size: 11px; color: #ef4444; margin-top: 2px;">Name is required.</div>
           </div>
           <div class="input-group">
             <label>Brand <span class="required">*</span></label>
             <input type="text" [(ngModel)]="formData.brand" placeholder="Enter brand">
+            <div *ngIf="!formData.brand" style="font-size: 11px; color: #ef4444; margin-top: 2px;">Brand is required.</div>
           </div>
           <div class="input-group">
-            <label>Model <span class="required">*</span></label>
+            <label>Model</label>
             <input type="text" [(ngModel)]="formData.model" placeholder="Enter model number">
           </div>
           <div class="input-group">
-            <label>Serial Number</label>
-            <input type="text" [(ngModel)]="formData.serialNumber" placeholder="Enter serial number">
+            <label>Status <span class="required">*</span></label>
+            <select [(ngModel)]="formData.status" (change)="onStatusChange()" class="field-select">
+              <option *ngFor="let opt of statusOptions" [value]="opt">{{ opt }}</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label>Serial Number <span class="required">*</span></label>
+              <button type="button" class="btn-suggest-sn" (click)="suggestSerialNumber()" 
+                      style="font-size: 0.72rem; padding: 2px 8px; background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                Suggest SN
+              </button>
+            </div>
+            <input type="text" [maxlength]="10" [(ngModel)]="formData.serialNumber" 
+                   (ngModelChange)="onSerialNumberChange()"
+                   placeholder="Enter serial number (exactly 10 chars)">
+            
+            <!-- Error messages stack -->
+            <div *ngIf="isCheckingSN" style="font-size: 11px; color: #3b82f6; margin-top: 2px;">
+              <i class="fas fa-spinner fa-spin"></i> Checking availability...
+            </div>
+
+            <div *ngIf="!formData.serialNumber" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+              Serial Number is required.
+            </div>
+            
+            <div *ngIf="isSNInvalidLength" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+              Exactly 10 characters required. (Currently: {{formData.serialNumber?.length}})
+            </div>
+            
+            <div *ngIf="isSNInvalidFormat" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+              Only letters and digits are allowed.
+            </div>
+
+            <div *ngIf="isSNMissingChars" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+              Must contain at least 1 letter and 1 digit.
+            </div>
+
+            <div *ngIf="!isSNAvailable && !isCheckingSN" style="font-size: 11px; color: #ef4444; margin-top: 2px; font-weight: 600;">
+              This Serial Number is already assigned to another equipment.
+            </div>
           </div>
           <div class="input-group">
             <label>Type <span class="required">*</span></label>
@@ -758,8 +810,11 @@
         <div class="input-grid">
           <div class="input-group full-width" style="grid-column: span 2;">
             <label>Shelf Assignment <span class="required">*</span></label>
-            <select [(ngModel)]="formData.shelfId">
+            <select [(ngModel)]="formData.shelfId" [disabled]="formData.status !== 'In Stock'">
               <option value="" disabled>Select an available shelf</option>
+              <option *ngIf="formData.status === 'Maintenance'" value="MAINTENANCE_AREA">Maintenance Area</option>
+              <option *ngIf="formData.status === 'Broken'" value="SCRAP_YARD">Scrap Yard</option>
+              <option *ngIf="formData.status === 'Out of Stock'" value="OUT_OF_STOCK">Out of Stock</option>
               <option *ngFor="let s of availableShelves" [value]="s.id">Shelf {{ s.nb }} (Available Capacity: {{
                 s.maxQte - s.currentQte }})</option>
             </select>
@@ -767,6 +822,15 @@
               equipment type first to see available shelves</div>
             <div class="hint error" *ngIf="formData.type && availableShelves.length === 0"
               style="font-size: 12px; color: #ef4444; margin-top: 4px;">No available shelves for this type/quantity
+            </div>
+            <div class="hint error" *ngIf="formData.status === 'In Stock' && (!formData.shelfId || formData.shelfId === '')"
+              style="font-size: 12px; color: #ef4444; margin-top: 4px; font-weight: 600;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-right: 4px; vertical-align: middle;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              Please select a shelf assignment for equipment in stock.
             </div>
           </div>
         </div>
@@ -864,7 +928,7 @@
   <!-- Footer Actions -->
   <div class="form-footer">
     <button class="btn-cancel" (click)="cancel()">Cancel</button>
-    <button class="btn-primary" [disabled]="isSaving" (click)="saveEquipment()">
+    <button class="btn-primary" [disabled]="isSaving || isFormInvalid" (click)="saveEquipment()">
       {{ isSaving ? 'Saving...' : (equipment ? 'Update Equipment' : 'Save Equipment') }}
     </button>
   </div>

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -17,13 +18,14 @@ export class ProfileComponent implements OnInit {
   toastMessage = '';
   toastType: 'success' | 'error' = 'success';
   showToast = false;
+  private userSub: Subscription | undefined;
 
   // Editable copy of user fields
   form = {
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
+    phoneNumber: '',
     department: '',
     bio: ''
   };
@@ -31,8 +33,18 @@ export class ProfileComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.user = this.authService.getCurrentUser() || {};
-    this.resetForm();
+    this.userSub = this.authService.user$.subscribe(user => {
+      this.user = user || {};
+      if (!this.isEditing) {
+        this.resetForm();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.userSub) {
+      this.userSub.unsubscribe();
+    }
   }
 
   get initials(): string {
@@ -56,7 +68,7 @@ export class ProfileComponent implements OnInit {
       firstName: this.user?.firstName || '',
       lastName: this.user?.lastName || '',
       email: this.user?.email || '',
-      phone: this.user?.phone || '',
+      phoneNumber: this.user?.phoneNumber || '',
       department: this.user?.department || 'IT Management',
       bio: this.user?.bio || ''
     };
@@ -71,18 +83,67 @@ export class ProfileComponent implements OnInit {
     this.resetForm();
   }
 
+  phoneError: string = '';
+
+  validatePhone(): boolean {
+    if (!this.form.phoneNumber) {
+      this.phoneError = 'Phone number is required';
+      return false;
+    }
+    if (this.form.phoneNumber.length !== 8) {
+      this.phoneError = 'Phone number must be 8 digits';
+      return false;
+    }
+    this.phoneError = '';
+    return true;
+  }
+
+  onPhoneKeypress(event: KeyboardEvent) {
+    if (event.key < '0' || event.key > '9') {
+      event.preventDefault();
+    }
+  }
+
+  onPhoneInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/[^0-9]/g, '');
+    this.form.phoneNumber = input.value;
+    this.validatePhone();
+  }
+
+  get isFormInvalid(): boolean {
+    return !this.form.firstName?.trim() || 
+           !this.form.lastName?.trim() || 
+           !this.form.phoneNumber || 
+           this.form.phoneNumber.length !== 8;
+  }
+
+  get firstNameError(): string {
+    return !this.form.firstName?.trim() ? 'First name is required' : '';
+  }
+
+  get lastNameError(): string {
+    return !this.form.lastName?.trim() ? 'Last name is required' : '';
+  }
+
   saveProfile(): void {
+    if (!this.validatePhone()) {
+      return;
+    }
     this.isSaving = true;
-    // Simulate API call – in production call authService.updateProfile(this.form)
-    setTimeout(() => {
-      // Persist in localStorage optimistically
-      const updated = { ...this.user, ...this.form };
-      localStorage.setItem('user_data', JSON.stringify(updated));
-      this.user = updated;
-      this.isSaving = false;
-      this.isEditing = false;
-      this.showNotification('Profile updated successfully!', 'success');
-    }, 900);
+    
+    this.authService.updateProfile(this.form).subscribe({
+      next: (response) => {
+        this.user = { ...this.user, ...this.form };
+        this.isSaving = false;
+        this.isEditing = false;
+        this.showNotification('Profile updated successfully!', 'success');
+      },
+      error: (err) => {
+        this.isSaving = false;
+        this.showNotification(err.error?.message || 'Error updating profile', 'error');
+      }
+    });
   }
 
   private showNotification(msg: string, type: 'success' | 'error'): void {

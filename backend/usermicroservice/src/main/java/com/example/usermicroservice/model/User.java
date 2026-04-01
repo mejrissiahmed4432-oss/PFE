@@ -26,6 +26,8 @@ public class User {
     private String photo;
     private Role role;
     
+    private String phoneNumber;
+    
     private String resetToken;
     private java.time.LocalDateTime resetTokenExpiry;
 
@@ -64,6 +66,9 @@ public class User {
 
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
     public String getResetToken() { return resetToken; }
     public void setResetToken(String resetToken) { this.resetToken = resetToken; }

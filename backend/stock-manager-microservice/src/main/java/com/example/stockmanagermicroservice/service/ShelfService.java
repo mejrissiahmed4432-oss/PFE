@@ -35,6 +35,7 @@ public class ShelfService {
         return shelfRepository.findById(id).map(shelf -> {
             shelf.setNb(shelfDetails.getNb());
             shelf.setMaxQte(shelfDetails.getMaxQte());
+            shelf.setMinQte(shelfDetails.getMinQte());
             shelf.setCurrentQte(shelfDetails.getCurrentQte());
             shelf.setEquipmentType(shelfDetails.getEquipmentType());
             updateShelfStatus(shelf);
@@ -49,9 +50,12 @@ public class ShelfService {
     public void updateShelfStatus(Shelf shelf) {
         if (shelf.getCurrentQte() == null) shelf.setCurrentQte(0);
         if (shelf.getMaxQte() == null) shelf.setMaxQte(0);
+        if (shelf.getMinQte() == null) shelf.setMinQte(0);
         
         if (shelf.getCurrentQte() == 0) {
             shelf.setStatus("EMPTY");
+        } else if (shelf.getCurrentQte() < shelf.getMinQte()) {
+            shelf.setStatus("LOW");
         } else if (shelf.getCurrentQte() >= shelf.getMaxQte()) {
             shelf.setStatus("FULL");
         } else {

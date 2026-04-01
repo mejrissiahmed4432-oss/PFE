@@ -33,6 +33,14 @@ export class EquipmentService {
     return this.http.get<Equipment>(`${this.apiUrl}/${id}`);
   }
 
+  checkSerialNumberUnique(serial: string, excludeId?: string): Observable<boolean> {
+    let url = `${this.apiUrl}/check-serial/${serial}`;
+    if (excludeId) {
+      url += `?excludeId=${excludeId}`;
+    }
+    return this.http.get<boolean>(url);
+  }
+
   getEquipmentByShelfId(shelfId: string): Observable<Equipment[]> {
     return this.http.get<Equipment[]>(`${this.apiUrl}/shelf/${shelfId}`);
   }
@@ -47,5 +55,13 @@ export class EquipmentService {
 
   deleteEquipment(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  deleteBulkEquipment(ids: string[]): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/bulk-delete`, ids);
+  }
+
+  updateBulkBasicInfo(ids: string[], name: string, brand: string, model: string): Observable<Equipment[]> {
+    return this.http.put<Equipment[]>(`${this.apiUrl}/bulk-update-basic`, { ids, name, brand, model });
   }
 }

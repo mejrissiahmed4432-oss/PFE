@@ -25,6 +25,13 @@ public class EquipmentController {
         return equipmentService.getEquipmentByShelfId(shelfId);
     }
 
+    @GetMapping("/check-serial/{serial}")
+    public ResponseEntity<Boolean> checkSerialUnique(
+            @PathVariable String serial,
+            @RequestParam(required = false) String excludeId) {
+        return ResponseEntity.ok(equipmentService.isSerialNumberUnique(serial, excludeId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Equipment> getEquipmentById(@PathVariable String id) {
         return equipmentService.getEquipmentById(id)
@@ -50,5 +57,25 @@ public class EquipmentController {
     public ResponseEntity<Void> deleteEquipment(@PathVariable String id) {
         equipmentService.deleteEquipment(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/bulk-delete")
+    public ResponseEntity<Void> deleteBulk(@RequestBody List<String> ids) {
+        equipmentService.deleteBulk(ids);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/bulk-update-basic")
+    public ResponseEntity<List<Equipment>> updateBulkBasicInfo(@RequestBody BulkUpdateBasicRequest request) {
+        List<Equipment> updated = equipmentService.updateBulkBasicInfo(
+                request.ids, request.name, request.brand, request.model);
+        return ResponseEntity.ok(updated);
+    }
+
+    public static class BulkUpdateBasicRequest {
+        public List<String> ids;
+        public String name;
+        public String brand;
+        public String model;
     }
 }

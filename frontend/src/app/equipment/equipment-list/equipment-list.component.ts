@@ -85,6 +85,12 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   qrModalDataUrl: string = '';
   showQrModal: boolean = false;
 
+  // Group Edit Modal
+  showGroupEditModal: boolean = false;
+  editingGroup: GroupedEquipment | null = null;
+  bulkEditForm = { name: '', brand: '', model: '' };
+  isBulkSaving: boolean = false;
+
   constructor(
     private equipmentService: EquipmentService,
     private supplierService: SupplierService,
@@ -263,13 +269,61 @@ export class EquipmentListComponent implements OnInit, OnChanges {
 
   deleteGroup(group: GroupedEquipment, event: Event): void {
     event.stopPropagation();
-    if (confirm(`Are you sure you want to delete all ${group.totalQuantity} items in this group?`)) {
-      const requests = group.items.map(item => this.equipmentService.deleteEquipment(item.id!));
-      forkJoin(requests).subscribe({
-        next: () => this.loadEquipments(),
+    if (confirm(`Are you sure you want to delete all ${group.totalQuantity} items in this group? This action cannot be undone.`)) {
+      const ids = group.items.map(item => item.id!);
+      this.equipmentService.deleteBulkEquipment(ids).subscribe({
+        next: () => {
+          this.loadEquipments();
+        },
         error: (err) => console.error('Error deleting group', err)
       });
     }
+  }
+
+  // ─── Group Edit ───────────────────────────────────
+  openGroupEditModal(group: GroupedEquipment, event: Event): void {
+    event.stopPropagation();
+    this.editingGroup = group;
+    this.bulkEditForm = {
+      name: group.name,
+      brand: group.brand,
+      model: group.commonModel === 'Mixed' ? '' : group.commonModel
+    };
+    this.showGroupEditModal = true;
+  }
+
+  closeGroupEditModal(): void {
+    this.showGroupEditModal = false;
+    this.editingGroup = null;
+  }
+
+  saveGroupEdit(): void {
+    if (!this.editingGroup) return;
+    if (!this.bulkEditForm.name || !this.bulkEditForm.brand) {
+      alert('Name and Brand are required.');
+      return;
+    }
+
+    this.isBulkSaving = true;
+    const ids = this.editingGroup.items.map(item => item.id!);
+    
+    this.equipmentService.updateBulkBasicInfo(
+      ids, 
+      this.bulkEditForm.name, 
+      this.bulkEditForm.brand, 
+      this.bulkEditForm.model
+    ).subscribe({
+      next: () => {
+        this.isBulkSaving = false;
+        this.closeGroupEditModal();
+        this.loadEquipments();
+      },
+      error: (err) => {
+        this.isBulkSaving = false;
+        console.error('Error updating group', err);
+        alert('Failed to update group. Please try again.');
+      }
+    });
   }
 
   get paginatedGroups(): GroupedEquipment[] {
@@ -355,11 +409,14 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   }
 
   getEquipmentStatus(eq: any): { label: string; cls: string } {
-    // Check for explicit 'status' property first
     if (eq.status) {
       const s = eq.status.toLowerCase();
-      if (s === 'broken') return { label: 'Broken', cls: 'expired' }; // using red cls
-      if (s === 'active') return { label: 'Active', cls: 'active' };
+      if (s === 'broken') return { label: 'Broken', cls: 'expired' }; 
+      if (s === 'maintenance') return { label: 'Maintenance', cls: 'maintenance' };
+      if (s === 'out of stock') return { label: 'Out of Stock', cls: 'unassigned' };
+      if (s === 'in stock') return { label: 'In Stock', cls: 'active' };
+      
+      // Fallback for any other status string
       return { label: eq.status, cls: 'unassigned' };
     }
 
@@ -367,13 +424,24 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     if (eq.warrantyExpiration && new Date(eq.warrantyExpiration) < new Date()) {
       return { label: 'Expired', cls: 'expired' };
     }
-    return { label: 'Active', cls: 'active' };
+    return { label: 'In Stock', cls: 'active' };
   }
 
   getShelfLocation(shelfId?: string): string {
-    if (!shelfId) return 'Unassigned';
+    if (!shelfId || shelfId === '') return 'Unassigned';
+    if (shelfId === 'MAINTENANCE_AREA') return 'Maintenance Area';
+    if (shelfId === 'SCRAP_YARD') return 'Scrap Yard';
+    if (shelfId === 'OUT_OF_STOCK') return 'Out of Stock';
+    
     const s = this.shelves.find(x => x.id === shelfId);
-    return s ? `Shelf ${s.nb}` : shelfId;
+    if (s) return `Shelf ${s.nb}`;
+
+    // If it's a long technical ID, don't show it to the user
+    if (shelfId && shelfId.length > 10) {
+      return 'Unknown Shelf';
+    }
+    
+    return shelfId;
   }
 
   downloadDocument(fileData?: string, fileName?: string): void {

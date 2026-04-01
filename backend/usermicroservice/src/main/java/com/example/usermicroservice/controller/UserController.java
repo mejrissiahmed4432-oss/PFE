@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,7 +67,8 @@ public class UserController {
                     user.getEmail(),
                     user.getRole(),
                     user.getPhoto(),
-                    token));
+                    token,
+                    user.getPhoneNumber()));
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid email or password"));
@@ -201,6 +203,36 @@ public class UserController {
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return ResponseEntity.ok(userRepository.save(user));
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(@RequestBody Map<String, String> request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Session expired. Please log in again."));
+        }
+
+        String email = auth.getPrincipal().toString();
+        Optional<User> userOpt = userRepository.findByEmail(email);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+        }
+
+        User user = userOpt.get();
+        if (request.containsKey("firstName")) user.setFirstName(request.get("firstName"));
+        if (request.containsKey("lastName")) user.setLastName(request.get("lastName"));
+        if (request.containsKey("phoneNumber")) user.setPhoneNumber(request.get("phoneNumber"));
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of(
+            "message", "Profile updated successfully",
+            "firstName", user.getFirstName(),
+            "lastName", user.getLastName(),
+            "phoneNumber", user.getPhoneNumber() != null ? user.getPhoneNumber() : ""
+        ));
     }
 
     @GetMapping

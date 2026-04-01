@@ -123,6 +123,11 @@
 .tag-loc  { background: #faf5ff; color: #7c3aed; }
 .tag-supplier { background: #fff7ed; color: #ea580c; }
 
+.tag-active { background: #dcfce7; color: #15803d; }
+.tag-expired { background: #fee2e2; color: #b91c1c; }
+.tag-unassigned { background: #f1f5f9; color: #64748b; }
+.tag-maintenance { background: #fef9c3; color: #a16207; border: 1px solid #fde68a; }
+
 .hero-actions {
   flex-shrink: 0;
 }

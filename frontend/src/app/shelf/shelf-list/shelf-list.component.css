@@ -245,6 +245,7 @@
 }
 
 .badge.normal { background: #f0fdf4; color: #16a34a; }
+.badge.low { background: #fffbeb; color: #d97706; }
 .badge.full { background: #fef2f2; color: #dc2626; }
 .badge.empty { background: #fff7ed; color: #ea580c; }
 .badge.default { background: #f1f5f9; color: #64748b; }
@@ -272,6 +273,7 @@
 }
 
 .progress-bar-fill.normal { background-color: #3b82f6; }
+.progress-bar-fill.low { background-color: #f59e0b; }
 .progress-bar-fill.full { background-color: #ef4444; }
 .progress-bar-fill.empty { background-color: #f97316; }
 .progress-bar-fill.default { background-color: #94a3b8; }
