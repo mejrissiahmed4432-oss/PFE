@@ -13,11 +13,13 @@ import { AlertsComponent } from '../alerts/alerts.component';
 import { AlertService } from '../alerts/alert.service';
 import { ShelfListComponent } from '../shelf/shelf-list/shelf-list.component';
 import { EquipmentService } from '../equipment/equipment.service';
+import { CategoryManagerComponent } from '../category-manager/category-manager.component';
+import { MessagingComponent } from '../messaging/messaging.component';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
 })
@@ -28,6 +30,7 @@ export class BoardComponent implements OnInit {
   isSidebarCollapsed: boolean = false;
   activeTab: string = 'dashboard'; // Defaulting to dashboard for view
   unreadAlertsCount: number = 0;
+  unreadMessagesCount: number = 4; // sample total from conversations (3+1)
   private userSub: Subscription | undefined;
 
   constructor(
@@ -81,6 +84,8 @@ export class BoardComponent implements OnInit {
       case 'orders': return 'Orders';
       case 'alerts': return 'Alerts';
       case 'reports': return 'Reports';
+      case 'messages': return 'Messages';
+      case 'categories': return 'Equipment Categories';
       case 'profile': return 'My Profile';
       case 'settings': return 'Account Settings';
       default: return 'Medina It Manage';
@@ -90,6 +95,11 @@ export class BoardComponent implements OnInit {
   clearFiltersAndGoToEquipment(): void {
     this.equipmentService.setShelfFilter(null, null);
     this.activeTab = 'equipment';
+  }
+
+  openMessages(): void {
+    this.activeTab = 'messages';
+    this.unreadMessagesCount = 0;
   }
 
   logout(): void {

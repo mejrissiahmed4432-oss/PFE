@@ -91,7 +91,7 @@
           <th class="col-icon">Icon</th>
           <th>Name</th>
           <th>Brand</th>
-          <th>Serial / Model</th>
+          <th>Model</th>
           <th style="width: 80px;">Qty</th>
           <th>Status</th>
           <th>Location</th>
@@ -131,11 +131,9 @@
           
           <td>
             <div *ngIf="group.totalQuantity === 1">
-              <div class="mono">{{ group.items[0].serialNumber || '—' }}</div>
-              <div class="card-subtitle">{{ group.items[0].model }}</div>
+              <div class="card-subtitle">{{ group.items[0].model || '—' }}</div>
             </div>
             <div *ngIf="group.totalQuantity > 1">
-              <div class="mono">-</div>
               <div class="card-subtitle">
                 {{ group.commonModel === 'Mixed' ? 'Multiple Models' : group.commonModel }}
               </div>
@@ -201,25 +199,27 @@
               <table class="instances-table">
                 <thead>
                   <tr>
-                    <th>Unit ID</th>
+                    <th>Name</th>
                     <th>Serial Number</th>
                     <th>Status</th>
                     <th>Shelf</th>
-                    <th>Assigned To</th>
+                    <th>Supplier</th>
+                    <th>Purchase Date</th>
                     <th class="actions-cell">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let item of group.items">
-                    <td class="mono">{{ item.id }}</td>
-                    <td class="mono">{{ item.serialNumber || '—' }}</td>
+                    <td>{{ item.equipmentName || '—' }}</td>
+                    <td class="mono font-semibold">{{ item.serialNumber || '—' }}</td>
                     <td>
                       <span class="status-chip-mini" [ngClass]="getEquipmentStatus(item).cls">
                         {{ getEquipmentStatus(item).label }}
                       </span>
                     </td>
                     <td>{{ getShelfLocation(item.shelfId) }}</td>
-                    <td>{{ item.department || '—' }}</td>
+                    <td>{{ item.supplier || '—' }}</td>
+                    <td>{{ item.purchaseDate | date:'mediumDate' }}</td>
                     <td class="actions-cell" style="justify-content: flex-start; gap: 8px;">
                       <button class="action-icon view sm" (click)="viewEvent.emit(item)" title="View">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>

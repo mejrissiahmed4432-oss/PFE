@@ -113,6 +113,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
         storage: '',
         graphicsCard: '',
         operatingSystem: '',
+        specification: '',
         status: 'In Stock'
       };
     }
@@ -478,7 +479,8 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   isComputerCategory(): boolean {
     const type = this.formData.type || '';
-    return ['pc', 'laptop', 'server', 'tablet', 'phone'].includes(type);
+    const category = this.formData.category?.toUpperCase() || '';
+    return category === 'DEVICE' || category === 'SERVER' || ['pc', 'laptop', 'server', 'tablet', 'phone'].includes(type);
   }
 
   isWarrantyExpired(): boolean {

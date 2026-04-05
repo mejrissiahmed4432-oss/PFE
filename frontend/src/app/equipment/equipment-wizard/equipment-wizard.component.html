@@ -33,8 +33,14 @@
       <div class="wizard-progress-fill" [style.width.%]="progressPct"></div>
     </div>
     <div class="wizard-step-dots">
-      <div *ngFor="let l of stepLabels; let i = index" class="step-dot" [class.done]="i < currentStep"
-        [class.current]="i === currentStep">
+      <div *ngFor="let l of stepLabels; let i = index"
+           class="step-dot"
+           [class.done]="i < currentStep"
+           [class.current]="i === currentStep"
+           [class.clickable-back]="i < currentStep"
+           [class.clickable-forward]="i > currentStep"
+           (click)="goToStep(i)"
+           [title]="i < currentStep ? 'Go back to ' + l : (i > currentStep ? 'Jump to ' + l : l)">
         <span class="dot-num">{{ i + 1 }}</span>
         <span class="dot-label">{{ l }}</span>
       </div>
@@ -65,10 +71,18 @@
         </div>
 
         <div class="field-group">
+          <label class="field-label">Category <span class="req">*</span></label>
+          <select class="field-select" [(ngModel)]="selectedCategoryName" (change)="onCategoryChange()" [disabled]="!!prefillData">
+            <option value="" disabled>Select a category…</option>
+            <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+          </select>
+        </div>
+
+        <div class="field-group">
           <label class="field-label">Equipment Type <span class="req">*</span></label>
-          <select class="field-select" [(ngModel)]="type" (change)="onTypeChange()" [disabled]="!!prefillData">
+          <select class="field-select" [(ngModel)]="type" (change)="onTypeChange()" [disabled]="!!prefillData || !selectedCategoryName">
             <option value="" disabled>Select a type…</option>
-            <option *ngFor="let t of equipmentTypes" [value]="t">{{ t | titlecase }}</option>
+            <option *ngFor="let t of availableTypes" [value]="t">{{ t | titlecase }}</option>
           </select>
         </div>
 
@@ -247,8 +261,8 @@
             </svg>
           </div>
           <div>
-            <h3>Device Specifications</h3>
-            <p>Hardware specs for {{ type | titlecase }} equipment.</p>
+            <h3>Specifications</h3>
+            <p>Define the technical characteristics for this equipment.</p>
           </div>
         </div>
 
@@ -264,7 +278,8 @@
 
         <!-- SAME spec mode -->
         <ng-container *ngIf="specMode === 'same' || quantity === 1">
-          <div class="spec-grid">
+          <!-- Complex Specs for Devices/Servers (Conditional) -->
+          <div class="spec-grid" *ngIf="isDeviceCategory" style="margin-bottom: 20px;">
             <div class="field-group">
               <label class="field-label">CPU</label>
               <input class="field-input" [(ngModel)]="sharedCpu" placeholder="e.g. Intel Core i7-12700H">
@@ -289,6 +304,13 @@
               <label class="field-label">Operating System</label>
               <input class="field-input" [(ngModel)]="sharedOs" placeholder="e.g. Windows 11 Pro">
             </div>
+          </div>
+
+          <!-- General Specification (Always show) -->
+          <div class="field-group">
+            <label class="field-label">specification</label>
+            <textarea class="field-textarea" [(ngModel)]="sharedSpecification" rows="4" 
+              placeholder="Technical details, screen size, connectors, or any specific configuration..."></textarea>
           </div>
         </ng-container>
 
@@ -320,11 +342,18 @@
                       (change)="onSpecSelectAll($event)"></th>
                   <th class="col-unit">#</th>
                   <th>Serial Nb <span class="req">*</span></th>
-                  <th>CPU</th>
-                  <th>RAM</th>
-                  <th>Storage</th>
-                  <th *ngIf="type === 'pc' || type === 'laptop'">GPU</th>
-                  <th>OS</th>
+                  
+                  <!-- Device Columns Header -->
+                  <ng-container *ngIf="isDeviceCategory">
+                    <th>CPU</th>
+                    <th>RAM</th>
+                    <th>Storage</th>
+                    <th *ngIf="type === 'pc' || type === 'laptop'">GPU</th>
+                    <th>OS</th>
+                  </ng-container>
+
+                  <!-- specification Column Header (Always) -->
+                  <th>specification</th>
                 </tr>
               </thead>
               <tbody>
@@ -344,12 +373,19 @@
                     <div *ngIf="u.serialNumber && u.serialNumber.length === 10 && !isValidSerialNumber(u.serialNumber)" style="font-size: 10px; color: #ef4444;">Must mix A-Z & 0-9</div>
                     <div *ngIf="!isSNUnique(u.serialNumber) && !isSNChecking(u.serialNumber)" style="font-size: 10px; color: #ef4444;">{{ getSNError(u.serialNumber) || 'Not unique' }}</div>
                   </td>
-                  <td><input class="tbl-input" [(ngModel)]="u.cpu" placeholder="CPU"></td>
-                  <td><input class="tbl-input" [(ngModel)]="u.ram" placeholder="RAM"></td>
-                  <td><input class="tbl-input" [(ngModel)]="u.storage" placeholder="Storage"></td>
-                  <td *ngIf="type === 'pc' || type === 'laptop'"><input class="tbl-input" [(ngModel)]="u.graphicsCard"
-                      placeholder="GPU"></td>
-                  <td><input class="tbl-input" [(ngModel)]="u.operatingSystem" placeholder="OS"></td>
+                  
+                  <!-- Device Columns -->
+                  <ng-container *ngIf="isDeviceCategory">
+                    <td><input class="tbl-input" [(ngModel)]="u.cpu" placeholder="CPU"></td>
+                    <td><input class="tbl-input" [(ngModel)]="u.ram" placeholder="RAM"></td>
+                    <td><input class="tbl-input" [(ngModel)]="u.storage" placeholder="Storage"></td>
+                    <td *ngIf="type === 'pc' || type === 'laptop'"><input class="tbl-input" [(ngModel)]="u.graphicsCard"
+                        placeholder="GPU"></td>
+                    <td><input class="tbl-input" [(ngModel)]="u.operatingSystem" placeholder="OS"></td>
+                  </ng-container>
+
+                  <!-- Specification Column (Always) -->
+                  <td><input class="tbl-input" [(ngModel)]="u.specification" placeholder="specification..."></td>
                 </tr>
               </tbody>
             </table>
@@ -509,7 +545,7 @@
                 <option *ngFor="let s of suppliers" [value]="s.id">{{ s.companyName }}</option>
               </select>
             </div>
-            <div class="field-group">
+            <div class="field-group" *ngIf="quantity > 1">
               <label class="field-label">Price Mode</label>
               <div class="toggle-group sm">
                 <button class="toggle-btn" [class.active]="sharedPriceMode === 'per-unit'"
@@ -519,7 +555,9 @@
               </div>
             </div>
             <div class="field-group">
-              <label class="field-label">{{ sharedPriceMode === 'total' ? 'Total Price' : 'Price per Unit' }}</label>
+              <label class="field-label">
+                {{ quantity === 1 ? 'Price' : (sharedPriceMode === 'total' ? 'Total Price' : 'Price per Unit') }}
+              </label>
               <div class="price-input-wrap">
                 <span class="price-currency">TND</span>
                 <input class="field-input price-input" type="number" min="0" [(ngModel)]="sharedPrice"

@@ -55,6 +55,7 @@ public class Equipment {
     private String storage;
     private String graphicsCard;
     private String operatingSystem;
+    private String specification;
     private String status;
 
     // Constructors
@@ -159,4 +160,7 @@ public class Equipment {
 
     public String getOperatingSystem() { return operatingSystem; }
     public void setOperatingSystem(String operatingSystem) { this.operatingSystem = operatingSystem; }
+
+    public String getSpecification() { return specification; }
+    public void setSpecification(String specification) { this.specification = specification; }
 }

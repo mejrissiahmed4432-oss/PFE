@@ -10,10 +10,21 @@
     <form [formGroup]="shelfForm" (ngSubmit)="onSubmit()" class="modal-body">
       <div class="form-row">
         <div class="form-group">
+          <label>Category <span class="required-star">*</span></label>
+          <select formControlName="category" class="form-control">
+            <option value="" disabled selected>Select Category</option>
+            <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+          </select>
+          <div class="error-msg" *ngIf="shelfForm.get('category')?.invalid && (shelfForm.get('category')?.dirty || shelfForm.get('category')?.touched)">
+            Category is required
+          </div>
+        </div>
+
+        <div class="form-group">
           <label>Equipment Type <span class="required-star">*</span></label>
-          <select formControlName="equipmentType" class="form-control">
+          <select formControlName="equipmentType" class="form-control" [attr.disabled]="!shelfForm.get('category')?.value ? true : null">
             <option value="" disabled selected>Select Type</option>
-            <option *ngFor="let type of equipmentTypes" [value]="type">{{ type | titlecase }}</option>
+            <option *ngFor="let type of availableTypes" [value]="type">{{ type | titlecase }}</option>
           </select>
           <div class="error-msg" *ngIf="shelfForm.get('equipmentType')?.invalid && (shelfForm.get('equipmentType')?.dirty || shelfForm.get('equipmentType')?.touched)">
             Equipment type is required
@@ -50,31 +61,31 @@
         <div class="form-group">
           <label>Max Quantity (Capacity) <span class="required-star">*</span></label>
           <input type="number" formControlName="maxQte" class="form-control" min="1">
-          <div class="error-msg" *ngIf="shelfForm.get('maxQte')?.invalid && (shelfForm.get('maxQte')?.dirty || shelfForm.get('maxQte')?.touched)">
+          <div class="error-msg" *ngIf="shelfForm.get('maxQte')?.invalid && (shelfForm.get('maxQte')?.dirty || shelfForm.get('maxQte')?.touched) && shelfForm.get('maxQte')?.errors?.['required']">
             Valid capacity is required
+          </div>
+          <div class="error-msg" *ngIf="shelfForm.errors?.['maxLessThanCurrent']">
+            Max quantity cannot be less than current quantity ({{shelfForm.get('currentQte')?.value}})
           </div>
         </div>
 
         <div class="form-group">
           <label>Min Quantity (Alert Threshold) <span class="required-star">*</span></label>
           <input type="number" formControlName="minQte" class="form-control" min="0">
-          <div class="error-msg" *ngIf="shelfForm.get('minQte')?.invalid && (shelfForm.get('minQte')?.dirty || shelfForm.get('minQte')?.touched)">
+          <div class="error-msg" *ngIf="shelfForm.get('minQte')?.invalid && (shelfForm.get('minQte')?.dirty || shelfForm.get('minQte')?.touched) && shelfForm.get('minQte')?.errors?.['required']">
             Minimum quantity is required
           </div>
-          <div class="error-msg" *ngIf="shelfForm.errors?.['minGreaterEqualMax'] && (shelfForm.get('minQte')?.dirty || shelfForm.get('minQte')?.touched)">
-            Min quantity must be less than max quantity
+          <div class="error-msg" *ngIf="shelfForm.errors?.['minGreaterEqualMax']">
+            Min quantity must be strictly less than max quantity
           </div>
         </div>
 
-        <div class="form-group" *ngIf="shelf">
-          <label>Current Quantity</label>
-          <input type="number" formControlName="currentQte" class="form-control" min="0">
-        </div>
+
       </div>
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
-        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || shelfForm.invalid">
           <span *ngIf="isSubmitting" class="spinner"></span>
           {{ shelf ? 'Update Shelf' : 'Add Shelf' }}
         </button>

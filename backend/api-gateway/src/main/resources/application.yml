@@ -55,6 +55,10 @@ spring:
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/alerts/**, /api/alerts
+        - id: categories-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/equipment-categories/**
 
 eureka:
   client:

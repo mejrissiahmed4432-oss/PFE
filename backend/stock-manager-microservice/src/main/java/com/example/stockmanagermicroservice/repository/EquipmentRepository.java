@@ -11,6 +11,8 @@ public interface EquipmentRepository extends MongoRepository<Equipment, String> 
     List<Equipment> findBySupplier(String supplier);
     List<Equipment> findBySupplierId(String supplierId);
     List<Equipment> findByShelfId(String shelfId);
+    List<Equipment> findByCategory(String category);
+    boolean existsByCategory(String category);
     boolean existsBySerialNumber(String serialNumber);
     boolean existsBySerialNumberAndIdNot(String serialNumber, String id);
 }

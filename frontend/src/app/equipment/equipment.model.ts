@@ -35,6 +35,7 @@ export interface Equipment {
   storage?: string;
   graphicsCard?: string;
   operatingSystem?: string;
+  specification?: string;
 }
 
 export interface EquipmentCategory {

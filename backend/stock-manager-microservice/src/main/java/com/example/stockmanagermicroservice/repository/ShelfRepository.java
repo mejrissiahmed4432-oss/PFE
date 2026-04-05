@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ShelfRepository extends MongoRepository<Shelf, String> {
     List<Shelf> findByEquipmentType(String equipmentType);
+    boolean existsByEquipmentTypeIn(List<String> types);
 }

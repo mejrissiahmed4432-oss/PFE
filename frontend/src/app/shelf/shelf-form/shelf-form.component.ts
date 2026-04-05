@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { ShelfService } from '../shelf.service';
 import { Shelf } from '../shelf.model';
+import { CategoryService } from '../../category-manager/category.service';
+import { EquipmentCategory } from '../../category-manager/category.model';
 
 @Component({
   selector: 'app-shelf-form',
@@ -17,19 +19,17 @@ export class ShelfFormComponent implements OnInit {
 
   shelfForm: FormGroup;
   isSubmitting = false;
-  equipmentTypes = [
-    'pc', 'laptop', 'server', 'monitor', 'printer', 'scanner', 
-    'projector', 'router', 'switch', 'ups', 'tablet', 'phone', 
-    'ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'
-  ];
-
+  categories: EquipmentCategory[] = [];
+  availableTypes: string[] = [];
   existingShelves: string[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private shelfService: ShelfService
+    private shelfService: ShelfService,
+    private categoryService: CategoryService
   ) {
     this.shelfForm = this.fb.group({
+      category: ['', Validators.required],
       nb: ['', Validators.required],
       equipmentType: ['', Validators.required],
       maxQte: [10, [Validators.required, Validators.min(1)]],
@@ -42,10 +42,49 @@ export class ShelfFormComponent implements OnInit {
   minMaxValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
     const min = group.get('minQte')?.value;
     const max = group.get('maxQte')?.value;
-    return min !== null && max !== null && min >= max ? { minGreaterEqualMax: true } : null;
+    const current = group.get('currentQte')?.value;
+    
+    if (min !== null && max !== null && min >= max) {
+      return { minGreaterEqualMax: true };
+    }
+    if (current !== null && max !== null && max < current) {
+      return { maxLessThanCurrent: true };
+    }
+    return null;
   };
 
   ngOnInit(): void {
+    // Fetch categories and map existing category if editing
+    this.categoryService.getAllCategories().subscribe(data => {
+      this.categories = data;
+      
+      // If editing, find which category owns the shelf's equipmentType
+      if (this.shelf && this.shelf.equipmentType) {
+        const matchingCategory = this.categories.find(c => 
+          c.types?.map(t => t.toLowerCase()).includes(this.shelf!.equipmentType.toLowerCase())
+        );
+        if (matchingCategory && matchingCategory.name) {
+          this.shelfForm.get('category')?.setValue(matchingCategory.name, { emitEvent: true });
+        }
+      }
+    });
+
+    // When category changes, update available types
+    this.shelfForm.get('category')?.valueChanges.subscribe(catName => {
+      const selectedCat = this.categories.find(c => c.name === catName);
+      if (selectedCat && selectedCat.types) {
+        this.availableTypes = selectedCat.types;
+      } else {
+        this.availableTypes = [];
+      }
+      
+      // Reset equipment type if current one isn't in the new list
+      const currentType = this.shelfForm.get('equipmentType')?.value;
+      if (currentType && !this.availableTypes.map(t => t.toLowerCase()).includes(currentType.toLowerCase())) {
+         this.shelfForm.get('equipmentType')?.setValue('');
+      }
+    });
+
     // Fetch existing shelves for uniqueness validation
     this.shelfService.getAllShelves().subscribe(shelves => {
       const currentNb = this.shelf ? this.shelf.nb?.toLowerCase() : '';
@@ -62,6 +101,10 @@ export class ShelfFormComponent implements OnInit {
 
     if (this.shelf) {
       this.shelfForm.patchValue(this.shelf);
+      if (this.shelf.currentQte && this.shelf.currentQte > 0) {
+        this.shelfForm.get('equipmentType')?.disable();
+        this.shelfForm.get('category')?.disable();
+      }
     }
 
     if (this.shelfForm.get('equipmentType')?.value) {
@@ -101,7 +144,10 @@ export class ShelfFormComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    const shelfData = this.shelfForm.value;
+    const shelfData = this.shelfForm.getRawValue();
+    
+    // Remove the transient category property before sending to the backend
+    delete shelfData.category;
     
     // Force the identifier back to lowercase before saving (e.g. PC-8 -> pc-8)
     if (shelfData.nb) {

@@ -168,7 +168,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     const groupsMap = new Map<string, GroupedEquipment>();
     
     this.filteredEquipments.forEach(eq => {
-      const key = `${eq.brand}|${eq.type}|${eq.equipmentName}`;
+      const key = `${eq.category}|${eq.type}|${eq.brand}`;
       if (!groupsMap.has(key)) {
         groupsMap.set(key, {
           groupId: key,
@@ -199,6 +199,10 @@ export class EquipmentListComponent implements OnInit, OnChanges {
       const first = group.items[0];
       
       // Calculate common attributes
+      const allNames = group.items.map(item => item.equipmentName || '—');
+      const uniqueNames = [...new Set(allNames)];
+      group.name = uniqueNames.length === 1 ? uniqueNames[0] : `${group.brand} ${group.type} (Multiple)`;
+
       group.commonSupplier = group.items.every(item => item.supplier === first.supplier) ? (first.supplier || '—') : '—';
       group.commonPurchaseDate = group.items.every(item => item.purchaseDate === first.purchaseDate) ? (first.purchaseDate || '') : '';
       group.commonLocation = group.items.every(item => item.shelfId === first.shelfId) ? this.getShelfLocation(first.shelfId) : 'Mixed';

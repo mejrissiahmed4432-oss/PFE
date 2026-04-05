@@ -11,6 +11,8 @@ import { SupplierService } from '../../supplier/supplier.service';
 import { Supplier } from '../../supplier/supplier.model';
 import { ShelfService } from '../../shelf/shelf.service';
 import { Shelf } from '../../shelf/shelf.model';
+import { CategoryService } from '../../category-manager/category.service';
+import { EquipmentCategory } from '../../category-manager/category.model';
 
 // ─── Interfaces ───────────────────────────────────────────────────────────
 export interface UnitRow {
@@ -41,6 +43,7 @@ export interface UnitRow {
   selectedForGeneralSync?: boolean;
   selectedForSpecSync?: boolean;
   selectedForSN?: boolean;
+  specification?: string;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────
@@ -73,8 +76,12 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   // ── Step 0: Setup ─────────────────────────────────────────────────────
   quantity: number = 1;
   category: 'Asset' | 'Consumable' = 'Asset';
+  selectedCategoryName: string = '';
   type: string = '';
   configMode: 'same' | 'different' = 'same';
+  
+  categories: EquipmentCategory[] = [];
+  availableTypes: string[] = [];
 
   // ── Step 1: General Info ──────────────────────────────────────────────
   sharedName: string = '';
@@ -90,6 +97,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   sharedGpu: string = '';
   sharedOs: string = '';
   sharedNetInterface: string = '';
+  sharedSpecification: string = '';
   sharedSerial: string = '';
 
   // ── Step 4: Purchase Info ─────────────────────────────────────────────
@@ -137,11 +145,13 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   constructor(
     private equipmentService: EquipmentService,
     private supplierService: SupplierService,
-    private shelfService: ShelfService
+    private shelfService: ShelfService,
+    private categoryService: CategoryService
   ) { }
 
   ngOnInit(): void {
     this.supplierService.getAllSuppliers().subscribe({ next: d => this.suppliers = d });
+    this.categoryService.getAllCategories().subscribe({ next: d => this.categories = d });
     this.sharedPurchaseDate = new Date().toISOString().split('T')[0];
     
     // ─── SN Uniqueness Validation Pipeline (Robust) ────────────────────────
@@ -188,6 +198,18 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   private populateFromPrefill(data: Equipment): void {
     this.type = data.type || '';
     this.category = data.category as 'Asset' | 'Consumable';
+    
+    // Auto-select category and populate types for prefill
+    if (this.type) {
+      const cat = this.categories.find(c => 
+        c.types?.map(t => t.toLowerCase()).includes(this.type.toLowerCase())
+      );
+      if (cat) {
+        this.selectedCategoryName = cat.name || '';
+        this.availableTypes = cat.types || [];
+      }
+    }
+    
     this.sharedName = data.equipmentName || '';
     this.sharedBrand = data.brand || '';
     this.sharedModel = data.model || '';
@@ -199,6 +221,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.sharedStorage = data.storage || '';
     this.sharedGpu = data.graphicsCard || '';
     this.sharedOs = data.operatingSystem || '';
+    this.sharedSpecification = data.specification || '';
     
     // Purchase
     this.sharedPurchaseDate = data.purchaseDate ? data.purchaseDate.toString().split('T')[0] : '';
@@ -228,6 +251,10 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   // ── Computed helpers ──────────────────────────────────────────────────
   get isComputerType(): boolean { return this.computerTypes.includes(this.type); }
   get isConsumable(): boolean { return this.consumableTypes.includes(this.type); }
+  get isDeviceCategory(): boolean { 
+    const cat = this.selectedCategoryName?.toUpperCase();
+    return cat === 'DEVICE' || cat === 'SERVER'; 
+  }
   get totalSteps(): number { return 8; }   // 0‑7
   get progressPct(): number { return Math.round((this.currentStep / 7) * 100); }
   get perUnitPrice(): number {
@@ -236,8 +263,35 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   }
 
   // ── Step 0 handlers ───────────────────────────────────────────────────
+  onCategoryChange(): void {
+    const selectedCat = this.categories.find(c => c.name === this.selectedCategoryName);
+    if (selectedCat) {
+      this.availableTypes = selectedCat.types || [];
+      
+      // Auto-set internal category tag
+      if (this.selectedCategoryName === 'COMPONENT' || 
+          this.selectedCategoryName === 'STORAGE' || 
+          this.selectedCategoryName === 'PERIPHERAL') {
+         // This is a simplified check based on previous logic "ram, hard drive, ssd..."
+         // We can refine this if needed, but for now we'll stick to a heuristic
+         // or just let it be Asset by default unless specifically known.
+      }
+    } else {
+      this.availableTypes = [];
+    }
+
+    // Reset type if not in new list
+    if (this.type && !this.availableTypes.map(t => t.toLowerCase()).includes(this.type.toLowerCase())) {
+      this.type = '';
+    }
+    this.validateStockCapacity();
+  }
+
   onTypeChange(): void {
-    if (this.consumableTypes.includes(this.type)) {
+    // If category is one of STORAGE, COMPONENT, it's often a Consumable in the previous logic
+    if (['STORAGE', 'COMPONENT'].includes(this.selectedCategoryName)) {
+      this.category = 'Consumable';
+    } else if (['ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'].includes(this.type.toLowerCase())) {
       this.category = 'Consumable';
     } else {
       this.category = 'Asset';
@@ -494,8 +548,9 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     if (this.currentStep === 0) { this.rebuildUnits(); }
 
     if (this.currentStep === 1) {
-      if (this.category === 'Consumable' || !this.isComputerType) {
-        this.currentStep = 3; return;
+      if (this.category === 'Consumable') {
+        // We still skip step 2 & 3 for consumables? 
+        // Actually, let's just let it go through step 2 for general specs.
       }
     }
     if (this.currentStep === 2) {
@@ -518,12 +573,12 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
 
   prevStep(): void {
     if (this.currentStep === 3) {
-      if (this.category === 'Consumable' || !this.isComputerType) {
-        this.currentStep = 1; return;
+      if (this.category === 'Consumable') {
+        // 
       }
     }
     if (this.currentStep === 4) {
-      if (this.isComputerType && this.specMode === 'different') {
+      if (this.specMode === 'different') {
         this.currentStep = 2; return;
       }
     }
@@ -533,6 +588,34 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
       }
     }
     if (this.currentStep > 0) this.currentStep--;
+  }
+
+  goToStep(targetStep: number): void {
+    if (targetStep === this.currentStep) return;
+
+    // Backward navigation: always allowed
+    if (targetStep < this.currentStep) {
+      this.currentStep = targetStep;
+      return;
+    }
+
+    // Forward navigation: validate each intermediate step
+    // Run units rebuild if we're going past step 0
+    if (this.currentStep === 0) { this.rebuildUnits(); }
+
+    for (let step = this.currentStep; step < targetStep; step++) {
+      const savedStep = this.currentStep;
+      this.currentStep = step;
+      if (!this.isStepValid()) {
+        // Stop here — can't skip this invalid step
+        return;
+      }
+      this.currentStep = savedStep;
+    }
+
+    // All intermediate steps are valid — jump to target
+    this.currentStep = targetStep;
+    if (this.currentStep === 6) this.loadShelves();
   }
 
   // ── Step 6 helpers ────────────────────────────────────────────────────
@@ -637,6 +720,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         storage: same ? this.sharedStorage : u.storage,
         graphicsCard: same ? this.sharedGpu : u.graphicsCard,
         operatingSystem: same ? this.sharedOs : u.operatingSystem,
+        specification: same ? this.sharedSpecification : u.specification,
         department: 'stock',
         status: 'In Stock',
         shelfId: '' // assigned below
@@ -683,6 +767,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.sharedName = ''; this.sharedBrand = ''; this.sharedModel = ''; this.sharedNotes = '';
     this.sharedCpu = ''; this.sharedRam = ''; this.sharedStorage = '';
     this.sharedGpu = ''; this.sharedOs = ''; this.sharedNetInterface = '';
+    this.sharedSpecification = '';
     this.sharedSerial = '';
     this.purchaseMode = 'same';
     this.sharedPurchaseDate = new Date().toISOString().split('T')[0];
@@ -815,6 +900,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
           unit.graphicsCard = src.graphicsCard;
           unit.operatingSystem = src.operatingSystem;
           unit.networkInterface = src.networkInterface;
+          unit.specification = src.specification;
         }
       }
     } else if (type === 'purchase') {
@@ -855,6 +941,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
           if (u.selectedForSpecSync) {
             u.cpu = ''; u.ram = ''; u.storage = '';
             u.graphicsCard = ''; u.operatingSystem = ''; u.networkInterface = '';
+            u.specification = '';
             u.serialNumber = '';
           }
           break;
