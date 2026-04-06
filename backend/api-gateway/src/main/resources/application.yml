@@ -34,7 +34,7 @@ spring:
         - id: user-microservice
           uri: lb://user-microservice
           predicates:
-            - Path=/api/users/**
+            - Path=/api/users/**, /api/messages/**
         - id: equipment-route
           uri: lb://stock-manager-microservice
           predicates:
@@ -59,6 +59,10 @@ spring:
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/equipment-categories/**
+        - id: user-ws-route
+          uri: lb://user-microservice
+          predicates:
+            - Path=/ws/**
 
 eureka:
   client:

@@ -15,11 +15,14 @@ import { ShelfListComponent } from '../shelf/shelf-list/shelf-list.component';
 import { EquipmentService } from '../equipment/equipment.service';
 import { CategoryManagerComponent } from '../category-manager/category-manager.component';
 import { MessagingComponent } from '../messaging/messaging.component';
+import { MessagingService } from '../messaging/messaging.service';
+import { SocketService } from '../messaging/socket.service';
 
 @Component({
   selector: 'app-board',
   standalone: true,
   imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent],
+  providers: [MessagingService],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
 })
@@ -30,14 +33,18 @@ export class BoardComponent implements OnInit {
   isSidebarCollapsed: boolean = false;
   activeTab: string = 'dashboard'; // Defaulting to dashboard for view
   unreadAlertsCount: number = 0;
-  unreadMessagesCount: number = 4; // sample total from conversations (3+1)
+  unreadMessagesCount: number = 0;
   private userSub: Subscription | undefined;
+  private pollSub: Subscription | undefined;
+  private socketSub: Subscription | undefined;
 
   constructor(
     private authService: AuthService, 
     private router: Router,
     private alertService: AlertService,
-    private equipmentService: EquipmentService
+    private equipmentService: EquipmentService,
+    private messagingService: MessagingService,
+    private socketService: SocketService
   ) { }
 
   ngOnInit(): void {
@@ -47,19 +54,36 @@ export class BoardComponent implements OnInit {
         this.router.navigate(['/login']);
       } else {
         this.loadUnreadCount();
+        
+        // 1. WebSocket Subscription for instant updates
+        this.socketSub?.unsubscribe();
+        this.socketSub = this.socketService.onUnreadCount.subscribe(count => {
+          this.unreadMessagesCount = count;
+        });
+
+        // 2. Reduce non-realtime polling to once per minute (standard dashboard sync)
+        if (!this.pollSub) {
+          import('rxjs').then(({ interval }) => {
+            this.pollSub = interval(60000).subscribe(() => this.loadUnreadCount());
+          });
+        }
       }
     });
   }
 
   ngOnDestroy(): void {
-    if (this.userSub) {
-      this.userSub.unsubscribe();
-    }
+    this.userSub?.unsubscribe();
+    this.pollSub?.unsubscribe();
+    this.socketSub?.unsubscribe();
   }
 
   loadUnreadCount(): void {
     this.alertService.getUnreadAlerts().subscribe(alerts => {
       this.unreadAlertsCount = alerts.length;
+    });
+    
+    this.messagingService.getUnreadCount().subscribe((res: any) => {
+      this.unreadMessagesCount = res.count || 0;
     });
   }
 
@@ -99,7 +123,6 @@ export class BoardComponent implements OnInit {
 
   openMessages(): void {
     this.activeTab = 'messages';
-    this.unreadMessagesCount = 0;
   }
 
   logout(): void {

@@ -17,9 +17,25 @@ export class AuthService {
     const userData = localStorage.getItem('user_data');
     if (userData) {
       this.currentUser = JSON.parse(userData);
+      // If we don't have an ID, we should try to sync from the server
+      if (!this.currentUser.id && this.isLoggedIn()) {
+        setTimeout(() => this.syncUserProfile(), 100);
+      }
       return this.currentUser;
     }
     return null;
+  }
+
+  syncUserProfile() {
+    this.http.get(`${this.apiUrl}/me`).subscribe({
+      next: (response: any) => {
+        const updated = { ...this.currentUser, ...response };
+        this.currentUser = updated;
+        localStorage.setItem('user_data', JSON.stringify(updated));
+        this.userSubject.next(updated);
+      },
+      error: () => { } // Ignore on fail
+    });
   }
 
   login(credentials: { email: string, password: any }): Observable<any> {
@@ -49,6 +65,10 @@ export class AuthService {
       if (userData) {
         this.currentUser = JSON.parse(userData);
       }
+    }
+    if (this.currentUser && !this.currentUser.id && this.isLoggedIn()) {
+       this.syncUserProfile();
+       // Return what we have for now, it'll update shortly via userSubject
     }
     return this.currentUser;
   }

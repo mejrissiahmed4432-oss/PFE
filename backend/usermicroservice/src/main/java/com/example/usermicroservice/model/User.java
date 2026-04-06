@@ -30,6 +30,8 @@ public class User {
     
     private String resetToken;
     private java.time.LocalDateTime resetTokenExpiry;
+    
+    private java.time.LocalDateTime lastActive;
 
     public User() {
         // Default photo if none provided
@@ -75,4 +77,7 @@ public class User {
 
     public java.time.LocalDateTime getResetTokenExpiry() { return resetTokenExpiry; }
     public void setResetTokenExpiry(java.time.LocalDateTime resetTokenExpiry) { this.resetTokenExpiry = resetTokenExpiry; }
+
+    public java.time.LocalDateTime getLastActive() { return lastActive; }
+    public void setLastActive(java.time.LocalDateTime lastActive) { this.lastActive = lastActive; }
 }

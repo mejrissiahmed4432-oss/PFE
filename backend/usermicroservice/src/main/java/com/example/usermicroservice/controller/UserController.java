@@ -62,6 +62,7 @@ public class UserController {
             User user = userOpt.get();
             String token = jwtUtils.generateToken(user.getEmail());
             return ResponseEntity.ok(new LoginResponse(
+                    user.getId(),
                     user.getFirstName(),
                     user.getLastName(),
                     user.getEmail(),
@@ -233,6 +234,48 @@ public class UserController {
             "lastName", user.getLastName(),
             "phoneNumber", user.getPhoneNumber() != null ? user.getPhoneNumber() : ""
         ));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUserProfile() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Not authenticated"));
+        }
+        
+        String email = auth.getPrincipal().toString();
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            return ResponseEntity.ok(Map.of(
+                "id", user.getId(),
+                "email", user.getEmail(),
+                "firstName", user.getFirstName() != null ? user.getFirstName() : "",
+                "lastName", user.getLastName() != null ? user.getLastName() : "",
+                "role", user.getRole() != null ? user.getRole() : "",
+                "phoneNumber", user.getPhoneNumber() != null ? user.getPhoneNumber() : ""
+            ));
+        }
+        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
+    }
+
+    @PostMapping("/ping")
+    public ResponseEntity<?> ping() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String email = auth.getPrincipal().toString();
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            user.setLastActive(LocalDateTime.now());
+            userRepository.save(user);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @GetMapping

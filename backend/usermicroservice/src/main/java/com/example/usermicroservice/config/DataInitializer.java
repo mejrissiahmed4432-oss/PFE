@@ -19,11 +19,11 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initDatabase(UserRepository repository) {
         return args -> {
-            String adminEmail = "mejrissiahmed4432@gmail.com";
+            String adminEmail = "mejrissiahmed44322@gmail.com";
             if (repository.findByEmail(adminEmail).isEmpty()) {
                 User admin = new User(
-                    "Ahmed", 
-                    "Mejrissi", 
+                    "Malek", 
+                    "Romdhane", 
                     adminEmail, 
                     passwordEncoder.encode("1234656Aa"), 
                     Role.ADMIN
