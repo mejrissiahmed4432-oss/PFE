@@ -31,6 +31,8 @@ import com.example.usermicroservice.model.User;
 import com.example.usermicroservice.repository.UserRepository;
 import com.example.usermicroservice.service.EmailService;
 
+import com.example.usermicroservice.config.WebSocketEventListener;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -41,6 +43,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private WebSocketEventListener webSocketEventListener;
 
     @Autowired
     private EmailService emailService;
@@ -280,6 +285,11 @@ public class UserController {
 
     @GetMapping
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        // Server-side calculation ignores any client-side timezone mismatches
+        for (User user : users) {
+             user.setOnline(webSocketEventListener.isUserOnline(user.getId()));
+        }
+        return users;
     }
 }

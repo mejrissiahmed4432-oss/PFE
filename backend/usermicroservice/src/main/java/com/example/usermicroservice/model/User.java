@@ -31,6 +31,9 @@ public class User {
     private String resetToken;
     private java.time.LocalDateTime resetTokenExpiry;
     
+    @org.springframework.data.annotation.Transient
+    private boolean online;
+    
     private java.time.LocalDateTime lastActive;
 
     public User() {
@@ -80,4 +83,7 @@ public class User {
 
     public java.time.LocalDateTime getLastActive() { return lastActive; }
     public void setLastActive(java.time.LocalDateTime lastActive) { this.lastActive = lastActive; }
+
+    public boolean isOnline() { return online; }
+    public void setOnline(boolean online) { this.online = online; }
 }

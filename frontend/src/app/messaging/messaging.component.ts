@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth.service';
@@ -62,6 +62,9 @@ export class MessagingComponent implements OnInit, AfterViewChecked, OnDestroy {
   editContent: string = '';
   private pollSubscription?: Subscription;
   private socketSubscription?: Subscription;
+  
+  // Real-time status overrides the timezone-dependent polling
+  private realTimeStatus: Map<string, boolean> = new Map();
 
   // Delete confirmation modal
   showDeleteModal: boolean = false;
@@ -71,7 +74,8 @@ export class MessagingComponent implements OnInit, AfterViewChecked, OnDestroy {
   constructor(
     private authService: AuthService,
     private messagingService: MessagingService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -119,6 +123,23 @@ export class MessagingComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.loadContacts();
     }));
 
+    // Handle instant real-time online/offline status
+    this.socketSubscription.add(this.socketService.onUserStatus.subscribe((status: {userId: string, online: boolean}) => {
+      console.log(`[MessagingComponent] Real-time status received for user ${status.userId}: online=${status.online}`);
+      this.realTimeStatus.set(status.userId, status.online);
+      
+      const contact = this.contacts.find(c => c.id === status.userId);
+      if (contact) {
+        contact.online = status.online;
+      }
+      
+      if (this.selectedUser?.id === status.userId) {
+        this.selectedUser.online = status.online;
+      }
+      
+      this.cdr.detectChanges(); // Force instant UI update
+    }));
+
     // 2. Reduce the background "heartbeat" to once per minute (for DB lastActive)
     this.pollSubscription = interval(60000).subscribe(() => {
       if (this.currentUser) {
@@ -149,8 +170,8 @@ export class MessagingComponent implements OnInit, AfterViewChecked, OnDestroy {
               lastMessage: summary?.lastMessage || '',
               lastTime: summary?.lastTime ? new Date(summary.lastTime) : null,
               unreadCount: summary?.unreadCount || 0,
-              // A user is considered online if lastActive is within 2 minutes (120000ms)
-              online: u.lastActive ? (new Date().getTime() - new Date(u.lastActive).getTime() < 120000) : false
+              // Server provides exact 'online' boolean status now. We override with instant WebSocket changes if current session receives any.
+              online: this.realTimeStatus.has(u.id) ? this.realTimeStatus.get(u.id) : (u.online ?? (u.lastActive ? (new Date().getTime() - new Date(u.lastActive).getTime() < 120000) : false))
             };
           })
           .sort((a, b) => {
@@ -236,6 +257,7 @@ export class MessagingComponent implements OnInit, AfterViewChecked, OnDestroy {
       // Refresh history immediately to get the official server state (with ID)
       // This avoids duplicates because loadHistory now deduplicates by ID
       this.loadHistory(this.selectedUser!.id, true);
+      this.loadContacts();
     });
   }
 
@@ -351,6 +373,7 @@ export class MessagingComponent implements OnInit, AfterViewChecked, OnDestroy {
         // All files sent — reload history once at the end
         if (this.selectedUser?.id === receiverId) {
           this.loadHistory(receiverId, true);
+          this.loadContacts();
         }
         return;
       }

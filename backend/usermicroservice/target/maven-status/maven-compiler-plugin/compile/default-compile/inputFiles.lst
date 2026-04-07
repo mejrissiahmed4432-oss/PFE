@@ -6,6 +6,7 @@ C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\exampl
 C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\repository\UserRepository.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\service\EmailService.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\config\JwtRequestFilter.java
+C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\config\WebSocketEventListener.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\config\DataInitializer.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\dto\ChangePasswordRequest.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\exception\GlobalExceptionHandler.java
@@ -17,5 +18,6 @@ C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\exampl
 C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\config\MongoConfig.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\config\JwtUtils.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\controller\MessageController.java
+C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\config\WebSocketConfig.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\dto\ForgotPasswordRequest.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\usermicroservice\src\main\java\com\example\usermicroservice\dto\ResetPasswordRequest.java

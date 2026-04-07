@@ -14,7 +14,7 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   private getInitialUser() {
-    const userData = localStorage.getItem('user_data');
+    const userData = sessionStorage.getItem('user_data');
     if (userData) {
       this.currentUser = JSON.parse(userData);
       // If we don't have an ID, we should try to sync from the server
@@ -31,7 +31,7 @@ export class AuthService {
       next: (response: any) => {
         const updated = { ...this.currentUser, ...response };
         this.currentUser = updated;
-        localStorage.setItem('user_data', JSON.stringify(updated));
+        sessionStorage.setItem('user_data', JSON.stringify(updated));
         this.userSubject.next(updated);
       },
       error: () => { } // Ignore on fail
@@ -43,8 +43,8 @@ export class AuthService {
       tap((response: any) => {
         this.currentUser = response;
         if (response.token) {
-          localStorage.setItem('auth_token', response.token);
-          localStorage.setItem('user_data', JSON.stringify(response));
+          sessionStorage.setItem('auth_token', response.token);
+          sessionStorage.setItem('user_data', JSON.stringify(response));
           this.userSubject.next(response);
         }
       })
@@ -61,7 +61,7 @@ export class AuthService {
 
   getCurrentUser() {
     if (!this.currentUser) {
-      const userData = localStorage.getItem('user_data');
+      const userData = sessionStorage.getItem('user_data');
       if (userData) {
         this.currentUser = JSON.parse(userData);
       }
@@ -75,13 +75,13 @@ export class AuthService {
 
   logout() {
     this.currentUser = null;
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
+    sessionStorage.removeItem('auth_token');
+    sessionStorage.removeItem('user_data');
     this.userSubject.next(null);
   }
 
   isLoggedIn(): boolean {
-    return localStorage.getItem('auth_token') !== null;
+    return sessionStorage.getItem('auth_token') !== null;
   }
 
   updateProfile(userData: any): Observable<any> {
@@ -91,7 +91,7 @@ export class AuthService {
         const current = this.getCurrentUser();
         const updated = { ...current, ...response };
         this.currentUser = updated;
-        localStorage.setItem('user_data', JSON.stringify(updated));
+        sessionStorage.setItem('user_data', JSON.stringify(updated));
         this.userSubject.next(updated);
       })
     );

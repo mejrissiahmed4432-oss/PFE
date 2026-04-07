@@ -13,8 +13,11 @@ export class SocketService {
   private unreadCountSubject = new Subject<number>();
   private messageUpdateSubject = new Subject<any>();
   private readUpdateSubject = new Subject<string>();
+  private userStatusSubject = new Subject<{userId: string, online: boolean}>();
   
   private connectionStatus = new BehaviorSubject<boolean>(false);
+
+  private currentUserId: string | null = null;
 
   constructor(private authService: AuthService) {
     this.init();
@@ -37,10 +40,17 @@ export class SocketService {
   }
 
   private connect(userId: string) {
-    if (this.stompClient && this.stompClient.connected) return;
+    if (this.stompClient && this.stompClient.connected) {
+      if (this.currentUserId === userId) {
+        return; // Already connected for this user
+      } else {
+        this.disconnect(); // Disconnect old user
+      }
+    }
+    
+    this.currentUserId = userId;
 
-    const socket = new SockJS('/ws');
-    this.stompClient = Stomp.over(socket);
+    this.stompClient = Stomp.over(() => new SockJS('/ws'));
 
     this.stompClient.onConnect = (frame) => {
       this.connectionStatus.next(true);
@@ -66,6 +76,11 @@ export class SocketService {
       this.stompClient!.subscribe(`/topic/read-updates/${userId}`, (msg: Message) => {
         const body = JSON.parse(msg.body);
         this.readUpdateSubject.next(body.readerId);
+      });
+
+      // Subscribe to global user online/offline status
+      this.stompClient!.subscribe(`/topic/user-status`, (msg: Message) => {
+        this.userStatusSubject.next(JSON.parse(msg.body));
       });
     };
 
@@ -103,6 +118,10 @@ export class SocketService {
 
   get onReadUpdate(): Observable<string> {
     return this.readUpdateSubject.asObservable();
+  }
+
+  get onUserStatus(): Observable<{userId: string, online: boolean}> {
+    return this.userStatusSubject.asObservable();
   }
 
   get isConnected(): Observable<boolean> {
