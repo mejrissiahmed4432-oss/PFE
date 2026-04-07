@@ -523,10 +523,14 @@
 
 /* Actions */
 .actions-cell {
+  vertical-align: middle;
+}
+
+.actions-wrap {
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 100%;
+  justify-content: flex-start;
 }
 
 .action-icon {
@@ -682,12 +686,24 @@
   justify-content: center;
 }
 
-.ti-laptop, .ti-pc   { background: #dbeafe; color: #3b82f6; }
-.ti-monitor           { background: #dcfce7; color: #16a34a; }
-.ti-server            { background: #ede9fe; color: #7c3aed; }
-.ti-printer           { background: #fed7aa; color: #ea580c; }
-.ti-router            { background: #d1fae5; color: #059669; }
-.ti-default           { background: #f1f5f9; color: #64748b; }
+.ti-laptop       { background: #dbeafe; color: #3b82f6; }
+.ti-pc           { background: #e0f2fe; color: #0284c7; }
+.ti-monitor      { background: #dcfce7; color: #16a34a; }
+.ti-server       { background: #ede9fe; color: #7c3aed; }
+.ti-printer      { background: #ffedd5; color: #ea580c; }
+.ti-scanner      { background: #fef08a; color: #ca8a04; }
+.ti-projector    { background: #fae8ff; color: #c026d3; }
+.ti-router       { background: #d1fae5; color: #059669; }
+.ti-ups          { background: #fce7f3; color: #db2777; }
+.ti-tablet       { background: #e0e7ff; color: #4f46e5; }
+.ti-phone        { background: #e0e7ff; color: #4338ca; }
+.ti-keyboard     { background: #f1f5f9; color: #475569; }
+.ti-mouse        { background: #f1f5f9; color: #475569; }
+.ti-headset      { background: #ffedd5; color: #f97316; }
+.ti-ram          { background: #dcfce7; color: #15803d; }
+.ti-hdd          { background: #e2e8f0; color: #334155; }
+.ti-cables       { background: #fef3c7; color: #d97706; }
+.ti-default      { background: #f1f5f9; color: #64748b; }
 
 /* QR Modal Core Styles */
 .qr-overlay {

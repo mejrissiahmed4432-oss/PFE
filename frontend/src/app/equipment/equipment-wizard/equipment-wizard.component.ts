@@ -256,7 +256,26 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     return cat === 'DEVICE' || cat === 'SERVER'; 
   }
   get totalSteps(): number { return 8; }   // 0‑7
-  get progressPct(): number { return Math.round((this.currentStep / 7) * 100); }
+  get progressPct(): number { return Math.round((this.currentStep / (this.totalSteps - 1)) * 100); }
+
+  // ── Dynamic display steps when Serial Numbers step is skipped ────────────
+  get displayTotalSteps(): number {
+    return (this.quantity > 1 && this.specMode === 'different') ? 7 : 8;
+  }
+
+  get displayStep(): number {
+    if (this.quantity > 1 && this.specMode === 'different' && this.currentStep > 2) {
+      return this.currentStep; // currentStep is 0-indexed, so index 4 -> Step 4
+    }
+    return this.currentStep + 1;
+  }
+
+  getDotNumber(index: number): number {
+    if (this.quantity > 1 && this.specMode === 'different' && index > 2) {
+      return index; // instead of index + 1
+    }
+    return index + 1;
+  }
   get perUnitPrice(): number {
     if (this.sharedPriceMode === 'per-unit') return this.sharedPrice;
     return this.quantity ? this.sharedPrice / this.quantity : 0;
@@ -462,13 +481,18 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
       this.sharedSerial = generateUniqueSN();
       this.onSNChange(this.sharedSerial);
     } else {
-      const selected = this.units.filter(u => u.selectedForSN);
+      const isSpecStep = this.currentStep === 2;
+      const selected = this.units.filter(u => isSpecStep ? u.selectedForSpecSync : u.selectedForSN);
       if (selected.length > 0) {
         selected.forEach(u => {
           u.serialNumber = generateUniqueSN();
           const idx = this.units.indexOf(u);
           this.onSNChange(u.serialNumber, idx);
-          u.selectedForSN = false;
+          if (isSpecStep) {
+            u.selectedForSpecSync = false;
+          } else {
+            u.selectedForSN = false;
+          }
         });
       }
     }

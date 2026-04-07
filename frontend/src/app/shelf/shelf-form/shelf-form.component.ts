@@ -31,7 +31,7 @@ export class ShelfFormComponent implements OnInit {
     this.shelfForm = this.fb.group({
       category: ['', Validators.required],
       nb: ['', Validators.required],
-      equipmentType: ['', Validators.required],
+      equipmentType: [{ value: '', disabled: true }, Validators.required],
       maxQte: [10, [Validators.required, Validators.min(1)]],
       minQte: [2, [Validators.required, Validators.min(0)]],
       currentQte: [0, [Validators.min(0)]],
@@ -78,10 +78,21 @@ export class ShelfFormComponent implements OnInit {
         this.availableTypes = [];
       }
       
+      
       // Reset equipment type if current one isn't in the new list
-      const currentType = this.shelfForm.get('equipmentType')?.value;
-      if (currentType && !this.availableTypes.map(t => t.toLowerCase()).includes(currentType.toLowerCase())) {
-         this.shelfForm.get('equipmentType')?.setValue('');
+      const eqTypeCtrl = this.shelfForm.get('equipmentType');
+      if (eqTypeCtrl) {
+        if (!catName) {
+           eqTypeCtrl.disable({ emitEvent: false });
+        } else {
+           if (!this.shelf || !this.shelf.currentQte || this.shelf.currentQte === 0) {
+             eqTypeCtrl.enable({ emitEvent: false });
+           }
+        }
+        const currentType = eqTypeCtrl.value;
+        if (currentType && !this.availableTypes.map(t => t.toLowerCase()).includes(currentType.toLowerCase())) {
+           eqTypeCtrl.setValue('');
+        }
       }
     });
 
@@ -101,9 +112,14 @@ export class ShelfFormComponent implements OnInit {
 
     if (this.shelf) {
       this.shelfForm.patchValue(this.shelf);
+      
+      if (this.shelf.equipmentType && (!this.shelf.currentQte || this.shelf.currentQte === 0)) {
+         this.shelfForm.get('equipmentType')?.enable({ emitEvent: false });
+      }
+
       if (this.shelf.currentQte && this.shelf.currentQte > 0) {
-        this.shelfForm.get('equipmentType')?.disable();
-        this.shelfForm.get('category')?.disable();
+        this.shelfForm.get('equipmentType')?.disable({ emitEvent: false });
+        this.shelfForm.get('category')?.disable({ emitEvent: false });
       }
     }
 

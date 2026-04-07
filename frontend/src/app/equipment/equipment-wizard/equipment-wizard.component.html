@@ -16,7 +16,7 @@
         </div>
         <div>
           <h2 class="wizard-title">{{ prefillData ? 'Add Similar Units' : 'Add Equipment' }}</h2>
-          <p class="wizard-subtitle">Step {{ currentStep + 1 }} of {{ totalSteps }} — {{ stepLabels[currentStep] }}</p>
+          <p class="wizard-subtitle">Step {{ displayStep }} of {{ displayTotalSteps }} — {{ stepLabels[currentStep] }}</p>
         </div>
       </div>
       <button class="wizard-close" (click)="close()">
@@ -33,17 +33,19 @@
       <div class="wizard-progress-fill" [style.width.%]="progressPct"></div>
     </div>
     <div class="wizard-step-dots">
-      <div *ngFor="let l of stepLabels; let i = index"
-           class="step-dot"
-           [class.done]="i < currentStep"
-           [class.current]="i === currentStep"
-           [class.clickable-back]="i < currentStep"
-           [class.clickable-forward]="i > currentStep"
-           (click)="goToStep(i)"
-           [title]="i < currentStep ? 'Go back to ' + l : (i > currentStep ? 'Jump to ' + l : l)">
-        <span class="dot-num">{{ i + 1 }}</span>
-        <span class="dot-label">{{ l }}</span>
-      </div>
+      <ng-container *ngFor="let l of stepLabels; let i = index">
+        <div class="step-dot"
+             *ngIf="!(i === 3 && quantity > 1 && specMode === 'different')"
+             [class.done]="i < currentStep"
+             [class.current]="i === currentStep"
+             [class.clickable-back]="i < currentStep"
+             [class.clickable-forward]="i > currentStep"
+             (click)="goToStep(i)"
+             [title]="i < currentStep ? 'Go back to ' + l : (i > currentStep ? 'Jump to ' + l : l)">
+          <span class="dot-num">{{ getDotNumber(i) }}</span>
+          <span class="dot-label">{{ l }}</span>
+        </div>
+      </ng-container>
     </div>
 
     <!-- ── STEP CONTENT ────────────────────────────── -->
@@ -933,7 +935,7 @@
       </div>
 
       <div class="footer-center step-counter">
-        {{ currentStep + 1 }} / {{ totalSteps }}
+        {{ displayStep }} / {{ displayTotalSteps }}
       </div>
 
       <div class="footer-right">

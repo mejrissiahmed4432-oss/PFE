@@ -50,6 +50,11 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>
         <span class="nav-label">Alerts</span>
       </a>
+      <!-- Schedule -->
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'schedule'" (click)="activeTab = 'schedule'" title="Schedule">
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="8" y1="14" x2="8.01" y2="14"></line><line x1="12" y1="14" x2="12.01" y2="14"></line><line x1="16" y1="14" x2="16.01" y2="14"></line></svg>
+        <span class="nav-label">Schedule</span>
+      </a>
       <!-- Reports -->
       <a href="javascript:void(0)" class="nav-item" title="Reports">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
@@ -103,6 +108,73 @@
           <span class="badge-count badge-blue" *ngIf="unreadMessagesCount > 0">{{ unreadMessagesCount }}</span>
         </button>
 
+
+
+        <!-- Notification Dropdown Menu -->
+        <div class="notif-container" style="position: relative; display: inline-block;">
+          <button class="action-btn notification-btn" title="Notifications" (click)="toggleNotifications($event)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="badge-count badge-blue" *ngIf="unreadNotificationsCount > 0">{{ unreadNotificationsCount }}</span>
+          </button>
+          
+          <div class="dropdown-menu notifications-menu" [class.show]="isNotificationsOpen" (click)="$event.stopPropagation()">
+            <div class="notif-header">
+              <div class="notif-title-area">
+                <span class="notif-title">Notifications</span>
+                <span class="notif-badge" *ngIf="unreadNotificationsCount > 0">{{ unreadNotificationsCount }} NEW</span>
+              </div>
+              <button class="notif-text-btn" title="Mark all as read" (click)="markAllNotificationsAsRead($event)">
+                Mark All Read
+              </button>
+            </div>
+            
+            <div class="notif-list">
+              <div *ngIf="notificationsList.length === 0" style="padding: 32px; text-align: center; color: var(--c-text-mute); font-size: 0.9rem;">
+                No new notifications
+              </div>
+
+              <div class="notif-item" *ngFor="let notif of notificationsList" [style.backgroundColor]="notif.bgColor">
+                 <div class="notif-icon-box" [ngSwitch]="notif.icon">
+                   <svg *ngSwitchCase="'link'" class="notif-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                   <svg *ngSwitchCase="'shield'" class="notif-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                   <svg *ngSwitchCase="'bell'" class="notif-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                   <svg *ngSwitchCase="'wrench'" class="notif-icon-svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                 </div>
+                 <div class="notif-content">
+                    <div class="notif-text">
+                       <span class="notif-dot" *ngIf="notif.isNew"></span>
+                       {{ notif.title }}
+                    </div>
+                    <div class="notif-time">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                      {{ notif.time }}
+                    </div>
+                 </div>
+                 <button class="notif-close" (click)="deleteNotification(notif.id, $event)" title="Delete">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                 </button>
+              </div>
+            </div>
+            
+            <div class="notif-footer">
+               <button class="notif-text-btn danger" (click)="deleteAllNotifications($event)">Clear All</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts Icon -->
+        <button class="action-btn notification-btn" title="Alerts" (click)="activeTab = 'alerts'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span class="badge-count badge-alert" *ngIf="unreadAlertsCount > 0">{{ unreadAlertsCount }}</span>
+        </button>
+
         <!-- Language Icon with Flags -->
         <div class="dropdown-wrapper">
           <button class="action-btn lang-btn" title="Change Language">
@@ -129,15 +201,6 @@
             </a>
           </div>
         </div>
-
-        <!-- Notification -->
-        <button class="action-btn notification-btn" title="Notifications" (click)="activeTab = 'alerts'">
-          <svg xmlns="http://www.w3.org/2000/svg" class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-          </svg>
-          <span class="badge-count" *ngIf="unreadAlertsCount > 0">{{ unreadAlertsCount }}</span>
-        </button>
 
         <!-- User Avatar & Profile Dropdown -->
         <div class="dropdown-wrapper">
@@ -205,6 +268,9 @@
 
       <!-- Alerts Component View -->
       <app-alerts *ngIf="activeTab === 'alerts'"></app-alerts>
+
+      <!-- Schedule Component View -->
+      <app-schedule *ngIf="activeTab === 'schedule'"></app-schedule>
 
       <!-- Messaging Component View -->
       <app-messaging *ngIf="activeTab === 'messages'"></app-messaging>
