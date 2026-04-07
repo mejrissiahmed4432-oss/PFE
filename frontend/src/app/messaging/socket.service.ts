@@ -9,7 +9,10 @@ import { AuthService } from '../auth.service';
 })
 export class SocketService {
   private stompClient: Client | null = null;
+  private alertsStompClient: Client | null = null;
+  
   private messageSubject = new Subject<any>();
+  private alertSubject = new Subject<void>();
   private unreadCountSubject = new Subject<number>();
   private messageUpdateSubject = new Subject<any>();
   private readUpdateSubject = new Subject<string>();
@@ -33,10 +36,35 @@ export class SocketService {
     this.authService.user$.subscribe(user => {
       if (user) {
         this.connect(user.id);
+        this.connectAlerts();
       } else {
         this.disconnect();
+        this.disconnectAlerts();
       }
     });
+  }
+
+  private connectAlerts() {
+    if (this.alertsStompClient && this.alertsStompClient.connected) return;
+
+    const socket = new SockJS('/ws-alerts');
+    this.alertsStompClient = Stomp.over(socket);
+
+    this.alertsStompClient.onConnect = () => {
+      console.log('Connected to Alerts WebSocket');
+      this.alertsStompClient!.subscribe('/topic/alerts', (msg: Message) => {
+        this.alertSubject.next();
+      });
+    };
+
+    this.alertsStompClient.activate();
+  }
+
+  private disconnectAlerts() {
+    if (this.alertsStompClient) {
+      this.alertsStompClient.deactivate();
+      this.alertsStompClient = null;
+    }
   }
 
   private connect(userId: string) {
@@ -52,7 +80,7 @@ export class SocketService {
 
     this.stompClient = Stomp.over(() => new SockJS('/ws'));
 
-    this.stompClient.onConnect = (frame) => {
+    this.stompClient.onConnect = (frame: any) => {
       this.connectionStatus.next(true);
       console.log('Connected to WebSocket');
 
@@ -84,7 +112,7 @@ export class SocketService {
       });
     };
 
-    this.stompClient.onStompError = (frame) => {
+    this.stompClient.onStompError = (frame: any) => {
       console.error('Broker reported error: ' + frame.headers['message']);
       console.error('Additional details: ' + frame.body);
     };
@@ -106,6 +134,10 @@ export class SocketService {
 
   get onMessage(): Observable<any> {
     return this.messageSubject.asObservable();
+  }
+
+  get onAlertUpdate(): Observable<void> {
+    return this.alertSubject.asObservable();
   }
 
   get onUnreadCount(): Observable<number> {

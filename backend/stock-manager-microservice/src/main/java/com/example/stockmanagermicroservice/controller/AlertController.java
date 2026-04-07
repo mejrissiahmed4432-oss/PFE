@@ -37,4 +37,27 @@ public class AlertController {
         alertService.generateDemoAlert();
         return ResponseEntity.ok("Alerts generation triggered. Check your alerts list!");
     }
+
+    @PostMapping
+    public ResponseEntity<Void> createAlert(@RequestBody java.util.Map<String, String> body) {
+        String title    = body.getOrDefault("title", "Notification");
+        String message  = body.getOrDefault("message", "");
+        String type     = body.getOrDefault("type", "INFO");
+        String category = body.getOrDefault("category", "TASK");
+        String relatedId = body.get("relatedId");
+        alertService.createAlert(title, message, type, category, relatedId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAlert(@PathVariable String id) {
+        alertService.deleteAlert(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> deleteAllAlerts() {
+        alertService.deleteAllAlerts();
+        return ResponseEntity.noContent().build();
+    }
 }

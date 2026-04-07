@@ -75,10 +75,10 @@ public class EquipmentService {
         Equipment saved = equipmentRepository.save(equipment);
 
         // Generate alert for new equipment
-        alertService.createAlert("New Equipment Added",
-                "A new " + saved.getType() + " (" + saved.getEquipmentName() + ") has been registered in shelf "
-                        + saved.getShelfId(),
-                "SUCCESS", "INVENTORY", saved.getId());
+        String creator = (saved.getCreatedBy() != null && !saved.getCreatedBy().isEmpty()) ? saved.getCreatedBy() : "Ahmed";
+        alertService.createAlert("New " + saved.getType() + " Added",
+                "New " + saved.getType() + " " + saved.getBrand() + " " + saved.getModel() + " added by " + creator,
+                "SUCCESS", "EQUIPMENT", saved.getId());
 
         // Update shelf quantity (Atomically)
         if (saved.getShelfId() != null && !saved.getShelfId().isEmpty()) {

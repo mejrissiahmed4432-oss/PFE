@@ -396,15 +396,26 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   }
 
   getTypeKey(type?: string): string {
-    const map: Record<string, string> = {
-      'laptop': 'laptop', 'pc': 'pc', 'monitor': 'monitor', 'server': 'server',
-      'printer': 'printer', 'scanner': 'scanner', 'projector': 'projector',
-      'router': 'router', 'switch': 'router', 'ups': 'ups',
-      'tablet': 'tablet', 'phone': 'phone',
-      'keyboard': 'keyboard', 'mouse': 'mouse', 'headset': 'headset',
-      'ram': 'ram', 'hard drive': 'hdd', 'ssd': 'hdd', 'cables': 'cables'
-    };
-    return map[type?.toLowerCase() || ''] || 'default';
+    const t = type?.toLowerCase() || '';
+    if (t.includes('laptop')) return 'laptop';
+    if (t.includes('pc') || t.includes('computer') || t.includes('desktop')) return 'pc';
+    if (t.includes('monitor') || t.includes('screen') || t.includes('display')) return 'monitor';
+    if (t.includes('server')) return 'server';
+    if (t.includes('print')) return 'printer';
+    if (t.includes('scan')) return 'scanner';
+    if (t.includes('project')) return 'projector';
+    if (t.includes('rout') || t.includes('switch') || t.includes('hub')) return 'router';
+    if (t.includes('ups') || t.includes('power')) return 'ups';
+    if (t.includes('tab') || t.includes('ipad')) return 'tablet';
+    if (t.includes('phone') || t.includes('mobile')) return 'phone';
+    if (t.includes('key')) return 'keyboard';
+    if (t.includes('mouse')) return 'mouse';
+    if (t.includes('head') || t.includes('ear') || t.includes('audio')) return 'headset';
+    if (t.includes('ram') || t.includes('memory') || t.includes('ddr')) return 'ram';
+    if (t.includes('hard') || t.includes('hdd') || t.includes('ssd') || t.includes('drive') || t.includes('storage')) return 'hdd';
+    if (t.includes('cable') || t.includes('wire') || t.includes('cord')) return 'cables';
+    
+    return 'default';
   }
 
   isWarrantyExpired(date?: string): boolean {

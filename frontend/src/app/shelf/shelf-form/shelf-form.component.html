@@ -22,7 +22,7 @@
 
         <div class="form-group">
           <label>Equipment Type <span class="required-star">*</span></label>
-          <select formControlName="equipmentType" class="form-control" [attr.disabled]="!shelfForm.get('category')?.value ? true : null">
+          <select formControlName="equipmentType" class="form-control">
             <option value="" disabled selected>Select Type</option>
             <option *ngFor="let type of availableTypes" [value]="type">{{ type | titlecase }}</option>
           </select>

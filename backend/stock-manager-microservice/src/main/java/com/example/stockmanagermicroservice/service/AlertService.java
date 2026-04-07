@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Service
 public class AlertService {
@@ -19,6 +20,9 @@ public class AlertService {
 
     @Autowired
     private EquipmentRepository equipmentRepository;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     public List<Alert> getAllAlerts() {
         return alertRepository.findAllByOrderByCreatedAtDesc();
@@ -31,12 +35,25 @@ public class AlertService {
     public Alert markAsRead(String id) {
         Alert alert = alertRepository.findById(id).orElseThrow();
         alert.setRead(true);
-        return alertRepository.save(alert);
+        Alert saved = alertRepository.save(alert);
+        messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
+        return saved;
     }
 
     public void createAlert(String title, String message, String type, String category, String relatedId) {
         Alert alert = new Alert(title, message, type, category, relatedId);
         alertRepository.save(alert);
+        messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
+    }
+
+    public void deleteAlert(String id) {
+        alertRepository.deleteById(id);
+        messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
+    }
+
+    public void deleteAllAlerts() {
+        alertRepository.deleteAll();
+        messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
     }
 
     // Automatically generate alerts for warranty expiry

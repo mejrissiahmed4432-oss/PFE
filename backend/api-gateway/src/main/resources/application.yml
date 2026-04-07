@@ -63,6 +63,10 @@ spring:
           uri: lb://user-microservice
           predicates:
             - Path=/ws/**
+        - id: alerts-ws-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/ws-alerts/**
 
 eureka:
   client:
