@@ -20,6 +20,9 @@ public class SupplierService {
     @Autowired
     private EquipmentRepository equipmentRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAll();
     }
@@ -31,7 +34,11 @@ public class SupplierService {
     public Supplier createSupplier(Supplier supplier) {
         supplier.setCreatedAt(LocalDateTime.now());
         supplier.setUpdatedAt(LocalDateTime.now());
-        return supplierRepository.save(supplier);
+        Supplier saved = supplierRepository.save(supplier);
+        notificationService.createNotification("New Supplier Added: " + saved.getCompanyName(),
+                "Supplier " + saved.getCompanyName() + " has been registered",
+                "SUCCESS", "SUPPLIER", saved.getId());
+        return saved;
     }
 
     public Supplier updateSupplier(String id, Supplier supplierDetails) {
@@ -52,6 +59,11 @@ public class SupplierService {
             
             Supplier updatedSupplier = supplierRepository.save(supplier);
 
+            // Generate notification for supplier update
+            notificationService.createNotification("Supplier Updated: " + updatedSupplier.getCompanyName(),
+                    "Supplier " + updatedSupplier.getCompanyName() + " details have been modified",
+                    "INFO", "SUPPLIER", updatedSupplier.getId());
+
             // Cascade update to Equipment if companyName changed
             if (oldCompanyName != null && !oldCompanyName.equals(newCompanyName)) {
                 // We use findBySupplierId to identify equipments belonging to this supplier
@@ -69,6 +81,11 @@ public class SupplierService {
     }
 
     public void deleteSupplier(String id) {
+        supplierRepository.findById(id).ifPresent(supplier -> {
+            notificationService.createNotification("Supplier Deleted: " + supplier.getCompanyName(),
+                    "Supplier " + supplier.getCompanyName() + " has been removed",
+                    "ERROR", "SUPPLIER", id);
+        });
         supplierRepository.deleteById(id);
     }
 }

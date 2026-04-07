@@ -60,4 +60,5 @@ public class AlertController {
         alertService.deleteAllAlerts();
         return ResponseEntity.noContent().build();
     }
+
 }

@@ -25,11 +25,22 @@ public class AlertService {
     private SimpMessagingTemplate messagingTemplate;
 
     public List<Alert> getAllAlerts() {
-        return alertRepository.findAllByOrderByCreatedAtDesc();
+        return alertRepository.findAllByOrderByCreatedAtDesc().stream()
+                .filter(this::isSystemAlert)
+                .toList();
     }
 
     public List<Alert> getUnreadAlerts() {
-        return alertRepository.findByReadFalseOrderByCreatedAtDesc();
+        return alertRepository.findByReadFalseOrderByCreatedAtDesc().stream()
+                .filter(this::isSystemAlert)
+                .toList();
+    }
+
+    private boolean isSystemAlert(Alert alert) {
+        String cat = alert.getCategory() != null ? alert.getCategory().toUpperCase() : "";
+        // Only allow WARRANTY, STOCK, MAINTENANCE, and SYSTEM in the Alerts list
+        // Explicitly exclude CRUD categories: EQUIPMENT, SHELF, SUPPLIER, CATEGORY
+        return cat.equals("WARRANTY") || cat.equals("STOCK") || cat.equals("MAINTENANCE") || cat.equals("SYSTEM");
     }
 
     public Alert markAsRead(String id) {
@@ -57,19 +68,37 @@ public class AlertService {
     }
 
     // Automatically generate alerts for warranty expiry
-    // @Scheduled(fixedRate = 60000) // Every 1 minute (useful for testing)
-    @Scheduled(cron = "0 0 0 * * *") // Every day at midnight
+    //@Scheduled(cron = "0 0 0 * * *") // Every day at midnight
+    @Scheduled(cron = "0 * * * * *")
     public void generateWarrantyAlerts() {
-        LocalDate thirtyDaysFromNow = LocalDate.now().plusDays(30);
-        List<Equipment> expiringSoon = equipmentRepository.findAll().stream()
-                .filter(e -> e.getWarrantyExpiration() != null && e.getWarrantyExpiration().isBefore(thirtyDaysFromNow))
+        LocalDate today = LocalDate.now();
+        LocalDate thirtyDaysFromNow = today.plusDays(30);
+        
+        List<Equipment> equipmentWithWarranty = equipmentRepository.findAll().stream()
+                .filter(e -> e.getWarrantyExpiration() != null)
                 .toList();
 
-        for (Equipment eq : expiringSoon) {
-            String title = "Warranty Expiring: " + eq.getEquipmentName();
-            createAlert(title,
-                    "Warranty for " + eq.getEquipmentName() + " expires on " + eq.getWarrantyExpiration(),
-                    "WARNING", "WARRANTY", eq.getId());
+        for (Equipment eq : equipmentWithWarranty) {
+            LocalDate expDate = eq.getWarrantyExpiration();
+            
+            // Check if already expired (< today)
+            if (expDate.isBefore(today)) {
+                boolean alreadyHasError = alertRepository.existsByCategoryAndRelatedIdAndType("WARRANTY", eq.getId(), "ERROR");
+                if (!alreadyHasError) {
+                    createAlert("Warranty Expired: " + eq.getEquipmentName(),
+                            "Warranty for " + eq.getEquipmentName() + " expired on " + expDate + ".",
+                            "ERROR", "WARRANTY", eq.getId());
+                }
+            } 
+            // Else check if expiring soon (< today + 30)
+            else if (expDate.isBefore(thirtyDaysFromNow)) {
+                boolean alreadyHasWarning = alertRepository.existsByCategoryAndRelatedIdAndType("WARRANTY", eq.getId(), "WARNING");
+                if (!alreadyHasWarning) {
+                    createAlert("Warranty Expiring: " + eq.getEquipmentName(),
+                            "Warranty for " + eq.getEquipmentName() + " will expire soon on " + expDate + ".",
+                            "WARNING", "WARRANTY", eq.getId());
+                }
+            }
         }
     }
 
@@ -78,4 +107,5 @@ public class AlertService {
                 "This is a real-time test alert to verify the notification system is working perfectly.",
                 "INFO", "SYSTEM", null);
     }
+
 }

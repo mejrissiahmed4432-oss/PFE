@@ -23,6 +23,9 @@ public class EquipmentCategoryService {
     @Autowired
     private ShelfRepository shelfRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public List<EquipmentCategory> getAllCategories() {
         return repository.findAll();
     }
@@ -55,7 +58,17 @@ public class EquipmentCategoryService {
                 }
             }
         }
-        return repository.save(category);
+        EquipmentCategory saved = repository.save(category);
+        if (category.getId() == null) {
+            notificationService.createNotification("New Category Created: " + saved.getName(),
+                    "Equipment category " + saved.getName() + " has been added",
+                    "SUCCESS", "CATEGORY", saved.getId());
+        } else {
+            notificationService.createNotification("Category Updated: " + saved.getName(),
+                    "Equipment category " + saved.getName() + " has been modified",
+                    "INFO", "CATEGORY", saved.getId());
+        }
+        return saved;
     }
 
     public EquipmentCategory addTypeToCategory(String categoryId, String type) {
@@ -103,6 +116,9 @@ public class EquipmentCategoryService {
                 }
             }
             
+            notificationService.createNotification("Category Deleted: " + category.getName(),
+                    "Equipment category " + category.getName() + " has been removed",
+                    "ERROR", "CATEGORY", id);
             repository.deleteById(id);
         } else {
             throw new RuntimeException("Category not found with id: " + id);

@@ -7,4 +7,5 @@ import java.util.List;
 public interface AlertRepository extends MongoRepository<Alert, String> {
     List<Alert> findByReadFalseOrderByCreatedAtDesc();
     List<Alert> findAllByOrderByCreatedAtDesc();
+    boolean existsByCategoryAndRelatedIdAndType(String category, String relatedId, String type);
 }

@@ -16,8 +16,13 @@ public class EquipmentService {
     @Autowired
     private EquipmentRepository equipmentRepository;
 
+
+
     @Autowired
-    private AlertService alertService;
+    private NotificationService notificationService;
+
+    @Autowired
+    private ShelfService shelfService;
 
     @Autowired
     private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
@@ -39,24 +44,7 @@ public class EquipmentService {
         return !equipmentRepository.existsBySerialNumber(serialNumber.trim());
     }
 
-    private void updateShelfStatus(Shelf shelf) {
-        if (shelf.getCurrentQte() == null)
-            shelf.setCurrentQte(0);
-        if (shelf.getMaxQte() == null)
-            shelf.setMaxQte(0);
-        if (shelf.getMinQte() == null)
-            shelf.setMinQte(0);
 
-        if (shelf.getCurrentQte() == 0) {
-            shelf.setStatus("EMPTY");
-        } else if (shelf.getCurrentQte() < shelf.getMinQte()) {
-            shelf.setStatus("LOW");
-        } else if (shelf.getCurrentQte() >= shelf.getMaxQte()) {
-            shelf.setStatus("FULL");
-        } else {
-            shelf.setStatus("NORMAL");
-        }
-    }
 
     public Optional<Equipment> getEquipmentById(String id) {
         return equipmentRepository.findById(id);
@@ -74,9 +62,9 @@ public class EquipmentService {
         }
         Equipment saved = equipmentRepository.save(equipment);
 
-        // Generate alert for new equipment
-        String creator = (saved.getCreatedBy() != null && !saved.getCreatedBy().isEmpty()) ? saved.getCreatedBy() : "Ahmed";
-        alertService.createAlert("New " + saved.getType() + " Added",
+        // Generate notification for new equipment
+        String creator = (saved.getCreatedBy() != null && !saved.getCreatedBy().isEmpty()) ? saved.getCreatedBy() : "System";
+        notificationService.createNotification("New " + saved.getType() + " Added",
                 "New " + saved.getType() + " " + saved.getBrand() + " " + saved.getModel() + " added by " + creator,
                 "SUCCESS", "EQUIPMENT", saved.getId());
 
@@ -105,7 +93,7 @@ public class EquipmentService {
                 Shelf.class);
 
         if (updatedShelf != null) {
-            updateShelfStatus(updatedShelf);
+            shelfService.updateShelfStatus(updatedShelf);
             // Update ONLY the status atomically to avoid overwriting currentQte
             mongoTemplate.updateFirst(
                     query,
@@ -135,6 +123,11 @@ public class EquipmentService {
             if (newShelfId != null && !newShelfId.equals(oldShelfId)) {
                 equipment.setLocationChangeAt(LocalDateTime.now());
                 equipment.setLocationChanged(true);
+                
+                // Notification for location change
+                notificationService.createNotification("Location Changed: " + equipment.getEquipmentName(),
+                        "Equipment moved from shelf " + (oldShelfId != null ? oldShelfId : "N/A") + " to " + newShelfId,
+                        "INFO", "EQUIPMENT", equipment.getId());
             }
 
             equipment.setEquipmentName(equipmentDetails.getEquipmentName());
@@ -180,6 +173,12 @@ public class EquipmentService {
             equipment.setUpdatedAt(LocalDateTime.now());
             Equipment updated = equipmentRepository.save(equipment);
 
+            // Generate notification for equipment update
+            String updater = (updated.getCreatedBy() != null && !updated.getCreatedBy().isEmpty()) ? updated.getCreatedBy() : "System";
+            notificationService.createNotification("Equipment Updated: " + updated.getEquipmentName(),
+                    updated.getBrand() + " " + updated.getModel() + " was updated by " + updater,
+                    "INFO", "EQUIPMENT", updated.getId());
+
             // Handle Shelf Capacity Changes using existing logic
             boolean isMarker = "MAINTENANCE_AREA".equals(newShelfId) ||
                     "SCRAP_YARD".equals(newShelfId) ||
@@ -217,6 +216,10 @@ public class EquipmentService {
                 int qte = equipment.getQte() != null ? equipment.getQte() : 1;
                 atomicUpdateShelfQuantity(equipment.getShelfId(), -qte);
             }
+            // Generate notification for equipment deletion
+            notificationService.createNotification("Equipment Deleted: " + equipment.getEquipmentName(),
+                    equipment.getBrand() + " " + equipment.getModel() + " has been removed from inventory",
+                    "ERROR", "EQUIPMENT", id);
         });
         equipmentRepository.deleteById(id);
     }
@@ -240,6 +243,13 @@ public class EquipmentService {
                 eq.setModel(model);
             eq.setUpdatedAt(LocalDateTime.now());
         });
-        return equipmentRepository.saveAll(items);
+        List<Equipment> saved = equipmentRepository.saveAll(items);
+        
+        // Notification for bulk update
+        notificationService.createNotification("Bulk Update Completed",
+                items.size() + " equipment items were updated successfully",
+                "INFO", "EQUIPMENT", null);
+                
+        return saved;
     }
 }

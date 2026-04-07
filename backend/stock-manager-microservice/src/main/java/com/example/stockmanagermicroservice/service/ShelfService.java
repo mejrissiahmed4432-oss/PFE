@@ -14,6 +14,12 @@ public class ShelfService {
     @Autowired
     private ShelfRepository shelfRepository;
 
+    @Autowired
+    private AlertService alertService;
+
+    @Autowired
+    private NotificationService notificationService;
+
     public List<Shelf> getAllShelves() {
         return shelfRepository.findAll();
     }
@@ -28,7 +34,11 @@ public class ShelfService {
 
     public Shelf createShelf(Shelf shelf) {
         updateShelfStatus(shelf);
-        return shelfRepository.save(shelf);
+        Shelf saved = shelfRepository.save(shelf);
+        notificationService.createNotification("New Shelf Created: " + saved.getNb(),
+                "Shelf " + saved.getNb() + " (" + saved.getEquipmentType() + ") has been added",
+                "SUCCESS", "SHELF", saved.getId());
+        return saved;
     }
 
     public Shelf updateShelf(String id, Shelf shelfDetails) {
@@ -39,11 +49,20 @@ public class ShelfService {
             shelf.setCurrentQte(shelfDetails.getCurrentQte());
             shelf.setEquipmentType(shelfDetails.getEquipmentType());
             updateShelfStatus(shelf);
-            return shelfRepository.save(shelf);
+            Shelf saved = shelfRepository.save(shelf);
+            notificationService.createNotification("Shelf Updated: " + saved.getNb(),
+                    "Shelf " + saved.getNb() + " configuration has been modified",
+                    "INFO", "SHELF", saved.getId());
+            return saved;
         }).orElseThrow(() -> new RuntimeException("Shelf not found with id: " + id));
     }
 
     public void deleteShelf(String id) {
+        shelfRepository.findById(id).ifPresent(shelf -> {
+            notificationService.createNotification("Shelf Deleted: " + shelf.getNb(),
+                    "Shelf " + shelf.getNb() + " has been removed",
+                    "ERROR", "SHELF", id);
+        });
         shelfRepository.deleteById(id);
     }
 
@@ -51,6 +70,8 @@ public class ShelfService {
         if (shelf.getCurrentQte() == null) shelf.setCurrentQte(0);
         if (shelf.getMaxQte() == null) shelf.setMaxQte(0);
         if (shelf.getMinQte() == null) shelf.setMinQte(0);
+        
+        String oldStatus = shelf.getStatus();
         
         if (shelf.getCurrentQte() == 0) {
             shelf.setStatus("EMPTY");
@@ -60,6 +81,19 @@ public class ShelfService {
             shelf.setStatus("FULL");
         } else {
             shelf.setStatus("NORMAL");
+        }
+        
+        // Generate System Alerts for stock issues
+        if (shelf.getStatus() != null && !shelf.getStatus().equals(oldStatus)) {
+            if ("LOW".equals(shelf.getStatus())) {
+                alertService.createAlert("Low Stock Alert: Shelf " + shelf.getNb(),
+                        "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") is running low on stock.",
+                        "ERROR", "STOCK", shelf.getId());
+            } else if ("FULL".equals(shelf.getStatus())) {
+                alertService.createAlert("Shelf Full: Shelf " + shelf.getNb(),
+                        "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") has reached maximum capacity.",
+                        "ERROR", "STOCK", shelf.getId());
+            }
         }
     }
 }

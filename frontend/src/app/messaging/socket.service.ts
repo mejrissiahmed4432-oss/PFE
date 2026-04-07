@@ -13,6 +13,7 @@ export class SocketService {
   
   private messageSubject = new Subject<any>();
   private alertSubject = new Subject<void>();
+  private notificationSubject = new Subject<void>();
   private unreadCountSubject = new Subject<number>();
   private messageUpdateSubject = new Subject<any>();
   private readUpdateSubject = new Subject<string>();
@@ -30,6 +31,7 @@ export class SocketService {
     const user = this.authService.getCurrentUser();
     if (user) {
       this.connect(user.id);
+      this.connectAlerts();
     }
 
     // React to login/logout
@@ -47,13 +49,15 @@ export class SocketService {
   private connectAlerts() {
     if (this.alertsStompClient && this.alertsStompClient.connected) return;
 
-    const socket = new SockJS('/ws-alerts');
-    this.alertsStompClient = Stomp.over(socket);
+    this.alertsStompClient = Stomp.over(() => new SockJS('/ws-alerts'));
 
     this.alertsStompClient.onConnect = () => {
       console.log('Connected to Alerts WebSocket');
       this.alertsStompClient!.subscribe('/topic/alerts', (msg: Message) => {
         this.alertSubject.next();
+      });
+      this.alertsStompClient!.subscribe('/topic/notifications', (msg: Message) => {
+        this.notificationSubject.next();
       });
     };
 
@@ -138,6 +142,10 @@ export class SocketService {
 
   get onAlertUpdate(): Observable<void> {
     return this.alertSubject.asObservable();
+  }
+
+  get onNotificationUpdate(): Observable<void> {
+    return this.notificationSubject.asObservable();
   }
 
   get onUnreadCount(): Observable<number> {

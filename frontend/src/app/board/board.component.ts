@@ -11,6 +11,7 @@ import { SupplierComponent } from '../supplier/supplier.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
 import { AlertsComponent } from '../alerts/alerts.component';
 import { AlertService, Alert } from '../alerts/alert.service';
+import { NotificationService, Notification } from '../alerts/notification.service';
 import { ShelfListComponent } from '../shelf/shelf-list/shelf-list.component';
 import { EquipmentService } from '../equipment/equipment.service';
 import { CategoryManagerComponent } from '../category-manager/category-manager.component';
@@ -49,7 +50,8 @@ export class BoardComponent implements OnInit {
     private alertService: AlertService,
     private equipmentService: EquipmentService,
     private messagingService: MessagingService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private notificationService: NotificationService
   ) { }
 
   @HostListener('document:click', ['$event'])
@@ -79,6 +81,11 @@ export class BoardComponent implements OnInit {
           this.loadUnreadCount();
         });
 
+        // Live Notifications Subscription
+        this.socketService.onNotificationUpdate.subscribe(() => {
+          this.loadUnreadCount();
+        });
+
         // 2. Reduce non-realtime polling to once per minute (standard dashboard sync)
         if (!this.pollSub) {
           import('rxjs').then(({ interval }) => {
@@ -96,22 +103,41 @@ export class BoardComponent implements OnInit {
   }
 
   loadUnreadCount(): void {
+    // 1. Load System Alerts (Stock/Warranty/System)
     this.alertService.getAlerts().subscribe(alerts => {
-      const notifs = alerts.filter(a => a.type === 'INFO' || a.type === 'SUCCESS');
-      const urgent = alerts.filter(a => a.type === 'WARNING' || a.type === 'ERROR');
-
       this.unreadAlertsCount = alerts.filter(a => !a.read).length;
-      
-      this.notificationsList = notifs
+    });
+
+    // 2. Load Notifications (CRUD/User Actions)
+    this.notificationService.getNotifications().subscribe(notifications => {
+      this.notificationsList = notifications
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 10)
-        .map(n => this.mapAlertToNotification(n));
-      this.unreadNotificationsCount = notifs.filter(n => !n.read).length;
+        .map(n => this.mapNotifToNotificationItem(n));
+      this.unreadNotificationsCount = notifications.filter(n => !n.read).length;
     });
     
+    // 3. Load Messages
     this.messagingService.getUnreadCount().subscribe((res: any) => {
       this.unreadMessagesCount = res.count || 0;
     });
+  }
+
+  private mapNotifToNotificationItem(notif: Notification): any {
+    let icon = 'bell';
+    const cat = notif.category?.toUpperCase() || '';
+    if (cat.includes('EQUIPMENT')) icon = 'link';
+    else if (cat.includes('SHELF')) icon = 'link';
+    else if (cat.includes('SUPPLIER')) icon = 'wrench';
+    
+    return {
+      id: notif.id,
+      title: notif.title || notif.message,
+      time: this.formatTimeAgo(notif.createdAt),
+      icon: icon,
+      bgColor: notif.read ? '#f8fafc' : '#ecfdf5',
+      isNew: !notif.read
+    };
   }
 
   private mapAlertToNotification(alert: Alert): any {
@@ -146,32 +172,26 @@ export class BoardComponent implements OnInit {
 
   markAllNotificationsAsRead(event: Event): void {
     event.stopPropagation();
-    this.notificationsList.forEach(n => { n.isNew = false; n.bgColor = '#f8fafc'; });
-    this.unreadNotificationsCount = 0;
-    
-    this.alertService.getUnreadAlerts().subscribe(alerts => {
-      const unreadNotifs = alerts.filter(a => a.type === 'INFO' || a.type === 'SUCCESS');
-      unreadNotifs.forEach(alert => {
-        this.alertService.markAsRead(alert.id).subscribe();
+    this.notificationService.getUnreadNotifications().subscribe(notifications => {
+      notifications.forEach(n => {
+        this.notificationService.markAsRead(n.id).subscribe();
       });
+      this.notificationsList.forEach(n => { n.isNew = false; n.bgColor = '#f8fafc'; });
+      this.unreadNotificationsCount = 0;
     });
   }
 
   deleteNotification(id: string, event: Event): void {
     event.stopPropagation();
     this.notificationsList = this.notificationsList.filter(n => n.id !== id);
-    this.alertService.deleteAlert(id).subscribe();
+    this.notificationService.deleteNotification(id).subscribe();
   }
 
   deleteAllNotifications(event: Event): void {
     event.stopPropagation();
-    const idsToDelete = this.notificationsList.map(n => n.id);
     this.notificationsList = [];
     this.unreadNotificationsCount = 0;
-    
-    idsToDelete.forEach(id => {
-      this.alertService.deleteAlert(id).subscribe();
-    });
+    this.notificationService.deleteAllNotifications().subscribe();
   }
 
   selectLanguage(lang: 'en' | 'fr'): void {

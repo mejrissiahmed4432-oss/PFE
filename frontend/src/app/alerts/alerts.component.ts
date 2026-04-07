@@ -40,6 +40,7 @@ export class AlertsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
+    
     this.loadAlerts();
 
     this.socketSub = this.socketService.onAlertUpdate.subscribe(() => {
@@ -55,8 +56,8 @@ export class AlertsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.alertService.getAlerts().subscribe({
       next: (data) => {
-        // Show everything including SUCCESS (equipment added) and INFO logs
         this.alerts = data;
+        
         this.calculateStats();
         this.filterAlerts();
         this.isLoading = false;
@@ -69,9 +70,9 @@ export class AlertsComponent implements OnInit, OnDestroy {
   }
 
   calculateStats(): void {
-    this.urgentCount = this.alerts.filter(a => a.type === 'ERROR').length;
-    this.upcomingCount = this.alerts.filter(a => a.type === 'WARNING').length;
-    this.overdueCount = this.alerts.filter(a => a.type === 'ERROR' && a.message.toLowerCase().includes('expired')).length;
+    this.urgentCount = this.alerts.filter(a => this.getAlertTheme(a) === 'urgent').length;
+    this.upcomingCount = this.alerts.filter(a => this.getAlertTheme(a) === 'upcoming').length;
+    this.overdueCount = this.alerts.filter(a => this.getAlertTheme(a) === 'overdue').length;
 
     // Generate categories dynamically
     const catMap = new Map<string, number>();
@@ -80,6 +81,9 @@ export class AlertsComponent implements OnInit, OnDestroy {
     });
     this.categories = Array.from(catMap.entries()).map(([name, count]) => ({name, count}));
   }
+
+  filterDate: string = '';
+  filterType: string = 'All Types';
 
   filterAlerts(): void {
     let temp = this.alerts;
@@ -97,6 +101,27 @@ export class AlertsComponent implements OnInit, OnDestroy {
         a.message.toLowerCase().includes(q) ||
         a.category.toLowerCase().includes(q)
       );
+    }
+
+    // Type filter
+    if (this.filterType !== 'All Types') {
+      temp = temp.filter(a => {
+        const theme = this.getAlertTheme(a);
+        if (this.filterType === 'Urgent' && theme === 'urgent') return true;
+        if (this.filterType === 'Upcoming' && theme === 'upcoming') return true;
+        if (this.filterType === 'Overdue' && theme === 'overdue') return true;
+        return false;
+      });
+    }
+
+    // Date filter
+    if (this.filterDate) {
+      temp = temp.filter(a => {
+        if (!a.createdAt) return false;
+        // Compare YYYY-MM-DD
+        const alertDateStr = new Date(a.createdAt).toISOString().split('T')[0];
+        return alertDateStr === this.filterDate;
+      });
     }
     
     this.filteredAlerts = temp;
@@ -123,8 +148,25 @@ export class AlertsComponent implements OnInit, OnDestroy {
 
   getDaysText(createdAt: string): string {
     const diffTime = Math.abs(new Date().getTime() - new Date(createdAt).getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     if (diffDays === 0) return 'Today';
     return `${diffDays}d ago`;
+  }
+
+  getAlertTheme(alert: Alert): 'overdue' | 'urgent' | 'upcoming' | 'info' | 'success' {
+    if (alert.type === 'ERROR') {
+      return alert.message.toLowerCase().includes('expired') ? 'overdue' : 'urgent';
+    }
+    if (alert.type === 'WARNING') return 'upcoming';
+    if (alert.type === 'SUCCESS') return 'success';
+    return 'info';
+  }
+  
+  getAlertLabel(alert: Alert): string {
+    const theme = this.getAlertTheme(alert);
+    if (theme === 'overdue') return 'OVERDUE';
+    if (theme === 'urgent') return 'URGENT';
+    if (theme === 'upcoming') return 'UPCOMING';
+    return alert.type;
   }
 }

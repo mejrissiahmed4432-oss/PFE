@@ -48,4 +48,5 @@ export class AlertService {
   createAlert(title: string, message: string, type: string, category: string, relatedId?: string): Observable<void> {
     return this.http.post<void>(this.apiUrl, { title, message, type, category, relatedId });
   }
+
 }
