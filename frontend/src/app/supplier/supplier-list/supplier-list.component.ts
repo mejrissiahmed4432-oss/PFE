@@ -30,6 +30,11 @@ export class SupplierListComponent implements OnInit, OnChanges {
   // Filters
   filterCategory: string = '';
 
+  // Delete Confirmation Modal
+  showDeleteModal: boolean = false;
+  supplierToDeleteId: string | null = null;
+  errorMessage: string | null = null;
+
   constructor(private supplierService: SupplierService) {}
 
   ngOnInit(): void {
@@ -93,12 +98,34 @@ export class SupplierListComponent implements OnInit, OnChanges {
   }
 
   deleteSupplier(id?: string): void {
-    if (id && confirm('Are you sure you want to delete this supplier?')) {
-      this.supplierService.deleteSupplier(id).subscribe({
-        next: () => this.loadSuppliers(),
-        error: (err) => console.error('Error deleting supplier', err)
+    if (!id) return;
+    this.supplierToDeleteId = id;
+    this.showDeleteModal = true;
+  }
+
+  confirmDelete(): void {
+    if (this.supplierToDeleteId) {
+      this.supplierService.deleteSupplier(this.supplierToDeleteId).subscribe({
+        next: () => {
+          this.loadSuppliers();
+          this.closeDeleteModal();
+        },
+        error: (err) => {
+          if (err.status === 409) {
+            this.errorMessage = typeof err.error === 'string' ? err.error : 'Cannot delete supplier: it is currently associated with equipment.';
+          } else {
+            console.error('Error deleting supplier', err);
+            this.closeDeleteModal();
+          }
+        }
       });
     }
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.supplierToDeleteId = null;
+    this.errorMessage = null;
   }
 
   get paginatedSuppliers(): Supplier[] {

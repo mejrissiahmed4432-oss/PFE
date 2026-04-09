@@ -7,6 +7,8 @@ import { SupplierService } from '../../supplier/supplier.service';
 import { Supplier } from '../../supplier/supplier.model';
 import { ShelfService } from '../../shelf/shelf.service';
 import { Shelf } from '../../shelf/shelf.model';
+import { CategoryService } from '../../category-manager/category.service';
+import { EquipmentCategory } from '../../category-manager/category.model';
 import { forkJoin } from 'rxjs';
 import * as QRCode from 'qrcode';
 
@@ -62,6 +64,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   groupedEquipments: GroupedEquipment[] = [];
   suppliers: Supplier[] = [];
   shelves: Shelf[] = [];
+  categoriesList: EquipmentCategory[] = [];
   
   viewMode: 'table' | 'card' = 'table';
   searchQuery: string = '';
@@ -88,13 +91,22 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   // Group Edit Modal
   showGroupEditModal: boolean = false;
   editingGroup: GroupedEquipment | null = null;
-  bulkEditForm = { name: '', brand: '', model: '' };
+  bulkEditForm = { name: '', brand: '' };
   isBulkSaving: boolean = false;
+
+  // Delete Confirmation Modal
+  showDeleteModal: boolean = false;
+  deleteModalTitle: string = '';
+  deleteModalMessage: string = '';
+  itemToDeleteId: string | null = null;
+  groupToDeleteIds: string[] | null = null;
+  isBulkDelete: boolean = false;
 
   constructor(
     private equipmentService: EquipmentService,
     private supplierService: SupplierService,
-    private shelfService: ShelfService
+    private shelfService: ShelfService,
+    private categoryService: CategoryService
   ) {}
 
   ngOnInit(): void {
@@ -105,6 +117,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     this.loadEquipments();
     this.loadSuppliers();
     this.loadShelves();
+    this.loadCategories();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -134,6 +147,16 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     this.shelfService.getAllShelves().subscribe({
       next: (data) => this.shelves = data,
       error: (err) => console.error('Error fetching shelves', err)
+    });
+  }
+
+  loadCategories(): void {
+    this.categoryService.getAllCategories().subscribe({
+      next: (data: EquipmentCategory[]) => {
+        this.categoriesList = data;
+        this.applyFilters();
+      },
+      error: (err: any) => console.error('Error fetching categories', err)
     });
   }
 
@@ -175,7 +198,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
           name: eq.equipmentName || 'Unnamed',
           brand: eq.brand || 'No Brand',
           type: eq.type || 'unknown',
-          category: eq.category || 'Asset',
+          category: this.getCorrectCategory(eq),
           totalQuantity: 0,
           items: [],
           expanded: false,
@@ -201,7 +224,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
       // Calculate common attributes
       const allNames = group.items.map(item => item.equipmentName || '—');
       const uniqueNames = [...new Set(allNames)];
-      group.name = uniqueNames.length === 1 ? uniqueNames[0] : `${group.brand} ${group.type} (Multiple)`;
+      group.name = uniqueNames.length === 1 ? uniqueNames[0] : `${group.brand} ${group.type}`;
 
       group.commonSupplier = group.items.every(item => item.supplier === first.supplier) ? (first.supplier || '—') : '—';
       group.commonPurchaseDate = group.items.every(item => item.purchaseDate === first.purchaseDate) ? (first.purchaseDate || '') : '';
@@ -263,23 +286,54 @@ export class EquipmentListComponent implements OnInit, OnChanges {
 
   deleteEquipment(id?: string, event?: Event): void {
     if (event) event.stopPropagation();
-    if (id && confirm('Are you sure you want to delete this specific unit?')) {
-      this.equipmentService.deleteEquipment(id).subscribe({
-        next: () => this.loadEquipments(),
-        error: (err) => console.error('Error deleting equipment', err)
-      });
-    }
+    if (!id) return;
+    
+    this.itemToDeleteId = id;
+    this.groupToDeleteIds = null;
+    this.isBulkDelete = false;
+    this.deleteModalTitle = 'Delete Equipment';
+    this.deleteModalMessage = 'Are you sure you want to delete this specific unit? This action cannot be undone.';
+    this.showDeleteModal = true;
   }
 
   deleteGroup(group: GroupedEquipment, event: Event): void {
     event.stopPropagation();
-    if (confirm(`Are you sure you want to delete all ${group.totalQuantity} items in this group? This action cannot be undone.`)) {
-      const ids = group.items.map(item => item.id!);
-      this.equipmentService.deleteBulkEquipment(ids).subscribe({
+    this.itemToDeleteId = null;
+    this.groupToDeleteIds = group.items.map(item => item.id!);
+    this.isBulkDelete = true;
+    this.deleteModalTitle = 'Delete Group';
+    this.deleteModalMessage = `Are you sure you want to delete all ${group.totalQuantity} items in this group? This action cannot be undone.`;
+    this.showDeleteModal = true;
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.itemToDeleteId = null;
+    this.groupToDeleteIds = null;
+  }
+
+  confirmDelete(): void {
+    if (this.isBulkDelete && this.groupToDeleteIds) {
+      this.equipmentService.deleteBulkEquipment(this.groupToDeleteIds).subscribe({
         next: () => {
           this.loadEquipments();
+          this.closeDeleteModal();
         },
-        error: (err) => console.error('Error deleting group', err)
+        error: (err) => {
+          console.error('Error deleting group', err);
+          this.closeDeleteModal();
+        }
+      });
+    } else if (this.itemToDeleteId) {
+      this.equipmentService.deleteEquipment(this.itemToDeleteId).subscribe({
+        next: () => {
+          this.loadEquipments();
+          this.closeDeleteModal();
+        },
+        error: (err) => {
+          console.error('Error deleting equipment', err);
+          this.closeDeleteModal();
+        }
       });
     }
   }
@@ -290,8 +344,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     this.editingGroup = group;
     this.bulkEditForm = {
       name: group.name,
-      brand: group.brand,
-      model: group.commonModel === 'Mixed' ? '' : group.commonModel
+      brand: group.brand
     };
     this.showGroupEditModal = true;
   }
@@ -310,19 +363,18 @@ export class EquipmentListComponent implements OnInit, OnChanges {
 
     this.isBulkSaving = true;
     const ids = this.editingGroup.items.map(item => item.id!);
-    
     this.equipmentService.updateBulkBasicInfo(
       ids, 
       this.bulkEditForm.name, 
       this.bulkEditForm.brand, 
-      this.bulkEditForm.model
+      null as any
     ).subscribe({
       next: () => {
         this.isBulkSaving = false;
         this.closeGroupEditModal();
         this.loadEquipments();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isBulkSaving = false;
         console.error('Error updating group', err);
         alert('Failed to update group. Please try again.');
@@ -429,7 +481,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
       if (s === 'broken') return { label: 'Broken', cls: 'expired' }; 
       if (s === 'maintenance') return { label: 'Maintenance', cls: 'maintenance' };
       if (s === 'out of stock') return { label: 'Out of Stock', cls: 'unassigned' };
-      if (s === 'in stock') return { label: 'In Stock', cls: 'active' };
+      if (s === 'available' || s === 'in stock') return { label: 'Available', cls: 'active' };
       
       // Fallback for any other status string
       return { label: eq.status, cls: 'unassigned' };
@@ -439,7 +491,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     if (eq.warrantyExpiration && new Date(eq.warrantyExpiration) < new Date()) {
       return { label: 'Expired', cls: 'expired' };
     }
-    return { label: 'In Stock', cls: 'active' };
+    return { label: 'Available', cls: 'active' };
   }
 
   getShelfLocation(shelfId?: string): string {
@@ -465,5 +517,22 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     a.href = fileData;
     a.download = fileName;
     a.click();
+  }
+
+  getCorrectCategory(eq: Equipment): string {
+    if (eq.category && eq.category !== 'Asset' && eq.category !== 'Consumable') {
+      return eq.category;
+    }
+
+    // Try to find the correct category from categoriesList based on type
+    if (this.categoriesList.length > 0 && eq.type) {
+      const typeLower = eq.type.toLowerCase();
+      const found = this.categoriesList.find(c =>
+        c.types?.some(t => t.name.toLowerCase() === typeLower)
+      );
+      if (found) return found.name || 'Asset';
+    }
+
+    return eq.category || 'Asset';
   }
 }

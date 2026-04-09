@@ -1,7 +1,10 @@
 package com.example.stockmanagermicroservice.service;
 
+import com.example.stockmanagermicroservice.model.CategoryType;
 import com.example.stockmanagermicroservice.model.Equipment;
+import com.example.stockmanagermicroservice.model.EquipmentCategory;
 import com.example.stockmanagermicroservice.model.Shelf;
+import com.example.stockmanagermicroservice.repository.EquipmentCategoryRepository;
 import com.example.stockmanagermicroservice.repository.EquipmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,9 @@ public class EquipmentService {
 
     @Autowired
     private ShelfService shelfService;
+
+    @Autowired
+    private EquipmentCategoryRepository equipmentCategoryRepository;
 
     @Autowired
     private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
@@ -53,12 +59,18 @@ public class EquipmentService {
     public Equipment createEquipment(Equipment equipment) {
         equipment.setCreatedAt(LocalDateTime.now());
         equipment.setUpdatedAt(LocalDateTime.now());
-        // Generate a simple pseudo QR code string if none provided
-        if (equipment.getQrCode() == null || equipment.getQrCode().isEmpty()) {
-            equipment.setQrCode("QR-" + System.currentTimeMillis());
+        
+        // Respect the "Requires QR Code" setting from categories
+        if (typeRequiresQrCode(equipment.getCategory(), equipment.getType())) {
+            if (equipment.getQrCode() == null || equipment.getQrCode().isEmpty()) {
+                equipment.setQrCode("QR-" + System.currentTimeMillis());
+            }
+        } else {
+            equipment.setQrCode(null);
         }
+
         if (equipment.getStatus() == null || equipment.getStatus().isEmpty()) {
-            equipment.setStatus("In Stock");
+            equipment.setStatus("Available");
         }
         Equipment saved = equipmentRepository.save(equipment);
 
@@ -165,9 +177,16 @@ public class EquipmentService {
             equipment.setStorage(equipmentDetails.getStorage());
             equipment.setGraphicsCard(equipmentDetails.getGraphicsCard());
             equipment.setOperatingSystem(equipmentDetails.getOperatingSystem());
+            equipment.setSpecification(equipmentDetails.getSpecification());
 
-            if (equipmentDetails.getQrCode() != null && !equipmentDetails.getQrCode().isEmpty()) {
-                equipment.setQrCode(equipmentDetails.getQrCode());
+            if (typeRequiresQrCode(equipment.getCategory(), equipment.getType())) {
+                if (equipment.getQrCode() == null || equipment.getQrCode().isEmpty()) {
+                    equipment.setQrCode("QR-" + System.currentTimeMillis());
+                } else if (equipmentDetails.getQrCode() != null && !equipmentDetails.getQrCode().isEmpty()) {
+                    equipment.setQrCode(equipmentDetails.getQrCode());
+                }
+            } else {
+                equipment.setQrCode(null);
             }
 
             equipment.setUpdatedAt(LocalDateTime.now());
@@ -251,5 +270,15 @@ public class EquipmentService {
                 "INFO", "EQUIPMENT", null);
                 
         return saved;
+    }
+    private boolean typeRequiresQrCode(String categoryName, String typeName) {
+        if (categoryName == null || typeName == null) return true;
+        return equipmentCategoryRepository.findByNameIgnoreCase(categoryName.trim())
+                .map(cat -> cat.getTypes().stream()
+                        .filter(t -> t.getName().equalsIgnoreCase(typeName.trim()))
+                        .map(CategoryType::isRequiresQrCode)
+                        .findFirst()
+                        .orElse(true)) // Fallback if type not found in cat
+                .orElse(true); // Fallback if cat not found
     }
 }

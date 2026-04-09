@@ -84,7 +84,7 @@
           <label class="field-label">Equipment Type <span class="req">*</span></label>
           <select class="field-select" [(ngModel)]="type" (change)="onTypeChange()" [disabled]="!!prefillData || !selectedCategoryName">
             <option value="" disabled>Select a type…</option>
-            <option *ngFor="let t of availableTypes" [value]="t">{{ t | titlecase }}</option>
+            <option *ngFor="let t of availableTypes" [value]="t.name">{{ t.name | titlecase }}</option>
           </select>
         </div>
 
@@ -310,9 +310,10 @@
 
           <!-- General Specification (Always show) -->
           <div class="field-group">
-            <label class="field-label">specification</label>
+            <label class="field-label">specification <span class="req">*</span></label>
             <textarea class="field-textarea" [(ngModel)]="sharedSpecification" rows="4" 
               placeholder="Technical details, screen size, connectors, or any specific configuration..."></textarea>
+            <div *ngIf="!sharedSpecification" class="error-msg">Specification is required.</div>
           </div>
         </ng-container>
 
@@ -355,7 +356,7 @@
                   </ng-container>
 
                   <!-- specification Column Header (Always) -->
-                  <th>specification</th>
+                  <th>specification <span class="req">*</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -387,7 +388,10 @@
                   </ng-container>
 
                   <!-- Specification Column (Always) -->
-                  <td><input class="tbl-input" [(ngModel)]="u.specification" placeholder="specification..."></td>
+                  <td>
+                    <input class="tbl-input" [(ngModel)]="u.specification" placeholder="specification...">
+                    <div *ngIf="!u.specification" class="error-msg" style="font-size: 10px;">Required</div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -839,6 +843,11 @@
             </div>
             <div class="review-row"><span>Config Mode</span><strong>{{ quantity === 1 ? 'Single Unit' : (configMode ===
                 'same' ? 'Same for All' : 'Per Unit') }}</strong></div>
+            <div class="review-row"><span>Generate QR</span>
+              <strong [style.color]="typeRequiresQr ? '#22c55e' : '#64748b'">
+                {{ typeRequiresQr ? 'Yes' : 'No (Type setting)' }}
+              </strong>
+            </div>
           </div>
 
           <div class="review-card">

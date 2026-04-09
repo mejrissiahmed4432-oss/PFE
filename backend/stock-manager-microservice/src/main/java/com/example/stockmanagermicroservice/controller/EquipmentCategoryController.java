@@ -1,5 +1,6 @@
 package com.example.stockmanagermicroservice.controller;
 
+import com.example.stockmanagermicroservice.model.CategoryType;
 import com.example.stockmanagermicroservice.model.EquipmentCategory;
 import com.example.stockmanagermicroservice.service.EquipmentCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class EquipmentCategoryController {
     }
 
     @PostMapping("/{id}/types")
-    public ResponseEntity<?> addTypeToCategory(@PathVariable String id, @RequestBody String type) {
+    public ResponseEntity<?> addTypeToCategory(@PathVariable String id, @RequestBody CategoryType type) {
         try {
             return ResponseEntity.ok(service.addTypeToCategory(id, type));
         } catch (IllegalArgumentException e) {
@@ -57,10 +58,28 @@ public class EquipmentCategoryController {
         }
     }
 
+    @PutMapping("/{id}/types/{typeName}")
+    public ResponseEntity<?> updateTypeInCategory(
+            @PathVariable String id,
+            @PathVariable String typeName,
+            @RequestBody CategoryType updatedType) {
+        try {
+            return ResponseEntity.ok(service.updateTypeInCategory(id, typeName, updatedType));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/{id}/types/{type}")
-    public ResponseEntity<EquipmentCategory> removeTypeFromCategory(@PathVariable String id, @PathVariable String type) {
+    public ResponseEntity<?> removeTypeFromCategory(@PathVariable String id, @PathVariable String type) {
         try {
             return ResponseEntity.ok(service.removeTypeFromCategory(id, type));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(e.getMessage());
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

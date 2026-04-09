@@ -2,6 +2,7 @@ package com.example.stockmanagermicroservice.service;
 
 import com.example.stockmanagermicroservice.model.Shelf;
 import com.example.stockmanagermicroservice.repository.ShelfRepository;
+import com.example.stockmanagermicroservice.repository.EquipmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class ShelfService {
     }
 
     public List<Shelf> getShelvesByEquipmentType(String equipmentType) {
-        return shelfRepository.findByEquipmentType(equipmentType);
+        return shelfRepository.findByEquipmentTypeIgnoreCase(equipmentType);
     }
 
     public Shelf createShelf(Shelf shelf) {
@@ -57,7 +58,14 @@ public class ShelfService {
         }).orElseThrow(() -> new RuntimeException("Shelf not found with id: " + id));
     }
 
+    @Autowired
+    private EquipmentRepository equipmentRepository;
+
     public void deleteShelf(String id) {
+        if (equipmentRepository.existsByShelfId(id)) {
+            throw new IllegalStateException("Cannot delete shelf: Equipment is still placed in it.");
+        }
+
         shelfRepository.findById(id).ifPresent(shelf -> {
             notificationService.createNotification("Shelf Deleted: " + shelf.getNb(),
                     "Shelf " + shelf.getNb() + " has been removed",

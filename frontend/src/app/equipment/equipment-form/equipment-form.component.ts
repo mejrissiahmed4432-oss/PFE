@@ -10,6 +10,8 @@ import { SupplierService } from '../../supplier/supplier.service';
 import { Supplier } from '../../supplier/supplier.model';
 import { ShelfService } from '../../shelf/shelf.service';
 import { Shelf } from '../../shelf/shelf.model';
+import { CategoryService } from '../../category-manager/category.service';
+import { CategoryType, EquipmentCategory } from '../../category-manager/category.model';
 import * as QRCode from 'qrcode';
 
 @Component({
@@ -32,7 +34,9 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   isEditing: boolean = false;
   suppliers: Supplier[] = [];
   availableShelves: Shelf[] = [];
+  availableTypes: CategoryType[] = [];
   allShelves: Shelf[] = [];
+  categories: EquipmentCategory[] = [];
   currentUserName: string = '';
   activeTab: string = 'overview';
   isSNAvailable: boolean = true;
@@ -46,14 +50,15 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     'ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'
   ];
   consumables = ['ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'];
-  statusOptions = ['In Stock', 'Broken', 'Maintenance', 'Out of Stock'];
+  statusOptions = ['Available', 'Broken', 'Maintenance', 'Out of Stock'];
 
 
   constructor(
     private equipmentService: EquipmentService,
     private authService: AuthService,
     private supplierService: SupplierService,
-    private shelfService: ShelfService
+    private shelfService: ShelfService,
+    private categoryService: CategoryService
   ) {}
 
   ngOnInit(): void {
@@ -62,9 +67,9 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
       ? `${userData.firstName} ${userData.lastName || ''}`.trim()
       : (userData?.email || 'Unknown');
 
-    this.loadSuppliers();
-    this.loadAllShelves();
-
+    this.supplierService.getAllSuppliers().subscribe(d => this.suppliers = d);
+    this.shelfService.getAllShelves().subscribe(d => this.allShelves = d);
+    
     // Setup debounced SN uniqueness check
     this.snSubject.pipe(
       debounceTime(500),
@@ -73,24 +78,52 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
       this.performSNUniquenessCheck(sn);
     });
 
-    if (this.equipment && this.equipment.id) {
-      this.equipmentService.getEquipmentById(this.equipment.id).subscribe({
-        next: (fullEq) => {
-          this.formData = { ...fullEq };
-          // If editing existing equipment, remember original SN to skip uniqueness check if unchanged
-          // If adding similar, we ignore original SN as we need a NEW unique one
-          this.originalSN = !this.isAddSimilar ? (fullEq.serialNumber || '') : '';
-          
-          if (this.formData.type) {
-            this.loadAvailableShelves();
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching full equipment detail', err);
-          this.formData = { ...this.equipment! };
+    // Load categories then handle the equipment data
+    this.categoryService.getAllCategories().subscribe({
+      next: (cats) => {
+        this.categories = cats;
+        
+        if (this.equipment && this.equipment.id) {
+          this.equipmentService.getEquipmentById(this.equipment.id).subscribe({
+            next: (fullEq) => {
+              this.formData = { ...fullEq };
+              this.originalSN = !this.isAddSimilar ? (fullEq.serialNumber || '') : '';
+              
+              // Find the category for this equipment based on its type (case-insensitive)
+              const currentType = (this.formData.type || '').toLowerCase().trim();
+              const foundCat = this.categories.find(c =>
+                c.types?.some(t => t.name.toLowerCase().trim() === currentType)
+              );
+
+              if (foundCat) {
+                this.formData.category = foundCat.name;
+                this.availableTypes = foundCat.types || [];
+
+                // Ensure formData.type matches exactly one of the types in the list for the select to work
+                const exactTypeMatch = this.availableTypes.find(t => t.name.toLowerCase().trim() === currentType);
+                if (exactTypeMatch) {
+                  this.formData.type = exactTypeMatch.name;
+                }
+              } else {
+                // Fallback for types not in any functional category
+                this.availableTypes = this.equipmentTypes.map(name => ({ name, requiresQrCode: false }));
+              }
+              
+              if (this.formData.type) {
+                this.loadAvailableShelves();
+              }
+            },
+            error: (err) => {
+              console.error('Error fetching full equipment detail', err);
+              this.formData = { ...this.equipment! };
+            }
+          });
         }
-      });
-    } else {
+      },
+      error: (err) => console.error('Error fetching categories', err)
+    });
+
+    if (!this.equipment || !this.equipment.id) {
       this.formData = {
         equipmentName: '',
         brand: '',
@@ -114,7 +147,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
         graphicsCard: '',
         operatingSystem: '',
         specification: '',
-        status: 'In Stock'
+        status: 'Available'
       };
     }
   }
@@ -127,11 +160,38 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   }
 
   onTypeChange(): void {
-    // Auto-set category based on type
-    if (this.formData.type) {
-      this.formData.category = this.consumables.includes(this.formData.type) ? 'Consumable' : 'Asset';
-      this.loadAvailableShelves();
+    if (!this.formData.type) return;
+    this.loadAvailableShelves();
+  }
+
+  onCategoryChange(): void {
+    const foundCat = this.categories.find(c => c.name === this.formData.category);
+    if (foundCat) {
+      this.availableTypes = foundCat.types || [];
+    } else {
+      this.availableTypes = [];
     }
+
+    // If the currently selected type isn't in the new category's types, clear it
+    if (this.formData.type && !this.availableTypes.some(t => t.name.toLowerCase() === this.formData.type?.toLowerCase())) {
+      this.formData.type = '';
+      this.availableShelves = [];
+      this.formData.shelfId = '';
+    }
+  }
+
+  loadCategories(): void {
+    this.categoryService.getAllCategories().subscribe({
+      next: (data) => {
+        this.categories = data;
+        
+        // If we already have a category (from ngOnInit init), populate availableTypes
+        if (this.formData.category) {
+          this.onCategoryChange();
+        }
+      },
+      error: (err) => console.error('Error fetching categories', err)
+    });
   }
 
   onStatusChange(): void {
@@ -142,8 +202,8 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
       this.formData.shelfId = 'SCRAP_YARD';
     } else if (status === 'Out of Stock') {
       this.formData.shelfId = 'OUT_OF_STOCK';
-    } else if (status === 'In Stock') {
-      // If switching back to In Stock from a virtual area, reset shelf
+    } else if (status === 'Available' || status === 'In Stock') {
+      // If switching back to Available from a virtual area, reset shelf
       if (this.formData.shelfId === 'MAINTENANCE_AREA' || 
           this.formData.shelfId === 'SCRAP_YARD' || 
           this.formData.shelfId === 'OUT_OF_STOCK') {
@@ -260,8 +320,8 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   }
 
   get isFormInvalid(): boolean {
-    const isBasicInfoMissing = !this.formData.equipmentName || !this.formData.brand || !this.isSerialNumberValid();
-    const isShelfMissingForInStock = this.formData.status === 'In Stock' && (!this.formData.shelfId || this.formData.shelfId === '');
+    const isBasicInfoMissing = !this.formData.equipmentName || !this.formData.brand || !this.isSerialNumberValid() || !this.formData.specification;
+    const isShelfMissingForInStock = (this.formData.status === 'Available' || this.formData.status === 'In Stock') && (!this.formData.shelfId || this.formData.shelfId === '');
     return isBasicInfoMissing || isShelfMissingForInStock || !this.isSNAvailable || this.isCheckingSN;
   }
 
@@ -274,17 +334,29 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   filterShelvesByQte(): void {
     const qteNeeded = this.formData.qte || 1;
+    const isUpdate = !!this.equipment?.id && !this.isAddSimilar;
+    const originalShelfId = isUpdate ? this.equipment?.shelfId : null;
+
     // Filter shelves that have enough capacity and are not full
-    let validShelves = this.availableShelves.filter(s => 
-      s.status !== 'FULL' && (s.currentQte + qteNeeded <= s.maxQte)
-    );
+    let validShelves = this.availableShelves.filter(s => {
+      if (s.status === 'FULL') {
+        // If it's the current shelf, it's at max capacity but we are ALREADY in it.
+        // So objectively there is space for us (we are it).
+        return isUpdate && s.id === originalShelfId;
+      }
+      
+      // Calculate effective current quantity by excluding ourselves if we are already there
+      const effectiveCurrentQte = (isUpdate && s.id === originalShelfId) ? (s.currentQte - 1) : s.currentQte;
+      return (effectiveCurrentQte + qteNeeded <= s.maxQte);
+    });
     
     this.availableShelves = validShelves;
 
     // Auto select if only one is available
     if (this.availableShelves.length === 1 && !this.formData.shelfId) {
       this.formData.shelfId = this.availableShelves[0].id;
-    } else if (this.availableShelves.length === 0) {
+    } else if (this.availableShelves.length === 0 && (this.formData.status === 'Available' || this.formData.status === 'In Stock')) {
+      // Only reset shelf if we really found nothing AND we are supposed to be available
       this.formData.shelfId = '';
     }
   }
@@ -490,5 +562,21 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   private formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
+  }
+
+  typeRequiresQr(): boolean {
+    if (!this.formData.category || !this.formData.type) {
+      // If we have existing equipment, check its QR code field
+      return !!(this.equipment && this.equipment.qrCode);
+    }
+    const cat = this.categories.find(c => c.name === this.formData.category);
+    if (!cat) return true;
+    const typeObj = cat.types?.find(t => t.name === this.formData.type);
+    return typeObj ? typeObj.requiresQrCode : true;
+  }
+
+  isLegacyType(): boolean {
+    if (!this.formData.type || !this.availableTypes) return false;
+    return !this.availableTypes.some(t => t.name === this.formData.type);
   }
 }

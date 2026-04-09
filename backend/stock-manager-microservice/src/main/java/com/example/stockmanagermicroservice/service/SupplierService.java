@@ -81,6 +81,10 @@ public class SupplierService {
     }
 
     public void deleteSupplier(String id) {
+        if (equipmentRepository.existsBySupplierId(id)) {
+            throw new IllegalStateException("Cannot delete supplier: Equipment is currently associated with it.");
+        }
+
         supplierRepository.findById(id).ifPresent(supplier -> {
             notificationService.createNotification("Supplier Deleted: " + supplier.getCompanyName(),
                     "Supplier " + supplier.getCompanyName() + " has been removed",

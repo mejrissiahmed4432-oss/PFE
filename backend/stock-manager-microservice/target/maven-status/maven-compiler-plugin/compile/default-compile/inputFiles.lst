@@ -4,6 +4,7 @@ C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\SupplierController.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\AlertController.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\SupplierRepository.java
+C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\CategoryType.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\ShelfService.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\StockManagerMicroserviceApplication.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\DashboardStats.java
@@ -29,3 +30,4 @@ C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\DashboardService.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\AlertRepository.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\config\SecurityConfig.java
+C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\GlobalExceptionHandler.java

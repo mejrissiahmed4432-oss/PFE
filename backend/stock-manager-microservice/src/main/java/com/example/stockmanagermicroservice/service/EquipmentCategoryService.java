@@ -1,7 +1,9 @@
 package com.example.stockmanagermicroservice.service;
 
+import com.example.stockmanagermicroservice.model.CategoryType;
 import com.example.stockmanagermicroservice.model.Equipment;
 import com.example.stockmanagermicroservice.model.EquipmentCategory;
+import com.example.stockmanagermicroservice.model.Shelf;
 import com.example.stockmanagermicroservice.repository.EquipmentCategoryRepository;
 import com.example.stockmanagermicroservice.repository.EquipmentRepository;
 import com.example.stockmanagermicroservice.repository.ShelfRepository;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EquipmentCategoryService {
@@ -38,7 +41,6 @@ public class EquipmentCategoryService {
         // Uniqueness check for name (Case-Insensitive)
         Optional<EquipmentCategory> existingNameOwner = repository.findByNameIgnoreCase(category.getName());
         if (existingNameOwner.isPresent()) {
-            // If it's a new category OR a rename that conflicts with another category
             if (category.getId() == null || !existingNameOwner.get().getId().equals(category.getId())) {
                 throw new IllegalArgumentException("Category with name '" + category.getName() + "' already exists.");
             }
@@ -48,7 +50,6 @@ public class EquipmentCategoryService {
             Optional<EquipmentCategory> existingOpt = repository.findById(category.getId());
             if (existingOpt.isPresent()) {
                 EquipmentCategory existing = existingOpt.get();
-                // If name changed, update all associated equipment
                 if (!existing.getName().equals(category.getName())) {
                     List<Equipment> equipmentList = equipmentRepository.findByCategory(existing.getName());
                     for (Equipment e : equipmentList) {
@@ -71,29 +72,93 @@ public class EquipmentCategoryService {
         return saved;
     }
 
-    public EquipmentCategory addTypeToCategory(String categoryId, String type) {
+    public EquipmentCategory addTypeToCategory(String categoryId, CategoryType newType) {
         Optional<EquipmentCategory> categoryOpt = repository.findById(categoryId);
         if (categoryOpt.isPresent()) {
             EquipmentCategory category = categoryOpt.get();
             // Duplicate check (Case-Insensitive)
             boolean exists = category.getTypes().stream()
-                    .anyMatch(t -> t.equalsIgnoreCase(type.trim()));
-            
+                    .anyMatch(t -> t.getName().equalsIgnoreCase(newType.getName().trim()));
+
             if (exists) {
-                throw new IllegalArgumentException("Type '" + type + "' already exists in category '" + category.getName() + "'.");
+                throw new IllegalArgumentException("Type '" + newType.getName() + "' already exists in category '" + category.getName() + "'.");
             }
-            
-            category.getTypes().add(type.trim());
+
+            newType.setName(newType.getName().trim());
+            category.getTypes().add(newType);
             return repository.save(category);
         }
         throw new RuntimeException("Category not found with id: " + categoryId);
     }
 
-    public EquipmentCategory removeTypeFromCategory(String categoryId, String type) {
+    public EquipmentCategory updateTypeInCategory(String categoryId, String oldTypeName, CategoryType updatedType) {
+        Optional<EquipmentCategory> categoryOpt = repository.findById(categoryId);
+        if (!categoryOpt.isPresent()) {
+            throw new RuntimeException("Category not found with id: " + categoryId);
+        }
+
+        EquipmentCategory category = categoryOpt.get();
+        String newName = updatedType.getName().trim();
+
+        // Find the existing type
+        CategoryType existing = category.getTypes().stream()
+                .filter(t -> t.getName().equalsIgnoreCase(oldTypeName))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Type '" + oldTypeName + "' not found in category."));
+
+        // Check new name is unique within this category (if it changed)
+        boolean nameChanged = !existing.getName().equalsIgnoreCase(newName);
+        if (nameChanged) {
+            boolean nameConflict = category.getTypes().stream()
+                    .anyMatch(t -> !t.getName().equalsIgnoreCase(oldTypeName) && t.getName().equalsIgnoreCase(newName));
+            if (nameConflict) {
+                throw new IllegalArgumentException("Type '" + newName + "' already exists in category '" + category.getName() + "'.");
+            }
+        }
+
+        // Check if QR code setting can be toggled: block if equipment exists
+        boolean qrChanged = existing.isRequiresQrCode() != updatedType.isRequiresQrCode();
+        if (qrChanged && equipmentRepository.existsByTypeIgnoreCase(oldTypeName)) {
+            throw new IllegalStateException("Cannot change QR Code requirement for type '" + oldTypeName + "': Equipment is currently associated with it.");
+        }
+
+        // Apply changes
+        existing.setName(newName);
+        existing.setRequiresQrCode(updatedType.isRequiresQrCode());
+
+        // Cascade rename to all equipment if name changed
+        if (nameChanged) {
+            List<Equipment> equipmentList = equipmentRepository.findByTypeIgnoreCase(oldTypeName);
+            for (Equipment e : equipmentList) {
+                e.setType(newName);
+                equipmentRepository.save(e);
+            }
+
+            List<Shelf> shelfList = shelfRepository.findByEquipmentTypeIgnoreCase(oldTypeName);
+            for (Shelf s : shelfList) {
+                s.setEquipmentType(newName);
+                if (s.getNb() != null && s.getNb().toLowerCase().startsWith(oldTypeName.toLowerCase() + "-")) {
+                    String suffix = s.getNb().substring(oldTypeName.length() + 1);
+                    s.setNb(newName.toLowerCase() + "-" + suffix);
+                }
+                shelfRepository.save(s);
+            }
+        }
+
+        return repository.save(category);
+    }
+
+    public EquipmentCategory removeTypeFromCategory(String categoryId, String typeName) {
         Optional<EquipmentCategory> categoryOpt = repository.findById(categoryId);
         if (categoryOpt.isPresent()) {
             EquipmentCategory category = categoryOpt.get();
-            category.getTypes().remove(type);
+
+            // Safety check: is equipment using this type?
+            if (equipmentRepository.existsByTypeIgnoreCase(typeName.trim())) {
+                throw new IllegalStateException("Cannot remove type '" + typeName + "': Equipment is currently associated with it.");
+            }
+
+            category.getTypes().removeIf(t -> t.getName().equalsIgnoreCase(typeName));
             return repository.save(category);
         }
         throw new RuntimeException("Category not found with id: " + categoryId);
@@ -103,19 +168,22 @@ public class EquipmentCategoryService {
         Optional<EquipmentCategory> catOpt = repository.findById(id);
         if (catOpt.isPresent()) {
             EquipmentCategory category = catOpt.get();
-            
+
             // Safety check 1: Equipment association
             if (equipmentRepository.existsByCategory(category.getName())) {
                 throw new IllegalStateException("Cannot delete category: Equipment is still associated with it.");
             }
-            
-            // Safety check 2: Shelf association (check if any type in this category is used in a shelf)
+
+            // Safety check 2: Shelf association
             if (category.getTypes() != null && !category.getTypes().isEmpty()) {
-                if (shelfRepository.existsByEquipmentTypeIn(category.getTypes())) {
+                List<String> typeNames = category.getTypes().stream()
+                        .map(CategoryType::getName)
+                        .collect(Collectors.toList());
+                if (shelfRepository.existsByEquipmentTypeIn(typeNames)) {
                     throw new IllegalStateException("Cannot delete category: One or more of its equipment types are associated with shelving.");
                 }
             }
-            
+
             notificationService.createNotification("Category Deleted: " + category.getName(),
                     "Equipment category " + category.getName() + " has been removed",
                     "ERROR", "CATEGORY", id);

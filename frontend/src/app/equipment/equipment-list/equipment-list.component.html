@@ -91,10 +91,10 @@
           <th class="col-icon">Icon</th>
           <th>Name</th>
           <th>Brand</th>
-          <th>Model</th>
-          <th style="width: 80px;">Qty</th>
+          <th>Category / Type</th>
           <th>Status</th>
           <th>Location</th>
+          <th style="width: 80px;">Qty</th>
           <th class="actions-cell">Actions</th>
         </tr>
       </thead>
@@ -115,46 +115,17 @@
 
           <td class="col-icon">
             <div class="type-icon-wrap" [ngClass]="'ti-' + getTypeKey(group.type)">
-              <svg *ngIf="getTypeKey(group.type)==='laptop'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><polyline points="8 21 12 17 16 21"></polyline><line x1="2" y1="17" x2="22" y2="17"></line></svg>
-              <svg *ngIf="getTypeKey(group.type)==='pc'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-              <svg *ngIf="getTypeKey(group.type)==='monitor'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-              <svg *ngIf="getTypeKey(group.type)==='server'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"></rect><rect x="2" y="14" width="20" height="8" rx="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-              <svg *ngIf="getTypeKey(group.type)==='printer'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='scanner'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="8" rx="2" ry="2"/><path d="M8 12h8"/><path d="M5 12h.01"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='projector'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="10" rx="2"/><circle cx="16" cy="13" r="3"/><path d="M6 13h.01"/><path d="M9 13h.01"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='router'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M6 14v-4"/><path d="M12 14v-6"/><path d="M18 14v-4"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='ups'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 10v4"/><path d="M15 10v4"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='tablet'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='phone'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='keyboard'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="10" y1="14" x2="14" y2="14"/><line x1="6" y1="10" x2="6.01" y2="10"/><line x1="10" y1="10" x2="10.01" y2="10"/><line x1="14" y1="10" x2="14.01" y2="10"/><line x1="18" y1="10" x2="18.01" y2="10"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='mouse'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="5"/><line x1="12" y1="7" x2="12" y2="11"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='headset'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='ram'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M5 17v-4"/><path d="M9 17v-4"/><path d="M15 17v-4"/><path d="M19 17v-4"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='hdd'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8"/><path d="M8 10h8"/><circle cx="12" cy="16" r="2"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='cables'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v4"/><path d="M14 3v4"/><rect x="8" y="7" width="8" height="6" rx="2"/><path d="M12 13v8"/></svg>
-              <svg *ngIf="getTypeKey(group.type)==='default'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+              <ng-container *ngTemplateOutlet="typeIconTemplate; context: { type: group.type }"></ng-container>
             </div>
           </td>
 
           <td>
             <div class="font-bold text-dark">{{ group.name }}</div>
-            <div class="card-subtitle">{{ group.category }}</div>
+            <div *ngIf="group.totalQuantity > 1" class="text-xs text-slate-400 font-medium mt-1" style="white-space: nowrap; word-break: normal;">(multiple)</div>
           </td>
           <td>{{ group.brand }}</td>
+          <td>{{ group.category }} / {{ group.type | titlecase }}</td>
           
-          <td>
-            <div *ngIf="group.totalQuantity === 1">
-              <div class="card-subtitle">{{ group.items[0].model || '—' }}</div>
-            </div>
-            <div *ngIf="group.totalQuantity > 1">
-              <div class="card-subtitle">
-                {{ group.commonModel === 'Mixed' ? 'Multiple Models' : group.commonModel }}
-              </div>
-            </div>
-          </td>
-
-          <td class="font-semibold">{{ group.totalQuantity }}</td>
-
           <td>
             <div *ngIf="group.totalQuantity === 1">
               <span class="status-chip" [ngClass]="getEquipmentStatus(group.items[0]).cls">
@@ -169,6 +140,7 @@
           </td>
 
           <td>{{ group.commonLocation }}</td>
+          <td class="font-semibold text-center">{{ group.totalQuantity }}</td>
 
           <td class="actions-cell">
             <div class="actions-wrap">
@@ -183,7 +155,7 @@
                 <button class="action-icon add-similar" (click)="addSimilarEvent.emit(group.items[0]); $event.stopPropagation()" title="Add Similar Unit">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
                 </button>
-                <button class="action-icon qr" (click)="openQrModal(group.items[0], $event)" title="QR Code">
+                <button *ngIf="group.items[0].qrCode" class="action-icon qr" (click)="openQrModal(group.items[0], $event)" title="QR Code">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><line x1="7" y1="7" x2="7" y2="7"></line><line x1="17" y1="7" x2="17" y2="7"></line><line x1="17" y1="17" x2="17" y2="17"></line><line x1="7" y1="17" x2="7" y2="17"></line></svg>
                 </button>
                 <button class="action-icon delete" (click)="deleteEquipment(group.items[0].id, $event)" title="Delete">
@@ -219,7 +191,7 @@
                     <th>Status</th>
                     <th>Shelf</th>
                     <th>Supplier</th>
-                    <th>Purchase Date</th>
+
                     <th class="actions-cell">Actions</th>
                   </tr>
                 </thead>
@@ -234,23 +206,25 @@
                     </td>
                     <td>{{ getShelfLocation(item.shelfId) }}</td>
                     <td>{{ item.supplier || '—' }}</td>
-                    <td>{{ item.purchaseDate | date:'mediumDate' }}</td>
-                    <td class="actions-cell" style="justify-content: flex-start; gap: 8px;">
-                      <button class="action-icon view sm" (click)="viewEvent.emit(item)" title="View">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                      </button>
-                      <button class="action-icon edit sm" (click)="editEvent.emit(item)" title="Edit">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                      </button>
-                      <button class="action-icon add-similar sm" (click)="addSimilarEvent.emit(item)" title="Add Similar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                      </button>
-                      <button class="action-icon qr sm" (click)="openQrModal(item, $event)" title="QR Code">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                      </button>
-                      <button class="action-icon delete sm" (click)="deleteEquipment(item.id, $event)" title="Delete">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                      </button>
+
+                    <td class="actions-cell">
+                      <div class="actions-wrap">
+                        <button class="action-icon view sm" (click)="viewEvent.emit(item)" title="View">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                        <button class="action-icon edit sm" (click)="editEvent.emit(item)" title="Edit">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </button>
+                        <button class="action-icon add-similar sm" (click)="addSimilarEvent.emit(item)" title="Add Similar">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                        </button>
+                        <button *ngIf="item.qrCode" class="action-icon qr sm" (click)="openQrModal(item, $event)" title="QR Code">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        </button>
+                        <button class="action-icon delete sm" (click)="deleteEquipment(item.id, $event)" title="Delete">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -268,41 +242,72 @@
       <!-- Multi-Unit Display (Grouping) -->
       <div class="equipment-card card-animate" *ngIf="group.totalQuantity > 1">
         <div class="card-header">
-          <div class="card-title-group">
-            <h3 class="font-bold text-dark">{{ group.name }}</h3>
-            <span class="card-subtitle">{{ group.brand }} • {{ group.category }}</span>
+          <div class="header-main">
+            <div class="type-icon-wrap" [ngClass]="'ti-' + getTypeKey(group.type)">
+                <ng-container *ngTemplateOutlet="typeIconTemplate; context: { type: group.type }"></ng-container>
+            </div>
+            <div class="card-title-group">
+              <h3 class="font-bold text-dark">{{ group.name }}</h3>
+              <span class="card-subtitle">{{ group.category }} / <span class="capitalize">{{ group.type }}</span></span>
+            </div>
           </div>
-          <div class="card-qte-badge">{{ group.totalQuantity }} units</div>
+          <div class="card-badge-right">
+             <div class="card-qte-badge">{{ group.totalQuantity }} units</div>
+          </div>
         </div>
         <div class="card-body">
-          <div class="status-summary-grid">
+          <div class="status-summary-grid mb-3">
             <span *ngFor="let s of group.statusSummary" class="summary-chip" [ngClass]="s.cls">
               {{ s.count }} {{ s.label }}
             </span>
           </div>
-          <div class="info-row mt-3">
-            <span class="label">Location:</span>
-            <span class="value">{{ group.commonLocation }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Model:</span>
-            <span class="value">{{ group.commonModel }}</span>
+          <div class="info-grid">
+            <div class="info-block">
+              <span class="label">Brand</span>
+              <span class="value">{{ group.brand || '—' }}</span>
+            </div>
+            <div class="info-block">
+              <span class="label">Location</span>
+              <span class="value font-medium">{{ group.commonLocation || '—' }}</span>
+            </div>
           </div>
         </div>
-        <div class="card-footer">
-          <button class="btn-group-expand" (click)="toggleGroup(group)">
-            {{ group.expanded ? 'Hide Units' : 'View ' + group.totalQuantity + ' Units' }}
+        <div class="card-footer actions-toolbar">
+          <button class="tool-btn text-slate" (click)="openGroupEditModal(group, $event)" title="Edit Group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </button>
+          <button class="tool-btn delete-btn" (click)="deleteGroup(group, $event)" title="Delete Group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+          <div class="tool-spacer"></div>
+          <button class="btn-group-expand" (click)="toggleGroup(group)" style="border:none;background:transparent;color:#3b82f6;font-size:0.85rem;font-weight:600;cursor:pointer;">
+            {{ group.expanded ? 'Hide Instances' : 'View All ' + group.totalQuantity + ' Instances' }}
           </button>
         </div>
         
         <!-- Instances List -->
-        <div class="card-instances-list" *ngIf="group.expanded">
-          <div *ngFor="let item of group.items" class="mini-instance-item">
-            <span class="mono">{{ item.serialNumber || item.id?.substring(0,8) }}</span>
-            <span class="status-dot" [ngClass]="getEquipmentStatus(item).cls"></span>
-            <div class="mini-actions">
-              <button (click)="viewEvent.emit(item)">View</button>
-              <button (click)="editEvent.emit(item)">Edit</button>
+        <div class="card-instances-list" *ngIf="group.expanded" style="margin-top:16px; display:flex; flex-direction:column; gap:8px;">
+          <div *ngFor="let item of group.items" class="mini-instance-item" style="display:flex; justify-content:space-between; align-items:center; padding:8px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span class="status-dot" style="width:8px; height:8px; border-radius:50%; display:inline-block;" [ngStyle]="{'background-color': getEquipmentStatus(item).label === 'Available' ? '#10b981' : (getEquipmentStatus(item).label === 'In Use' ? '#3b82f6' : (getEquipmentStatus(item).label === 'Out of Stock' ? '#64748b' : (getEquipmentStatus(item).label === 'Broken' ? '#ef4444' : '#f59e0b')))}"></span>
+                <span class="mono" style="font-size:0.8rem; font-family:monospace; color:#475569;">{{ item.serialNumber || item.id?.substring(0,8) }}</span>
+            </div>
+            <div class="actions-wrap" style="gap:4px;">
+              <button class="action-icon view sm" (click)="viewEvent.emit(item)" title="View">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+              <button class="action-icon edit sm" (click)="editEvent.emit(item)" title="Edit">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+              <button class="action-icon add-similar sm" (click)="addSimilarEvent.emit(item)" title="Add Similar Unit">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+              </button>
+              <button *ngIf="item.qrCode" class="action-icon qr sm" (click)="openQrModal(item, $event)" title="QR Code">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              </button>
+              <button class="action-icon delete sm" (click)="deleteEquipment(item.id, $event)" title="Delete">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
             </div>
           </div>
         </div>
@@ -311,54 +316,62 @@
       <!-- Single-Unit Display (Normal Card) -->
       <div class="equipment-card card-animate" *ngIf="group.totalQuantity === 1">
         <div class="card-header">
-          <div class="card-title-group">
-            <h3 class="font-bold text-dark">{{ group.items[0].equipmentName }}</h3>
-            <span class="card-subtitle">{{ group.items[0].brand }} • {{ group.items[0].model }}</span>
+          <div class="header-main">
+            <div class="type-icon-wrap" [ngClass]="'ti-' + getTypeKey(group.type)">
+                <ng-container *ngTemplateOutlet="typeIconTemplate; context: { type: group.type }"></ng-container>
+            </div>
+            <div class="card-title-group">
+              <h3 class="font-bold text-dark">{{ group.items[0].equipmentName }}</h3>
+              <span class="card-subtitle" *ngIf="group.items[0].model">{{ group.items[0].model }}</span>
+            </div>
           </div>
-          <span class="status-chip" [ngClass]="getEquipmentStatus(group.items[0]).cls">
-            {{ getEquipmentStatus(group.items[0]).label }}
-          </span>
+          <div class="card-badge-right">
+             <span class="status-chip" [ngClass]="getEquipmentStatus(group.items[0]).cls">
+               {{ getEquipmentStatus(group.items[0]).label }}
+             </span>
+          </div>
         </div>
         <div class="card-body">
-          <div class="info-row">
-            <span class="label">S/N:</span>
-            <span class="value mono">{{ group.items[0].serialNumber || '—' }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Location:</span>
-            <span class="value">{{ getShelfLocation(group.items[0].shelfId) }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Supplier:</span>
-            <span class="value">{{ group.items[0].supplier || '—' }}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">Warranty:</span>
-            <span class="value" [class.text-danger]="isWarrantyExpired(group.items[0].warrantyExpiration)">
-              {{ group.items[0].warrantyExpiration ? (group.items[0].warrantyExpiration | date:'mediumDate') : '—' }}
-            </span>
+          <div class="info-grid mt-2">
+            <div class="info-block">
+              <span class="label">Category / Type</span>
+              <span class="value">{{ group.items[0].category }} / <span class="capitalize">{{ group.items[0].type }}</span></span>
+            </div>
+            <div class="info-block">
+              <span class="label">S/N</span>
+              <span class="value mono">{{ group.items[0].serialNumber || '—' }}</span>
+            </div>
+            <div class="info-block">
+              <span class="label">Brand</span>
+              <span class="value">{{ group.items[0].brand || '—' }}</span>
+            </div>
+            <div class="info-block">
+              <span class="label">Supplier</span>
+              <span class="value">{{ group.items[0].supplier || '—' }}</span>
+            </div>
+            <div class="info-block" style="grid-column: span 2;">
+              <span class="label">Location</span>
+              <span class="value font-medium">{{ getShelfLocation(group.items[0].shelfId) }}</span>
+            </div>
           </div>
         </div>
-        <div class="card-footer">
-          <div class="actions-cell" style="width: 100%; justify-content: space-between;">
-            <div style="display: flex; gap: 8px;">
-              <button class="action-icon view" (click)="viewEvent.emit(group.items[0])" title="View">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              </button>
-              <button class="action-icon edit" (click)="editEvent.emit(group.items[0])" title="Edit">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-              </button>
-              <button class="action-icon add-similar" (click)="addSimilarEvent.emit(group.items[0])" title="Add Similar Unit">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-              </button>
-              <button class="action-icon qr" (click)="openQrModal(group.items[0], $event)" title="QR Code">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><line x1="7" y1="7" x2="7" y2="7"></line><line x1="17" y1="7" x2="17" y2="7"></line><line x1="17" y1="17" x2="17" y2="17"></line><line x1="7" y1="17" x2="7" y2="17"></line></svg>
-              </button>
-            </div>
-            <button class="action-icon delete" (click)="deleteEquipment(group.items[0].id)" title="Delete">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-            </button>
-          </div>
+        <div class="card-footer actions-toolbar">
+          <button class="tool-btn text-slate" (click)="viewEvent.emit(group.items[0])" title="View Details">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+          <button class="tool-btn text-slate" (click)="editEvent.emit(group.items[0])" title="Edit Item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </button>
+          <button class="tool-btn text-slate" (click)="addSimilarEvent.emit(group.items[0])" title="Clone Item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+          </button>
+          <button class="tool-btn text-slate" *ngIf="group.items[0].qrCode" (click)="openQrModal(group.items[0], $event)" title="Show QR Code">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          </button>
+          <div class="tool-spacer"></div>
+          <button class="tool-btn delete-btn" (click)="deleteEquipment(group.items[0].id)" title="Delete Item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
         </div>
       </div>
     </ng-container>
@@ -459,12 +472,7 @@
                     </div>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <label style="font-size: 0.85rem; font-weight: 600; color: #475569;">Model</label>
-                    <input type="text" [(ngModel)]="bulkEditForm.model" 
-                           style="padding: 10px 12px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem; outline: none;"
-                           placeholder="Enter model name (optional)">
-                </div>
+
             </div>
         </div>
 
@@ -478,3 +486,49 @@
         </div>
     </div>
 </div>
+
+<!-- ═══ Custom Delete Confirmation Modal (Messaging Style) ═══ -->
+<div class="delete-modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+    <div class="delete-modal" (click)="$event.stopPropagation()">
+        <div class="delete-modal-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                <path d="M10 11v6"></path><path d="M14 11v6"></path>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+            </svg>
+        </div>
+        <h3 class="delete-modal-title">{{ deleteModalTitle }}</h3>
+        <p class="delete-modal-desc">{{ deleteModalMessage }}</p>
+        
+        <div class="delete-modal-actions">
+            <button class="delete-btn-confirm" (click)="confirmDelete()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                Delete
+            </button>
+            <button class="delete-btn-cancel" (click)="closeDeleteModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- SVGs Template for Icons -->
+<ng-template #typeIconTemplate let-type="type">
+    <svg *ngIf="getTypeKey(type)==='laptop'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><polyline points="8 21 12 17 16 21"></polyline><line x1="2" y1="17" x2="22" y2="17"></line></svg>
+    <svg *ngIf="getTypeKey(type)==='pc'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+    <svg *ngIf="getTypeKey(type)==='monitor'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+    <svg *ngIf="getTypeKey(type)==='server'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"></rect><rect x="2" y="14" width="20" height="8" rx="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+    <svg *ngIf="getTypeKey(type)==='printer'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    <svg *ngIf="getTypeKey(type)==='scanner'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="8" rx="2" ry="2"/><path d="M8 12h8"/><path d="M5 12h.01"/></svg>
+    <svg *ngIf="getTypeKey(type)==='projector'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="10" rx="2"/><circle cx="16" cy="13" r="3"/><path d="M6 13h.01"/><path d="M9 13h.01"/></svg>
+    <svg *ngIf="getTypeKey(type)==='router'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M6 14v-4"/><path d="M12 14v-6"/><path d="M18 14v-4"/></svg>
+    <svg *ngIf="getTypeKey(type)==='ups'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 10v4"/><path d="M15 10v4"/></svg>
+    <svg *ngIf="getTypeKey(type)==='tablet'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+    <svg *ngIf="getTypeKey(type)==='phone'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+    <svg *ngIf="getTypeKey(type)==='keyboard'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="10" y1="14" x2="14" y2="14"/><line x1="6" y1="10" x2="6.01" y2="10"/><line x1="10" y1="10" x2="10.01" y2="10"/><line x1="14" y1="10" x2="14.01" y2="10"/><line x1="18" y1="10" x2="18.01" y2="10"/></svg>
+    <svg *ngIf="getTypeKey(type)==='mouse'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="5"/><line x1="12" y1="7" x2="12" y2="11"/></svg>
+    <svg *ngIf="getTypeKey(type)==='headset'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>
+    <svg *ngIf="getTypeKey(type)==='ram'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M5 17v-4"/><path d="M9 17v-4"/><path d="M15 17v-4"/><path d="M19 17v-4"/></svg>
+    <svg *ngIf="getTypeKey(type)==='hdd'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8"/><path d="M8 10h8"/><circle cx="12" cy="16" r="2"/></svg>
+    <svg *ngIf="getTypeKey(type)==='cables'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v4"/><path d="M14 3v4"/><rect x="8" y="7" width="8" height="6" rx="2"/><path d="M12 13v8"/></svg>
+    <svg *ngIf="getTypeKey(type)==='default'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+</ng-template>

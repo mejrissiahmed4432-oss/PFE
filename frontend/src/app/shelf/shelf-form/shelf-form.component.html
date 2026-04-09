@@ -24,7 +24,7 @@
           <label>Equipment Type <span class="required-star">*</span></label>
           <select formControlName="equipmentType" class="form-control">
             <option value="" disabled selected>Select Type</option>
-            <option *ngFor="let type of availableTypes" [value]="type">{{ type | titlecase }}</option>
+            <option *ngFor="let type of availableTypes" [value]="type.name">{{ type.name | titlecase }}</option>
           </select>
           <div class="error-msg" *ngIf="shelfForm.get('equipmentType')?.invalid && (shelfForm.get('equipmentType')?.dirty || shelfForm.get('equipmentType')?.touched)">
             Equipment type is required
@@ -33,23 +33,26 @@
 
         <div class="form-group">
           <label>Shelf NB / Identifier <span class="required-star">*</span></label>
-          <input type="text" formControlName="nb" class="form-control" 
-                 [placeholder]="!shelfForm.get('equipmentType')?.value ? 'Awaiting type selection...' : 'e.g. ' + (shelfForm.get('equipmentType')?.value || 'pc') + '-1'"
-                 [readonly]="!shelfForm.get('equipmentType')?.value">
+          <div class="prefix-input-group" [class.disabled]="!shelfForm.get('equipmentType')?.value">
+            <span class="prefix">{{ shelfForm.get('equipmentType')?.value ? (shelfForm.get('equipmentType')?.value | lowercase) + '-' : 'type-' }}</span>
+            <input type="text" formControlName="nbSuffix" class="form-control" 
+                   placeholder="e.g. 1, 4, 755"
+                   [readonly]="!shelfForm.get('equipmentType')?.value">
+          </div>
           
-          <div class="type-hint" *ngIf="!shelfForm.get('nb')?.value && !shelfForm.get('equipmentType')?.value">
+          <div class="type-hint" *ngIf="!shelfForm.get('equipmentType')?.value">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
             Select a type first to define the ID
           </div>
 
-          <div class="error-msg" *ngIf="shelfForm.get('equipmentType')?.value">
-            <span *ngIf="shelfForm.get('nb')?.errors?.['required']">Identifier is required</span>
+          <div class="error-msg" *ngIf="shelfForm.get('equipmentType')?.value && (shelfForm.get('nbSuffix')?.dirty || shelfForm.get('nbSuffix')?.touched)">
+            <span *ngIf="shelfForm.get('nbSuffix')?.errors?.['required']">Identifier number is required</span>
             
-            <ng-container *ngIf="!shelfForm.get('nb')?.errors?.['required']">
-              <span *ngIf="shelfForm.get('nb')?.errors?.['pattern']">
-                Format must be: {{ shelfForm.get('equipmentType')?.value || 'type' }}-number (e.g. {{ shelfForm.get('equipmentType')?.value || 'pc' }}-1)
+            <ng-container *ngIf="!shelfForm.get('nbSuffix')?.errors?.['required']">
+              <span *ngIf="shelfForm.get('nbSuffix')?.errors?.['pattern']">
+                Number must contain only digits.
               </span>
-              <span *ngIf="!shelfForm.get('nb')?.errors?.['pattern'] && shelfForm.get('nb')?.errors?.['notUnique']">
+              <span *ngIf="!shelfForm.get('nbSuffix')?.errors?.['pattern'] && shelfForm.get('nbSuffix')?.errors?.['notUnique']">
                 This Shelf identifier already exists.
               </span>
             </ng-container>

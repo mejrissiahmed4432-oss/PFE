@@ -37,6 +37,11 @@ export class ShelfListComponent implements OnInit {
 
   showForm: boolean = false;
   selectedShelf: Shelf | null = null;
+
+  // Delete Confirmation Modal
+  showDeleteModal: boolean = false;
+  shelfToDeleteId: string | null = null;
+  errorMessage: string | null = null;
   
   @Output() navigate = new EventEmitter<string>();
 
@@ -118,16 +123,61 @@ export class ShelfListComponent implements OnInit {
   }
 
   deleteShelf(id: string | undefined): void {
-    if (id && confirm('Are you sure you want to delete this shelf?')) {
-      this.shelfService.deleteShelf(id).subscribe({
-        next: () => this.loadShelves(),
-        error: (error) => console.error('Error deleting shelf', error)
+    if (!id) return;
+    this.shelfToDeleteId = id;
+    this.showDeleteModal = true;
+  }
+
+  confirmDelete(): void {
+    if (this.shelfToDeleteId) {
+      this.shelfService.deleteShelf(this.shelfToDeleteId).subscribe({
+        next: () => {
+          this.loadShelves();
+          this.closeDeleteModal();
+        },
+        error: (err) => {
+          if (err.status === 409) {
+            this.errorMessage = typeof err.error === 'string' ? err.error : 'Cannot delete shelf: it is currently in use.';
+          } else {
+            console.error('Error deleting shelf', err);
+            this.closeDeleteModal();
+          }
+        }
       });
     }
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.shelfToDeleteId = null;
+    this.errorMessage = null;
   }
 
   viewEquipment(shelf: Shelf): void {
     this.equipmentService.setShelfFilter(shelf.id || null, shelf.nb?.toString() || null);
     this.navigate.emit('equipment');
+  }
+
+  getTypeKey(type?: string): string {
+    const t = type?.toLowerCase() || '';
+    if (t.includes('laptop')) return 'laptop';
+    if (t.includes('pc') || t.includes('computer') || t.includes('desktop')) return 'pc';
+    if (t.includes('monitor') || t.includes('screen') || t.includes('display')) return 'monitor';
+    if (t.includes('server')) return 'server';
+    if (t.includes('print')) return 'printer';
+    if (t.includes('scan')) return 'scanner';
+    if (t.includes('project')) return 'projector';
+    if (t.includes('rout') || t.includes('switch') || t.includes('hub')) return 'router';
+    if (t.includes('ups') || t.includes('power')) return 'ups';
+    if (t.includes('tab') || t.includes('ipad')) return 'tablet';
+    if (t.includes('phone') || t.includes('mobile')) return 'phone';
+    if (t.includes('key')) return 'keyboard';
+    if (t.includes('mouse')) return 'mouse';
+    if (t.includes('head') || t.includes('ear') || t.includes('audio')) return 'headset';
+    if (t.includes('ram') || t.includes('memory') || t.includes('ddr')) return 'ram';
+    if (t.includes('hard') || t.includes('hdd') || t.includes('ssd') || t.includes('drive') || t.includes('storage')) return 'hdd';
+    if (t.includes('cable') || t.includes('wire') || t.includes('cord')) return 'cables';
+    
+    return 'default';
   }
 }

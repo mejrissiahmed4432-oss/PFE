@@ -62,7 +62,7 @@ spring:
         - id: categories-route
           uri: lb://stock-manager-microservice
           predicates:
-            - Path=/api/equipment-categories/**
+            - Path=/api/equipment-categories, /api/equipment-categories/**
         - id: user-ws-route
           uri: lb://user-microservice
           predicates:
@@ -78,3 +78,4 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     hostname: localhost
+    prefer-ip-address: true
