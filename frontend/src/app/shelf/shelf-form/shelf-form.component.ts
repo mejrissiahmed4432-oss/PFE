@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, A
 import { ShelfService } from '../shelf.service';
 import { Shelf } from '../shelf.model';
 import { CategoryService } from '../../category-manager/category.service';
-import { EquipmentCategory } from '../../category-manager/category.model';
+import { EquipmentCategory, CategoryType } from '../../category-manager/category.model';
 
 @Component({
   selector: 'app-shelf-form',
@@ -20,7 +20,7 @@ export class ShelfFormComponent implements OnInit {
   shelfForm: FormGroup;
   isSubmitting = false;
   categories: EquipmentCategory[] = [];
-  availableTypes: string[] = [];
+  availableTypes: CategoryType[] = [];
   existingShelves: string[] = [];
 
   constructor(
@@ -30,7 +30,7 @@ export class ShelfFormComponent implements OnInit {
   ) {
     this.shelfForm = this.fb.group({
       category: ['', Validators.required],
-      nb: ['', Validators.required],
+      nbSuffix: ['', [Validators.required, Validators.pattern('^[0-9]+$'), this.uniqueNbValidator()]],
       equipmentType: [{ value: '', disabled: true }, Validators.required],
       maxQte: [10, [Validators.required, Validators.min(1)]],
       minQte: [2, [Validators.required, Validators.min(0)]],
@@ -61,7 +61,7 @@ export class ShelfFormComponent implements OnInit {
       // If editing, find which category owns the shelf's equipmentType
       if (this.shelf && this.shelf.equipmentType) {
         const matchingCategory = this.categories.find(c => 
-          c.types?.map(t => t.toLowerCase()).includes(this.shelf!.equipmentType.toLowerCase())
+          c.types?.some(t => t.name.toLowerCase() === this.shelf!.equipmentType.toLowerCase())
         );
         if (matchingCategory && matchingCategory.name) {
           this.shelfForm.get('category')?.setValue(matchingCategory.name, { emitEvent: true });
@@ -90,7 +90,7 @@ export class ShelfFormComponent implements OnInit {
            }
         }
         const currentType = eqTypeCtrl.value;
-        if (currentType && !this.availableTypes.map(t => t.toLowerCase()).includes(currentType.toLowerCase())) {
+        if (currentType && !this.availableTypes.some(t => t.name.toLowerCase() === currentType.toLowerCase())) {
            eqTypeCtrl.setValue('');
         }
       }
@@ -102,16 +102,28 @@ export class ShelfFormComponent implements OnInit {
       this.existingShelves = shelves
         .map(s => s.nb?.toLowerCase())
         .filter(nb => nb && nb !== currentNb);
-      this.shelfForm.get('nb')?.updateValueAndValidity();
+      this.shelfForm.get('nbSuffix')?.updateValueAndValidity();
     });
 
-    // Dynamic validation for 'nb' based on selected 'equipmentType'
+    // Re-validate unique id when equipmentType changes
     this.shelfForm.get('equipmentType')?.valueChanges.subscribe(type => {
-      this.updateNbValidator(type);
+      this.shelfForm.get('nbSuffix')?.updateValueAndValidity();
     });
 
     if (this.shelf) {
-      this.shelfForm.patchValue(this.shelf);
+      const formVal: any = { ...this.shelf };
+      
+      // Extract the suffix from the existing nb
+      if (this.shelf.nb && this.shelf.equipmentType) {
+        const prefix = this.shelf.equipmentType + '-';
+        if (this.shelf.nb.toLowerCase().startsWith(prefix.toLowerCase())) {
+          formVal['nbSuffix'] = this.shelf.nb.substring(prefix.length);
+        } else {
+          formVal['nbSuffix'] = this.shelf.nb;
+        }
+      }
+
+      this.shelfForm.patchValue(formVal);
       
       if (this.shelf.equipmentType && (!this.shelf.currentQte || this.shelf.currentQte === 0)) {
          this.shelfForm.get('equipmentType')?.enable({ emitEvent: false });
@@ -122,30 +134,17 @@ export class ShelfFormComponent implements OnInit {
         this.shelfForm.get('category')?.disable({ emitEvent: false });
       }
     }
-
-    if (this.shelfForm.get('equipmentType')?.value) {
-      this.updateNbValidator(this.shelfForm.get('equipmentType')?.value);
-    }
-  }
-
-  updateNbValidator(type: string): void {
-    const ctrl = this.shelfForm.get('nb');
-    if (!ctrl) return;
-    if (!type) {
-      ctrl.setValidators([Validators.required, this.uniqueNbValidator()]);
-    } else {
-      // e.g. if type is 'pc', pattern is '^pc-[0-9]+$' (case insensitive)
-      const safeType = type.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const pattern = new RegExp(`^${safeType}-[0-9]+$`, 'i');
-      ctrl.setValidators([Validators.required, Validators.pattern(pattern), this.uniqueNbValidator()]);
-    }
-    ctrl.updateValueAndValidity();
   }
 
   uniqueNbValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) return null;
-      const val = control.value.toLowerCase();
+      if (!this.shelfForm) return null;
+      
+      const type = this.shelfForm.get('equipmentType')?.value;
+      if (!type) return null;
+
+      const val = `${type}-${control.value}`.toLowerCase();
       if (this.existingShelves.includes(val)) {
         return { notUnique: true };
       }
@@ -162,13 +161,14 @@ export class ShelfFormComponent implements OnInit {
     this.isSubmitting = true;
     const shelfData = this.shelfForm.getRawValue();
     
-    // Remove the transient category property before sending to the backend
+    // Remove transient properties before saving
     delete shelfData.category;
     
-    // Force the identifier back to lowercase before saving (e.g. PC-8 -> pc-8)
-    if (shelfData.nb) {
-      shelfData.nb = shelfData.nb.toLowerCase();
+    // Construct the full nb identifier
+    if (shelfData.equipmentType && shelfData.nbSuffix) {
+      shelfData.nb = `${shelfData.equipmentType}-${shelfData.nbSuffix}`.toLowerCase();
     }
+    delete shelfData.nbSuffix;
 
     if (this.shelf && this.shelf.id) {
       // Update existing

@@ -210,7 +210,7 @@
     <button class="tab-btn" [class.active]="activeTab==='purchase'" (click)="activeTab='purchase'">Purchase &
       Warranty</button>
     <button class="tab-btn" [class.active]="activeTab==='storage'" (click)="activeTab='storage'">Storage</button>
-    <button class="tab-btn" [class.active]="activeTab==='qr'" (click)="activeTab='qr'" *ngIf="equipment?.id">QR
+    <button class="tab-btn" [class.active]="activeTab==='qr'" (click)="activeTab='qr'" *ngIf="equipment?.id && typeRequiresQr()">QR
       Code</button>
   </div>
 
@@ -249,11 +249,11 @@
               <span class="info-label">Status</span>
               <span class="info-value">
                 <span class="tag" [ngClass]="{
-                  'tag-active': equipment?.status === 'In Stock',
+                  'tag-active': equipment?.status === 'Available',
                   'tag-expired': equipment?.status === 'Broken',
                   'tag-maintenance': equipment?.status === 'Maintenance',
                   'tag-unassigned': equipment?.status === 'Out of Stock'
-                }">{{ equipment?.status || 'In Stock' }}</span>
+                }">{{ equipment?.status || 'Available' }}</span>
               </span>
             </div>
             <div class="info-row">
@@ -267,6 +267,10 @@
             <div class="info-row">
               <span class="info-label">Category</span>
               <span class="info-value"><span class="tag tag-cat">{{ equipment?.category }}</span></span>
+            </div>
+            <div class="info-row" *ngIf="equipment?.specification">
+              <span class="info-label">Specifications</span>
+              <span class="info-value">{{ equipment?.specification }}</span>
             </div>
           </div>
         </div>
@@ -614,7 +618,7 @@
     </ng-container>
 
     <!-- QR CODE -->
-    <ng-container *ngIf="activeTab==='qr' && equipment?.id">
+    <ng-container *ngIf="activeTab==='qr' && equipment?.id && typeRequiresQr()">
       <div class="info-grid">
         <div class="info-card qr-detail-card">
           <div class="info-card-header">
@@ -675,8 +679,19 @@
 <!-- ════════════════════════════════════════════════════════
      EDIT / ADD  mode  (unchanged structure)
      ════════════════════════════════════════════════════════ -->
-<div class="form-wrapper" *ngIf="!viewOnly || isEditing">
-  <div class="form-header">
+<ng-container *ngIf="!viewOnly || isEditing">
+  <div class="back-bar">
+    <button class="btn-back" (click)="cancel()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      Back to Equipment
+    </button>
+  </div>
+
+  <div class="form-wrapper">
+    <div class="form-header">
     <h3>{{ !equipment ? 'Add New Equipment' : 'Edit Equipment' }}</h3>
     <p class="subtitle">Fill in the equipment details below.</p>
   </div>
@@ -747,15 +762,22 @@
             </div>
           </div>
           <div class="input-group">
-            <label>Type <span class="required">*</span></label>
-            <select [(ngModel)]="formData.type" (change)="onTypeChange()">
-              <option value="" disabled>Select type</option>
-              <option *ngFor="let t of equipmentTypes" [value]="t">{{ t | titlecase }}</option>
+            <label>Category <span class="required">*</span></label>
+            <select [(ngModel)]="formData.category" (change)="onCategoryChange()" name="eqCategory" [disabled]="viewOnly || (!!equipment && !isAddSimilar)">
+                <option value="" disabled>Select category</option>
+                <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
             </select>
           </div>
           <div class="input-group">
-            <label>Category</label>
-            <input type="text" [(ngModel)]="formData.category" disabled>
+            <label>Type <span class="required">*</span></label>
+            <select [(ngModel)]="formData.type" (change)="onTypeChange()" name="eqType" [disabled]="viewOnly || !formData.category || (!!equipment && !isAddSimilar)">
+              <option value="" disabled>{{ formData.category ? 'Select type' : 'Select category first' }}</option>
+              <option *ngFor="let t of availableTypes" [value]="t.name">{{ t.name | titlecase }}</option>
+              <!-- Fallback for legacy data/unmapped types -->
+              <option *ngIf="isLegacyType()" [value]="formData.type">
+                  {{ formData.type | titlecase }}
+              </option>
+            </select>
           </div>
         </div>
       </div>
@@ -826,27 +848,31 @@
         <div class="input-grid">
           <div class="input-group full-width" style="grid-column: span 2;">
             <label>Shelf Assignment <span class="required">*</span></label>
-            <select [(ngModel)]="formData.shelfId" [disabled]="formData.status !== 'In Stock'">
+            <select [(ngModel)]="formData.shelfId" [disabled]="formData.status !== 'Available' && formData.status !== 'In Stock'">
               <option value="" disabled>Select an available shelf</option>
               <option *ngIf="formData.status === 'Maintenance'" value="MAINTENANCE_AREA">Maintenance Area</option>
               <option *ngIf="formData.status === 'Broken'" value="SCRAP_YARD">Scrap Yard</option>
               <option *ngIf="formData.status === 'Out of Stock'" value="OUT_OF_STOCK">Out of Stock</option>
-              <option *ngFor="let s of availableShelves" [value]="s.id">Shelf {{ s.nb }} (Available Capacity: {{
-                s.maxQte - s.currentQte }})</option>
+              <option *ngFor="let s of availableShelves" [value]="s.id">
+                Shelf {{ s.nb }} 
+                ({{ (equipment?.id && !isAddSimilar && s.id === equipment?.shelfId) ? 
+                    (s.maxQte - s.currentQte + 1) + ' spots (Your current)' : 
+                    (s.maxQte - s.currentQte) + ' spots' }})
+              </option>
             </select>
             <div class="hint" *ngIf="!formData.type" style="font-size: 12px; color: #64748b; margin-top: 4px;">Select an
               equipment type first to see available shelves</div>
             <div class="hint error" *ngIf="formData.type && availableShelves.length === 0"
               style="font-size: 12px; color: #ef4444; margin-top: 4px;">No available shelves for this type/quantity
             </div>
-            <div class="hint error" *ngIf="formData.status === 'In Stock' && (!formData.shelfId || formData.shelfId === '')"
+            <div class="hint error" *ngIf="(formData.status === 'Available' || formData.status === 'In Stock') && (!formData.shelfId || formData.shelfId === '')"
               style="font-size: 12px; color: #ef4444; margin-top: 4px; font-weight: 600;">
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-right: 4px; vertical-align: middle;">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="8" x2="12" y2="12"></line>
                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
               </svg>
-              Please select a shelf assignment for equipment in stock.
+              Please select a shelf assignment for available equipment.
             </div>
           </div>
         </div>
@@ -881,8 +907,9 @@
         </div>
 
         <div class="input-group full-width">
-          <label>specification</label>
-          <textarea [(ngModel)]="formData.specification" rows="4" placeholder="Enter technical specifications..."></textarea>
+          <label>specification <span class="required">*</span></label>
+          <textarea [(ngModel)]="formData.specification" name="specification" #spec="ngModel" rows="4" placeholder="Enter technical specifications..." required></textarea>
+          <div *ngIf="!formData.specification" class="error-msg">Specification is required.</div>
         </div>
       </div>
 
@@ -897,7 +924,7 @@
     </div>
 
     <!-- Right Column: QR & Info panel -->
-    <div class="side-column" *ngIf="equipment?.id">
+    <div class="side-column" *ngIf="equipment?.id && typeRequiresQr()">
       <div class="side-panel qr-panel">
         <h4>QR Code</h4>
         <div class="qr-img-wrapper">

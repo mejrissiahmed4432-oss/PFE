@@ -13,6 +13,10 @@ public interface EquipmentRepository extends MongoRepository<Equipment, String> 
     List<Equipment> findByShelfId(String shelfId);
     List<Equipment> findByCategory(String category);
     boolean existsByCategory(String category);
+    boolean existsByTypeIgnoreCase(String type);
     boolean existsBySerialNumber(String serialNumber);
     boolean existsBySerialNumberAndIdNot(String serialNumber, String id);
+    boolean existsByShelfId(String shelfId);
+    boolean existsBySupplierId(String supplierId);
+    List<Equipment> findByTypeIgnoreCase(String type);
 }

@@ -40,9 +40,9 @@
 
 .search-box input:focus {
   outline: none;
-  border-color: #4f46e5;
+  border-color: #3b82f6;
   background-color: white;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .actions-group {
@@ -93,7 +93,7 @@
 
 .view-btn.active {
   background: white;
-  color: #4f46e5;
+  color: #3b82f6;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
@@ -169,8 +169,8 @@
 
 .filter-group select:focus, .filter-group input:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 /* Table Styles */
@@ -202,6 +202,8 @@
   font-size: 0.95rem;
   border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .table-row-animate {
@@ -315,7 +317,7 @@
 }
 
 .action-icon.view:hover { color: #3b82f6; background: #eff6ff; }
-.action-icon.edit:hover { color: #4f46e5; background: #eef2ff; }
+.action-icon.edit:hover { color: #2563eb; background: #eff6ff; }
 .action-icon.delete:hover { color: #ef4444; background: #fef2f2; }
 
 /* Card View */
@@ -401,9 +403,9 @@
 .btn-outline {
   padding: 8px 16px;
   background: transparent;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #bfdbfe;
   border-radius: 6px;
-  color: #4f46e5;
+  color: #3b82f6;
   font-weight: 600;
   font-size: 0.85rem;
   cursor: pointer;
@@ -412,7 +414,7 @@
 
 .btn-outline:hover {
   background: #eff6ff;
-  border-color: #4f46e5;
+  border-color: #3b82f6;
 }
 
 .action-buttons-group {
@@ -522,8 +524,8 @@
 }
 
 .page-btn.active {
-  background: #4f46e5;
-  border-color: #4f46e5;
+  background: #3b82f6;
+  border-color: #3b82f6;
   color: white;
 }
 
@@ -536,4 +538,14 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ═══ Type Icon Wrap ═══ */
+.type-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #3b82f6;
+}
+
 

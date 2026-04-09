@@ -12,7 +12,7 @@ import { Supplier } from '../../supplier/supplier.model';
 import { ShelfService } from '../../shelf/shelf.service';
 import { Shelf } from '../../shelf/shelf.model';
 import { CategoryService } from '../../category-manager/category.service';
-import { EquipmentCategory } from '../../category-manager/category.model';
+import { CategoryType, EquipmentCategory } from '../../category-manager/category.model';
 
 // ─── Interfaces ───────────────────────────────────────────────────────────
 export interface UnitRow {
@@ -81,7 +81,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   configMode: 'same' | 'different' = 'same';
   
   categories: EquipmentCategory[] = [];
-  availableTypes: string[] = [];
+  availableTypes: CategoryType[] = [];
 
   // ── Step 1: General Info ──────────────────────────────────────────────
   sharedName: string = '';
@@ -197,12 +197,22 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
 
   private populateFromPrefill(data: Equipment): void {
     this.type = data.type || '';
-    this.category = data.category as 'Asset' | 'Consumable';
+    if (data.category === 'Asset' || data.category === 'Consumable') {
+      this.category = data.category as 'Asset' | 'Consumable';
+    } else {
+      this.selectedCategoryName = data.category || '';
+      // Heuristic for the internal Asset/Consumable tag if category is a real name
+      if (['STORAGE', 'COMPONENT'].includes(this.selectedCategoryName.toUpperCase())) {
+        this.category = 'Consumable';
+      } else {
+        this.category = 'Asset';
+      }
+    }
     
     // Auto-select category and populate types for prefill
     if (this.type) {
-      const cat = this.categories.find(c => 
-        c.types?.map(t => t.toLowerCase()).includes(this.type.toLowerCase())
+      const cat = this.categories.find(c =>
+        c.types?.map(t => t.name.toLowerCase()).includes(this.type.toLowerCase())
       );
       if (cat) {
         this.selectedCategoryName = cat.name || '';
@@ -270,6 +280,15 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     return this.currentStep + 1;
   }
 
+  get typeRequiresQr(): boolean {
+    if (!this.selectedCategoryName || !this.type) return true;
+    const cat = this.categories.find(c => c.name === this.selectedCategoryName);
+    if (!cat) return true;
+    const typeObj = cat.types?.find(t => t.name === this.type);
+    return typeObj ? typeObj.requiresQrCode : true;
+  }
+
+
   getDotNumber(index: number): number {
     if (this.quantity > 1 && this.specMode === 'different' && index > 2) {
       return index; // instead of index + 1
@@ -300,7 +319,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     }
 
     // Reset type if not in new list
-    if (this.type && !this.availableTypes.map(t => t.toLowerCase()).includes(this.type.toLowerCase())) {
+    if (this.type && !this.availableTypes.map(t => t.name.toLowerCase()).includes(this.type.toLowerCase())) {
       this.type = '';
     }
     this.validateStockCapacity();
@@ -546,11 +565,10 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         ? !!this.sharedName && !!this.sharedBrand
         : this.units.every(u => !!u.name && !!u.brand);
       case 2:
-        if (this.specMode === 'same' || this.quantity === 1) return true;
+        if (this.specMode === 'same' || this.quantity === 1) return !!this.sharedSpecification;
         return this.units.every(u => {
           const sn = u.serialNumber;
-          if (!sn) return false;
-          return this.isValidSerialNumber(sn) && this.isSNUnique(sn) && !this.isSNChecking(sn);
+          return !!u.specification && !!sn && this.isValidSerialNumber(sn) && this.isSNUnique(sn) && !this.isSNChecking(sn);
         });
       case 3:
         if (this.quantity === 1) return this.isValidSerialNumber(this.sharedSerial) && this.isSNUnique(this.sharedSerial) && !this.isSNChecking(this.sharedSerial);
@@ -727,7 +745,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         model: same ? this.sharedModel : u.model,
         note: same ? this.sharedNotes : '',
         type: this.type,
-        category: this.category,
+        category: this.selectedCategoryName,
         qte: 1,
         serialNumber: serial,
         supplierId: this.purchaseMode === 'same' ? this.sharedSupplierId : u.supplierId,
@@ -746,7 +764,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         operatingSystem: same ? this.sharedOs : u.operatingSystem,
         specification: same ? this.sharedSpecification : u.specification,
         department: 'stock',
-        status: 'In Stock',
+        status: 'Available',
         shelfId: '' // assigned below
       } as Equipment;
     });

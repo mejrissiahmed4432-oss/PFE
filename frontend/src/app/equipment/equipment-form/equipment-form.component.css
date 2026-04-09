@@ -57,21 +57,21 @@
   box-shadow: 0 4px 12px rgba(59,130,246,0.15);
 }
 
-/* Per-type icon colors */
+/* Per-type icon colors - All UNIFIED BLUE palette as requested */
 .cat-laptop, .cat-pc { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #3b82f6; }
-.cat-monitor { background: linear-gradient(135deg, #f0fdf4, #dcfce7); color: #16a34a; }
-.cat-server { background: linear-gradient(135deg, #faf5ff, #ede9fe); color: #7c3aed; }
-.cat-printer, .cat-scanner { background: linear-gradient(135deg, #fff7ed, #fed7aa); color: #ea580c; }
-.cat-projector { background: linear-gradient(135deg, #fdf4ff, #fae8ff); color: #a21caf; }
-.cat-router, .cat-switch { background: linear-gradient(135deg, #ecfdf5, #d1fae5); color: #059669; }
-.cat-ups { background: linear-gradient(135deg, #fff1f2, #ffe4e6); color: #e11d48; }
-.cat-tablet { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #2563eb; }
-.cat-phone { background: linear-gradient(135deg, #f0fdf4, #dcfce7); color: #15803d; }
-.cat-keyboard, .cat-mouse { background: linear-gradient(135deg, #fefce8, #fef08a); color: #a16207; }
-.cat-headset { background: linear-gradient(135deg, #faf5ff, #ede9fe); color: #9333ea; }
-.cat-ram { background: linear-gradient(135deg, #eff6ff, #bfdbfe); color: #1d4ed8; }
-.cat-hard\ drive, .cat-ssd { background: linear-gradient(135deg, #f8fafc, #e2e8f0); color: #475569; }
-.cat-cables { background: linear-gradient(135deg, #fdf4ff, #e9d5ff); color: #7c3aed; }
+.cat-monitor { background: linear-gradient(135deg, #ecfeff, #cffafe); color: #0891b2; }
+.cat-server { background: linear-gradient(135deg, #eef2ff, #e0e7ff); color: #4338ca; }
+.cat-printer, .cat-scanner { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); color: #0ea5e9; }
+.cat-projector { background: linear-gradient(135deg, #f8fafc, #dbeafe); color: #2563eb; }
+.cat-router, .cat-switch { background: linear-gradient(135deg, #f0fdfa, #ccfbf1); color: #0d9488; }
+.cat-ups { background: linear-gradient(135deg, #f1f5f9, #e2e8f0); color: #475569; }
+.cat-tablet { background: linear-gradient(135deg, #ebf5ff, #c3e0ff); color: #1d4ed8; }
+.cat-phone { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #3b82f6; }
+.cat-keyboard, .cat-mouse { background: linear-gradient(135deg, #f8fafc, #e2e8f0); color: #64748b; }
+.cat-headset { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color: #4f46e5; }
+.cat-ram { background: linear-gradient(135deg, #eff6ff, #bfdbfe); color: #1e40af; }
+.cat-hard\ drive, .cat-ssd { background: linear-gradient(135deg, #f8fafc, #e2e8f0); color: #334155; }
+.cat-cables { background: linear-gradient(135deg, #f0f9ff, #bae6fd); color: #0284c7; }
 .cat-default { background: linear-gradient(135deg, #f1f5f9, #e2e8f0); color: #64748b; }
 
 .hero-info {
@@ -119,9 +119,9 @@
   letter-spacing: 0.02em;
 }
 .tag-type { background: #eff6ff; color: #3b82f6; }
-.tag-cat  { background: #f0fdf4; color: #16a34a; }
-.tag-loc  { background: #faf5ff; color: #7c3aed; }
-.tag-supplier { background: #fff7ed; color: #ea580c; }
+.tag-cat  { background: #f0f9ff; color: #0077b6; }
+.tag-loc  { background: #eef2ff; color: #4338ca; }
+.tag-supplier { background: #f0fdfa; color: #0d9488; }
 
 .tag-active { background: #dcfce7; color: #15803d; }
 .tag-expired { background: #fee2e2; color: #b91c1c; }
@@ -137,19 +137,19 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
   color: white;
   border: none;
   border-radius: 10px;
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(79,70,229,0.25);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
   transition: all 0.2s;
 }
 .btn-edit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(79,70,229,0.35);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }
 
 /* ─── Tabs ─── */
@@ -226,10 +226,10 @@
   justify-content: center;
   flex-shrink: 0;
 }
-.info-card-icon.green  { background: linear-gradient(135deg,#f0fdf4,#dcfce7); color:#16a34a; }
-.info-card-icon.purple { background: linear-gradient(135deg,#faf5ff,#ede9fe); color:#7c3aed; }
-.info-card-icon.amber  { background: linear-gradient(135deg,#fffbeb,#fef3c7); color:#d97706; }
-.info-card-icon.blue   { background: linear-gradient(135deg,#eff6ff,#dbeafe); color:#2563eb; }
+.info-card-icon.green  { background: linear-gradient(135deg, #ecfeff, #cffafe); color: #0891b2; }
+.info-card-icon.purple { background: linear-gradient(135deg, #eef2ff, #e0e7ff); color: #4338ca; }
+.info-card-icon.amber  { background: linear-gradient(135deg, #f1f5f9, #e2e8f0); color: #475569; }
+.info-card-icon.blue   { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #2563eb; }
 
 .info-rows {
   display: flex;
@@ -260,6 +260,8 @@
   color: #1e293b;
   font-weight: 600;
   text-align: right;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 .info-value.mono { font-family: monospace; font-weight: 500; }
 .info-value.mono.small { font-size: 0.78rem; word-break: break-all; }
@@ -311,7 +313,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #4f46e5;
+  color: #3b82f6;
   flex-shrink: 0;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
@@ -565,8 +567,8 @@
 .input-group select:focus, 
 .input-group textarea:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .side-panel {
@@ -694,19 +696,19 @@
 
 .btn-primary {
   padding: 10px 24px;
-  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
   border: none;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
 }
 
 .btn-primary:disabled {
@@ -849,4 +851,9 @@
 .doc-attachment-card .doc-icon,
 .doc-attachment-card .doc-info {
   cursor: pointer;
+}
+.error-msg {
+  font-size: 11px;
+  color: #ef4444;
+  margin-top: 4px;
 }

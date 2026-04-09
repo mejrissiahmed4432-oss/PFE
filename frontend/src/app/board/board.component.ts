@@ -117,7 +117,6 @@ export class BoardComponent implements OnInit {
     this.notificationService.getNotifications().subscribe(notifications => {
       this.notificationsList = notifications
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 10)
         .map(n => this.mapNotifToNotificationItem(n));
       this.unreadNotificationsCount = notifications.filter(n => !n.read).length;
     });

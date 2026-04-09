@@ -40,9 +40,9 @@
 
 .search-box input:focus {
   outline: none;
-  border-color: #4f46e5;
+  border-color: #3b82f6;
   background-color: white;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .actions-group {
@@ -93,7 +93,7 @@
 
 .view-btn.active {
   background: white;
-  color: #4f46e5;
+  color: #3b82f6;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
@@ -138,8 +138,8 @@
 
 .filter-group select:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .table-container {
@@ -170,6 +170,8 @@
   font-size: 0.95rem;
   border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .table-row-animate {
@@ -197,7 +199,7 @@
   letter-spacing: 0.02em;
 }
 
-.badge.hardware { background: #eff2ff; color: #4f46e5; }
+.badge.hardware { background: #eff6ff; color: #3b82f6; }
 .badge.software { background: #f0fdf4; color: #16a34a; }
 .badge.services { background: #fff7ed; color: #ea580c; }
 .badge.network { background: #fef2f2; color: #dc2626; }
@@ -241,7 +243,7 @@
 }
 
 .website-link {
-  color: #4f46e5;
+  color: #3b82f6;
   text-decoration: none;
   font-weight: 500;
   display: inline-flex;
@@ -250,12 +252,12 @@
 }
 
 .website-link:hover {
-  color: #4338ca;
+  color: #2563eb;
   text-decoration: underline;
 }
 
 .link-inline {
-  color: #4f46e5 !important;
+  color: #3b82f6 !important;
   text-decoration: underline;
 }
 
@@ -277,7 +279,7 @@
 }
 
 .action-icon.view:hover { color: #3b82f6; }
-.action-icon.edit:hover { color: #4f46e5; }
+.action-icon.edit:hover { color: #2563eb; }
 .action-icon.delete:hover { color: #ef4444; background: #fef2f2; }
 
 .card-grid {
@@ -325,7 +327,7 @@
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #4f46e5;
+  accent-color: #3b82f6;
 }
 
 .card-header h3 {
@@ -368,7 +370,7 @@
   background: transparent;
   border: 1px solid #e2e8f0;
   border-radius: 6px;
-  color: #4f46e5;
+  color: #3b82f6;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -377,13 +379,13 @@
 }
 
 .btn-outline:hover {
-  background: #f8fafc;
-  border-color: #4f46e5;
+  background: #eff6ff;
+  border-color: #3b82f6;
 }
 
 .btn-primary-solid {
   padding: 8px 0;
-  background: #4f46e5;
+  background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
   color: white;
   border: none;
   border-radius: 6px;
@@ -395,7 +397,8 @@
 }
 
 .btn-primary-solid:hover {
-  background: #4338ca;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .pagination-container {
@@ -452,7 +455,7 @@
 }
 
 .page-btn.active {
-  background: #4f46e5;
-  border-color: #4f46e5;
+  background: #3b82f6;
+  border-color: #3b82f6;
   color: white;
 }

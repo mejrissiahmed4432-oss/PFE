@@ -12,7 +12,7 @@ public class EquipmentCategory {
     private String id;
     private String name;
     private String icon;
-    private List<String> types = new ArrayList<>();
+    private List<CategoryType> types = new ArrayList<>();
 
     public EquipmentCategory() {}
 
@@ -30,6 +30,6 @@ public class EquipmentCategory {
     public String getIcon() { return icon; }
     public void setIcon(String icon) { this.icon = icon; }
 
-    public List<String> getTypes() { return types; }
-    public void setTypes(List<String> types) { this.types = types; }
+    public List<CategoryType> getTypes() { return types; }
+    public void setTypes(List<CategoryType> types) { this.types = types; }
 }
