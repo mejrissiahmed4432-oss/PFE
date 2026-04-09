@@ -21,44 +21,55 @@
         <span class="nav-label">Dashboard</span>
       </a>
       <!-- Stock -->
-      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'stock'" (click)="activeTab = 'stock'" title="Stock">
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'stock'" *ngIf="user?.role !== 'TECHNICIAN'" (click)="activeTab = 'stock'" title="Stock">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
         <span class="nav-label">Stock (Shelves)</span>
       </a>
       <!-- Inventory -->
-      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'equipment'" (click)="clearFiltersAndGoToEquipment()" title="Inventory">
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'equipment'" *ngIf="user?.role !== 'TECHNICIAN'" (click)="clearFiltersAndGoToEquipment()" title="Inventory">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
         <span class="nav-label">Inventory / Equipment</span>
       </a>
       <!-- Categories -->
-      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'categories'" (click)="activeTab = 'categories'" title="Equipment Category">
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'categories'" *ngIf="user?.role !== 'TECHNICIAN'" (click)="activeTab = 'categories'" title="Equipment Category">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16"></path><path d="M4 15h16"></path><path d="M10 3L8 21"></path><path d="M16 3l-2 18"></path></svg>
         <span class="nav-label">Categories</span>
       </a>
       <!-- Suppliers -->
-      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'suppliers'" (click)="activeTab = 'suppliers'" title="Suppliers">
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'suppliers'" *ngIf="user?.role !== 'TECHNICIAN'" (click)="activeTab = 'suppliers'" title="Suppliers">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
         <span class="nav-label">Suppliers</span>
       </a>
       <!-- Orders -->
-      <a href="#" class="nav-item" title="Orders">
+      <a href="#" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN'" title="Orders">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
         <span class="nav-label">Orders</span>
       </a>
       <!-- Alerts -->
-      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'alerts'" (click)="activeTab = 'alerts'" title="Alerts">
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'alerts'" *ngIf="user?.role !== 'TECHNICIAN'" (click)="activeTab = 'alerts'" title="Alerts">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>
         <span class="nav-label">Alerts</span>
       </a>
       <!-- Schedule -->
-      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'schedule'" (click)="activeTab = 'schedule'" title="Schedule">
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'schedule'" *ngIf="user?.role !== 'TECHNICIAN'" (click)="activeTab = 'schedule'" title="Schedule">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="8" y1="14" x2="8.01" y2="14"></line><line x1="12" y1="14" x2="12.01" y2="14"></line><line x1="16" y1="14" x2="16.01" y2="14"></line></svg>
         <span class="nav-label">Schedule</span>
       </a>
       <!-- Reports -->
-      <a href="javascript:void(0)" class="nav-item" title="Reports">
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN'" title="Reports">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
         <span class="nav-label">Reports</span>
+      </a>
+
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'parts'" *ngIf="user?.role === 'TECHNICIAN'" (click)="activeTab = 'parts'" title="Parts Management">
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        <span class="nav-label">Parts</span>
+      </a>
+
+      <!-- My Requests (for technicians) -->
+      <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'requests'" *ngIf="user?.role === 'TECHNICIAN'" (click)="activeTab = 'requests'" title="My Part Requests">
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <span class="nav-label">Requests</span>
       </a>
     
     </nav>
@@ -242,7 +253,7 @@
             <p class="date">Wednesday, March 18, 2026</p>
           </div>
           <div class="header-actions">
-             <button class="primary-btn">Stock Manager</button>
+             <button class="primary-btn">{{ user?.role || 'User' }}</button>
           </div>
         </div>
         <app-dashboard></app-dashboard>
@@ -274,6 +285,12 @@
 
       <!-- Messaging Component View -->
       <app-messaging *ngIf="activeTab === 'messages'"></app-messaging>
+
+      <!-- Parts Management Component View -->
+      <app-parts-management *ngIf="activeTab === 'parts'"></app-parts-management>
+
+      <!-- My Requests Component View -->
+      <app-request-list *ngIf="activeTab === 'requests'"></app-request-list>
     </main>
     
     <!-- AI Assistant Panel Overlay -->

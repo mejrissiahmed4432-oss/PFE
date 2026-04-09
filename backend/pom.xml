@@ -13,6 +13,7 @@
 		<module>eureka-server</module>
 		<module>usermicroservice</module>
 		<module>stock-manager-microservice</module>
+		<module>technician-microservice</module>
 		<module>api-gateway</module>
 	</modules>
 </project>

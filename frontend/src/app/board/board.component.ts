@@ -19,11 +19,13 @@ import { MessagingComponent } from '../messaging/messaging.component';
 import { MessagingService } from '../messaging/messaging.service';
 import { SocketService } from '../messaging/socket.service';
 import { ScheduleComponent } from '../schedule/schedule.component';
+import { PartsManagementComponent } from '../parts-management/parts-management.component';
+import { RequestListComponent } from '../parts-management/request-list/request-list.component';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent],
   providers: [MessagingService],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
@@ -68,6 +70,9 @@ export class BoardComponent implements OnInit {
       if (!this.user) {
         this.router.navigate(['/login']);
       } else {
+        if (this.user.role === 'TECHNICIAN') {
+          this.activeTab = 'parts';
+        }
         this.loadUnreadCount();
         
         // 1. WebSocket Subscription for instant message updates
@@ -225,6 +230,8 @@ export class BoardComponent implements OnInit {
       case 'categories': return 'Equipment Categories';
       case 'profile': return 'My Profile';
       case 'settings': return 'Account Settings';
+      case 'parts': return 'Parts Management';
+      case 'requests': return 'My Part Requests';
       default: return 'Medina It Manage';
     }
   }

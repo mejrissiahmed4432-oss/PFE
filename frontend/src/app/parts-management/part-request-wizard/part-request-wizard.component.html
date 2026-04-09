@@ -1,0 +1,393 @@
+<!-- ════════════════════════════════════════════════
+     PART REQUEST WIZARD — SLIDE-IN PANEL
+     ════════════════════════════════════════════════ -->
+<div class="wizard-overlay" *ngIf="visible" (click)="close()">
+
+  <div class="wizard-panel" (click)="$event.stopPropagation()">
+
+    <!-- ── CUSTOM ALERT OVERLAY ──────────────────── -->
+    <div class="custom-alert-overlay" *ngIf="customAlert" (click)="$event.stopPropagation()">
+      <div class="custom-alert-box" (click)="$event.stopPropagation()">
+        <div class="alert-icon-circle">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </div>
+        <h3 class="alert-title">{{ customAlert.title }}</h3>
+        <p class="alert-message">{{ customAlert.message }}</p>
+
+        <div class="alert-actions">
+          <button class="btn-alert-confirm" (click)="closeAlert($event)">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HEADER ────────────────────────────────── -->
+    <div class="wizard-header">
+      <div class="wizard-header-left">
+        <div class="wizard-icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div>
+          <h2 class="wizard-title">{{ editRequest ? 'Edit Request' : 'Select Parts' }}</h2>
+          <p class="wizard-subtitle">Step {{ currentStep + 1 }} of {{ totalSteps }} — {{ stepLabels[currentStep] }}</p>
+        </div>
+      </div>
+      <button class="wizard-close" (click)="close()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- ── PROGRESS BAR ────────────────────────────── -->
+    <div class="wizard-progress-track">
+      <div class="wizard-progress-fill" [style.width.%]="progressPct"></div>
+    </div>
+    <div class="wizard-step-dots">
+      <ng-container *ngFor="let l of stepLabels; let i = index">
+        <div class="step-dot" [class.done]="i < currentStep" [class.current]="i === currentStep"
+          [class.clickable-back]="i < currentStep" [class.clickable-forward]="i > currentStep" (click)="goToStep(i)"
+          [title]="i < currentStep ? 'Go back to ' + l : (i > currentStep ? 'Jump to ' + l : l)">
+          <span class="dot-num">{{ getDotNumber(i) }}</span>
+          <span class="dot-label">{{ l }}</span>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- ── STEP CONTENT ────────────────────────────── -->
+    <div class="wizard-body">
+
+      <!-- ════════ STEP 1: ITEM SELECTION ════════ -->
+      <div *ngIf="currentStep === 0" class="step-content animate-in">
+        <div class="step-hero">
+          <div class="step-hero-icon blue">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </div>
+          <div>
+            <h3>Search Availability</h3>
+            <p>Select a Category and Type to see currently available inventory, or create a custom request.</p>
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-bottom: 24px;">
+          <div class="field-group">
+            <label class="field-label">Category</label>
+            <select class="field-select" [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+              <option value="" disabled>Select Category…</option>
+              <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Equipment Type</label>
+            <select class="field-select" [(ngModel)]="selectedType" [disabled]="!selectedCategory"
+              (change)="onTypeChange()">
+              <option value="" disabled>Select Type…</option>
+              <option *ngFor="let t of availableTypes" [value]="t">{{ t | titlecase }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Stock Table -->
+        <div *ngIf="selectedType">
+          <label class="field-label">Matches Found in Stock</label>
+          <div class="unit-table-wrap" *ngIf="availableStockGroups.length > 0">
+            <table class="unit-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px; text-align: center;"></th>
+                  <th>Part Details</th>
+                  <th>Specification</th>
+                  <th style="width: 80px; text-align: center;">Stock</th>
+                  <th style="width: 100px; text-align: center;">Req. Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let g of availableStockGroups" [class.selected-row]="g.selected"
+                  [style.opacity]="g.availableQte === 0 ? '0.55' : '1'">
+                  <td style="text-align: center;">
+                    <input type="checkbox" [(ngModel)]="g.selected" [disabled]="g.availableQte === 0">
+                  </td>
+                  <td>
+                    <div style="font-weight: 600; color: #1e293b;">{{ g.name }}</div>
+                    <div style="font-size: 0.75rem; color: #64748b;">{{ g.brand }}</div>
+                  </td>
+                  <td>{{ g.specification || '—' }}</td>
+                  <td style="text-align: center;">
+                    <span class="stock-badge" [style.background]="g.availableQte === 0 ? '#fee2e2' : ''"
+                      [style.color]="g.availableQte === 0 ? '#dc2626' : ''">{{ g.availableQte }}</span>
+                    <div *ngIf="g.availableQte === 0"
+                      style="font-size: 0.7rem; color: #dc2626; font-weight: 600; margin-top: 2px;">Already in cart
+                    </div>
+                  </td>
+                  <td style="text-align: center;">
+                    <span *ngIf="g.availableQte === 0" style="font-size: 0.75rem; color: #94a3b8;">—</span>
+                    <input *ngIf="g.availableQte > 0" type="number" class="tbl-input" min="1" [(ngModel)]="g.requestQte"
+                      [disabled]="!g.selected" (blur)="validateQuantity(g)" (change)="validateQuantity(g)"
+                      style="text-align: center;">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="availableStockGroups.length === 0" class="no-stock-banner">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <div>
+              <strong>No items in stock</strong>
+              <p>Please enter your exact specifications below to requisition order.</p>
+            </div>
+          </div>
+
+          <!-- Divider / Custom Request Area -->
+          <div style="text-align: center; margin-top: 24px;" *ngIf="!showManualEntry">
+            <button
+              style="color: #4f46e5; font-size: 0.95rem; font-weight: 600; background: none; border: none; cursor: pointer; text-decoration: underline;"
+              (click)="showManualEntry = true">
+              + Not available in stock (Quantity or Specification)
+            </button>
+          </div>
+
+          <div *ngIf="showManualEntry"
+            style="margin-top: 32px; padding-top: 24px; border-top: 1px dashed #cbd5e1; position: relative;">
+
+            <button class="btn-remove"
+              style="position: absolute; right: 0; top: 24px; background: #f1f5f9; color: #64748b;"
+              (click)="showManualEntry = false" title="Cancel Custom Entry">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+
+            <div style="text-align: center; margin-bottom: 24px; padding-right: 40px;">
+              <h4 style="margin: 0 0 8px; color: #0f172a;">Custom Specification Entry</h4>
+              <p style="margin: 0 0 16px; font-size: 0.85rem; color: #64748b;">If stock is unavailable, build a custom
+                request to signal procurement.</p>
+
+              <!-- Centered segmented toggle wrapper -->
+              <div class="toggle-group sm"
+                style="display: inline-flex; background: #e2e8f0; padding: 4px; border-radius: 10px;">
+                <button class="toggle-btn" [class.active]="manualMode === 'same'" (click)="manualMode = 'same'">Same
+                  Spec (Batch)</button>
+                <button class="toggle-btn" [class.active]="manualMode === 'per_unit'"
+                  (click)="manualMode = 'per_unit'">Per Unit Specs</button>
+              </div>
+            </div>
+
+            <div *ngIf="manualMode === 'same'">
+              <div class="field-group">
+                <label class="field-label">Custom Specification <span class="req">*</span></label>
+                <textarea class="field-textarea" [(ngModel)]="manualSpec" rows="2"
+                  placeholder="Describe the physical attributes required (e.g. 16GB DDR4 3200MHz)..."></textarea>
+                <div *ngIf="hasSelectedSpecs()"
+                  style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                  <button *ngFor="let g of getSelectedGroupsWithSpecs()" class="btn-text"
+                    style="font-size: 0.75rem; padding: 4px 10px; background: #e2e8f0; border-radius: 6px; color: #334155; cursor: pointer; border: none; font-weight: 600;"
+                    (click)="manualSpec = (g.brand && g.brand !== 'No Brand' ? g.brand + ' - ' : '') + g.specification">
+                    Paste: {{ g.brand && g.brand !== 'No Brand' ? g.brand + ' - ' : '' }}{{ g.specification }}
+                  </button>
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Quantity Required</label>
+                <input type="number" class="field-input" min="1" [(ngModel)]="manualQte" style="width: 120px;">
+              </div>
+            </div>
+
+            <div *ngIf="manualMode === 'per_unit'">
+              <div class="unit-table-wrap">
+                <table class="unit-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 40px; text-align: center;">No.</th>
+                      <th>Custom Specification <span class="req">*</span></th>
+                      <th style="width: 100px; text-align: center;">Qty</th>
+                      <th style="width: 50px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of manualRows; let i = index">
+                      <td style="text-align: center; color: #64748b; font-weight: 500;">{{ i + 1 }}</td>
+                      <td>
+                        <input type="text" class="tbl-input" [(ngModel)]="row.specification"
+                          placeholder="Exact specs for this line..." required>
+                        <div *ngIf="hasSelectedSpecs()"
+                          style="margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap;">
+                          <button *ngFor="let g of getSelectedGroupsWithSpecs()" class="btn-text"
+                            style="font-size: 0.7rem; padding: 3px 8px; background: #f1f5f9; border-radius: 6px; color: #475569; cursor: pointer; border: 1px solid #cbd5e1; font-weight: 600;"
+                            (click)="row.specification = (g.brand && g.brand !== 'No Brand' ? g.brand + ' - ' : '') + g.specification"
+                            [title]="'Paste spec: ' + g.name">
+                            Paste: {{ g.brand && g.brand !== 'No Brand' ? g.brand + ' - ' : '' }}{{ g.specification }}
+                          </button>
+                        </div>
+                      </td>
+                      <td style="text-align: center; vertical-align: top; padding-top: 14px;">
+                        <input type="number" class="tbl-input" min="1" [(ngModel)]="row.quantity"
+                          style="text-align: center;">
+                      </td>
+                      <td style="text-align: center; vertical-align: top; padding-top: 14px;">
+                        <button class="btn-remove" (click)="removeManualRow(i)" *ngIf="manualRows.length > 1"
+                          title="Remove row">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <button class="btn-secondary" style="margin-top: 12px; font-size: 0.85rem; padding: 6px 12px;"
+                (click)="addManualRow()">
+                + Add Another Row
+              </button>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px; text-align: right;" *ngIf="hasSelectedItems()">
+            <button class="btn-primary" (click)="addSelectedToCart()">
+              Add to Request List
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════ STEP 2: CART REVIEW ════════ -->
+      <div *ngIf="currentStep === 1" class="step-content animate-in">
+        <div class="step-hero">
+          <div class="step-hero-icon green">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h3>Review Request List</h3>
+            <p>Finalize the quantities and details before dispatching to the stock manager.</p>
+          </div>
+        </div>
+
+        <!-- Table View of Cart -->
+        <div class="unit-table-wrap" *ngIf="cart.length > 0">
+          <table class="unit-table">
+            <thead>
+              <tr>
+                <th style="width: 40px; text-align: center;" *ngIf="!editRequest"></th>
+                <th>Part Details</th>
+                <th>Specification</th>
+                <th style="width: 100px; text-align: center;">Req. Qty</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of cart; let i = index" [class.selected-row]="item.selected">
+                <td style="text-align: center;" *ngIf="!editRequest">
+                  <input type="checkbox" [(ngModel)]="item.selected">
+                </td>
+                <td>
+                  <div style="font-weight: 600; color: #1e293b;">
+                    {{ item.partName }}
+                    <span *ngIf="item.isManual" class="badge-manual">Custom</span>
+                  </div>
+                  <div style="font-size: 0.75rem; color: #64748b;">Type: {{ item.type }}</div>
+                </td>
+                <td>{{ item.specification || '—' }}</td>
+                <td style="text-align: center;">
+                  <input type="number" class="tbl-input" min="1" [(ngModel)]="item.quantity" [disabled]="!item.selected"
+                    style="text-align: center;">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="cart.length === 0" class="no-stock-banner" style="margin-top: 16px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <div>
+            <strong>Cart is empty</strong>
+            <p>Please go back to Step 1 and add items.</p>
+          </div>
+        </div>
+
+        <!-- Global Settings for Request -->
+        <div class="global-request-settings" *ngIf="cart.length > 0"
+          style="margin-top: 24px; padding: 20px; background: white; border: 1px solid #e2e8f0; border-radius: 12px;">
+          <h4 style="margin: 0 0 16px 0; color: #0f172a; font-size: 1rem;">Submission Details</h4>
+
+          <div class="two-col">
+            <div class="field-group">
+              <label class="field-label">Overall Priority</label>
+              <select class="field-select" [(ngModel)]="globalPriority">
+                <option value="Low">Low Priority</option>
+                <option value="Medium">Medium Priority</option>
+                <option value="High">High Priority</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">General Reason / Note <span class="field-optional">(optional)</span></label>
+              <textarea class="field-textarea" [(ngModel)]="globalDescription" rows="2"
+                placeholder="Explain why these items are needed..."></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── FOOTER ACTIONS ──────────────────────────── -->
+    <div class="wizard-footer">
+      <div class="footer-left">
+        <button class="btn-secondary" *ngIf="currentStep > 0" (click)="goToStep(currentStep - 1)">Back</button>
+      </div>
+      <div class="footer-right">
+        <!-- Floating cart summary button in Step 0 -->
+        <button class="btn-secondary cart-indicator" *ngIf="currentStep === 0 && cart.length > 0" (click)="goToStep(1)">
+          {{ cart.length }} items selected &rarr;
+        </button>
+
+        <button class="btn-primary" *ngIf="currentStep === 0 && cart.length === 0" (click)="goToStep(1)"
+          [disabled]="cart.length === 0" [style.opacity]="cart.length === 0 ? 0.5 : 1">
+          Review List
+        </button>
+        <button class="btn-primary confirm" *ngIf="currentStep === 1" (click)="submitCart()" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">Submit Request</span>
+          <span *ngIf="isSubmitting">Submitting...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

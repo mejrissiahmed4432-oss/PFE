@@ -1,0 +1,261 @@
+<div class="parts-container">
+  <!-- Page Header -->
+  <header class="integrated-header">
+    <div class="header-main">
+      <div class="header-title-area">
+        <h1>Parts Management</h1>
+        <p class="subtitle">Search and request inventory consumables</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-primary-glow" (click)="openRequestWizard()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Request Part
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="list-wrapper">
+
+    <div class="tabs-container">
+      <button class="tab-btn active">My Inventory</button>
+    </div>
+
+    <!-- ==========================================
+         INVENTORY TAB
+         ========================================== -->
+    <div>
+      <!-- Top Controls (Same as Equipment) -->
+      <div class="controls-bar">
+        <div class="search-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()"
+            placeholder="Search by name, type, brand...">
+        </div>
+
+        <div class="actions-group">
+          <button class="icon-toggle-btn" [class.active]="showFilters" (click)="toggleFilters()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            Filters
+          </button>
+
+          <div class="view-toggles">
+            <button class="view-btn" [class.active]="viewMode === 'table'" (click)="toggleViewMode('table')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </button>
+            <button class="view-btn" [class.active]="viewMode === 'card'" (click)="toggleViewMode('card')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters Panel -->
+      <div class="filters-panel" *ngIf="showFilters">
+        <div class="filter-group">
+          <label>Category</label>
+          <select [(ngModel)]="filterCategory" (change)="applyFilters()">
+            <option value="">All Categories</option>
+            <option *ngFor="let cat of categoryNames" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Brand</label>
+          <input type="text" [(ngModel)]="filterBrand" (input)="applyFilters()" placeholder="Filter by brand...">
+        </div>
+        <div class="filter-group">
+          <label>Supplier</label>
+          <select [(ngModel)]="filterSupplier" (change)="applyFilters()">
+            <option value="">All Suppliers</option>
+            <option *ngFor="let s of suppliers" [value]="s.companyName">{{ s.companyName }}</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Shelf Location</label>
+          <select [(ngModel)]="filterShelfId" (change)="applyFilters()">
+            <option value="">All Shelves</option>
+            <option *ngFor="let s of shelves" [value]="s.id">Shelf {{ s.nb }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Table View -->
+      <div class="table-container" *ngIf="viewMode === 'table'">
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th class="col-expand"></th>
+              <th>Name & Details</th>
+              <th>Type</th>
+              <th>Category</th>
+              <th>Brand/Model</th>
+              <th class="text-center">Total Qty</th>
+              <th>Availability</th>
+              <th>Location</th>
+              <th class="actions-cell">Actions</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let group of paginatedGroups">
+            <tr class="group-header-row table-row-animate" [class.has-instances]="group.totalQuantity > 1"
+              (click)="group.totalQuantity > 1 ? toggleGroup(group) : null">
+
+              <td class="col-expand">
+                <button *ngIf="group.totalQuantity > 1" class="expand-btn" [class.expanded]="group.expanded"
+                  (click)="$event.stopPropagation(); toggleGroup(group)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </td>
+
+              <td>
+                <div class="font-bold text-dark">{{ group.name }}</div>
+                <div class="card-subtitle">{{ group.items[0].specification || '—' }}</div>
+              </td>
+              <td>{{ group.type }}</td>
+              <td>{{ group.category }}</td>
+              <td>
+                <div>{{ group.brand }}</div>
+                <div class="card-subtitle">{{ group.model }}</div>
+              </td>
+              <td class="text-center font-semibold">{{ group.totalQuantity }}</td>
+              <td>
+                <div class="status-summary-group">
+                  <span *ngFor="let s of group.statusSummary" class="summary-chip" [ngClass]="s.cls">
+                    {{ s.count }} {{ s.label }}
+                  </span>
+                </div>
+              </td>
+              <td>{{ group.commonLocation }}</td>
+              <td class="actions-cell">
+                <button class="btn-request-sm" (click)="openRequestWizard(); $event.stopPropagation()">
+                  Request
+                </button>
+              </td>
+            </tr>
+
+            <!-- Expanded Instances -->
+            <tr *ngFor="let item of group.expanded ? group.items : []" class="instance-row">
+              <td></td>
+              <td colspan="4" class="text-mute font-medium">Instance ID: {{ item.id?.substring(0,8) }}</td>
+              <td class="text-center">1</td>
+              <td>
+                <span class="status-chip-mini" [ngClass]="getStatusColor(item.status)">
+                  {{ item.status }}
+                </span>
+              </td>
+              <td>{{ getShelfLocation(item.shelfId) }}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Card View -->
+      <div class="card-grid" *ngIf="viewMode === 'card'">
+        <div class="equipment-card card-animate" *ngFor="let group of paginatedGroups">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h3 class="font-bold text-dark">{{ group.name }}</h3>
+              <span class="card-subtitle">{{ group.brand }} • {{ group.type }}</span>
+            </div>
+            <div class="card-qte-badge">{{ group.totalQuantity }} units</div>
+          </div>
+          <div class="card-body">
+            <div class="status-summary-grid">
+              <span *ngFor="let s of group.statusSummary" class="summary-chip" [ngClass]="s.cls">
+                {{ s.count }} {{ s.label }}
+              </span>
+            </div>
+            <div class="info-row mt-3">
+              <span class="label">Location:</span>
+              <span class="value">{{ group.commonLocation }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Category:</span>
+              <span class="value">{{ group.category }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Specification:</span>
+              <span class="value truncate" [title]="group.items[0].specification">{{ group.items[0].specification || '—'
+                }}</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-request-full" (click)="openRequestWizard()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"></path>
+              </svg>
+              Request This Part
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-container" *ngIf="totalPages > 0">
+        <div class="page-info">
+          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ (currentPage * itemsPerPage > groupedParts.length) ?
+          groupedParts.length : currentPage * itemsPerPage }} of {{ groupedParts.length }} groups
+        </div>
+        <div class="pagination">
+          <button class="page-btn text-btn" [disabled]="currentPage === 1"
+            (click)="changePage(currentPage - 1)">Previous</button>
+          <button *ngFor="let p of pages" class="page-btn num-btn" [class.active]="p === currentPage"
+            (click)="changePage(p)">{{ p }}</button>
+          <button class="page-btn text-btn" [disabled]="currentPage === totalPages"
+            (click)="changePage(currentPage + 1)">Next</button>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state-container" *ngIf="groupedParts.length === 0">
+        <div class="illustration-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none"
+            stroke="#e2e8f0" stroke-width="1">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+            </path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </div>
+        <h2>No assets assigned</h2>
+        <p>You currently do not have any assets or parts assigned to your profile. Click 'Request Part' to submit a
+          request.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Slide-In Parts Request Wizard -->
+  <app-part-request-wizard *ngIf="isWizardOpen" [visible]="isWizardOpen" [user]="user"
+    (closeWizard)="onWizardClose($event)">
+  </app-part-request-wizard>
