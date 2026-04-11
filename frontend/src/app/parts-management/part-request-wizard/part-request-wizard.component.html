@@ -301,7 +301,7 @@
           <table class="unit-table">
             <thead>
               <tr>
-                <th style="width: 40px; text-align: center;" *ngIf="!editRequest"></th>
+                <th style="width: 40px; text-align: center;"></th>
                 <th>Part Details</th>
                 <th>Specification</th>
                 <th style="width: 100px; text-align: center;">Req. Qty</th>
@@ -309,7 +309,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let item of cart; let i = index" [class.selected-row]="item.selected">
-                <td style="text-align: center;" *ngIf="!editRequest">
+                <td style="text-align: center;">
                   <input type="checkbox" [(ngModel)]="item.selected">
                 </td>
                 <td>
@@ -322,6 +322,7 @@
                 <td>{{ item.specification || '—' }}</td>
                 <td style="text-align: center;">
                   <input type="number" class="tbl-input" min="1" [(ngModel)]="item.quantity" [disabled]="!item.selected"
+                    (ngModelChange)="validateCartQuantity(item)"
                     style="text-align: center;">
                 </td>
               </tr>

@@ -37,9 +37,10 @@ public class PartRequestService {
         if (!"PENDING".equals(request.getStatus())) {
             throw new RuntimeException("Cannot update a request that is not PENDING");
         }
-        if (updateDetails.getQuantity() != null) request.setQuantity(updateDetails.getQuantity());
+        if (updateDetails.getItems() != null) request.setItems(updateDetails.getItems());
         if (updateDetails.getPriority() != null) request.setPriority(updateDetails.getPriority());
-        if (updateDetails.getSpecification() != null) request.setSpecification(updateDetails.getSpecification());
+        if (updateDetails.getDescription() != null) request.setDescription(updateDetails.getDescription());
+        
         return repository.save(request);
     }
 

@@ -154,7 +154,7 @@
               </td>
               <td>{{ group.commonLocation }}</td>
               <td class="actions-cell">
-                <button class="btn-request-sm" (click)="openRequestWizard(); $event.stopPropagation()">
+                <button class="btn-request-sm" (click)="openRequestWizard(group); $event.stopPropagation()">
                   Request
                 </button>
               </td>
@@ -208,7 +208,7 @@
             </div>
           </div>
           <div class="card-footer">
-            <button class="btn-request-full" (click)="openRequestWizard()">
+            <button class="btn-request-full" (click)="openRequestWizard(group)">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
                 <path d="M12 5v14M5 12h14"></path>
@@ -257,5 +257,6 @@
 
   <!-- Slide-In Parts Request Wizard -->
   <app-part-request-wizard *ngIf="isWizardOpen" [visible]="isWizardOpen" [user]="user"
+    [initialPartSelection]="preselectedGroup"
     (closeWizard)="onWizardClose($event)">
   </app-part-request-wizard>

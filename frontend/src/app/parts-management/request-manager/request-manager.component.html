@@ -1,0 +1,133 @@
+<div class="manager-container animate-fade-in">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Part Requests Management</h2>
+      <p class="page-subtitle">Review, approve, and refuse incoming technician requests.</p>
+    </div>
+    
+    <div class="header-actions">
+      <div class="search-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" class="search-input" placeholder="Search by name, ID..." [(ngModel)]="searchQuery" (ngModelChange)="filterRequests()">
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <div class="tabs-nav">
+    <button class="tab-btn" [class.active]="activeTab === 'PENDING'" (click)="setTab('PENDING')">
+      Pending Requests
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'PROCESSED'" (click)="setTab('PROCESSED')">
+      Processed / History
+    </button>
+  </div>
+
+  <!-- Requests Table -->
+  <div class="table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 40px"></th>
+          <th>Requester</th>
+          <th>Cart / Overview</th>
+          <th>Priority</th>
+          <th>Date Submitted</th>
+          <th>Status</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let r of filteredRequests">
+          <!-- Main Row -->
+          <tr class="main-row" [class.expanded]="expandedRequestId === r.id" (click)="toggleExpand(r.id)">
+            <td style="text-align: center; color: #94a3b8;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [style.transform]="expandedRequestId === r.id ? 'rotate(90deg)' : 'rotate(0)'" style="transition: transform 0.2s;">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </td>
+            <td>
+              <div class="font-semibold text-dark">{{ r.requesterName || 'Unknown Technician' }}</div>
+              <div class="text-sm text-mute">ID: {{ r.id?.substring(0, 8) }}...</div>
+            </td>
+            <td>
+              <div class="font-semibold text-dark">
+                {{ r.items ? r.items.length : 0 }} Items Requested
+              </div>
+              <div class="text-sm text-mute truncate-note" [title]="r.description">{{ r.description || 'No note provided' }}</div>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="priority-dot" [style.background]="getPriorityColor(r.priority)"></span>
+                <span class="font-medium" [style.color]="getPriorityColor(r.priority)">{{ r.priority || 'Medium' }}</span>
+              </div>
+            </td>
+            <td class="text-mute">{{ r.createdAt | date:'mediumDate' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusBadgeClass(r.status)">
+                {{ r.status }}
+              </span>
+            </td>
+            <td style="text-align: right;">
+              <div class="action-buttons" *ngIf="r.status === 'PENDING'">
+                <button class="btn-action check" (click)="updateStatus(r.id, 'APPROVED', $event)" [disabled]="processingId === r.id" title="Approve Request">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+                <button class="btn-action x" (click)="updateStatus(r.id, 'REJECTED', $event)" [disabled]="processingId === r.id" title="Reject Request">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+              <div *ngIf="r.status !== 'PENDING'" class="text-mute text-sm font-medium">
+                Processed
+              </div>
+            </td>
+          </tr>
+
+          <!-- Expanded Line Items Row -->
+          <tr class="details-row" *ngIf="expandedRequestId === r.id">
+            <td colspan="7" style="padding: 0;">
+              <div class="details-container">
+                <div class="details-header">
+                  <h4 class="details-title">Requested Items Breakdown</h4>
+                </div>
+                <table class="nested-table">
+                  <thead>
+                    <tr>
+                      <th>Item Name</th>
+                      <th>Category & Type</th>
+                      <th>Specification</th>
+                      <th style="text-align: right;">Quantity</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of r.items">
+                      <td>
+                        <div class="item-name">
+                          {{ item.partName }}
+                          <span class="badge-manual" *ngIf="!item.equipmentId">Custom</span>
+                        </div>
+                      </td>
+                      <td class="text-mute">{{ item.category }} / {{ item.type }}</td>
+                      <td class="text-mute">{{ item.specification || '—' }}</td>
+                      <td style="text-align: right; font-weight: 600; color: #0f172a;">{{ item.quantity }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredRequests.length === 0">
+      <div class="empty-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+      </div>
+      <h3 class="empty-title">No {{ activeTab | lowercase }} requests found</h3>
+      <p class="empty-desc">You're all caught up! There are no requests matching your criteria.</p>
+    </div>
+  </div>
+</div>

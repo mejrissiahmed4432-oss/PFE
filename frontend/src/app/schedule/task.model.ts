@@ -4,7 +4,7 @@ export interface Task {
   description: string;
   type: 'Equipment' | 'Maintenance' | 'Stock' | 'General';
   priority: 'High' | 'Medium' | 'Low';
-  status: 'Pending' | 'In Progress' | 'Completed';
+  status: 'Pending' | 'In Progress' | 'Completed' | 'History';
   dueDate: string;
   assignedTo: string;
   createdAt: string;

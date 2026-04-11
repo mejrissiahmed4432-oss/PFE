@@ -21,11 +21,13 @@ import { SocketService } from '../messaging/socket.service';
 import { ScheduleComponent } from '../schedule/schedule.component';
 import { PartsManagementComponent } from '../parts-management/parts-management.component';
 import { RequestListComponent } from '../parts-management/request-list/request-list.component';
+import { RequestManagerComponent } from '../parts-management/request-manager/request-manager.component';
+import { TicketsComponent } from '../tickets/tickets.component';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent],
   providers: [MessagingService],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
@@ -231,6 +233,8 @@ export class BoardComponent implements OnInit {
       case 'settings': return 'Account Settings';
       case 'parts': return 'Parts Management';
       case 'requests': return 'My Part Requests';
+      case 'manager-requests': return 'Incoming Part Requests';
+      case 'tickets': return 'Support Tickets';
       default: return 'Medina It Manage';
     }
   }

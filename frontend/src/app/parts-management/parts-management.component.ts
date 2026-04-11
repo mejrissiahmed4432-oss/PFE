@@ -62,6 +62,7 @@ export class PartsManagementComponent implements OnInit {
   categories: EquipmentCategory[] = [];
   availableTypes: string[] = [];
   isWizardOpen: boolean = false;
+  preselectedGroup: any = null;
 
   user: any;
   categoryNames: string[] = ['All', 'COMPONENT', 'STORAGE'];
@@ -110,15 +111,20 @@ export class PartsManagementComponent implements OnInit {
     this.partRequestService.getMyRequests(this.user.id).subscribe((requests: PartRequest[]) => {
       const approved = requests.filter(r => r.status === 'APPROVED');
 
-      this.parts = approved.map(r => ({
-        ...r,
-        equipmentName: r.partName,
-        brand: '—', // Requests don't strictly bind brand yet, but can be pulled from name
-        model: '—',
-        qte: r.quantity, // map the requested quantity
-        status: 'In stock', // Since it's approved and in possession
-        shelfId: r.equipmentId // Use equipment reference
-      }));
+      this.parts = approved.flatMap(r => 
+        (r.items || []).map(item => ({
+          ...r,
+          equipmentName: item.partName,
+          category: item.category || 'Unknown',
+          type: item.type || 'Unknown',
+          specification: item.specification || '',
+          brand: '—',
+          model: '—',
+          qte: item.quantity,
+          status: 'In stock',
+          shelfId: item.equipmentId
+        }))
+      );
       this.applyFilters();
     });
   }
@@ -229,12 +235,14 @@ export class PartsManagementComponent implements OnInit {
     return s ? `Shelf ${s.nb}` : 'Unknown';
   }
 
-  openRequestWizard(): void {
+  openRequestWizard(group?: any): void {
+    this.preselectedGroup = group || null;
     this.isWizardOpen = true;
   }
 
   onWizardClose(success: boolean): void {
     this.isWizardOpen = false;
+    this.preselectedGroup = null;
     if (success) {
       this.loadMyRequests();
       this.loadParts(); // Refresh inventory if any auto-approved items (future-proofing)

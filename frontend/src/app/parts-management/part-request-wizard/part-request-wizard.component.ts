@@ -17,6 +17,8 @@ interface CartItem {
   isManual: boolean;
   equipmentId?: string;
   selected: boolean;
+  isOriginalEdit?: boolean;
+  maxAvailable?: number;
 }
 
 interface StockGroup {
@@ -43,6 +45,7 @@ export class PartRequestWizardComponent implements OnInit {
   @Input() visible: boolean = false;
   @Input() user: any;
   @Input() editRequest: PartRequest | null = null;
+  @Input() initialPartSelection: any = null;
   @Output() closeWizard = new EventEmitter<boolean>();
 
   currentStep: number = 0;
@@ -55,6 +58,10 @@ export class PartRequestWizardComponent implements OnInit {
   // Selection Filters
   selectedCategory: string = '';
   selectedType: string = '';
+
+  initialSelectionProcessed: boolean = false;
+  categoriesLoaded: boolean = false;
+  stockLoaded: boolean = false;
 
   // Data
   allStock: any[] = [];
@@ -98,21 +105,27 @@ export class PartRequestWizardComponent implements OnInit {
     this.loadAllStock();
 
     if (this.editRequest) {
-      this.cart = [{
-        partName: this.editRequest.partName || '',
-        category: this.editRequest.category || '',
-        type: this.editRequest.type || '',
-        specification: this.editRequest.specification || '',
-        quantity: this.editRequest.quantity || 1,
-        isManual: true,
-        equipmentId: this.editRequest.equipmentId,
-        selected: true
-      }];
+      if (this.editRequest.items && this.editRequest.items.length > 0) {
+        this.cart = this.editRequest.items.map(item => ({
+          partName: item.partName || '',
+          category: item.category || '',
+          type: item.type || '',
+          specification: item.specification || '',
+          quantity: item.quantity || 1,
+          isManual: !item.equipmentId,
+          equipmentId: item.equipmentId,
+          selected: true,
+          isOriginalEdit: true
+        }));
+        this.selectedCategory = this.editRequest.items[0].category || '';
+        this.selectedType = this.editRequest.items[0].type || '';
+      } else {
+        this.cart = [];
+        this.selectedCategory = '';
+        this.selectedType = '';
+      }
       this.globalPriority = (this.editRequest.priority as any) || 'Medium';
       this.globalDescription = this.editRequest.description || '';
-
-      this.selectedCategory = this.editRequest.category || '';
-      this.selectedType = this.editRequest.type || '';
 
       this.currentStep = 1; // skip step 1 directly to review
       this.stepLabels = ['Original Info', 'Edit Request'];
@@ -122,11 +135,13 @@ export class PartRequestWizardComponent implements OnInit {
   loadCategories(): void {
     this.categoryService.getAllCategories().subscribe(data => {
       this.categories = data;
+      this.categoriesLoaded = true;
       // If we already have a selected category (e.g. from editRequest), populate types now
       if (this.selectedCategory) {
         const selectedCat = this.categories.find(c => c.name === this.selectedCategory);
-        this.availableTypes = selectedCat ? (selectedCat.types || []) : [];
+        this.availableTypes = selectedCat ? (selectedCat.types || []).map((t: any) => typeof t === 'string' ? t : t.name) : [];
       }
+      this.checkInitialPartSelection();
     });
   }
 
@@ -140,7 +155,56 @@ export class PartRequestWizardComponent implements OnInit {
         const isPart = partCategories.includes(cat) || cat.includes('COMPONENT') || cat.includes('STORAGE') || cat.includes('CONSUMABLE');
         return isPart && isInStock;
       });
+
+      // Update maxAvailable for any existing cart items (e.g. from editRequest)
+      this.cart.forEach(item => {
+        if (!item.isManual) {
+          const totalInSystem = this.allStock.filter(p => 
+            (p.equipmentName || p.type || '').trim() === item.partName &&
+            (p.specification || '').trim() === (item.specification || '').trim()
+          ).length;
+          item.maxAvailable = totalInSystem;
+          
+          if (item.quantity > totalInSystem && totalInSystem > 0) {
+             // We don't automatically reduce here to avoid wiping out requested counts on load, but we map the limit.
+          }
+        }
+      });
+      
+      this.stockLoaded = true;
+      this.checkInitialPartSelection();
     });
+  }
+
+  checkInitialPartSelection(): void {
+    if (this.categoriesLoaded && this.stockLoaded && this.initialPartSelection && !this.editRequest && !this.initialSelectionProcessed) {
+      this.initialSelectionProcessed = true;
+      
+      this.selectedCategory = this.initialPartSelection.category;
+      this.onCategoryChange();
+      this.selectedType = this.initialPartSelection.type;
+      this.onTypeChange();
+      
+      const spec = (this.initialPartSelection.items && this.initialPartSelection.items.length > 0) ? (this.initialPartSelection.items[0].specification || '') : '';
+      const name = this.initialPartSelection.name;
+      
+      const matchingGroup = this.availableStockGroups.find(g => 
+        g.name === name && 
+        (g.specification || '') === spec &&
+        g.availableQte > 0
+      );
+
+      if (matchingGroup) {
+         matchingGroup.selected = true;
+         matchingGroup.requestQte = 1;
+         this.addSelectedToCart();
+         
+         this.customAlert = {
+           title: 'Item Added',
+           message: `We automatically added 1 unit of "${matchingGroup.name}" to your request list because it was available in stock.`
+         };
+      }
+    }
   }
 
   getPartStatus(item: any): string {
@@ -168,7 +232,7 @@ export class PartRequestWizardComponent implements OnInit {
     // When going back to step 0, re-populate availableTypes from the selected category
     if (step === 0 && this.selectedCategory) {
       const selectedCat = this.categories.find(c => c.name === this.selectedCategory);
-      this.availableTypes = selectedCat ? (selectedCat.types || []) : [];
+      this.availableTypes = selectedCat ? (selectedCat.types || []).map((t: any) => typeof t === 'string' ? t : t.name) : [];
       // Re-run type filter to restore stock groups
       if (this.selectedType) {
         this.onTypeChange();
@@ -218,7 +282,7 @@ export class PartRequestWizardComponent implements OnInit {
 
   onCategoryChange(): void {
     const selectedCat = this.categories.find(c => c.name === this.selectedCategory);
-    this.availableTypes = selectedCat ? (selectedCat.types || []) : [];
+    this.availableTypes = selectedCat ? (selectedCat.types || []).map((t: any) => typeof t === 'string' ? t : t.name) : [];
     this.selectedType = '';
     this.availableStockGroups = [];
   }
@@ -291,6 +355,14 @@ export class PartRequestWizardComponent implements OnInit {
 
     this.availableStockGroups.forEach(g => {
       if (g.selected) {
+        if (g.requestQte > g.availableQte) {
+          g.requestQte = g.availableQte;
+        }
+        if (g.requestQte <= 0) {
+          g.selected = false;
+          return;
+        }
+
         // Check against ALL cart items (including manual ones from edit mode)
         const existingItem = this.cart.find(c =>
           c.partName === g.name &&
@@ -312,7 +384,8 @@ export class PartRequestWizardComponent implements OnInit {
             quantity: g.requestQte,
             isManual: false,
             equipmentId: g.items[0]?.id,
-            selected: true
+            selected: true,
+            maxAvailable: g.items.length // the total raw items found for this group
           });
         }
 
@@ -394,6 +467,18 @@ export class PartRequestWizardComponent implements OnInit {
     }
   }
 
+  validateCartQuantity(item: CartItem): void {
+    if (item.isManual) return;
+    
+    if (item.maxAvailable !== undefined && item.quantity > item.maxAvailable) {
+      this.customAlert = {
+        title: 'Quantity Exceeded',
+        message: `You requested ${item.quantity} units of "${item.partName}", but only ${item.maxAvailable} are available in total stock. Reverting to maximum.`
+      };
+      item.quantity = item.maxAvailable;
+    }
+  }
+
   submitCart(): void {
     const finalCart = this.cart.filter(c => c.selected);
     if (finalCart.length === 0) {
@@ -406,20 +491,27 @@ export class PartRequestWizardComponent implements OnInit {
 
     this.isSubmitting = true;
 
+    // Create the items array
+    const requestItems = finalCart.map(item => ({
+      partName: item.partName,
+      category: item.category,
+      type: item.type,
+      specification: item.specification,
+      equipmentId: item.equipmentId,
+      quantity: item.quantity
+    }));
+
     if (this.editRequest && this.editRequest.id) {
-      const updatedItem = finalCart[0];
-      const payload: Partial<PartRequest> = {
-        partName: updatedItem.partName,
-        category: updatedItem.category,
-        type: updatedItem.type,
-        equipmentId: updatedItem.equipmentId,
-        quantity: updatedItem.quantity,
+      const updatePayload: Partial<PartRequest> = {
+        items: requestItems,
         priority: this.globalPriority,
-        specification: updatedItem.specification,
         description: this.globalDescription
       };
-      this.partRequestService.updateRequest(this.editRequest.id, payload).subscribe({
-        next: () => this.handleSubmissionComplete(false),
+
+      this.partRequestService.updateRequest(this.editRequest.id, updatePayload).subscribe({
+        next: () => {
+          this.handleSubmissionComplete(false);
+        },
         error: (err) => {
           console.error(err);
           this.handleSubmissionComplete(true);
@@ -428,41 +520,24 @@ export class PartRequestWizardComponent implements OnInit {
       return;
     }
 
-    let completed = 0;
-    const total = finalCart.length;
-    let hasError = false;
+    // Normal Create workflow (when not editing)
+    const payload: PartRequest = {
+      items: requestItems,
+      priority: this.globalPriority,
+      description: this.globalDescription,
+      requesterId: this.user.id,
+      requesterName: `${this.user.firstName} ${this.user.lastName}`,
+      status: 'PENDING'
+    };
 
-    finalCart.forEach(item => {
-      const payload: PartRequest = {
-        partName: item.partName,
-        category: item.category,
-        type: item.type,
-        specification: item.specification,
-        equipmentId: item.equipmentId,
-        quantity: item.quantity,
-        priority: this.globalPriority,
-        description: this.globalDescription,
-        requesterId: this.user.id,
-        requesterName: `${this.user.firstName} ${this.user.lastName}`,
-        status: 'PENDING'
-      };
-
-      this.partRequestService.createRequest(payload).subscribe({
-        next: () => {
-          completed++;
-          if (completed === total) {
-            this.handleSubmissionComplete(hasError);
-          }
-        },
-        error: (err) => {
-          console.error(err);
-          hasError = true;
-          completed++;
-          if (completed === total) {
-            this.handleSubmissionComplete(hasError);
-          }
-        }
-      });
+    this.partRequestService.createRequest(payload).subscribe({
+      next: () => {
+        this.handleSubmissionComplete(false);
+      },
+      error: (err) => {
+        console.error(err);
+        this.handleSubmissionComplete(true);
+      }
     });
   }
 

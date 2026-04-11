@@ -1,0 +1,114 @@
+<div class="tickets-container">
+  <!-- Page Header -->
+  <header class="tickets-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="glass-title">Support Tickets</h1>
+        <p class="glass-subtitle">Manage and track technical support issues</p>
+      </div>
+      <div class="header-actions">
+        <div class="search-wrapper glass-element">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search tickets...">
+        </div>
+        <button class="create-btn" (click)="openModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          New Ticket
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="tabs-glass">
+        <button class="tab-item" [class.active]="activeFilter === 'All'" (click)="setFilter('All')">All Tickets</button>
+        <button class="tab-item" [class.active]="activeFilter === 'Open'" (click)="setFilter('Open')">Open</button>
+        <button class="tab-item" [class.active]="activeFilter === 'Resolved'" (click)="setFilter('Resolved')">Resolved</button>
+      </div>
+      <div class="stats-pills">
+        <span class="stat-pill">Total: {{ tickets.length }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tickets Grid -->
+  <div class="tickets-grid" *ngIf="filteredTickets.length > 0; else emptyState">
+    <div class="ticket-card glass-card card-animate" *ngFor="let ticket of filteredTickets" [ngClass]="getPriorityClass(ticket.priority)">
+      <div class="card-edge" [ngClass]="getPriorityClass(ticket.priority)"></div>
+      <div class="card-content">
+        <div class="card-header">
+          <span class="ticket-id">#{{ ticket.id?.substring(0,8) || 'NEW' }}</span>
+          <span class="status-badge" [ngClass]="getStatusClass(ticket.status)">{{ ticket.status }}</span>
+        </div>
+        
+        <h3 class="ticket-title">{{ ticket.title }}</h3>
+        <p class="ticket-desc">{{ ticket.description }}</p>
+
+        <div class="card-footer">
+          <div class="meta-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            <span>{{ ticket.category }}</span>
+          </div>
+          <div class="meta-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>{{ ticket.createdAt | date:'shortDate' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <ng-template #emptyState>
+    <div class="empty-glass">
+      <div class="empty-icon">📂</div>
+      <h3>No tickets found</h3>
+      <p>Search another term or create your first support ticket.</p>
+    </div>
+  </ng-template>
+
+  <!-- New Ticket Modal -->
+  <div class="modal-overlay" *ngIf="showAddModal" (click)="closeModal()">
+    <div class="modal-glass" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Create New Ticket</h2>
+        <button class="close-modal" (click)="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Subject</label>
+          <input type="text" [(ngModel)]="newTicket.title" placeholder="What's the issue?">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category</label>
+            <select [(ngModel)]="newTicket.category">
+              <option value="Generic">Generic</option>
+              <option value="Software">Software</option>
+              <option value="Hardware">Hardware</option>
+              <option value="Network">Network</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select [(ngModel)]="newTicket.priority">
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="newTicket.description" rows="4" placeholder="Provide more details..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button class="btn-submit" [disabled]="isSubmitting" (click)="createTicket()">
+          {{ isSubmitting ? 'Creating...' : 'Create Ticket' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

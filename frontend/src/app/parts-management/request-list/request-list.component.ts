@@ -21,6 +21,7 @@ export class RequestListComponent implements OnInit {
 
   isWizardOpen: boolean = false;
   requestToEdit: PartRequest | null = null;
+  expandedRequestId: string | null = null;
 
   constructor(
     private partRequestService: PartRequestService,
@@ -43,10 +44,7 @@ export class RequestListComponent implements OnInit {
           new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime()
         ).map(r => ({
           ...r,
-          isEditing: false,
-          editQuantity: r.quantity,
-          editPriority: r.priority,
-          editSpecification: r.specification
+          isEditing: false
         }));
         this.applyFilters();
       },
@@ -71,9 +69,18 @@ export class RequestListComponent implements OnInit {
     this.applyFilters();
   }
 
-  openEditWizard(request: any): void {
+  openEditWizard(request: any, event: Event): void {
+    event.stopPropagation();
     this.requestToEdit = request;
     this.isWizardOpen = true;
+  }
+
+  toggleExpand(id: string): void {
+    if (this.expandedRequestId === id) {
+      this.expandedRequestId = null;
+    } else {
+      this.expandedRequestId = id;
+    }
   }
 
   onWizardClose(success: boolean): void {
@@ -84,11 +91,15 @@ export class RequestListComponent implements OnInit {
     }
   }
 
-  cancelRequest(request: any): void {
-    if (confirm(`Are you sure you want to cancel the request for ${request.partName}?`)) {
+  cancelRequest(request: any, event: Event): void {
+    event.stopPropagation();
+    if (confirm(`Are you sure you want to cancel this request?`)) {
       this.partRequestService.deleteRequest(request.id).subscribe({
         next: () => {
           this.requests = this.requests.filter(r => r.id !== request.id);
+          if (this.expandedRequestId === request.id) {
+            this.expandedRequestId = null;
+          }
           this.applyFilters();
         },
         error: err => console.error("Error deleting", err)
@@ -98,9 +109,9 @@ export class RequestListComponent implements OnInit {
 
   getStatusClass(status?: string): string {
     switch (status) {
-      case 'APPROVED': return 'status-approved';
-      case 'REJECTED': return 'status-rejected';
-      default: return 'status-pending';
+      case 'APPROVED': return 'badge-approved';
+      case 'REJECTED': return 'badge-rejected';
+      default: return 'badge-pending';
     }
   }
 

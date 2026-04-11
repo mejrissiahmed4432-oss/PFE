@@ -4,12 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { TaskService } from './task.service';
 import { AlertService } from '../alerts/alert.service';
+import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Task } from './task.model';
 
 @Component({
   selector: 'app-schedule',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DragDropModule],
   templateUrl: './schedule.component.html',
   styleUrl: './schedule.component.css'
 })
@@ -20,6 +21,8 @@ export class ScheduleComponent implements OnInit {
   showAddModal = false;
   showDetailPanel = false;
   isSubmitting = false;
+  
+  customAlert: { title: string, message: string } | null = null;
 
   // Toast notification
   toast: { message: string; type: 'success' | 'info' | 'error' } | null = null;
@@ -75,7 +78,14 @@ export class ScheduleComponent implements OnInit {
 
   loadTasks(): void {
     this.taskService.getTasks().subscribe({
-      next: (data) => { this.tasks = data; },
+      next: (data) => { 
+        if (this.currentUser) {
+          const userFullName = `${this.currentUser.firstName} ${this.currentUser.lastName || ''}`.trim();
+          this.tasks = data.filter(t => t.assignedTo === userFullName);
+        } else {
+          this.tasks = data; 
+        }
+      },
       error: (err) => console.error('Failed to load tasks', err)
     });
   }
@@ -111,19 +121,66 @@ export class ScheduleComponent implements OnInit {
 
   hasTasksOnDay(date: Date | null): Task[] {
     if (!date) return [];
-    const s = date.toISOString().split('T')[0];
+    const s = this.formatDateKey(date);
     return this.tasks.filter(t => t.dueDate === s);
+  }
+
+  selectedDayFilter: Date | null = null;
+
+  toggleDayFilter(day: Date | null): void {
+    if (!day) return;
+    if (this.selectedDayFilter && this.isSameDay(this.selectedDayFilter, day)) {
+      this.selectedDayFilter = null;
+    } else {
+      this.selectedDayFilter = day;
+    }
+  }
+
+  formatDateKey(date: Date): string {
+    const y = date.getFullYear();
+    const m = (date.getMonth() + 1).toString().padStart(2, '0');
+    const d = date.getDate().toString().padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  isSameDay(d1: Date, d2: Date): boolean {
+    return d1.getFullYear() === d2.getFullYear() && 
+           d1.getMonth() === d2.getMonth() && 
+           d1.getDate() === d2.getDate();
   }
 
   get filteredTasks(): Task[] {
     if (!this.tasks) return [];
-    const todayStr = this.today.toISOString().split('T')[0];
+    let result = this.tasks;
+    
+    const todayStr = this.formatDateKey(this.today);
     switch (this.currentFilter) {
-      case 'Today':     return this.tasks.filter(t => t.dueDate === todayStr);
-      case 'Upcoming':  return this.tasks.filter(t => t.dueDate > todayStr && t.status !== 'Completed');
-      case 'Completed': return this.tasks.filter(t => t.status === 'Completed');
-      default:          return this.tasks;
+      case 'Today':     result = result.filter(t => t.dueDate === todayStr); break;
+      case 'Upcoming':  result = result.filter(t => t.dueDate > todayStr && t.status !== 'Completed' && t.status !== 'History'); break;
+      case 'Completed': result = result.filter(t => t.status === 'Completed'); break;
     }
+    
+    if (this.selectedDayFilter) {
+      const selStr = this.formatDateKey(this.selectedDayFilter);
+      result = result.filter(t => t.dueDate === selStr);
+    }
+    return result;
+  }
+
+  get todoTasks(): Task[] {
+    return this.filteredTasks.filter(t => t.status === 'Pending');
+  }
+
+  get inProgressTasks(): Task[] {
+    return this.filteredTasks.filter(t => t.status === 'In Progress');
+  }
+
+  get doneTasks(): Task[] {
+    return this.filteredTasks.filter(t => t.status === 'Completed');
+  }
+
+  get historyTasks(): Task[] {
+    return this.filteredTasks.filter(t => t.status === 'History');
   }
 
   get stats() {
@@ -142,6 +199,40 @@ export class ScheduleComponent implements OnInit {
     this.showDetailPanel = true;
   }
 
+  onDrop(event: CdkDragDrop<Task[]>): void {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      const task = event.previousContainer.data[event.previousIndex];
+      const targetListId = event.container.id; 
+      
+      let newStatus: 'Pending' | 'In Progress' | 'Completed' | 'History' = 'Pending';
+      if (targetListId === 'list-progress') newStatus = 'In Progress';
+      else if (targetListId === 'list-done') newStatus = 'Completed';
+      else if (targetListId === 'list-history') newStatus = 'History';
+
+      task.status = newStatus;
+      
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+
+      this.taskService.updateTaskStatus(task.id, newStatus).subscribe({
+        next: (updatedTask) => {
+           this.alertService.createAlert(
+              `Task Moved: ${updatedTask.title}`,
+              `Task was moved to "${updatedTask.status}"`,
+              updatedTask.status === 'Completed' ? 'SUCCESS' : 'INFO', 'TASK', updatedTask.id
+           ).subscribe();
+        },
+        error: (err) => console.error('Failed to update task status automatically', err)
+      });
+    }
+  }
+
   closeDetail(): void {
     this.showDetailPanel = false;
     this.selectedTask = null;
@@ -149,11 +240,30 @@ export class ScheduleComponent implements OnInit {
 
   updateTask(): void {
     if (!this.selectedTask || this.isSubmitting) return;
+
+    if (this.selectedTask.dueDate) {
+      const todayStr = new Date().toISOString().split('T')[0];
+      if (this.selectedTask.dueDate < todayStr) {
+        this.customAlert = {
+          title: 'Validation Error',
+          message: 'Task due date cannot be set in the past.'
+        };
+        return;
+      }
+    }
+
     this.isSubmitting = true;
     this.taskService.updateTask(this.selectedTask.id, this.selectedTask).subscribe({
       next: (updatedTask) => {
         const index = this.tasks.findIndex(t => t.id === updatedTask.id);
-        if (index !== -1) this.tasks[index] = updatedTask;
+        const userFullName = this.currentUser ? `${this.currentUser.firstName} ${this.currentUser.lastName || ''}`.trim() : '';
+        
+        if (updatedTask.assignedTo !== userFullName && this.currentUser) {
+          if (index !== -1) this.tasks.splice(index, 1);
+        } else {
+          if (index !== -1) this.tasks[index] = updatedTask;
+        }
+
         this.closeDetail();
         this.showToast(`✏️ Task "${updatedTask.title}" updated successfully`, 'info');
         this.alertService.createAlert(
@@ -185,10 +295,23 @@ export class ScheduleComponent implements OnInit {
 
   addTask(): void {
     if (!this.newTask.title || !this.newTask.dueDate || this.isSubmitting) return;
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (this.newTask.dueDate < todayStr) {
+      this.customAlert = {
+        title: 'Validation Error',
+        message: 'Target date cannot be in the past.'
+      };
+      return;
+    }
+
     this.isSubmitting = true;
     this.taskService.createTask(this.newTask).subscribe({
       next: (createdTask) => {
-        this.tasks.unshift(createdTask);
+        const userFullName = this.currentUser ? `${this.currentUser.firstName} ${this.currentUser.lastName || ''}`.trim() : '';
+        if (createdTask.assignedTo === userFullName || !this.currentUser) {
+          this.tasks.unshift(createdTask);
+        }
         this.showAddModal = false;
         this.newTask = this.emptyTask();
         this.showToast(`✅ Task "${createdTask.title}" created!`, 'success');
@@ -238,6 +361,19 @@ export class ScheduleComponent implements OnInit {
       case 'In Progress': return 'status-progress';
       default:            return 'status-pending';
     }
+  }
+
+
+
+  closeAlert(event?: Event): void {
+    if (event) event.stopPropagation();
+    this.customAlert = null;
+  }
+
+  closeAddModal(): void {
+    this.showAddModal = false;
+    this.newTask = this.emptyTask() as any;
+    this.customAlert = null;
   }
 
   formatDate(dateStr: string | undefined): string {
