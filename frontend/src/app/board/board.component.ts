@@ -73,7 +73,7 @@ export class BoardComponent implements OnInit {
         this.router.navigate(['/login']);
       } else {
         if (this.user.role === 'TECHNICIAN') {
-          this.activeTab = 'parts';
+          this.activeTab = 'tickets';
         }
         this.loadUnreadCount();
         

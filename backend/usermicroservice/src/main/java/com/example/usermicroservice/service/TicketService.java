@@ -38,6 +38,10 @@ public class TicketService {
             ticket.setCategory(ticketDetails.getCategory());
             ticket.setPriority(ticketDetails.getPriority());
             ticket.setStatus(ticketDetails.getStatus());
+            ticket.setAssignedTo(ticketDetails.getAssignedTo());
+            ticket.setEquipmentName(ticketDetails.getEquipmentName());
+            ticket.setDeadline(ticketDetails.getDeadline());
+            ticket.setAttachments(ticketDetails.getAttachments());
             ticket.preUpdate();
             return ticketRepository.save(ticket);
         }).orElseThrow(() -> new RuntimeException("Ticket not found with id " + id));

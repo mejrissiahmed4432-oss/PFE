@@ -25,17 +25,36 @@
   margin-bottom: 32px;
 }
 
-.page-title {
-  margin: 0 0 4px;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #0f172a;
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
-.page-subtitle {
+.header-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 10px 25px rgba(6, 182, 212, 0.35);
+}
+
+.header-text h1 {
   margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #020c18;
+  letter-spacing: -0.02em;
+}
+
+.header-text p {
+  margin: 4px 0 0 0;
+  font-size: 1rem;
   color: #64748b;
-  font-size: 0.95rem;
 }
 
 /* Search */

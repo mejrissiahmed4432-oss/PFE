@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Document(collection = "tickets")
 public class Ticket {
@@ -12,10 +13,14 @@ public class Ticket {
     private String id;
     private String title;
     private String description;
-    private String category; // e.g. "Software", "Hardware", "Network"
-    private String priority; // e.g. "High", "Medium", "Low"
-    private String status;   // e.g. "Open", "In Progress", "Resolved", "Closed"
-    private String userId;   // Creator's ID
+    private String category; // "Maintenance", "Inspection", "Incident"
+    private String priority; // "High", "Medium", "Low"
+    private String status;   // "Open", "In Progress", "Resolved", "Closed" ...
+    private String userId;   // Creator's ID (createdBy)
+    private String assignedTo; // Assigned technician ID
+    private String equipmentName; // Equipment this ticket is for
+    private String deadline;     // Optional deadline date
+    private List<String> attachments; // Base64 or URLs of attachments
     private String createdAt;
     private String updatedAt;
 
@@ -54,6 +59,14 @@ public class Ticket {
     public void setStatus(String status) { this.status = status; }
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
+    public String getAssignedTo() { return assignedTo; }
+    public void setAssignedTo(String assignedTo) { this.assignedTo = assignedTo; }
+    public String getEquipmentName() { return equipmentName; }
+    public void setEquipmentName(String equipmentName) { this.equipmentName = equipmentName; }
+    public String getDeadline() { return deadline; }
+    public void setDeadline(String deadline) { this.deadline = deadline; }
+    public List<String> getAttachments() { return attachments; }
+    public void setAttachments(List<String> attachments) { this.attachments = attachments; }
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
     public String getUpdatedAt() { return updatedAt; }

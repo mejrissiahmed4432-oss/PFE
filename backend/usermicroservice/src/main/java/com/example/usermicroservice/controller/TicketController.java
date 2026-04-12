@@ -22,12 +22,12 @@ public class TicketController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<Ticket> getTicketsByUser(@pathVariable String userId) {
+    public List<Ticket> getTicketsByUser(@PathVariable String userId) {
         return ticketService.getTicketsByUser(userId);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Ticket> getTicketById(@pathVariable String id) {
+    public ResponseEntity<Ticket> getTicketById(@PathVariable String id) {
         return ticketService.getTicketById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -39,7 +39,7 @@ public class TicketController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Ticket> updateTicket(@pathVariable String id, @RequestBody Ticket ticketDetails) {
+    public ResponseEntity<Ticket> updateTicket(@PathVariable String id, @RequestBody Ticket ticketDetails) {
         try {
             return ResponseEntity.ok(ticketService.updateTicket(id, ticketDetails));
         } catch (RuntimeException e) {
@@ -48,7 +48,7 @@ public class TicketController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTicket(@pathVariable String id) {
+    public ResponseEntity<Void> deleteTicket(@PathVariable String id) {
         ticketService.deleteTicket(id);
         return ResponseEntity.noContent().build();
     }
