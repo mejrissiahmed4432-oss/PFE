@@ -13,6 +13,7 @@ import { ShelfService } from '../../shelf/shelf.service';
 import { Shelf } from '../../shelf/shelf.model';
 import { CategoryService } from '../../category-manager/category.service';
 import { CategoryType, EquipmentCategory } from '../../category-manager/category.model';
+import * as QRCode from 'qrcode';
 
 // ─── Interfaces ───────────────────────────────────────────────────────────
 export interface UnitRow {
@@ -787,20 +788,34 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.isSaving = true;
     this.saveError = '';
     const payloads = this.buildPayloads();
-    const requests: Observable<Equipment>[] = payloads.map(p => this.equipmentService.createEquipment(p));
 
-    forkJoin(requests).subscribe({
-      next: () => {
-        this.isSaving = false;
-        this.closeEvent.emit(true);
-        this.reset();
-      },
-      error: err => {
-        this.isSaving = false;
-        this.saveError = 'Failed to save some equipment. Please try again.';
-        console.error(err);
-      }
-    });
+    if (this.typeRequiresQr) {
+      // Generate QR codes for all payloads before saving
+      const qrPromises = payloads.map((p, i) => {
+        // Use a placeholder id for QR content (will be replaced by backend id)
+        const tempId = `QR-${Date.now()}-${i}`;
+        return this.generateQRCodeDataUrl(p, tempId).then(url => {
+          p.qrCode = url;
+          return p;
+        });
+      });
+
+      Promise.all(qrPromises).then(updatedPayloads => {
+        const requests: Observable<Equipment>[] = updatedPayloads.map(p => this.equipmentService.createEquipment(p));
+        forkJoin(requests).subscribe({
+          next: () => { this.isSaving = false; this.closeEvent.emit(true); this.reset(); },
+          error: err => { this.isSaving = false; this.saveError = 'Failed to save some equipment. Please try again.'; console.error(err); }
+        });
+      });
+    } else {
+      // No QR codes — explicit override to do not generate
+      payloads.forEach(p => { p.qrCode = 'NONE'; });
+      const requests: Observable<Equipment>[] = payloads.map(p => this.equipmentService.createEquipment(p));
+      forkJoin(requests).subscribe({
+        next: () => { this.isSaving = false; this.closeEvent.emit(true); this.reset(); },
+        error: err => { this.isSaving = false; this.saveError = 'Failed to save some equipment. Please try again.'; console.error(err); }
+      });
+    }
   }
 
   private reset(): void {
@@ -821,6 +836,22 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.availableShelves = []; this.shelfAssignments = [];
     this.units = []; this.isSaving = false; this.saveError = '';
     this.prefillData = null;
+  }
+
+  // ── QR Code generation ────────────────────────────────────────────────
+  private async generateQRCodeDataUrl(payload: Equipment, tempId: string): Promise<string> {
+    const qrData = JSON.stringify({
+      id: tempId,
+      name: payload.equipmentName,
+      serial: payload.serialNumber,
+      shelfId: payload.shelfId
+    });
+    try {
+      return await QRCode.toDataURL(qrData, { width: 240, margin: 1, color: { dark: '#1e293b', light: '#ffffff' } });
+    } catch (err) {
+      console.error('QR generation failed', err);
+      return '';
+    }
   }
 
   // ── Review helpers ────────────────────────────────────────────────────
@@ -916,6 +947,34 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     };
     reader.readAsDataURL(file);
     input.value = '';
+  }
+
+  removeSharedInvoice(event?: Event): void {
+    if (event) event.stopPropagation();
+    this.sharedInvoiceFile = null;
+    this.sharedInvoiceFileName = '';
+    this.sharedInvoiceFileData = '';
+  }
+
+  removeUnitInvoice(unit: UnitRow, event?: Event): void {
+    if (event) event.stopPropagation();
+    unit.invoiceFile = undefined;
+    unit.invoiceFileName = '';
+    unit.invoiceFileData = '';
+  }
+
+  removeSharedWarranty(event?: Event): void {
+    if (event) event.stopPropagation();
+    this.sharedWarrantyFile = null;
+    this.sharedWarrantyFileName = '';
+    this.sharedWarrantyFileData = '';
+  }
+
+  removeUnitWarranty(unit: UnitRow, event?: Event): void {
+    if (event) event.stopPropagation();
+    unit.warrantyFile = undefined;
+    unit.warrantyFileName = '';
+    unit.warrantyFileData = '';
   }
 
   // ── Sync Logic ────────────────────────────────────────────────────────

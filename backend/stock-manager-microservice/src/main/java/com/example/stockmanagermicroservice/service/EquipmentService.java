@@ -7,6 +7,10 @@ import com.example.stockmanagermicroservice.model.Shelf;
 import com.example.stockmanagermicroservice.repository.EquipmentCategoryRepository;
 import com.example.stockmanagermicroservice.repository.EquipmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,8 +23,6 @@ public class EquipmentService {
     @Autowired
     private EquipmentRepository equipmentRepository;
 
-
-
     @Autowired
     private NotificationService notificationService;
 
@@ -31,7 +33,7 @@ public class EquipmentService {
     private EquipmentCategoryRepository equipmentCategoryRepository;
 
     @Autowired
-    private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
+    private MongoTemplate mongoTemplate;
 
     public List<Equipment> getAllEquipment() {
         return equipmentRepository.findAll();
@@ -50,8 +52,6 @@ public class EquipmentService {
         return !equipmentRepository.existsBySerialNumber(serialNumber.trim());
     }
 
-
-
     public Optional<Equipment> getEquipmentById(String id) {
         return equipmentRepository.findById(id);
     }
@@ -59,13 +59,22 @@ public class EquipmentService {
     public Equipment createEquipment(Equipment equipment) {
         equipment.setCreatedAt(LocalDateTime.now());
         equipment.setUpdatedAt(LocalDateTime.now());
-        
-        // Respect the "Requires QR Code" setting from categories
-        if (typeRequiresQrCode(equipment.getCategory(), equipment.getType())) {
+
+        // Respect the "Requires QR Code" setting from categories, unless overridden by
+        // frontend
+        if (equipment.getQrCode() != null && "NONE".equals(equipment.getQrCode())) {
+            // Frontend explicitly chose NO QR CODE.
+            equipment.setQrCode(null);
+        } else if (equipment.getQrCode() != null && !equipment.getQrCode().isEmpty()) {
+            // User explicitly requested QR code generation on the form, keep the generated
+            // code
+        } else if (typeRequiresQrCode(equipment.getCategory(), equipment.getType())) {
+            // Type requires a QR code, generate one if missing
             if (equipment.getQrCode() == null || equipment.getQrCode().isEmpty()) {
                 equipment.setQrCode("QR-" + System.currentTimeMillis());
             }
         } else {
+            // Type doesn't require it and user didn't request it, ensure it's null
             equipment.setQrCode(null);
         }
 
@@ -75,7 +84,8 @@ public class EquipmentService {
         Equipment saved = equipmentRepository.save(equipment);
 
         // Generate notification for new equipment
-        String creator = (saved.getCreatedBy() != null && !saved.getCreatedBy().isEmpty()) ? saved.getCreatedBy() : "System";
+        String creator = (saved.getCreatedBy() != null && !saved.getCreatedBy().isEmpty()) ? saved.getCreatedBy()
+                : "System";
         notificationService.createNotification("New " + saved.getType() + " Added",
                 "New " + saved.getType() + " " + saved.getBrand() + " " + saved.getModel() + " added by " + creator,
                 "SUCCESS", "EQUIPMENT", saved.getId());
@@ -135,7 +145,7 @@ public class EquipmentService {
             if (newShelfId != null && !newShelfId.equals(oldShelfId)) {
                 equipment.setLocationChangeAt(LocalDateTime.now());
                 equipment.setLocationChanged(true);
-                
+
                 // Notification for location change
                 notificationService.createNotification("Location Changed: " + equipment.getEquipmentName(),
                         "Equipment moved from shelf " + (oldShelfId != null ? oldShelfId : "N/A") + " to " + newShelfId,
@@ -179,21 +189,35 @@ public class EquipmentService {
             equipment.setOperatingSystem(equipmentDetails.getOperatingSystem());
             equipment.setSpecification(equipmentDetails.getSpecification());
 
-            if (typeRequiresQrCode(equipment.getCategory(), equipment.getType())) {
-                if (equipment.getQrCode() == null || equipment.getQrCode().isEmpty()) {
-                    equipment.setQrCode("QR-" + System.currentTimeMillis());
-                } else if (equipmentDetails.getQrCode() != null && !equipmentDetails.getQrCode().isEmpty()) {
+            // Determine if we need to clear QR code explicitly
+            boolean clearQrCode = false;
+            if (equipmentDetails.getQrCode() != null) {
+                if ("NONE".equals(equipmentDetails.getQrCode()) || equipmentDetails.getQrCode().isEmpty()) {
+                    // Explicit request to remove QR code
+                    equipment.setQrCode(null);
+                    clearQrCode = true;
+                } else {
                     equipment.setQrCode(equipmentDetails.getQrCode());
                 }
             } else {
-                equipment.setQrCode(null);
+                // qrCode not specified in update — keep existing
             }
 
             equipment.setUpdatedAt(LocalDateTime.now());
             Equipment updated = equipmentRepository.save(equipment);
 
+            // If QR code was explicitly removed, force $unset in MongoDB to guarantee field
+            // removal
+            if (clearQrCode) {
+                Query query = new Query(Criteria.where("_id").is(id));
+                Update unsetUpdate = new Update().unset("qrCode");
+                mongoTemplate.updateFirst(query, unsetUpdate, Equipment.class);
+            }
+
             // Generate notification for equipment update
-            String updater = (updated.getCreatedBy() != null && !updated.getCreatedBy().isEmpty()) ? updated.getCreatedBy() : "System";
+            String updater = (updated.getCreatedBy() != null && !updated.getCreatedBy().isEmpty())
+                    ? updated.getCreatedBy()
+                    : "System";
             notificationService.createNotification("Equipment Updated: " + updated.getEquipmentName(),
                     updated.getBrand() + " " + updated.getModel() + " was updated by " + updater,
                     "INFO", "EQUIPMENT", updated.getId());
@@ -263,16 +287,18 @@ public class EquipmentService {
             eq.setUpdatedAt(LocalDateTime.now());
         });
         List<Equipment> saved = equipmentRepository.saveAll(items);
-        
+
         // Notification for bulk update
         notificationService.createNotification("Bulk Update Completed",
                 items.size() + " equipment items were updated successfully",
                 "INFO", "EQUIPMENT", null);
-                
+
         return saved;
     }
+
     private boolean typeRequiresQrCode(String categoryName, String typeName) {
-        if (categoryName == null || typeName == null) return true;
+        if (categoryName == null || typeName == null)
+            return true;
         return equipmentCategoryRepository.findByNameIgnoreCase(categoryName.trim())
                 .map(cat -> cat.getTypes().stream()
                         .filter(t -> t.getName().equalsIgnoreCase(typeName.trim()))

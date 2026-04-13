@@ -17,19 +17,20 @@
       </button>
     </div>
 
+    <!-- Form Body -->
     <div class="wizard-body">
+      <div class="form-compact">
 
-  <div class="form-grid">
-    <div class="fields-column">
-      
-      <!-- Basic Information -->
-      <div class="form-section">
-        <h4>Basic Information</h4>
-        <div class="input-grid">
+        <!-- Basic Info -->
+        <div class="section-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Basic Information
+        </div>
+        <div class="form-row">
           <div class="input-group">
             <label>Company Name <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
             <input type="text" formControlName="companyName" placeholder="Enter company name">
-            <div class="error-msg" *ngIf="f['companyName'].touched && f['companyName'].errors">
+            <div class="error-msg" *ngIf="(f['companyName'].dirty || f['companyName'].touched) && f['companyName'].errors">
               <span *ngIf="f['companyName'].errors?.['required']">Company name is required</span>
               <span *ngIf="f['companyName'].errors?.['minlength']">Minimum 2 characters</span>
             </div>
@@ -43,45 +44,35 @@
               <option value="Services">Services</option>
               <option value="Network">Network</option>
             </select>
-            <div class="error-msg" *ngIf="f['category'].touched && f['category'].errors">
-              Category is required
-            </div>
-          </div>
-          <div class="input-group" *ngIf="supplier">
-            <label>Service Rating <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
-            <div class="star-rating">
-              <span *ngFor="let star of [1,2,3,4,5]" 
-                    (click)="setRating(star)"
-                    [class.filled]="star <= supplierForm.get('rating')?.value"
-                    class="star">★</span>
-            </div>
+            <div class="error-msg" *ngIf="(f['category'].dirty || f['category'].touched) && f['category'].errors">Category is required</div>
           </div>
         </div>
-      </div>
 
-      <!-- Contact Information -->
-      <div class="form-section">
-        <h4>Contact Information</h4>
-        <div class="input-grid">
+        <!-- Contact Info -->
+        <div class="section-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 6.29 6.29l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Contact Information
+        </div>
+        <div class="form-row">
           <div class="input-group">
             <label>Contact Person <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
             <input type="text" formControlName="contactPerson" placeholder="Enter contact person">
-            <div class="error-msg" *ngIf="f['contactPerson'].touched && f['contactPerson'].errors">
-              Contact person is required
-            </div>
+            <div class="error-msg" *ngIf="(f['contactPerson'].dirty || f['contactPerson'].touched) && f['contactPerson'].errors">Contact person is required</div>
           </div>
           <div class="input-group">
             <label>Email <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
             <input type="email" formControlName="email" placeholder="Enter email">
-            <div class="error-msg" *ngIf="f['email'].touched && f['email'].errors">
+            <div class="error-msg" *ngIf="(f['email'].dirty || f['email'].touched) && f['email'].errors">
               <span *ngIf="f['email'].errors?.['required']">Email is required</span>
               <span *ngIf="f['email'].errors?.['email']">Invalid email format</span>
             </div>
           </div>
+        </div>
+        <div class="form-row">
           <div class="input-group">
             <label>Phone Number <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
             <input type="text" formControlName="phoneNumber" placeholder="Enter phone number">
-            <div class="error-msg" *ngIf="f['phoneNumber'].touched && f['phoneNumber'].errors">
+            <div class="error-msg" *ngIf="(f['phoneNumber'].dirty || f['phoneNumber'].touched) && f['phoneNumber'].errors">
               <span *ngIf="f['phoneNumber'].errors?.['required']">Phone is required</span>
               <span *ngIf="f['phoneNumber'].errors?.['pattern']">Numeric only</span>
             </div>
@@ -89,56 +80,56 @@
           <div class="input-group">
             <label>Website <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
             <input type="text" formControlName="website" placeholder="https://example.com">
-            <div class="error-msg" *ngIf="f['website'].touched && f['website'].errors">
+            <div class="error-msg" *ngIf="(f['website'].dirty || f['website'].touched) && f['website'].errors">
               <span *ngIf="f['website'].errors?.['required']">Website is required</span>
               <span *ngIf="f['website'].errors?.['pattern']">Invalid URL format</span>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Address information -->
-      <div class="form-section">
-        <h4>Address Information</h4>
-        <div class="input-group full-width">
-          <label>Address <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
-          <textarea formControlName="address" rows="2" placeholder="Enter full address..."></textarea>
-          <div class="error-msg" *ngIf="f['address'].touched && f['address'].errors">
-            Address is required
+        <!-- Address + Notes on same row -->
+        <div class="section-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Address &amp; Notes
+        </div>
+        <div class="form-row">
+          <div class="input-group">
+            <label>Address <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <textarea formControlName="address" rows="2" placeholder="Enter full address..."></textarea>
+            <div class="error-msg" *ngIf="(f['address'].dirty || f['address'].touched) && f['address'].errors">Address is required</div>
+          </div>
+          <div class="input-group">
+            <label>Notes</label>
+            <textarea formControlName="note" rows="2" placeholder="Optional notes..."></textarea>
           </div>
         </div>
-      </div>
 
-      <!-- Additional Information -->
-      <div class="form-section">
-        <h4>Additional Information</h4>
-        <div class="input-group full-width">
-          <label>Notes</label>
-          <textarea formControlName="note" rows="4" placeholder="Add any additional notes..."></textarea>
+        <!-- Rating (Edit mode only) -->
+        <div class="form-row" *ngIf="supplier">
+          <div class="input-group">
+            <label>Service Rating <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <div class="star-rating">
+              <span *ngFor="let star of [1,2,3,4,5]"
+                    (click)="setRating(star)"
+                    [class.filled]="star <= supplierForm.get('rating')?.value"
+                    class="star">★</span>
+            </div>
+          </div>
+          <!-- System Info inline -->
+          <div class="input-group" *ngIf="supplier?.id">
+            <label>System Info</label>
+            <div class="sys-info-inline">
+              <span>Created: <strong>{{ supplier.createdAt | date:'mediumDate' }}</strong></span>
+              <span>Updated: <strong>{{ supplier.updatedAt | date:'mediumDate' }}</strong></span>
+            </div>
+          </div>
         </div>
-      </div>
 
-    </div>
-
-    <!-- System Info Panel -->
-    <div class="side-column" *ngIf="supplier?.id">
-      <div class="side-panel system-panel">
-        <h4>System Information</h4>
-        <div class="sys-info-block">
-          <span class="label">Created At</span>
-          <span class="value">{{ supplier?.createdAt | date:'mediumDate' }}</span>
-        </div>
-        <div class="sys-info-block">
-          <span class="label">Updated At</span>
-          <span class="value">{{ supplier?.updatedAt | date:'mediumDate' }}</span>
-        </div>
       </div>
-    </div>
     </div>
 
     <!-- Footer Actions -->
     <div class="wizard-footer">
-      <div style="flex: 1;"></div>
       <ng-container *ngIf="viewOnly && !isEditing">
         <button class="btn-cancel" (click)="cancel()">← Back</button>
         <button class="btn-primary" (click)="enableEdit()">Edit Supplier</button>
@@ -146,7 +137,10 @@
 
       <ng-container *ngIf="!viewOnly || isEditing">
         <button class="btn-cancel" (click)="cancel()">Cancel</button>
-        <button class="btn-primary" [disabled]="isSaving" (click)="saveSupplier()">
+        <button class="btn-primary"
+                [disabled]="isSaving || supplierForm.invalid"
+                [class.btn-disabled]="supplierForm.invalid"
+                (click)="saveSupplier()">
           {{ isSaving ? 'Saving...' : (supplier ? 'Update Supplier' : 'Save Supplier') }}
         </button>
       </ng-container>

@@ -178,6 +178,7 @@
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+  table-layout: fixed;
 }
 
 .premium-table th {
@@ -189,12 +190,14 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 2px solid #f1f5f9;
+  text-align: center;
 }
 
 .premium-table td {
   padding: 16px;
   border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
+  text-align: center;
 }
 
 .group-header-row {
@@ -235,6 +238,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  justify-content: center;
 }
 
 .summary-chip {

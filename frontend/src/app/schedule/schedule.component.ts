@@ -79,6 +79,29 @@ export class ScheduleComponent implements OnInit {
   loadTasks(): void {
     this.taskService.getTasks().subscribe({
       next: (data) => { 
+        const todayStr = this.formatDateKey(this.today);
+        
+        data.forEach(t => {
+          // If the task already has an original due date, it means it was rolled over before
+          if (t.originalDueDate) {
+            (t as any).isOverdue = true;
+          }
+
+          if (t.dueDate < todayStr) {
+            if (t.status === 'Completed') {
+              t.status = 'History';
+              this.taskService.updateTaskStatus(t.id, 'History').subscribe();
+            } else if (t.status === 'Pending' || t.status === 'In Progress') {
+              (t as any).isOverdue = true;
+              if (!t.originalDueDate) {
+                t.originalDueDate = t.dueDate;
+              }
+              t.dueDate = todayStr;
+              this.taskService.updateTask(t.id, t).subscribe();
+            }
+          }
+        });
+
         if (this.currentUser) {
           const userFullName = `${this.currentUser.firstName} ${this.currentUser.lastName || ''}`.trim();
           this.tasks = data.filter(t => t.assignedTo === userFullName);
@@ -155,7 +178,9 @@ export class ScheduleComponent implements OnInit {
     
     const todayStr = this.formatDateKey(this.today);
     switch (this.currentFilter) {
-      case 'Today':     result = result.filter(t => t.dueDate === todayStr); break;
+      case 'Today':     
+        result = result.filter(t => t.dueDate === todayStr); 
+        break;
       case 'Upcoming':  result = result.filter(t => t.dueDate > todayStr && t.status !== 'Completed' && t.status !== 'History'); break;
       case 'Completed': result = result.filter(t => t.status === 'Completed'); break;
     }
@@ -164,7 +189,9 @@ export class ScheduleComponent implements OnInit {
       const selStr = this.formatDateKey(this.selectedDayFilter);
       result = result.filter(t => t.dueDate === selStr);
     }
-    return result;
+
+    const priorityWeights: Record<string, number> = { 'High': 0, 'Medium': 1, 'Low': 2 };
+    return result.sort((a, b) => (priorityWeights[a.priority] ?? 3) - (priorityWeights[b.priority] ?? 3));
   }
 
   get todoTasks(): Task[] {
@@ -186,7 +213,7 @@ export class ScheduleComponent implements OnInit {
   get stats() {
     if (!this.tasks) return { total: 0, completed: 0, inProgress: 0, pending: 0 };
     return {
-      total:      this.tasks.length,
+      total:      this.tasks.filter(t => t.status !== 'History').length,
       completed:  this.tasks.filter(t => t.status === 'Completed').length,
       inProgress: this.tasks.filter(t => t.status === 'In Progress').length,
       pending:    this.tasks.filter(t => t.status === 'Pending').length,

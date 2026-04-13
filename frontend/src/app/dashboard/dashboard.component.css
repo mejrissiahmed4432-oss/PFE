@@ -4,8 +4,15 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .stats-row {
@@ -42,10 +49,25 @@
   color: #374151;
 }
 
-.total-eq .stat-icon { background: #eff6ff; color: #3b82f6; }
-.total-sup .stat-icon { background: #f0fdf4; color: #22c55e; }
-.warranty-warning.alert-active .stat-icon { background: #fff7ed; color: #f97316; }
-.stock-alert .stat-icon { background: #fef2f2; color: #ef4444; }
+.total-eq .stat-icon {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.total-sup .stat-icon {
+  background: #f0fdf4;
+  color: #22c55e;
+}
+
+.warranty-warning.alert-active .stat-icon {
+  background: #fff7ed;
+  color: #f97316;
+}
+
+.stock-alert .stat-icon {
+  background: #fef2f2;
+  color: #ef4444;
+}
 
 .stat-label {
   font-size: 0.875rem;
@@ -68,7 +90,9 @@
 }
 
 @media (max-width: 1024px) {
-  .charts-row { grid-template-columns: 1fr; }
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .card {
@@ -92,7 +116,9 @@
 }
 
 @media (max-width: 1280px) {
-  .data-row { grid-template-columns: 1fr; }
+  .data-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .card-header-flex {
@@ -169,7 +195,9 @@
   color: #4f46e5;
 }
 
-.date-cell { color: #6b7280; }
+.date-cell {
+  color: #6b7280;
+}
 
 .alert-list {
   display: flex;
@@ -185,9 +213,17 @@
   align-items: flex-start;
 }
 
-.alert-item.error { background: #fef2f2; }
-.alert-item.warning { background: #fff7ed; }
-.alert-item.info { background: #f0f9ff; }
+.alert-item.error {
+  background: #fef2f2;
+}
+
+.alert-item.warning {
+  background: #fff7ed;
+}
+
+.alert-item.info {
+  background: #f0f9ff;
+}
 
 .alert-icon {
   width: 24px;
@@ -200,9 +236,20 @@
   flex-shrink: 0;
 }
 
-.error .alert-icon { background: #ef4444; color: white; }
-.warning .alert-icon { background: #f97316; color: white; }
-.info .alert-icon { background: #3b82f6; color: white; }
+.error .alert-icon {
+  background: #ef4444;
+  color: white;
+}
+
+.warning .alert-icon {
+  background: #f97316;
+  color: white;
+}
+
+.info .alert-icon {
+  background: #3b82f6;
+  color: white;
+}
 
 .alert-content {
   display: flex;
@@ -240,5 +287,7 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

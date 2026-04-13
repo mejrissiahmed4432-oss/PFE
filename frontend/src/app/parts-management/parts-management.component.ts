@@ -48,9 +48,7 @@ export class PartsManagementComponent implements OnInit {
 
   // Filters
   filterCategory: string = '';
-  filterBrand: string = '';
-  filterSupplier: string = '';
-  filterShelfId: string = '';
+  filterType: string = '';
 
   // Pagination
   currentPage: number = 1;
@@ -86,8 +84,6 @@ export class PartsManagementComponent implements OnInit {
         this.loadParts();
         this.loadMyRequests();
         this.loadCategories();
-        this.loadSuppliers();
-        this.loadShelves();
       }
     });
   }
@@ -104,6 +100,13 @@ export class PartsManagementComponent implements OnInit {
     this.categoryService.getAllCategories().subscribe(data => {
       this.categories = data;
     });
+  }
+
+  onCategoryFilterChange(): void {
+    this.filterType = '';
+    const selectedCat = this.categories.find(c => c.name === this.filterCategory);
+    this.availableTypes = selectedCat ? (selectedCat.types || []).map((t: any) => typeof t === 'string' ? t : t.name) : [];
+    this.applyFilters();
   }
 
   loadParts(): void {
@@ -149,11 +152,9 @@ export class PartsManagementComponent implements OnInit {
         (part.brand?.toLowerCase() || '').includes(query);
 
       const matchCategory = !this.filterCategory || part.category === this.filterCategory;
-      const matchBrand = !this.filterBrand || part.brand?.toLowerCase() === this.filterBrand.toLowerCase();
-      const matchSupplier = !this.filterSupplier || part.supplier === this.filterSupplier;
-      const matchShelf = !this.filterShelfId || part.shelfId === this.filterShelfId;
+      const matchType = !this.filterType || part.type === this.filterType;
 
-      return matchSearch && matchCategory && matchBrand && matchSupplier && matchShelf;
+      return matchSearch && matchCategory && matchType;
     });
 
     const groupsMap = new Map<string, GroupedPart>();

@@ -19,6 +19,7 @@ public class Task {
     private String assignedTo;
     private String createdAt;
     private String updatedAt;
+    private String originalDueDate;
 
     public Task() {}
 
@@ -57,4 +58,6 @@ public class Task {
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
     public String getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
+    public String getOriginalDueDate() { return originalDueDate; }
+    public void setOriginalDueDate(String originalDueDate) { this.originalDueDate = originalDueDate; }
 }

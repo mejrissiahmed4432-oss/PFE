@@ -16,7 +16,8 @@
         </div>
         <div>
           <h2 class="wizard-title">{{ prefillData ? 'Add Similar Units' : 'Add Equipment' }}</h2>
-          <p class="wizard-subtitle">Step {{ displayStep }} of {{ displayTotalSteps }} — {{ stepLabels[currentStep] }}</p>
+          <p class="wizard-subtitle">Step {{ displayStep }} of {{ displayTotalSteps }} — {{ stepLabels[currentStep] }}
+          </p>
         </div>
       </div>
       <button class="wizard-close" (click)="close()">
@@ -34,14 +35,10 @@
     </div>
     <div class="wizard-step-dots">
       <ng-container *ngFor="let l of stepLabels; let i = index">
-        <div class="step-dot"
-             *ngIf="!(i === 3 && quantity > 1 && specMode === 'different')"
-             [class.done]="i < currentStep"
-             [class.current]="i === currentStep"
-             [class.clickable-back]="i < currentStep"
-             [class.clickable-forward]="i > currentStep"
-             (click)="goToStep(i)"
-             [title]="i < currentStep ? 'Go back to ' + l : (i > currentStep ? 'Jump to ' + l : l)">
+        <div class="step-dot" *ngIf="!(i === 3 && quantity > 1 && specMode === 'different')"
+          [class.done]="i < currentStep" [class.current]="i === currentStep" [class.clickable-back]="i < currentStep"
+          [class.clickable-forward]="i > currentStep" (click)="goToStep(i)"
+          [title]="i < currentStep ? 'Go back to ' + l : (i > currentStep ? 'Jump to ' + l : l)">
           <span class="dot-num">{{ getDotNumber(i) }}</span>
           <span class="dot-label">{{ l }}</span>
         </div>
@@ -74,7 +71,8 @@
 
         <div class="field-group">
           <label class="field-label">Category <span class="req">*</span></label>
-          <select class="field-select" [(ngModel)]="selectedCategoryName" (change)="onCategoryChange()" [disabled]="!!prefillData">
+          <select class="field-select" [(ngModel)]="selectedCategoryName" (change)="onCategoryChange()"
+            [disabled]="!!prefillData">
             <option value="" disabled>Select a category…</option>
             <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
           </select>
@@ -82,7 +80,8 @@
 
         <div class="field-group">
           <label class="field-label">Equipment Type <span class="req">*</span></label>
-          <select class="field-select" [(ngModel)]="type" (change)="onTypeChange()" [disabled]="!!prefillData || !selectedCategoryName">
+          <select class="field-select" [(ngModel)]="type" (change)="onTypeChange()"
+            [disabled]="!!prefillData || !selectedCategoryName">
             <option value="" disabled>Select a type…</option>
             <option *ngFor="let t of availableTypes" [value]="t.name">{{ t.name | titlecase }}</option>
           </select>
@@ -201,6 +200,8 @@
               <input class="field-input" [(ngModel)]="sharedModel" placeholder="e.g. XPS-9510">
             </div>
           </div>
+
+
           <div class="field-group">
             <label class="field-label">Notes</label>
             <textarea class="field-textarea" [(ngModel)]="sharedNotes" rows="3"
@@ -244,6 +245,8 @@
               </tbody>
             </table>
           </div>
+
+
           <div class="field-group" style="margin-top:16px">
             <label class="field-label">Notes (shared for all units)</label>
             <textarea class="field-textarea" [(ngModel)]="sharedNotes" rows="2"
@@ -311,7 +314,7 @@
           <!-- General Specification (Always show) -->
           <div class="field-group">
             <label class="field-label">specification <span class="req">*</span></label>
-            <textarea class="field-textarea" [(ngModel)]="sharedSpecification" rows="4" 
+            <textarea class="field-textarea" [(ngModel)]="sharedSpecification" rows="4"
               placeholder="Technical details, screen size, connectors, or any specific configuration..."></textarea>
             <div *ngIf="!sharedSpecification" class="error-msg">Specification is required.</div>
           </div>
@@ -345,7 +348,7 @@
                       (change)="onSpecSelectAll($event)"></th>
                   <th class="col-unit">#</th>
                   <th>Serial Nb <span class="req">*</span></th>
-                  
+
                   <!-- Device Columns Header -->
                   <ng-container *ngIf="isDeviceCategory">
                     <th>CPU</th>
@@ -367,16 +370,17 @@
                   <td>
                     <input class="tbl-input mono" [maxlength]="10"
                       [class.field-error]="u.serialNumber && (!isValidSerialNumber(u.serialNumber) || !isSNUnique(u.serialNumber))"
-                      [(ngModel)]="u.serialNumber" 
-                      (ngModelChange)="onSNChange($event, i)"
-                      placeholder="Serial">
+                      [(ngModel)]="u.serialNumber" (ngModelChange)="onSNChange($event, i)" placeholder="Serial">
                     <!-- Error messages -->
                     <div *ngIf="isSNChecking(u.serialNumber)" style="font-size: 10px; color: #3b82f6;">Checking...</div>
-                    <div *ngIf="u.serialNumber && u.serialNumber.length !== 10" style="font-size: 10px; color: #ef4444;">10 chars req.</div>
-                    <div *ngIf="u.serialNumber && u.serialNumber.length === 10 && !isValidSerialNumber(u.serialNumber)" style="font-size: 10px; color: #ef4444;">Must mix A-Z & 0-9</div>
-                    <div *ngIf="!isSNUnique(u.serialNumber) && !isSNChecking(u.serialNumber)" style="font-size: 10px; color: #ef4444;">{{ getSNError(u.serialNumber) || 'Not unique' }}</div>
+                    <div *ngIf="u.serialNumber && u.serialNumber.length !== 10"
+                      style="font-size: 10px; color: #ef4444;">10 chars req.</div>
+                    <div *ngIf="u.serialNumber && u.serialNumber.length === 10 && !isValidSerialNumber(u.serialNumber)"
+                      style="font-size: 10px; color: #ef4444;">Must mix A-Z & 0-9</div>
+                    <div *ngIf="!isSNUnique(u.serialNumber) && !isSNChecking(u.serialNumber)"
+                      style="font-size: 10px; color: #ef4444;">{{ getSNError(u.serialNumber) || 'Not unique' }}</div>
                   </td>
-                  
+
                   <!-- Device Columns -->
                   <ng-container *ngIf="isDeviceCategory">
                     <td><input class="tbl-input" [(ngModel)]="u.cpu" placeholder="CPU"></td>
@@ -436,24 +440,25 @@
             <label class="field-label">Serial Number <span class="req">*</span></label>
             <input class="field-input mono" [maxlength]="10"
               [class.field-error]="sharedSerial && (!isValidSerialNumber(sharedSerial) || !isSNUnique(sharedSerial))"
-              [(ngModel)]="sharedSerial" 
-              (ngModelChange)="onSNChange($event)"
-              placeholder="e.g. SN2024A1">
-            
+              [(ngModel)]="sharedSerial" (ngModelChange)="onSNChange($event)" placeholder="e.g. SN2024A1">
+
             <!-- Error messages stack -->
             <div *ngIf="isSNChecking(sharedSerial)" style="font-size: 11px; color: #3b82f6; margin-top: 4px;">
               <i class="fas fa-spinner fa-spin"></i> Checking availability...
             </div>
 
-            <div *ngIf="sharedSerial && sharedSerial.length !== 10" style="font-size: 11px; color: #ef4444; margin-top: 4px;">
+            <div *ngIf="sharedSerial && sharedSerial.length !== 10"
+              style="font-size: 11px; color: #ef4444; margin-top: 4px;">
               Exactly 10 characters required.
             </div>
 
-            <div *ngIf="sharedSerial && sharedSerial.length === 10 && !isValidSerialNumber(sharedSerial)" style="font-size: 11px; color: #ef4444; margin-top: 4px;">
+            <div *ngIf="sharedSerial && sharedSerial.length === 10 && !isValidSerialNumber(sharedSerial)"
+              style="font-size: 11px; color: #ef4444; margin-top: 4px;">
               Must contain at least 1 letter and 1 digit (alphanumeric).
             </div>
 
-            <div *ngIf="sharedSerial && !isSNUnique(sharedSerial) && !isSNChecking(sharedSerial)" style="font-size: 11px; color: #ef4444; margin-top: 4px; font-weight: 600;">
+            <div *ngIf="sharedSerial && !isSNUnique(sharedSerial) && !isSNChecking(sharedSerial)"
+              style="font-size: 11px; color: #ef4444; margin-top: 4px; font-weight: 600;">
               {{ getSNError(sharedSerial) || 'This Serial Number is already assigned to another equipment.' }}
             </div>
           </div>
@@ -494,14 +499,15 @@
                   <td>
                     <input class="tbl-input mono" [maxlength]="10"
                       [class.field-error]="u.serialNumber && (!isValidSerialNumber(u.serialNumber) || !isSNUnique(u.serialNumber))"
-                      [(ngModel)]="u.serialNumber" 
-                      (ngModelChange)="onSNChange($event, i)"
-                      placeholder="Serial">
+                      [(ngModel)]="u.serialNumber" (ngModelChange)="onSNChange($event, i)" placeholder="Serial">
                     <!-- Error messages -->
                     <div *ngIf="isSNChecking(u.serialNumber)" style="font-size: 10px; color: #3b82f6;">Checking...</div>
-                    <div *ngIf="u.serialNumber && u.serialNumber.length !== 10" style="font-size: 10px; color: #ef4444;">10 chars req.</div>
-                    <div *ngIf="u.serialNumber && u.serialNumber.length === 10 && !isValidSerialNumber(u.serialNumber)" style="font-size: 10px; color: #ef4444;">Must mix A-Z & 0-9</div>
-                    <div *ngIf="!isSNUnique(u.serialNumber) && !isSNChecking(u.serialNumber)" style="font-size: 10px; color: #ef4444;">{{ getSNError(u.serialNumber) || 'Not unique' }}</div>
+                    <div *ngIf="u.serialNumber && u.serialNumber.length !== 10"
+                      style="font-size: 10px; color: #ef4444;">10 chars req.</div>
+                    <div *ngIf="u.serialNumber && u.serialNumber.length === 10 && !isValidSerialNumber(u.serialNumber)"
+                      style="font-size: 10px; color: #ef4444;">Must mix A-Z & 0-9</div>
+                    <div *ngIf="!isSNUnique(u.serialNumber) && !isSNChecking(u.serialNumber)"
+                      style="font-size: 10px; color: #ef4444;">{{ getSNError(u.serialNumber) || 'Not unique' }}</div>
                   </td>
                 </tr>
               </tbody>
@@ -618,9 +624,15 @@
                   <td><input class="tbl-input" type="number" [(ngModel)]="u.purchasePrice" placeholder="0.00"></td>
                   <td><input class="tbl-input" type="text" [(ngModel)]="u.invoiceRef" placeholder="INV-REF"></td>
                   <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    <span *ngIf="u.invoiceFileName" (click)="previewFile(u.invoiceFile)"
-                      style="cursor: pointer; color: #3b82f6; text-decoration: underline;"
-                      [title]="u.invoiceFileName">{{ u.invoiceFileName }}</span>
+                    <div style="display: flex; align-items: center; gap: 4px;" *ngIf="u.invoiceFileName">
+                      <span (click)="previewFile(u.invoiceFile)"
+                        style="cursor: pointer; color: #3b82f6; text-decoration: underline; flex: 1; overflow: hidden; text-overflow: ellipsis;"
+                        [title]="u.invoiceFileName">{{ u.invoiceFileName }}</span>
+                      <button (click)="removeUnitInvoice(u, $event)" title="Remove"
+                        style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 2px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                      </button>
+                    </div>
                     <span *ngIf="!u.invoiceFileName">—</span>
                   </td>
                 </tr>
@@ -633,7 +645,7 @@
         <div class="field-group" style="margin-top: 20px;">
           <label class="field-label">Invoice / Facture Document <span class="field-optional">(optional)</span></label>
           <input type="file" #invoiceInput style="display: none" (change)="onInvoiceFileUpload($event)">
-          <div class="upload-zone" (click)="invoiceInput.click()" style="cursor: pointer;">
+          <div class="upload-zone" (click)="invoiceInput.click()" style="cursor: pointer;" *ngIf="!(purchaseMode === 'same' || quantity === 1) || !sharedInvoiceFileData">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
               stroke="#94a3b8" stroke-width="1.5">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -641,9 +653,18 @@
               <line x1="12" y1="3" x2="12" y2="15"></line>
             </svg>
             <p>Drag & drop or <strong>click to upload</strong></p>
-            <span *ngIf="purchaseMode === 'same' || quantity === 1">{{ sharedInvoiceFileName || 'PDF, PNG, JPG up to
-              10MB' }}</span>
+            <span *ngIf="purchaseMode === 'same' || quantity === 1">PDF, PNG, JPG up to 10MB</span>
             <span *ngIf="purchaseMode === 'different' && quantity > 1">Upload to selected rows</span>
+          </div>
+          <div *ngIf="(purchaseMode === 'same' || quantity === 1) && sharedInvoiceFileData" 
+               style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+              <span (click)="previewFile($any(sharedInvoiceFile))" style="cursor: pointer; color: #3b82f6; text-decoration: underline; font-weight: 500; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" [title]="sharedInvoiceFileName">{{ sharedInvoiceFileName }}</span>
+            </div>
+            <button type="button" (click)="removeSharedInvoice($event)" style="padding: 4px; background: #fee2e2; border: none; border-radius: 4px; cursor: pointer; color: #ef4444; display: flex; align-items: center; justify-content: center;" title="Remove document">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
           </div>
         </div>
       </div>
@@ -710,9 +731,15 @@
                   <td><code class="serial-sm">{{ u.serialNumber || '—' }}</code></td>
                   <td><input class="tbl-input" type="date" [(ngModel)]="u.warrantyEnd"></td>
                   <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    <span *ngIf="u.warrantyFileName" (click)="previewFile(u.warrantyFile)"
-                      style="cursor: pointer; color: #3b82f6; text-decoration: underline;"
-                      [title]="u.warrantyFileName">{{ u.warrantyFileName }}</span>
+                    <div style="display: flex; align-items: center; gap: 4px;" *ngIf="u.warrantyFileName">
+                      <span (click)="previewFile(u.warrantyFile)"
+                        style="cursor: pointer; color: #3b82f6; text-decoration: underline; flex: 1; overflow: hidden; text-overflow: ellipsis;"
+                        [title]="u.warrantyFileName">{{ u.warrantyFileName }}</span>
+                      <button (click)="removeUnitWarranty(u, $event)" title="Remove"
+                        style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 2px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                      </button>
+                    </div>
                     <span *ngIf="!u.warrantyFileName">—</span>
                   </td>
                 </tr>
@@ -725,7 +752,7 @@
         <div class="field-group" style="margin-top: 20px;">
           <label class="field-label">Warranty Document <span class="field-optional">(optional)</span></label>
           <input type="file" #warrantyInput style="display: none" (change)="onWarrantyFileUpload($event)">
-          <div class="upload-zone" (click)="warrantyInput.click()" style="cursor: pointer;">
+          <div class="upload-zone" (click)="warrantyInput.click()" style="cursor: pointer;" *ngIf="!(warrantyMode === 'shared' || quantity === 1) || !sharedWarrantyFileData">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
               stroke="#94a3b8" stroke-width="1.5">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -733,9 +760,18 @@
               <line x1="12" y1="3" x2="12" y2="15"></line>
             </svg>
             <p>Drag & drop or <strong>click to upload</strong></p>
-            <span *ngIf="warrantyMode === 'shared' || quantity === 1">{{ sharedWarrantyFileName || 'PDF, PNG, JPG up to
-              10MB' }}</span>
+            <span *ngIf="warrantyMode === 'shared' || quantity === 1">PDF, PNG, JPG up to 10MB</span>
             <span *ngIf="warrantyMode === 'individual' && quantity > 1">Upload to selected rows</span>
+          </div>
+          <div *ngIf="(warrantyMode === 'shared' || quantity === 1) && sharedWarrantyFileData" 
+               style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+              <span (click)="previewFile($any(sharedWarrantyFile))" style="cursor: pointer; color: #3b82f6; text-decoration: underline; font-weight: 500; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;" [title]="sharedWarrantyFileName">{{ sharedWarrantyFileName }}</span>
+            </div>
+            <button type="button" (click)="removeSharedWarranty($event)" style="padding: 4px; background: #fee2e2; border: none; border-radius: 4px; cursor: pointer; color: #ef4444; display: flex; align-items: center; justify-content: center;" title="Remove document">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
           </div>
         </div>
       </div>
@@ -764,7 +800,7 @@
             style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: 500; color: #334155;">Assignment Progress</span>
             <span style="font-weight: 600; font-size: 15px;"
-              [ngStyle]="{'color': getTotalAssigned() === quantity ? '#10b981' : '#ef4444'}">
+              [ngStyle]="{'color': getTotalAssigned() == quantity ? '#10b981' : '#ef4444'}">
               {{ getTotalAssigned() }} / {{ quantity }} Assigned
             </span>
           </div>
@@ -796,7 +832,7 @@
                       style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #f8fafc; border-radius: 6px; padding: 4px;">
                       <button (click)="decrementAssign(i)"
                         style="width: 28px; height: 28px; border-radius: 4px; border: 1px solid #cbd5e1; background: white; cursor: pointer; color: #64748b; font-weight: bold; display: flex; align-items: center; justify-content: center;">-</button>
-                      <input type="text" [value]="s.assignCount" (keypress)="onlyNumbers($event)" 
+                      <input type="text" [value]="s.assignCount" (keypress)="onlyNumbers($event)"
                         (input)="onAssignCountInput(i, $event)"
                         style="width: 32px; text-align: center; font-weight: 600; font-size: 15px; border: none; background: transparent; outline: none;">
                       <button (click)="incrementAssign(i)"
@@ -839,15 +875,13 @@
             <div class="review-row"><span>Quantity</span><strong>{{ quantity }}</strong></div>
             <div class="review-row"><span>Type</span><strong>{{ type | titlecase }}</strong></div>
             <div class="review-row"><span>Category</span>
-              <span class="review-badge" [ngClass]="category === 'Asset' ? 'blue' : 'orange'">{{ category }}</span>
+              <span class="review-badge" [ngClass]="category === 'Asset' ? 'blue' : 'orange'">{{ selectedCategoryName }}</span>
             </div>
-            <div class="review-row"><span>Config Mode</span><strong>{{ quantity === 1 ? 'Single Unit' : (configMode ===
-                'same' ? 'Same for All' : 'Per Unit') }}</strong></div>
-            <div class="review-row"><span>Generate QR</span>
-              <strong [style.color]="typeRequiresQr ? '#22c55e' : '#64748b'">
-                {{ typeRequiresQr ? 'Yes' : 'No (Type setting)' }}
-              </strong>
-            </div>
+            <ng-container *ngIf="quantity === 1 || configMode === 'same'">
+              <div class="review-row"><span>Name</span><strong>{{ sharedName || '—' }}</strong></div>
+              <div class="review-row"><span>Brand</span><strong>{{ sharedBrand || '—' }}</strong></div>
+              <div class="review-row" *ngIf="sharedModel"><span>Model</span><strong>{{ sharedModel }}</strong></div>
+            </ng-container>
           </div>
 
           <div class="review-card">
@@ -859,17 +893,24 @@
               </svg>
               Purchase
             </div>
-            <div class="review-row"><span>Supplier</span><strong>{{ sharedSupplier || '—' }}</strong></div>
-            <div class="review-row"><span>Date</span><strong>{{ sharedPurchaseDate | date:'mediumDate' }}</strong></div>
-            <div class="review-row"><span>Total Value</span>
-              <strong class="price-text">{{ (sharedPriceMode === 'total' ? sharedPrice : sharedPrice * quantity) |
-                number:'1.2-2' }} TND</strong>
-            </div>
-            <div class="review-row" *ngIf="sharedInvoiceFileData">
-              <span>Invoice</span>
-              <button class="btn-link-sm"
-                (click)="downloadDocument(sharedInvoiceFileData, sharedInvoiceFileName)">Download</button>
-            </div>
+            <ng-container *ngIf="purchaseMode === 'same' || quantity === 1">
+              <div class="review-row"><span>Supplier</span><strong>{{ sharedSupplier || '—' }}</strong></div>
+              <div class="review-row"><span>Date</span><strong>{{ sharedPurchaseDate | date:'mediumDate' }}</strong></div>
+              <div class="review-row"><span>Total Value</span>
+                <strong class="price-text">{{ (sharedPriceMode === 'total' ? sharedPrice : sharedPrice * quantity) |
+                  number:'1.2-2' }} TND</strong>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="purchaseMode === 'different' && quantity > 1">
+               <div class="review-row"><span>Purchase Details</span><strong style="color: #64748b; font-style: italic;">Per Unit</strong></div>
+            </ng-container>
+            <ng-container *ngIf="purchaseMode === 'same' || quantity === 1">
+              <div class="review-row">
+                <span>Invoice Doc</span>
+                <strong *ngIf="!sharedInvoiceFileData" style="color: #64748b;">Not set</strong>
+                <strong *ngIf="sharedInvoiceFileData" style="color: #10b981;">Set</strong>
+              </div>
+            </ng-container>
           </div>
 
           <div class="review-card" *ngIf="category === 'Asset'">
@@ -880,16 +921,37 @@
               </svg>
               Warranty
             </div>
-            <div class="review-row"><span>Mode</span><strong>{{ warrantyMode === 'shared' ? 'Shared' : 'Per Unit'
-                }}</strong></div>
-            <div class="review-row" *ngIf="sharedWarrantyEnd"><span>Expires</span><strong>{{ sharedWarrantyEnd |
-                date:'mediumDate' }}</strong></div>
-            <div class="review-row" *ngIf="!sharedWarrantyEnd"><span>Expires</span><strong>Not set</strong></div>
-            <div class="review-row" *ngIf="sharedWarrantyFileData">
-              <span>Warranty Doc</span>
-              <button class="btn-link-sm"
-                (click)="downloadDocument(sharedWarrantyFileData, sharedWarrantyFileName)">Download</button>
-            </div>
+            <ng-container *ngIf="warrantyMode === 'shared' || quantity === 1">
+              <div class="review-row" *ngIf="sharedWarrantyEnd"><span>Expires</span><strong>{{ sharedWarrantyEnd |
+                  date:'mediumDate' }}</strong></div>
+              <div class="review-row" *ngIf="!sharedWarrantyEnd"><span>Expires</span><strong>Not set</strong></div>
+              <div class="review-row">
+                <span>Warranty Doc</span>
+                <strong *ngIf="!sharedWarrantyFileData" style="color: #64748b;">Not set</strong>
+                <strong *ngIf="sharedWarrantyFileData" style="color: #10b981;">Set</strong>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="warrantyMode === 'individual' && quantity > 1">
+                <div class="review-row"><span>Warranty Details</span><strong style="color: #64748b; font-style: italic;">Per Unit</strong></div>
+            </ng-container>
+          </div>
+
+          <div class="review-card">
+             <div class="review-card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                Storage Assignment
+             </div>
+             <ng-container *ngIf="getTotalAssigned() > 0">
+                 <ng-container *ngFor="let sa of shelfAssignments">
+                   <div class="review-row" *ngIf="sa.assignCount > 0">
+                     <span>Shelf {{ sa.shelf.nb }}</span>
+                     <strong>{{ sa.assignCount }} unit(s)</strong>
+                   </div>
+                 </ng-container>
+             </ng-container>
+             <div class="review-row" *ngIf="getTotalAssigned() === 0">
+                <span>Location</span><strong style="color: #64748b;">Not assigned</strong>
+             </div>
           </div>
         </div>
 

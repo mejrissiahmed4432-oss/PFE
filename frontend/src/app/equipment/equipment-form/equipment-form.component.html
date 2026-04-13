@@ -210,8 +210,8 @@
     <button class="tab-btn" [class.active]="activeTab==='purchase'" (click)="activeTab='purchase'">Purchase &
       Warranty</button>
     <button class="tab-btn" [class.active]="activeTab==='storage'" (click)="activeTab='storage'">Storage</button>
-    <button class="tab-btn" [class.active]="activeTab==='qr'" (click)="activeTab='qr'" *ngIf="equipment?.id && typeRequiresQr()">QR
-      Code</button>
+    <button class="tab-btn" [class.active]="activeTab==='qr'" (click)="activeTab='qr'"
+      *ngIf="equipment?.id && equipment?.qrCode">QR Code</button>
   </div>
 
   <!-- ─── Tab panels ─── -->
@@ -459,7 +459,8 @@
             </div>
             <div class="info-row">
               <span class="info-label">Purchase Price</span>
-              <span class="info-value price">{{ equipment?.purchasePrice ? (equipment?.purchasePrice | number:'1.2-2') + '
+              <span class="info-value price">{{ equipment?.purchasePrice ? (equipment?.purchasePrice | number:'1.2-2') +
+                '
                 TND' : '—' }}</span>
             </div>
             <div class="info-row">
@@ -554,7 +555,8 @@
                     <polyline points="9 12 11 14 15 10"></polyline>
                   </svg>
                 </div>
-                <div class="doc-info" (click)="downloadDocument(equipment?.warrantyFileData, equipment?.warrantyFileName)">
+                <div class="doc-info"
+                  (click)="downloadDocument(equipment?.warrantyFileData, equipment?.warrantyFileName)">
                   <span class="doc-name">{{ equipment?.warrantyFileName }}</span>
                   <span class="doc-hint">Click to download warranty</span>
                 </div>
@@ -618,7 +620,7 @@
     </ng-container>
 
     <!-- QR CODE -->
-    <ng-container *ngIf="activeTab==='qr' && equipment?.id && typeRequiresQr()">
+    <ng-container *ngIf="activeTab==='qr' && equipment?.id && equipment?.qrCode">
       <div class="info-grid">
         <div class="info-card qr-detail-card">
           <div class="info-card-header">
@@ -692,294 +694,365 @@
 
   <div class="form-wrapper">
     <div class="form-header">
-    <h3>{{ !equipment ? 'Add New Equipment' : 'Edit Equipment' }}</h3>
-    <p class="subtitle">Fill in the equipment details below.</p>
-  </div>
+      <h3>{{ !equipment ? 'Add New Equipment' : 'Edit Equipment' }}</h3>
+      <p class="subtitle">Fill in the equipment details below.</p>
+    </div>
 
-  <div class="form-grid">
-    <!-- Left Column: Form Fields -->
-    <div class="fields-column">
+    <div class="form-grid">
+      <!-- Left Column: Form Fields -->
+      <div class="fields-column">
 
-      <!-- Basic Information -->
-      <div class="form-section">
-        <h4>Basic Information</h4>
-        <div class="input-grid">
-          <div class="input-group">
-            <label>Equipment Name <span class="required">*</span></label>
-            <input type="text" [(ngModel)]="formData.equipmentName" placeholder="Enter equipment name">
-            <div *ngIf="!formData.equipmentName" style="font-size: 11px; color: #ef4444; margin-top: 2px;">Name is required.</div>
-          </div>
-          <div class="input-group">
-            <label>Brand <span class="required">*</span></label>
-            <input type="text" [(ngModel)]="formData.brand" placeholder="Enter brand">
-            <div *ngIf="!formData.brand" style="font-size: 11px; color: #ef4444; margin-top: 2px;">Brand is required.</div>
-          </div>
-          <div class="input-group">
-            <label>Model</label>
-            <input type="text" [(ngModel)]="formData.model" placeholder="Enter model number">
-          </div>
-          <div class="input-group">
-            <label>Status <span class="required">*</span></label>
-            <select [(ngModel)]="formData.status" (change)="onStatusChange()" class="field-select">
-              <option *ngFor="let opt of statusOptions" [value]="opt">{{ opt }}</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <label>Serial Number <span class="required">*</span></label>
-              <button type="button" class="btn-suggest-sn" (click)="suggestSerialNumber()" 
-                      style="font-size: 0.72rem; padding: 2px 8px; background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; border-radius: 4px; cursor: pointer; font-weight: 600;">
-                Suggest SN
-              </button>
+        <!-- Basic Information -->
+        <div class="form-section">
+          <h4>Basic Information</h4>
+          <div class="input-grid">
+            <div class="input-group">
+              <label>Equipment Name <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="formData.equipmentName" placeholder="Enter equipment name">
+              <div *ngIf="!formData.equipmentName" style="font-size: 11px; color: #ef4444; margin-top: 2px;">Name is
+                required.</div>
             </div>
-            <input type="text" [maxlength]="10" [(ngModel)]="formData.serialNumber" 
-                   (ngModelChange)="onSerialNumberChange()"
-                   placeholder="Enter serial number (exactly 10 chars)">
-            
-            <!-- Error messages stack -->
-            <div *ngIf="isCheckingSN" style="font-size: 11px; color: #3b82f6; margin-top: 2px;">
-              <i class="fas fa-spinner fa-spin"></i> Checking availability...
+            <div class="input-group">
+              <label>Brand <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="formData.brand" placeholder="Enter brand">
+              <div *ngIf="!formData.brand" style="font-size: 11px; color: #ef4444; margin-top: 2px;">Brand is required.
+              </div>
             </div>
+            <div class="input-group">
+              <label>Model</label>
+              <input type="text" [(ngModel)]="formData.model" placeholder="Enter model number">
+            </div>
+            <div class="input-group">
+              <label>Status <span class="required">*</span></label>
+              <select [(ngModel)]="formData.status" (change)="onStatusChange()" class="field-select">
+                <option *ngFor="let opt of statusOptions" [value]="opt">{{ opt }}</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label>Serial Number <span class="required">*</span></label>
+                <button type="button" class="btn-suggest-sn" (click)="suggestSerialNumber()"
+                  style="font-size: 0.72rem; padding: 2px 8px; background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                  Suggest SN
+                </button>
+              </div>
+              <input type="text" [maxlength]="10" [(ngModel)]="formData.serialNumber"
+                (ngModelChange)="onSerialNumberChange()" placeholder="Enter serial number (exactly 10 chars)">
 
-            <div *ngIf="!formData.serialNumber" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
-              Serial Number is required.
-            </div>
-            
-            <div *ngIf="isSNInvalidLength" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
-              Exactly 10 characters required. (Currently: {{formData.serialNumber?.length}})
-            </div>
-            
-            <div *ngIf="isSNInvalidFormat" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
-              Only letters and digits are allowed.
-            </div>
+              <!-- Error messages stack -->
+              <div *ngIf="isCheckingSN" style="font-size: 11px; color: #3b82f6; margin-top: 2px;">
+                <i class="fas fa-spinner fa-spin"></i> Checking availability...
+              </div>
 
-            <div *ngIf="isSNMissingChars" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
-              Must contain at least 1 letter and 1 digit.
-            </div>
+              <div *ngIf="!formData.serialNumber" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+                Serial Number is required.
+              </div>
 
-            <div *ngIf="!isSNAvailable && !isCheckingSN" style="font-size: 11px; color: #ef4444; margin-top: 2px; font-weight: 600;">
-              This Serial Number is already assigned to another equipment.
+              <div *ngIf="isSNInvalidLength" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+                Exactly 10 characters required. (Currently: {{formData.serialNumber?.length}})
+              </div>
+
+              <div *ngIf="isSNInvalidFormat" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+                Only letters and digits are allowed.
+              </div>
+
+              <div *ngIf="isSNMissingChars" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+                Must contain at least 1 letter and 1 digit.
+              </div>
+
+              <div *ngIf="!isSNAvailable && !isCheckingSN"
+                style="font-size: 11px; color: #ef4444; margin-top: 2px; font-weight: 600;">
+                This Serial Number is already assigned to another equipment.
+              </div>
             </div>
-          </div>
-          <div class="input-group">
-            <label>Category <span class="required">*</span></label>
-            <select [(ngModel)]="formData.category" (change)="onCategoryChange()" name="eqCategory" [disabled]="viewOnly || (!!equipment && !isAddSimilar)">
+            <div class="input-group">
+              <label>Category <span class="required">*</span></label>
+              <select [(ngModel)]="formData.category" (change)="onCategoryChange()" name="eqCategory"
+                [disabled]="viewOnly || (!!equipment && !isAddSimilar)">
                 <option value="" disabled>Select category</option>
                 <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label>Type <span class="required">*</span></label>
-            <select [(ngModel)]="formData.type" (change)="onTypeChange()" name="eqType" [disabled]="viewOnly || !formData.category || (!!equipment && !isAddSimilar)">
-              <option value="" disabled>{{ formData.category ? 'Select type' : 'Select category first' }}</option>
-              <option *ngFor="let t of availableTypes" [value]="t.name">{{ t.name | titlecase }}</option>
-              <!-- Fallback for legacy data/unmapped types -->
-              <option *ngIf="isLegacyType()" [value]="formData.type">
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Type <span class="required">*</span></label>
+              <select [(ngModel)]="formData.type" (change)="onTypeChange()" name="eqType"
+                [disabled]="viewOnly || !formData.category || (!!equipment && !isAddSimilar)">
+                <option value="" disabled>{{ formData.category ? 'Select type' : 'Select category first' }}</option>
+                <option *ngFor="let t of availableTypes" [value]="t.name">{{ t.name | titlecase }}</option>
+                <!-- Fallback for legacy data/unmapped types -->
+                <option *ngIf="isLegacyType()" [value]="formData.type">
                   {{ formData.type | titlecase }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Purchase Information -->
-      <div class="form-section">
-        <h4>Purchase Information</h4>
-        <div class="input-grid">
-          <div class="input-group">
-            <label>Purchase Date <span class="required">*</span></label>
-            <input type="date" [(ngModel)]="formData.purchaseDate">
-          </div>
-          <div class="input-group">
-            <label>Supplier <span class="required">*</span></label>
-            <select [(ngModel)]="formData.supplierId" (change)="onSupplierChange()">
-              <option value="" disabled>Select supplier</option>
-              <option *ngFor="let s of suppliers" [value]="s.id">{{ s.companyName }}</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label>Warranty Expiration</label>
-            <input type="date" [(ngModel)]="formData.warrantyExpiration">
-          </div>
-          <div class="input-group">
-            <label>Purchase Price</label>
-            <input type="number" [(ngModel)]="formData.purchasePrice" placeholder="0.00">
-          </div>
-          <div class="input-group">
-            <label>Invoice Document <span class="field-optional"
-                style="color: #94a3b8; font-size: 11px;">(pdf/img)</span></label>
-            <input type="file" #invoiceInput style="display: none" (change)="onInvoiceFileUpload($event)">
-            <button class="btn-outline-secondary"
-              style="width: 100%; justify-content: flex-start; padding-left: 12px; height: 38px;"
-              (click)="invoiceInput.click()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="17 8 12 3 7 8"></polyline>
-                <line x1="12" y1="3" x2="12" y2="15"></line>
-              </svg>
-              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ formData.invoiceFileName
-                || 'Upload Invoice...' }}</span>
-            </button>
-          </div>
-          <div class="input-group">
-            <label>Warranty Document <span class="field-optional"
-                style="color: #94a3b8; font-size: 11px;">(pdf/img)</span></label>
-            <input type="file" #warrantyInput style="display: none" (change)="onWarrantyFileUpload($event)">
-            <button class="btn-outline-secondary"
-              style="width: 100%; justify-content: flex-start; padding-left: 12px; height: 38px;"
-              (click)="warrantyInput.click()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="17 8 12 3 7 8"></polyline>
-                <line x1="12" y1="3" x2="12" y2="15"></line>
-              </svg>
-              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ formData.warrantyFileName
-                || 'Upload Warranty...' }}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Storage Information -->
-      <div class="form-section">
-        <h4>Storage Information</h4>
-        <div class="input-grid">
-          <div class="input-group full-width" style="grid-column: span 2;">
-            <label>Shelf Assignment <span class="required">*</span></label>
-            <select [(ngModel)]="formData.shelfId" [disabled]="formData.status !== 'Available' && formData.status !== 'In Stock'">
-              <option value="" disabled>Select an available shelf</option>
-              <option *ngIf="formData.status === 'Maintenance'" value="MAINTENANCE_AREA">Maintenance Area</option>
-              <option *ngIf="formData.status === 'Broken'" value="SCRAP_YARD">Scrap Yard</option>
-              <option *ngIf="formData.status === 'Out of Stock'" value="OUT_OF_STOCK">Out of Stock</option>
-              <option *ngFor="let s of availableShelves" [value]="s.id">
-                Shelf {{ s.nb }} 
-                ({{ (equipment?.id && !isAddSimilar && s.id === equipment?.shelfId) ? 
-                    (s.maxQte - s.currentQte + 1) + ' spots (Your current)' : 
-                    (s.maxQte - s.currentQte) + ' spots' }})
-              </option>
-            </select>
-            <div class="hint" *ngIf="!formData.type" style="font-size: 12px; color: #64748b; margin-top: 4px;">Select an
-              equipment type first to see available shelves</div>
-            <div class="hint error" *ngIf="formData.type && availableShelves.length === 0"
-              style="font-size: 12px; color: #ef4444; margin-top: 4px;">No available shelves for this type/quantity
+                </option>
+              </select>
             </div>
-            <div class="hint error" *ngIf="(formData.status === 'Available' || formData.status === 'In Stock') && (!formData.shelfId || formData.shelfId === '')"
-              style="font-size: 12px; color: #ef4444; margin-top: 4px; font-weight: 600;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-right: 4px; vertical-align: middle;">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </div>
+
+          <!-- QR Code Toggle -->
+          <div class="qr-toggle-card" [class.qr-toggle-card--on]="formGenerateQr"
+               (click)="formGenerateQr = !formGenerateQr">
+            <div class="qr-toggle-icon-wrap">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="3" width="5" height="5"></rect>
+                <rect x="16" y="3" width="5" height="5"></rect>
+                <rect x="3" y="16" width="5" height="5"></rect>
+                <path d="M21 16h-3a2 2 0 0 0-2 2v3"></path>
+                <path d="M21 21v.01"></path>
+                <path d="M12 7v3a2 2 0 0 1-2 2H7"></path>
+                <path d="M3 12h.01"></path>
+                <path d="M12 3h.01"></path>
+                <path d="M12 16v.01"></path>
+                <path d="M16 12h1"></path>
+                <path d="M21 12v.01"></path>
+                <path d="M12 21v-1"></path>
               </svg>
-              Please select a shelf assignment for available equipment.
+            </div>
+            <div class="qr-toggle-text">
+              <span class="qr-toggle-title">Generate QR Code</span>
+              <span class="qr-toggle-sub">
+                {{ formGenerateQr
+                  ? 'QR code will be generated (or regenerated) when you save'
+                  : 'No QR code — existing QR code will be removed on save' }}
+              </span>
+            </div>
+            <div class="qr-toggle-checkbox" [class.qr-toggle-checkbox--on]="formGenerateQr">
+              <svg *ngIf="formGenerateQr" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Device Specifications -->
-      <div class="form-section">
-        <h4 *ngIf="isComputerCategory()">Device Specifications</h4>
-        <h4 *ngIf="!isComputerCategory()">Specifications</h4>
-        
-        <div class="input-grid" *ngIf="isComputerCategory()" style="margin-bottom: 20px;">
-          <div class="input-group">
-            <label>CPU</label>
-            <input type="text" [(ngModel)]="formData.cpu" placeholder="e.g. Intel Core i7">
-          </div>
-          <div class="input-group">
-            <label>RAM</label>
-            <input type="text" [(ngModel)]="formData.ram" placeholder="e.g. 16GB">
-          </div>
-          <div class="input-group">
-            <label>Storage</label>
-            <input type="text" [(ngModel)]="formData.storage" placeholder="e.g. 512GB SSD">
-          </div>
-          <div class="input-group">
-            <label>Graphics Card</label>
-            <input type="text" [(ngModel)]="formData.graphicsCard" placeholder="e.g. NVIDIA RTX 3060">
-          </div>
-          <div class="input-group">
-            <label>Operating System</label>
-            <input type="text" [(ngModel)]="formData.operatingSystem" placeholder="e.g. Windows 11">
+        <!-- Purchase Information -->
+        <div class="form-section">
+          <h4>Purchase Information</h4>
+          <div class="input-grid">
+            <div class="input-group">
+              <label>Purchase Date <span class="required">*</span></label>
+              <input type="date" [(ngModel)]="formData.purchaseDate">
+            </div>
+            <div class="input-group">
+              <label>Supplier <span class="required">*</span></label>
+              <select [(ngModel)]="formData.supplierId" (change)="onSupplierChange()">
+                <option value="" disabled>Select supplier</option>
+                <option *ngFor="let s of suppliers" [value]="s.id">{{ s.companyName }}</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Warranty Expiration</label>
+              <input type="date" [(ngModel)]="formData.warrantyExpiration">
+            </div>
+            <div class="input-group">
+              <label>Purchase Price</label>
+              <input type="number" [(ngModel)]="formData.purchasePrice" placeholder="0.00">
+            </div>
+            <div class="input-group">
+              <label>Invoice Document <span class="field-optional"
+                  style="color: #94a3b8; font-size: 11px;">(pdf/img)</span></label>
+              <input type="file" #invoiceInput style="display: none" (change)="onInvoiceFileUpload($event)">
+              <button class="btn-outline-secondary"
+                style="width: 100%; justify-content: flex-start; padding-left: 12px; height: 38px;"
+                (click)="invoiceInput.click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{
+                  formData.invoiceFileName
+                  || 'Upload Invoice...' }}</span>
+              </button>
+            </div>
+            <div class="input-group">
+              <label>Warranty Document <span class="field-optional"
+                  style="color: #94a3b8; font-size: 11px;">(pdf/img)</span></label>
+              <input type="file" #warrantyInput style="display: none" (change)="onWarrantyFileUpload($event)">
+              <button class="btn-outline-secondary"
+                style="width: 100%; justify-content: flex-start; padding-left: 12px; height: 38px;"
+                (click)="warrantyInput.click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{
+                  formData.warrantyFileName
+                  || 'Upload Warranty...' }}</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="input-group full-width">
-          <label>specification <span class="required">*</span></label>
-          <textarea [(ngModel)]="formData.specification" name="specification" #spec="ngModel" rows="4" placeholder="Enter technical specifications..." required></textarea>
-          <div *ngIf="!formData.specification" class="error-msg">Specification is required.</div>
+        <!-- Storage Information -->
+        <div class="form-section">
+          <h4>Storage Information</h4>
+          <div class="input-grid">
+            <div class="input-group full-width" style="grid-column: span 2;">
+              <label>Shelf Assignment <span class="required">*</span></label>
+              <select [(ngModel)]="formData.shelfId"
+                [disabled]="formData.status !== 'Available' && formData.status !== 'In Stock'">
+                <option value="" disabled>Select an available shelf</option>
+                <option *ngIf="formData.status === 'Maintenance'" value="MAINTENANCE_AREA">Maintenance Area</option>
+                <option *ngIf="formData.status === 'Broken'" value="SCRAP_YARD">Scrap Yard</option>
+                <option *ngIf="formData.status === 'Out of Stock'" value="OUT_OF_STOCK">Out of Stock</option>
+                <option *ngFor="let s of availableShelves" [value]="s.id">
+                  Shelf {{ s.nb }}
+                  ({{ (equipment?.id && !isAddSimilar && s.id === equipment?.shelfId) ?
+                  (s.maxQte - s.currentQte + 1) + ' spots (Your current)' :
+                  (s.maxQte - s.currentQte) + ' spots' }})
+                </option>
+              </select>
+              <div class="hint" *ngIf="!formData.type" style="font-size: 12px; color: #64748b; margin-top: 4px;">Select
+                an
+                equipment type first to see available shelves</div>
+              <div class="hint error" *ngIf="formData.type && availableShelves.length === 0"
+                style="font-size: 12px; color: #ef4444; margin-top: 4px;">No available shelves for this type/quantity
+              </div>
+              <div class="hint error"
+                *ngIf="(formData.status === 'Available' || formData.status === 'In Stock') && (!formData.shelfId || formData.shelfId === '')"
+                style="font-size: 12px; color: #ef4444; margin-top: 4px; font-weight: 600;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="3" style="margin-right: 4px; vertical-align: middle;">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                Please select a shelf assignment for available equipment.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Device Specifications -->
+        <div class="form-section">
+          <h4 *ngIf="isComputerCategory()">Device Specifications</h4>
+          <h4 *ngIf="!isComputerCategory()">Specifications</h4>
+
+          <div class="input-grid" *ngIf="isComputerCategory()" style="margin-bottom: 20px;">
+            <div class="input-group">
+              <label>CPU</label>
+              <input type="text" [(ngModel)]="formData.cpu" placeholder="e.g. Intel Core i7">
+            </div>
+            <div class="input-group">
+              <label>RAM</label>
+              <input type="text" [(ngModel)]="formData.ram" placeholder="e.g. 16GB">
+            </div>
+            <div class="input-group">
+              <label>Storage</label>
+              <input type="text" [(ngModel)]="formData.storage" placeholder="e.g. 512GB SSD">
+            </div>
+            <div class="input-group">
+              <label>Graphics Card</label>
+              <input type="text" [(ngModel)]="formData.graphicsCard" placeholder="e.g. NVIDIA RTX 3060">
+            </div>
+            <div class="input-group">
+              <label>Operating System</label>
+              <input type="text" [(ngModel)]="formData.operatingSystem" placeholder="e.g. Windows 11">
+            </div>
+          </div>
+
+          <div class="input-group full-width">
+            <label>specification <span class="required">*</span></label>
+            <textarea [(ngModel)]="formData.specification" name="specification" #spec="ngModel" rows="4"
+              placeholder="Enter technical specifications..." required></textarea>
+            <div *ngIf="!formData.specification" class="error-msg">Specification is required.</div>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="form-section">
+          <h4>Additional Information</h4>
+          <div class="input-group full-width">
+            <label>Notes</label>
+            <textarea [(ngModel)]="formData.note" rows="4" placeholder="Add any additional notes..."></textarea>
+          </div>
         </div>
       </div>
 
-      <!-- Additional Information -->
-      <div class="form-section">
-        <h4>Additional Information</h4>
-        <div class="input-group full-width">
-          <label>Notes</label>
-          <textarea [(ngModel)]="formData.note" rows="4" placeholder="Add any additional notes..."></textarea>
+      <!-- Right Column: QR & Info panel -->
+      <div class="side-column">
+        <!-- QR preview panel: only show if formGenerateQr is on AND equipment already has qrCode -->
+        <div class="side-panel qr-panel" *ngIf="equipment?.id && formGenerateQr && equipment?.qrCode">
+          <h4>QR Code</h4>
+          <div class="qr-img-wrapper">
+            <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="Equipment QR Code" width="160" height="160" />
+            <div *ngIf="!qrDataUrl" class="qr-loading">Generating...</div>
+          </div>
+          <div class="eq-id">
+            <span class="label">Equipment ID</span>
+            <span class="value id-truncate" [title]="equipment?.id">{{ equipment?.id }}</span>
+          </div>
+          <div class="qr-actions">
+            <button class="btn-outline-secondary" (click)="downloadQR()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download QR
+            </button>
+            <button class="btn-outline-secondary" (click)="printQR()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              Print Label
+            </button>
+          </div>
+        </div>
+
+        <!-- Notice when QR is toggled ON but not yet saved -->
+        <div class="side-panel qr-panel" *ngIf="equipment?.id && formGenerateQr && !equipment?.qrCode">
+          <h4>QR Code</h4>
+          <div class="qr-pending-notice">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+              stroke="#3b82f6" stroke-width="1.5">
+              <rect x="3" y="3" width="5" height="5"></rect>
+              <rect x="16" y="3" width="5" height="5"></rect>
+              <rect x="3" y="16" width="5" height="5"></rect>
+              <path d="M21 16h-3a2 2 0 0 0-2 2v3"></path>
+              <path d="M21 21v.01"></path>
+              <path d="M12 7v3a2 2 0 0 1-2 2H7"></path>
+              <path d="M3 12h.01"></path>
+              <path d="M12 3h.01"></path>
+              <path d="M12 16v.01"></path>
+              <path d="M16 12h1"></path>
+              <path d="M21 12v.01"></path>
+              <path d="M12 21v-1"></path>
+            </svg>
+            <p>QR code will be generated automatically when you save this equipment.</p>
+          </div>
+        </div>
+
+        <div class="side-panel system-panel" *ngIf="equipment?.id">
+          <h4>System Information</h4>
+          <div class="sys-info-block">
+            <span class="label">Created At</span>
+            <span class="value">{{ equipment?.createdAt | date:'mediumDate' }}</span>
+          </div>
+          <div class="sys-info-block">
+            <span class="label">Updated At</span>
+            <span class="value">{{ equipment?.updatedAt | date:'mediumDate' }}</span>
+          </div>
+          <div class="sys-info-block">
+            <span class="label">Created By</span>
+            <span class="value">{{ equipment?.createdBy || currentUserName || '—' }}</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Right Column: QR & Info panel -->
-    <div class="side-column" *ngIf="equipment?.id && typeRequiresQr()">
-      <div class="side-panel qr-panel">
-        <h4>QR Code</h4>
-        <div class="qr-img-wrapper">
-          <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="Equipment QR Code" width="160" height="160" />
-          <div *ngIf="!qrDataUrl" class="qr-loading">Generating...</div>
-        </div>
-        <div class="eq-id">
-          <span class="label">Equipment ID</span>
-          <span class="value id-truncate" [title]="equipment?.id">{{ equipment?.id }}</span>
-        </div>
-        <div class="qr-actions">
-          <button class="btn-outline-secondary" (click)="downloadQR()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            Download QR
-          </button>
-          <button class="btn-outline-secondary" (click)="printQR()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2">
-              <polyline points="6 9 6 2 18 2 18 9"></polyline>
-              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-              <rect x="6" y="14" width="12" height="8"></rect>
-            </svg>
-            Print Label
-          </button>
-        </div>
-      </div>
-
-      <div class="side-panel system-panel">
-        <h4>System Information</h4>
-        <div class="sys-info-block">
-          <span class="label">Created At</span>
-          <span class="value">{{ equipment?.createdAt | date:'mediumDate' }}</span>
-        </div>
-        <div class="sys-info-block">
-          <span class="label">Updated At</span>
-          <span class="value">{{ equipment?.updatedAt | date:'mediumDate' }}</span>
-        </div>
-        <div class="sys-info-block">
-          <span class="label">Created By</span>
-          <span class="value">{{ equipment?.createdBy || currentUserName || '—' }}</span>
-        </div>
-      </div>
+    <!-- Footer Actions -->
+    <div class="form-footer">
+      <button class="btn-cancel" (click)="cancel()">Cancel</button>
+      <button class="btn-primary" [disabled]="isSaving || isFormInvalid" (click)="saveEquipment()">
+        {{ isSaving ? 'Saving...' : (equipment ? 'Update Equipment' : 'Save Equipment') }}
+      </button>
     </div>
   </div>
-
-  <!-- Footer Actions -->
-  <div class="form-footer">
-    <button class="btn-cancel" (click)="cancel()">Cancel</button>
-    <button class="btn-primary" [disabled]="isSaving || isFormInvalid" (click)="saveEquipment()">
-      {{ isSaving ? 'Saving...' : (equipment ? 'Update Equipment' : 'Save Equipment') }}
-    </button>
-  </div>
-</div>

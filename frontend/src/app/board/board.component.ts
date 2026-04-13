@@ -23,11 +23,12 @@ import { PartsManagementComponent } from '../parts-management/parts-management.c
 import { RequestListComponent } from '../parts-management/request-list/request-list.component';
 import { RequestManagerComponent } from '../parts-management/request-manager/request-manager.component';
 import { TicketsComponent } from '../tickets/tickets.component';
+import { ReportsComponent } from '../reports/reports.component';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent],
   providers: [MessagingService],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
@@ -49,7 +50,7 @@ export class BoardComponent implements OnInit {
   unreadNotificationsCount: number = 0;
 
   constructor(
-    private authService: AuthService, 
+    private authService: AuthService,
     private router: Router,
     private alertService: AlertService,
     private equipmentService: EquipmentService,
@@ -62,7 +63,7 @@ export class BoardComponent implements OnInit {
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
     if (!target.closest('.notif-container')) {
-       this.isNotificationsOpen = false;
+      this.isNotificationsOpen = false;
     }
   }
 
@@ -76,7 +77,7 @@ export class BoardComponent implements OnInit {
           this.activeTab = 'tickets';
         }
         this.loadUnreadCount();
-        
+
         // 1. WebSocket Subscription for instant message updates
         this.socketSub?.unsubscribe();
         this.socketSub = this.socketService.onUnreadCount.subscribe(count => {
@@ -122,7 +123,7 @@ export class BoardComponent implements OnInit {
         .map(n => this.mapNotifToNotificationItem(n));
       this.unreadNotificationsCount = notifications.filter(n => !n.read).length;
     });
-    
+
     // 3. Load Messages
     this.messagingService.getUnreadCount().subscribe((res: any) => {
       this.unreadMessagesCount = res.count || 0;
@@ -135,7 +136,7 @@ export class BoardComponent implements OnInit {
     if (cat.includes('EQUIPMENT')) icon = 'link';
     else if (cat.includes('SHELF')) icon = 'link';
     else if (cat.includes('SUPPLIER')) icon = 'wrench';
-    
+
     return {
       id: notif.id,
       title: notif.title || notif.message,
@@ -152,7 +153,7 @@ export class BoardComponent implements OnInit {
     if (cat.includes('MAINTENANCE')) icon = 'wrench';
     else if (cat.includes('EQUIPMENT') || cat.includes('STOCK')) icon = 'link';
     else if (cat.includes('INSURANCE')) icon = 'shield';
-    
+
     return {
       id: alert.id,
       title: alert.title || alert.message,
@@ -252,5 +253,5 @@ export class BoardComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
-   
+
 }

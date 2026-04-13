@@ -116,32 +116,51 @@ public class EquipmentCategoryService {
             }
         }
 
-        // Check if QR code setting can be toggled: block if equipment exists
+        // Check if QR code setting can be toggled: cascade to equipment
         boolean qrChanged = existing.isRequiresQrCode() != updatedType.isRequiresQrCode();
-        if (qrChanged && equipmentRepository.existsByTypeIgnoreCase(oldTypeName)) {
-            throw new IllegalStateException("Cannot change QR Code requirement for type '" + oldTypeName + "': Equipment is currently associated with it.");
-        }
-
+        
         // Apply changes
         existing.setName(newName);
         existing.setRequiresQrCode(updatedType.isRequiresQrCode());
 
-        // Cascade rename to all equipment if name changed
-        if (nameChanged) {
-            List<Equipment> equipmentList = equipmentRepository.findByTypeIgnoreCase(oldTypeName);
+        // Process existing equipment based on changes
+        if (qrChanged || nameChanged) {
+            List<Equipment> equipmentList;
+            if (nameChanged) {
+                equipmentList = equipmentRepository.findByTypeIgnoreCase(oldTypeName);
+            } else {
+                equipmentList = equipmentRepository.findByTypeIgnoreCase(newName);
+            }
+            
             for (Equipment e : equipmentList) {
-                e.setType(newName);
+                if (nameChanged) {
+                    e.setType(newName);
+                }
+                
+                if (qrChanged) {
+                    if (updatedType.isRequiresQrCode()) {
+                        // Needs a QR code now, give it one if missing
+                        if (e.getQrCode() == null || e.getQrCode().isEmpty()) {
+                            e.setQrCode("QR-" + System.currentTimeMillis() + "-" + e.getId());
+                        }
+                    } else {
+                        // QR code no longer required, remove it
+                        e.setQrCode(null);
+                    }
+                }
                 equipmentRepository.save(e);
             }
 
-            List<Shelf> shelfList = shelfRepository.findByEquipmentTypeIgnoreCase(oldTypeName);
-            for (Shelf s : shelfList) {
-                s.setEquipmentType(newName);
-                if (s.getNb() != null && s.getNb().toLowerCase().startsWith(oldTypeName.toLowerCase() + "-")) {
-                    String suffix = s.getNb().substring(oldTypeName.length() + 1);
-                    s.setNb(newName.toLowerCase() + "-" + suffix);
+            if (nameChanged) {
+                List<Shelf> shelfList = shelfRepository.findByEquipmentTypeIgnoreCase(oldTypeName);
+                for (Shelf s : shelfList) {
+                    s.setEquipmentType(newName);
+                    if (s.getNb() != null && s.getNb().toLowerCase().startsWith(oldTypeName.toLowerCase() + "-")) {
+                        String suffix = s.getNb().substring(oldTypeName.length() + 1);
+                        s.setNb(newName.toLowerCase() + "-" + suffix);
+                    }
+                    shelfRepository.save(s);
                 }
-                shelfRepository.save(s);
             }
         }
 

@@ -197,7 +197,10 @@
   align-items: center;
 }
 
-.status-chip.active { background: #dcfce7; color: #16a34a; }
+.status-chip.active {
+  background: #dcfce7;
+  color: #16a34a;
+}
 
 /* Actions */
 /* Actions */
@@ -208,6 +211,7 @@
   gap: 8px;
   height: 100%;
 }
+
 th.actions-cell {
   display: table-cell;
   text-align: right;
@@ -235,10 +239,23 @@ th.actions-cell {
   background: #f1f5f9;
 }
 
-.action-icon.view:hover { color: #3b82f6; }
-.action-icon.edit:hover { color: #2563eb; background: #eff6ff; }
-.action-icon.add-similar:hover { color: #10b981; }
-.action-icon.delete:hover { color: #ef4444; background: #fef2f2; }
+.action-icon.view:hover {
+  color: #3b82f6;
+}
+
+.action-icon.edit:hover {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.action-icon.add-similar:hover {
+  color: #10b981;
+}
+
+.action-icon.delete:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}
 
 /* Instances Nested Table */
 .expandable-content-row {
@@ -249,7 +266,7 @@ th.actions-cell {
   padding: 20px 40px;
   background: linear-gradient(to bottom, #f8fafc, #ffffff);
   border-left: 4px solid #3b82f6;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .instances-header {
@@ -335,7 +352,9 @@ th.actions-cell {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Modal Styling matching Shelf Form */
@@ -508,8 +527,13 @@ th.actions-cell {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideIn {
@@ -517,6 +541,7 @@ th.actions-cell {
     opacity: 0;
     transform: translateY(20px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -533,11 +558,22 @@ th.actions-cell {
   font-size: 0.78rem;
   font-weight: 600;
 }
-.qr-badge.yes { background: #dcfce7; color: #16a34a; }
-.qr-badge.no  { background: #f1f5f9; color: #94a3b8; }
+
+.qr-badge.yes {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.qr-badge.no {
+  background: #f1f5f9;
+  color: #94a3b8;
+}
 
 /* Custom Checkbox */
-.qr-checkbox-group { margin-bottom: 8px; }
+.qr-checkbox-group {
+  margin-bottom: 8px;
+}
+
 .checkbox-label {
   display: flex;
   align-items: flex-start;
@@ -545,6 +581,7 @@ th.actions-cell {
   cursor: pointer;
   user-select: none;
 }
+
 .custom-checkbox {
   width: 20px;
   height: 20px;
@@ -559,14 +596,29 @@ th.actions-cell {
   transition: all 0.15s;
   cursor: pointer;
 }
+
 .custom-checkbox.checked {
   background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
   border-color: transparent;
   color: white;
 }
-.checkbox-text { display: flex; flex-direction: column; gap: 2px; }
-.checkbox-title { font-size: 0.92rem; font-weight: 600; color: #1e293b; }
-.checkbox-desc  { font-size: 0.8rem; color: #64748b; }
+
+.checkbox-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.checkbox-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.checkbox-desc {
+  font-size: 0.8rem;
+  color: #64748b;
+}
 
 /* Modal Header Icon */
 .modal-header-icon {
@@ -606,6 +658,7 @@ th.actions-cell {
   cursor: pointer;
   transition: all 0.2s;
 }
+
 .qr-link-btn:hover {
   background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
   transform: translateY(-1px);

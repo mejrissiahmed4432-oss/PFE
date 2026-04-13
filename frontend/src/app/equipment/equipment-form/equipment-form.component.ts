@@ -42,11 +42,12 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   isSNAvailable: boolean = true;
   isCheckingSN: boolean = false;
   originalSN: string = '';
+  formGenerateQr: boolean = false;  // QR code checkbox for edit form
   private snSubject = new Subject<string>();
 
   equipmentTypes = [
-    'pc', 'laptop', 'server', 'monitor', 'printer', 'scanner', 
-    'projector', 'router', 'switch', 'ups', 'tablet', 'phone', 
+    'pc', 'laptop', 'server', 'monitor', 'printer', 'scanner',
+    'projector', 'router', 'switch', 'ups', 'tablet', 'phone',
     'ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'
   ];
   consumables = ['ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'];
@@ -59,7 +60,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     private supplierService: SupplierService,
     private shelfService: ShelfService,
     private categoryService: CategoryService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const userData = this.authService.getCurrentUser();
@@ -69,7 +70,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
     this.supplierService.getAllSuppliers().subscribe(d => this.suppliers = d);
     this.shelfService.getAllShelves().subscribe(d => this.allShelves = d);
-    
+
     // Setup debounced SN uniqueness check
     this.snSubject.pipe(
       debounceTime(500),
@@ -82,13 +83,15 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     this.categoryService.getAllCategories().subscribe({
       next: (cats) => {
         this.categories = cats;
-        
+
         if (this.equipment && this.equipment.id) {
           this.equipmentService.getEquipmentById(this.equipment.id).subscribe({
             next: (fullEq) => {
               this.formData = { ...fullEq };
               this.originalSN = !this.isAddSimilar ? (fullEq.serialNumber || '') : '';
-              
+              // Initialise QR checkbox based on whether the equipment already has a QR code
+              this.formGenerateQr = !!(fullEq.qrCode);
+
               // Find the category for this equipment based on its type (case-insensitive)
               const currentType = (this.formData.type || '').toLowerCase().trim();
               const foundCat = this.categories.find(c =>
@@ -108,7 +111,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
                 // Fallback for types not in any functional category
                 this.availableTypes = this.equipmentTypes.map(name => ({ name, requiresQrCode: false }));
               }
-              
+
               if (this.formData.type) {
                 this.loadAvailableShelves();
               }
@@ -184,7 +187,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     this.categoryService.getAllCategories().subscribe({
       next: (data) => {
         this.categories = data;
-        
+
         // If we already have a category (from ngOnInit init), populate availableTypes
         if (this.formData.category) {
           this.onCategoryChange();
@@ -204,9 +207,9 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
       this.formData.shelfId = 'OUT_OF_STOCK';
     } else if (status === 'Available' || status === 'In Stock') {
       // If switching back to Available from a virtual area, reset shelf
-      if (this.formData.shelfId === 'MAINTENANCE_AREA' || 
-          this.formData.shelfId === 'SCRAP_YARD' || 
-          this.formData.shelfId === 'OUT_OF_STOCK') {
+      if (this.formData.shelfId === 'MAINTENANCE_AREA' ||
+        this.formData.shelfId === 'SCRAP_YARD' ||
+        this.formData.shelfId === 'OUT_OF_STOCK') {
         this.formData.shelfId = '';
         this.loadAvailableShelves(); // Refresh available options
       }
@@ -229,13 +232,13 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const digits = '0123456789';
     let result = '';
-    
+
     // Generate exactly 10 random alphanumeric chars
     const chars = letters + digits;
     for (let i = 0; i < 10; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    
+
     // Ensure it's never just letters or just digits (force at least one of each)
     if (!/\d/.test(result)) {
       result = result.substring(0, 9) + digits.charAt(Math.floor(Math.random() * digits.length));
@@ -243,7 +246,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     if (!/[a-zA-Z]/.test(result)) {
       result = result.substring(0, 9) + letters.charAt(Math.floor(Math.random() * letters.length));
     }
-    
+
     this.formData.serialNumber = result;
     this.onSerialNumberChange(); // Trigger uniqueness check for suggested SN
   }
@@ -252,7 +255,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     if (this.formData.serialNumber) {
       // Force uppercase and trim
       this.formData.serialNumber = this.formData.serialNumber.toUpperCase().trim();
-      
+
       const currentSN = this.formData.serialNumber;
 
       // If it's the same as the original, it's valid by default
@@ -310,12 +313,12 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   isSerialNumberValid(): boolean {
     const sn = this.formData.serialNumber || '';
     if (!sn) return false;
-    
+
     const hasExactLength = sn.length === 10;
     const onlyAlphanumeric = /^[a-zA-Z0-9]+$/.test(sn);
     const hasLetter = /[a-zA-Z]/.test(sn);
     const hasDigit = /\d/.test(sn);
-    
+
     return hasExactLength && onlyAlphanumeric && hasLetter && hasDigit;
   }
 
@@ -344,12 +347,12 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
         // So objectively there is space for us (we are it).
         return isUpdate && s.id === originalShelfId;
       }
-      
+
       // Calculate effective current quantity by excluding ourselves if we are already there
       const effectiveCurrentQte = (isUpdate && s.id === originalShelfId) ? (s.currentQte - 1) : s.currentQte;
       return (effectiveCurrentQte + qteNeeded <= s.maxQte);
     });
-    
+
     this.availableShelves = validShelves;
 
     // Auto select if only one is available
@@ -422,19 +425,48 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   saveEquipment(): void {
     this.isSaving = true;
-    const payload = this.formData as Equipment;
+    const payload = { ...this.formData } as Equipment;
     payload.qte = 1; // Enforce single unit management
 
-    if (this.equipment && this.equipment.id) {
-      this.equipmentService.updateEquipment(this.equipment.id, payload).subscribe({
-        next: () => { this.isSaving = false; this.closeEvent.emit(true); },
-        error: (err) => { console.error(err); this.isSaving = false; }
+    const doSave = (finalPayload: Equipment) => {
+      if (this.equipment && this.equipment.id) {
+        this.equipmentService.updateEquipment(this.equipment.id, finalPayload).subscribe({
+          next: () => { this.isSaving = false; this.closeEvent.emit(true); },
+          error: (err) => { console.error(err); this.isSaving = false; }
+        });
+      } else {
+        this.equipmentService.createEquipment(finalPayload).subscribe({
+          next: () => { this.isSaving = false; this.closeEvent.emit(true); },
+          error: (err) => { console.error(err); this.isSaving = false; }
+        });
+      }
+    };
+
+    if (this.formGenerateQr) {
+      // Generate QR code data URL then save
+      this.generateQRCodeForSave(payload).then(url => {
+        payload.qrCode = url;
+        doSave(payload);
       });
     } else {
-      this.equipmentService.createEquipment(payload).subscribe({
-        next: () => { this.isSaving = false; this.closeEvent.emit(true); },
-        error: (err) => { console.error(err); this.isSaving = false; }
-      });
+      // Remove QR code
+      payload.qrCode = 'NONE';
+      doSave(payload);
+    }
+  }
+
+  private async generateQRCodeForSave(payload: Equipment): Promise<string> {
+    const qrData = JSON.stringify({
+      id: this.equipment?.id || 'NEW',
+      name: payload.equipmentName,
+      serial: payload.serialNumber,
+      shelfId: payload.shelfId
+    });
+    try {
+      return await QRCode.toDataURL(qrData, { width: 240, margin: 1, color: { dark: '#1e293b', light: '#ffffff' } });
+    } catch (err) {
+      console.error('QR generation failed', err);
+      return '';
     }
   }
 
@@ -460,7 +492,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     if (!input.files || input.files.length === 0) return;
     const file = input.files[0];
     this.formData.invoiceFileName = file.name;
-    
+
     const reader = new FileReader();
     reader.onload = () => {
       this.formData.invoiceFileData = reader.result as string;
@@ -473,7 +505,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     if (!input.files || input.files.length === 0) return;
     const file = input.files[0];
     this.formData.warrantyFileName = file.name;
-    
+
     const reader = new FileReader();
     reader.onload = () => {
       this.formData.warrantyFileData = reader.result as string;
@@ -494,7 +526,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     if (shelfId === 'MAINTENANCE_AREA') return 'Maintenance Area';
     if (shelfId === 'SCRAP_YARD') return 'Scrap Yard';
     if (shelfId === 'OUT_OF_STOCK') return 'Out of Stock';
-    
+
     const s = this.allShelves.find(x => x.id === shelfId);
     return s ? `Shelf ${s.nb}` : shelfId;
   }
@@ -503,11 +535,11 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0 || !this.equipment?.id) return;
     const file = input.files[0];
-    
+
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;
-      const updateData: any = { 
+      const updateData: any = {
         ...this.equipment,
         invoiceFileName: file.name,
         invoiceFileData: dataUrl
@@ -528,11 +560,11 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0 || !this.equipment?.id) return;
     const file = input.files[0];
-    
+
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;
-      const updateData: any = { 
+      const updateData: any = {
         ...this.equipment,
         warrantyFileName: file.name,
         warrantyFileData: dataUrl

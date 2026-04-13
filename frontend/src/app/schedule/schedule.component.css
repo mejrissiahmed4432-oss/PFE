@@ -178,7 +178,7 @@
 /* ── Stats Row ────────────────────────────────────────────── */
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -217,10 +217,24 @@
 
 /* ── Main Grid ─────────────────────────────────────────────── */
 .sched-grid {
-  display: grid;
-  grid-template-columns: 1fr 360px;
+  display: flex;
+  flex-direction: column;
   gap: 20px;
-  align-items: start;
+}
+
+@media (min-width: 1280px) {
+  .sched-grid {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .board-col {
+    flex: 1;
+    min-width: 0;
+  }
+  .calendar-panel {
+    width: 360px;
+    flex-shrink: 0;
+  }
 }
 
 .board-col {
@@ -282,8 +296,14 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  min-width: 300px;
+  min-width: 280px;
   flex: 1;
+}
+
+@media (max-width: 640px) {
+  .kanban-column {
+    min-width: 240px;
+  }
 }
 
 .kanban-header {
@@ -386,6 +406,7 @@
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1356,4 +1377,86 @@
 
 .btn-alert-confirm:hover {
   opacity: 0.9;
+}
+
+/* ──────────────────────────────────────────────────────────
+   EMPTY STATE / SINGLE DOT
+   ────────────────────────────────────────────────────────── */
+.no-selection-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #64748b;
+  text-align: center;
+  flex: 1;
+}
+
+.no-selection-message svg {
+  color: var(--c-accent, #3b82f6);
+  opacity: 0.6;
+  margin-bottom: 20px;
+}
+
+.no-selection-message h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.no-selection-message p {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.dot-single-task {
+  width: 8px;
+  height: 8px;
+  background: var(--c-accent, #3b82f6);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.6);
+}
+
+/* ──────────────────────────────────────────────────────────
+   EMPTY STATE / SINGLE DOT
+   ────────────────────────────────────────────────────────── */
+.no-selection-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #64748b;
+  text-align: center;
+  flex: 1;
+}
+
+.no-selection-message svg {
+  color: var(--c-accent, #3b82f6);
+  opacity: 0.6;
+  margin-bottom: 20px;
+}
+
+.no-selection-message h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.no-selection-message p {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.dot-single-task {
+  width: 8px;
+  height: 8px;
+  background: var(--c-accent, #3b82f6);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.6);
 }

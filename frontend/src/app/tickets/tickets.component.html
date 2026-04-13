@@ -1,13 +1,18 @@
 <div class="tickets-container">
-  
+
   <!-- Page Header -->
   <div class="page-header">
     <div class="header-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><line x1="12" y1="9" x2="12" y2="15"></line></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z">
+        </path>
+        <line x1="12" y1="9" x2="12" y2="15"></line>
+      </svg>
     </div>
     <div class="header-text">
-       <h1>Tickets</h1>
-       <p>Manage your support requests and equipment</p>
+      <h1>Tickets</h1>
+      <p>Manage your support requests and equipment</p>
     </div>
   </div>
   <!-- Stats Row -->
@@ -32,21 +37,27 @@
 
   <!-- View Toggles -->
   <div class="view-toggles">
-     <div class="toggle-group-left">
-       <button class="toggle-btn" [class.active]="viewMode === 'equipment'" (click)="switchView('equipment')">Equipment</button>
-       <button class="toggle-btn" [class.active]="viewMode === 'tickets'" (click)="switchView('tickets')">My Tickets</button>
-     </div>
-     
-     <button class="filter-toggle-btn" *ngIf="viewMode === 'equipment'" (click)="showFilters = !showFilters" [class.active]="showFilters">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
-        Filters
-     </button>
+    <div class="toggle-group-left">
+      <button class="toggle-btn" [class.active]="viewMode === 'equipment'"
+        (click)="switchView('equipment')">Equipment</button>
+      <button class="toggle-btn" [class.active]="viewMode === 'tickets'" (click)="switchView('tickets')">My
+        Tickets</button>
+    </div>
+
+    <button class="filter-toggle-btn" *ngIf="viewMode === 'equipment'" (click)="showFilters = !showFilters"
+      [class.active]="showFilters">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      Filters
+    </button>
   </div>
 
   <!-- Search and Filter Header (Only for Equipment) -->
   <header class="master-header" *ngIf="viewMode === 'equipment' && showFilters">
     <div class="filter-dropdown-bar" style="margin-top: 0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);">
-      
+
       <!-- New General Search Input -->
       <div class="filter-group" style="flex: 1.5;">
         <label>Search Details</label>
@@ -60,7 +71,7 @@
           <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
         </select>
       </div>
-      
+
       <div class="filter-group">
         <label>Type</label>
         <select [(ngModel)]="filterType" (change)="applyFilters()" [disabled]="filterCategory === 'All Categories'">
@@ -76,12 +87,13 @@
 
       <div class="filter-group" style="flex: auto; display: flex; align-items: flex-end;">
         <button class="qr-scan-btn" (click)="qrInput.click()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-             <rect x="7" y="7" width="3" height="3"></rect>
-             <rect x="14" y="7" width="3" height="3"></rect>
-             <rect x="7" y="14" width="3" height="3"></rect>
-             <rect x="14" y="14" width="3" height="3"></rect>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <rect x="7" y="7" width="3" height="3"></rect>
+            <rect x="14" y="7" width="3" height="3"></rect>
+            <rect x="7" y="14" width="3" height="3"></rect>
+            <rect x="14" y="14" width="3" height="3"></rect>
           </svg>
           Scan QR
         </button>
@@ -92,49 +104,84 @@
 
   <!-- Split View Content (Shared) -->
   <div class="split-view" *ngIf="!showWorkbench">
-    
+
     <!-- LEFT: Main List Pane -->
     <div class="master-pane">
-       
-       <!-- Equipment List -->
-       <ng-container *ngIf="viewMode === 'equipment'">
-         <div class="list-empty" *ngIf="filteredEquipments.length === 0">
-            No equipment found. Try adjusting your filters or scanning a QR code.
-         </div>
 
-         <div class="eq-item" *ngFor="let eq of filteredEquipments" [class.selected]="selectedEquipment?.id === eq.id" (click)="selectEquipment(eq)">
-            <div class="eq-icon-box">
-               <ng-container [ngSwitch]="getIconForEquipment(eq.type)">
-                  <svg *ngSwitchCase="'laptop'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg>
-                  <svg *ngSwitchCase="'printer'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                  <svg *ngSwitchCase="'server'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-                  <svg *ngSwitchDefault xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-               </ng-container>
-            </div>
-            <div class="eq-info">
-               <h4>{{ eq.name }}</h4>
-               <span class="eq-meta">{{ eq.serialNumber }} • {{ eq.type }}</span>
-               <div class="eq-footer">
-                  <span class="assignee"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> {{ eq.assignedUser }}</span>
-                  <span class="last-repair"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Last repair: {{ eq.lastRepair }}</span>
-               </div>
-            </div>
-            <div class="eq-status-col">
-               <span class="badge" [ngClass]="getStatusClass(eq.status)">
-                 <svg *ngIf="eq.status === 'Under Repair'" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-                 {{ eq.status }}
-               </span>
-            </div>
-         </div>
-       </ng-container>
+      <!-- Equipment List -->
+      <ng-container *ngIf="viewMode === 'equipment'">
+        <div class="list-empty" *ngIf="filteredEquipments.length === 0">
+          No equipment found. Try adjusting your filters or scanning a QR code.
+        </div>
 
-       <!-- Tickets List -->
-       <ng-container *ngIf="viewMode === 'tickets'">
-         <div class="list-empty" *ngIf="filteredTickets.length === 0">
-            You don't have any active (open) tickets at the moment.
-         </div>
+        <div class="eq-item" *ngFor="let eq of filteredEquipments" [class.selected]="selectedEquipment?.id === eq.id"
+          (click)="selectEquipment(eq)">
+          <div class="eq-icon-box">
+            <ng-container [ngSwitch]="getIconForEquipment(eq.type)">
+              <svg *ngSwitchCase="'laptop'" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="2" y1="20" x2="22" y2="20"></line>
+              </svg>
+              <svg *ngSwitchCase="'printer'" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              <svg *ngSwitchCase="'server'" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+              </svg>
+              <svg *ngSwitchDefault xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+            </ng-container>
+          </div>
+          <div class="eq-info">
+            <h4>{{ eq.name }}</h4>
+            <span class="eq-meta">{{ eq.serialNumber }} • {{ eq.type }}</span>
+            <div class="eq-footer">
+              <span class="assignee"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg> {{ eq.assignedUser }}</span>
+              <span class="last-repair"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg> Last repair: {{ eq.lastRepair }}</span>
+            </div>
+          </div>
+          <div class="eq-status-col">
+            <span class="badge" [ngClass]="getStatusClass(eq.status)">
+              <svg *ngIf="eq.status === 'Under Repair'" xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                <path
+                  d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                </path>
+              </svg>
+              {{ eq.status }}
+            </span>
+          </div>
+        </div>
+      </ng-container>
 
-         <div class="ticket-row" *ngFor="let ticket of filteredTickets" [class.selected]="selectedTicket?.id === ticket.id" (click)="selectTicket(ticket)">
+      <!-- Tickets List -->
+      <ng-container *ngIf="viewMode === 'tickets'">
+        <div class="list-empty" *ngIf="filteredTickets.length === 0">
+          You don't have any active (open) tickets at the moment.
+        </div>
+
+        <div class="ticket-row" *ngFor="let ticket of filteredTickets"
+          [class.selected]="selectedTicket?.id === ticket.id" (click)="selectTicket(ticket)">
           <div class="prio-marker" [ngClass]="getPriorityClass(ticket.priority)">
             {{ ticket.priority | uppercase }}
           </div>
@@ -173,214 +220,297 @@
               {{ ticket.status }}
             </div>
           </div>
-         </div>
-       </ng-container>
+        </div>
+      </ng-container>
 
     </div>
 
     <!-- RIGHT: Equipment/Ticket Details -->
     <div class="detail-pane" *ngIf="selectedEquipment && !showFullHistory">
-      
+
       <!-- Ticket Specific Information (Only when selecting from Tickets mode) -->
       <div class="ticket-top-detail" *ngIf="selectedTicket">
         <div class="ticket-detail-header">
-           <div class="ticket-header-left">
-              <span class="ticket-type-tag" [ngClass]="selectedTicket.category">{{ selectedTicket.category }}</span>
-           </div>
-           <div class="ticket-actions-row">
-              <button class="btn-action btn-edit" title="Edit Ticket" (click)="openEditModal(selectedTicket)">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-              </button>
-              <button class="btn-action btn-delete" title="Delete Ticket" (click)="deleteTicket(selectedTicket.id)">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-              </button>
-           </div>
+          <div class="ticket-header-left">
+            <span class="ticket-type-tag" [ngClass]="selectedTicket.category">{{ selectedTicket.category }}</span>
+          </div>
+          <div class="ticket-actions-row">
+            <button class="btn-action btn-edit" title="Edit Ticket" (click)="openEditModal(selectedTicket)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+            <button class="btn-action btn-delete" title="Delete Ticket" (click)="deleteTicket(selectedTicket.id)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
         </div>
-        
+
         <h2 class="ticket-detail-title">{{ selectedTicket.title }}</h2>
-        
+
         <div class="ticket-meta-grid">
-           <div class="tm-item">
-              <label>Priority</label>
-              <div class="prio-tag" [ngClass]="getPriorityClass(selectedTicket.priority)">{{ selectedTicket.priority }}</div>
-           </div>
-           <div class="tm-item">
-              <label>Status</label>
-              <div class="status-tag" [ngClass]="getStatusClass(selectedTicket.status)">{{ selectedTicket.status }}</div>
-           </div>
-           <div class="tm-item" *ngIf="selectedTicket.deadline">
-              <label>Deadline</label>
-              <div class="deadline-tag">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                {{ selectedTicket.deadline | date:'mediumDate' }}
-              </div>
-           </div>
+          <div class="tm-item">
+            <label>Priority</label>
+            <div class="prio-tag" [ngClass]="getPriorityClass(selectedTicket.priority)">{{ selectedTicket.priority }}
+            </div>
+          </div>
+          <div class="tm-item">
+            <label>Status</label>
+            <div class="status-tag" [ngClass]="getStatusClass(selectedTicket.status)">{{ selectedTicket.status }}</div>
+          </div>
+          <div class="tm-item" *ngIf="selectedTicket.deadline">
+            <label>Deadline</label>
+            <div class="deadline-tag">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              {{ selectedTicket.deadline | date:'mediumDate' }}
+            </div>
+          </div>
         </div>
 
         <div class="ticket-description">
-           <label>Description</label>
-           <p>{{ selectedTicket.description }}</p>
+          <label>Description</label>
+          <p>{{ selectedTicket.description }}</p>
         </div>
 
         <!-- Attachments Section -->
         <div class="ticket-attachments" *ngIf="selectedTicket.attachments && selectedTicket.attachments.length > 0">
-           <label>Attachments ({{ selectedTicket.attachments.length }})</label>
-           <div class="attachment-grid">
-              <div class="att-card" *ngFor="let att of selectedTicket.attachments">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                 <span class="att-name">Attachment</span>
-              </div>
-           </div>
+          <label>Attachments ({{ selectedTicket.attachments.length }})</label>
+          <div class="attachment-grid">
+            <div class="att-card" *ngFor="let att of selectedTicket.attachments">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              <span class="att-name">Attachment</span>
+            </div>
+          </div>
         </div>
 
         <div class="divider-line"></div>
       </div>
 
       <h3 class="detail-title">Equipment Details</h3>
-      
+
       <div class="detail-header-card">
-         <div class="detail-icon-box">
-             <ng-container [ngSwitch]="getIconForEquipment(selectedEquipment.type)">
-                <svg *ngSwitchCase="'laptop'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg>
-                <svg *ngSwitchCase="'printer'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                <svg *ngSwitchCase="'server'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-                <svg *ngSwitchDefault xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-             </ng-container>
-         </div>
-         <div class="detail-main-info">
-            <h2>{{ selectedEquipment.name }}</h2>
-            <span>{{ selectedEquipment.serialNumber }}</span>
-         </div>
-      </div>
-      
-      <div class="detail-grid">
-         <div class="d-item">
-            <span class="lbl">Type</span>
-            <span class="val">{{ selectedEquipment.type }}</span>
-         </div>
-         <div class="d-item">
-            <span class="lbl">Status</span>
-            <span class="val" style="display:flex; align-items:center; gap:4px; font-weight:600;">
-               <svg *ngIf="selectedEquipment.status === 'Under Repair'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-               {{ selectedEquipment.status }}
-            </span>
-         </div>
-         <div class="d-item">
-            <span class="lbl">Assigned User</span>
-            <span class="val">{{ selectedEquipment.assignedUser || 'Unassigned' }}</span>
-         </div>
-         <div class="d-item">
-            <span class="lbl">Last Repair</span>
-            <span class="val">{{ selectedEquipment.lastRepair || 'Never' }}</span>
-         </div>
+        <div class="detail-icon-box">
+          <ng-container [ngSwitch]="getIconForEquipment(selectedEquipment.type)">
+            <svg *ngSwitchCase="'laptop'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="2" y1="20" x2="22" y2="20"></line>
+            </svg>
+            <svg *ngSwitchCase="'printer'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            <svg *ngSwitchCase="'server'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+              <line x1="6" y1="6" x2="6.01" y2="6"></line>
+              <line x1="6" y1="18" x2="6.01" y2="18"></line>
+            </svg>
+            <svg *ngSwitchDefault xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </ng-container>
+        </div>
+        <div class="detail-main-info">
+          <h2>{{ selectedEquipment.name }}</h2>
+          <span>{{ selectedEquipment.serialNumber }}</span>
+        </div>
       </div>
 
-      <div class="active-ticket-banner" *ngIf="hasActiveTicket(selectedEquipment.name || selectedEquipment.equipmentName)">
-         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-         <span>This equipment has an <strong>active ticket</strong>. Please resolve it before creating a new one.</span>
+      <div class="detail-grid">
+        <div class="d-item">
+          <span class="lbl">Type</span>
+          <span class="val">{{ selectedEquipment.type }}</span>
+        </div>
+        <div class="d-item">
+          <span class="lbl">Status</span>
+          <span class="val" style="display:flex; align-items:center; gap:4px; font-weight:600;">
+            <svg *ngIf="selectedEquipment.status === 'Under Repair'" xmlns="http://www.w3.org/2000/svg" width="14"
+              height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2">
+              <path
+                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+              </path>
+            </svg>
+            {{ selectedEquipment.status }}
+          </span>
+        </div>
+        <div class="d-item">
+          <span class="lbl">Assigned User</span>
+          <span class="val">{{ selectedEquipment.assignedUser || 'Unassigned' }}</span>
+        </div>
+        <div class="d-item">
+          <span class="lbl">Last Repair</span>
+          <span class="val">{{ selectedEquipment.lastRepair || 'Never' }}</span>
+        </div>
+      </div>
+
+      <div class="active-ticket-banner"
+        *ngIf="hasActiveTicket(selectedEquipment.name || selectedEquipment.equipmentName)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>This equipment has an <strong>active ticket</strong>. Please resolve it before creating a new one.</span>
       </div>
 
       <div class="repair-history-section">
-         <h4>Repair History</h4>
-         
-         <div class="timeline" *ngIf="selectedEquipment.repairHistory && selectedEquipment.repairHistory.length > 0; else noHistory">
-            <div class="timeline-item" *ngFor="let rep of selectedEquipment.repairHistory">
-               <div class="tl-dot"></div>
-               <div class="tl-content">
-                  <div class="tl-title">{{ rep.issue }}</div>
-                  <div class="tl-meta">{{ rep.date }} • {{ rep.technician }}</div>
-               </div>
+        <h4>Repair History</h4>
+
+        <div class="timeline"
+          *ngIf="selectedEquipment.repairHistory && selectedEquipment.repairHistory.length > 0; else noHistory">
+          <div class="timeline-item" *ngFor="let rep of selectedEquipment.repairHistory">
+            <div class="tl-dot"></div>
+            <div class="tl-content">
+              <div class="tl-title">{{ rep.issue }}</div>
+              <div class="tl-meta">{{ rep.date }} • {{ rep.technician }}</div>
             </div>
-         </div>
-         <ng-template #noHistory>
-            <div class="no-history-msg">No previous repair records found.</div>
-         </ng-template>
+          </div>
+        </div>
+        <ng-template #noHistory>
+          <div class="no-history-msg">No previous repair records found.</div>
+        </ng-template>
       </div>
 
       <div class="detail-actions">
-         <button class="btn-create-ticket" 
-                 *ngIf="viewMode === 'equipment'" 
-                 [disabled]="hasActiveTicket(selectedEquipment.name || selectedEquipment.equipmentName)"
-                 (click)="openTicketModal()">
-           Create Ticket
-         </button>
-         <button class="btn-view-history" (click)="showFullHistory = true">View Full History</button>
+        <button class="btn-create-ticket" *ngIf="viewMode === 'equipment'"
+          [disabled]="hasActiveTicket(selectedEquipment.name || selectedEquipment.equipmentName)"
+          (click)="openTicketModal()">
+          Create Ticket
+        </button>
+        <button class="btn-view-history" (click)="showFullHistory = true">View Full History</button>
       </div>
 
       <!-- Start Working Button (only in tickets view) -->
       <div class="start-work-section" *ngIf="viewMode === 'tickets' && selectedTicket">
         <button class="btn-start-work" (click)="startWorkbench(selectedTicket)">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
           Start Working
         </button>
       </div>
     </div>
-    
+
     <!-- RIGHT: Full History Pane -->
     <div class="detail-pane full-history-pane" *ngIf="selectedEquipment && showFullHistory">
-       <div class="history-header-pane">
-           <button class="btn-back" (click)="showFullHistory = false">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
-           </button>
-           <h3>Full History: {{ selectedEquipment.serialNumber }}</h3>
-       </div>
-       
-       <div class="rich-timeline-container" *ngIf="selectedEquipment.extendedHistory && selectedEquipment.extendedHistory.length > 0; else noRichHistory">
-          <!-- Iterate over extended history -->
-          <div class="rich-timeline">
-             <div class="rt-item" *ngFor="let item of selectedEquipment.extendedHistory; let isLast = last">
-                <!-- Icon column -->
-                <div class="rt-icon-col">
-                   <div class="rt-icon" [ngClass]="'icon-' + item.type">
-                      <svg *ngIf="item.type === 'repair'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-                      <svg *ngIf="item.type === 'ticket'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                   </div>
-                   <div class="rt-line" *ngIf="!isLast"></div>
-                </div>
+      <div class="history-header-pane">
+        <button class="btn-back" (click)="showFullHistory = false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5"></path>
+            <path d="M12 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <h3>Full History: {{ selectedEquipment.serialNumber }}</h3>
+      </div>
 
-                <!-- Card column -->
-                <div class="rt-card">
-                   <div class="rt-card-header">
-                      <div class="rt-badges">
-                         <span class="rt-badge-outline" [ngClass]="item.type">{{ item.type | titlecase }}</span>
-                         <span class="rt-badge-priority" *ngIf="item.priority" [ngClass]="item.priority.toLowerCase()">{{ item.priority }}</span>
-                         <span class="rt-ref-id">{{ item.referenceId }}</span>
-                      </div>
-                      <div class="rt-timestamp">
-                         <div class="rt-date">{{ item.dateStr }}</div>
-                         <div class="rt-time">{{ item.timeStr }}</div>
-                      </div>
-                   </div>
-                   <h4 class="rt-title">{{ item.title }}</h4>
-                   <p class="rt-desc">{{ item.description }}</p>
-                   
-                   <div class="rt-meta-row">
-                      <span class="rt-meta-item">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                         {{ item.user }}
-                      </span>
-                      <span class="rt-meta-item" *ngIf="item.duration">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                         {{ item.duration }}
-                      </span>
-                      <span class="rt-meta-item rt-cost" *ngIf="item.cost">Cost: {{ item.cost }}</span>
-                   </div>
-                   
-                   <div class="rt-expand" *ngIf="item.type === 'repair'">Show details <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+      <div class="rich-timeline-container"
+        *ngIf="selectedEquipment.extendedHistory && selectedEquipment.extendedHistory.length > 0; else noRichHistory">
+        <!-- Iterate over extended history -->
+        <div class="rich-timeline">
+          <div class="rt-item" *ngFor="let item of selectedEquipment.extendedHistory; let isLast = last">
+            <!-- Icon column -->
+            <div class="rt-icon-col">
+              <div class="rt-icon" [ngClass]="'icon-' + item.type">
+                <svg *ngIf="item.type === 'repair'" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                  </path>
+                </svg>
+                <svg *ngIf="item.type === 'ticket'" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </div>
+              <div class="rt-line" *ngIf="!isLast"></div>
+            </div>
+
+            <!-- Card column -->
+            <div class="rt-card">
+              <div class="rt-card-header">
+                <div class="rt-badges">
+                  <span class="rt-badge-outline" [ngClass]="item.type">{{ item.type | titlecase }}</span>
+                  <span class="rt-badge-priority" *ngIf="item.priority" [ngClass]="item.priority.toLowerCase()">{{
+                    item.priority }}</span>
+                  <span class="rt-ref-id">{{ item.referenceId }}</span>
                 </div>
-             </div>
+                <div class="rt-timestamp">
+                  <div class="rt-date">{{ item.dateStr }}</div>
+                  <div class="rt-time">{{ item.timeStr }}</div>
+                </div>
+              </div>
+              <h4 class="rt-title">{{ item.title }}</h4>
+              <p class="rt-desc">{{ item.description }}</p>
+
+              <div class="rt-meta-row">
+                <span class="rt-meta-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  {{ item.user }}
+                </span>
+                <span class="rt-meta-item" *ngIf="item.duration">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  {{ item.duration }}
+                </span>
+                <span class="rt-meta-item rt-cost" *ngIf="item.cost">Cost: {{ item.cost }}</span>
+              </div>
+
+              <div class="rt-expand" *ngIf="item.type === 'repair'">Show details <svg xmlns="http://www.w3.org/2000/svg"
+                  width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg></div>
+            </div>
           </div>
-       </div>
-       <ng-template #noRichHistory>
-          <div class="no-history-msg">No detailed history records found for this equipment.</div>
-       </ng-template>
+        </div>
+      </div>
+      <ng-template #noRichHistory>
+        <div class="no-history-msg">No detailed history records found for this equipment.</div>
+      </ng-template>
     </div>
 
     <!-- When nothing is selected -->
     <div class="detail-pane empty-pane" *ngIf="!selectedEquipment">
-       <div class="empty-icon">🔌</div>
-       <p *ngIf="viewMode === 'equipment'">Select equipment from the list to view details and create a service ticket.</p>
-       <p *ngIf="viewMode === 'tickets'">Select a ticket from the list to view its associated equipment details.</p>
+      <div class="empty-icon">🔌</div>
+      <p *ngIf="viewMode === 'equipment'">Select equipment from the list to view details and create a service ticket.
+      </p>
+      <p *ngIf="viewMode === 'tickets'">Select a ticket from the list to view its associated equipment details.</p>
     </div>
 
 
@@ -392,7 +522,10 @@
     <div class="wb-header">
       <div class="wb-header-left">
         <button class="wb-back-btn" (click)="exitWorkbench()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
           Back
         </button>
         <div class="wb-title-block">
@@ -406,7 +539,10 @@
           Active Session
         </span>
         <button class="btn-complete-repair" (click)="completeRepair()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
           Complete Repair
         </button>
       </div>
@@ -418,141 +554,172 @@
       <!-- TOP ROW: ticket info+timer (left) · notes+timeline (right) -->
       <div class="wb-top-row">
 
-      <!-- LEFT COLUMN -->
-      <div class="wb-col-left">
+        <!-- LEFT COLUMN -->
+        <div class="wb-col-left">
 
-        <!-- Active Ticket Card -->
-        <div class="wb-card">
-          <div class="wb-card-header">
-            <h4>Active Ticket</h4>
-            <span class="prio-tag" [ngClass]="getPriorityClass(workbenchTicket.priority)">{{ workbenchTicket.priority }}</span>
-          </div>
-          <div class="wb-ticket-info">
-            <div class="wbt-row"><span class="wbt-lbl">Equipment</span><span class="wbt-val">{{ workbenchTicket.equipmentName }}</span></div>
-            <div class="wbt-row"><span class="wbt-lbl">Category</span><span class="wbt-val">{{ workbenchTicket.category }}</span></div>
-            <div class="wbt-row"><span class="wbt-lbl">Status</span><span class="wbt-val"><span class="status-badge-wb in-progress">In Progress</span></span></div>
-            <div class="wbt-row" *ngIf="workbenchEquipment"><span class="wbt-lbl">Serial</span><span class="wbt-val">{{ workbenchEquipment.serialNumber }}</span></div>
-            <div class="wbt-problem">
-              <span class="wbt-lbl">Problem description</span>
-              <p>{{ workbenchTicket.description }}</p>
+          <!-- Active Ticket Card -->
+          <div class="wb-card">
+            <div class="wb-card-header">
+              <h4>Active Ticket</h4>
+              <span class="prio-tag" [ngClass]="getPriorityClass(workbenchTicket.priority)">{{ workbenchTicket.priority
+                }}</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Work Timer -->
-        <div class="wb-card wb-timer-card">
-          <div class="wb-card-header">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              <h4>Work Timer</h4>
-            </div>
-            <span class="timer-status" [class.running]="timerRunning">{{ timerRunning ? 'Running' : 'Paused' }}</span>
-          </div>
-          <div class="wb-timer-display">{{ formatTimer() }}</div>
-          <div class="wb-timer-controls">
-            <button class="wb-btn-start" (click)="startTimer()" [disabled]="timerRunning">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="0"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-              Start
-            </button>
-            <button class="wb-btn-stop" (click)="stopTimer()" [disabled]="!timerRunning">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="0"><rect x="3" y="3" width="18" height="18" rx="2"></rect></svg>
-              Stop
-            </button>
-          </div>
-        </div>
-
-        <!-- Parts Used -->
-        <div class="wb-card">
-          <div class="wb-card-header">
-            <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
-              <h4>Parts Used</h4>
-              <span class="inventory-badge" *ngIf="userInventory.length > 0">
-                📦 {{ userInventory.length }} items in stock
-              </span>
-            </div>
-          </div>
-          
-          <div class="wb-parts-list" *ngIf="partsUsed.length > 0">
-            <div class="wb-part-row" *ngFor="let part of partsUsed; let i = index">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-              <span class="wb-part-name">{{ part.name }}</span>
-              <span class="wb-part-qty">Qty: {{ part.qty }}</span>
-              <button class="wb-remove-part" (click)="removePart(i)">×</button>
-            </div>
-          </div>
-
-          <div class="wb-add-part-form">
-            <div class="wb-form-row">
-              <div class="wb-form-group">
-                <label class="wb-small-label">Category</label>
-                <select class="wb-input wb-select" [(ngModel)]="selectedPartCategory" (change)="selectedPartFromInventory = null; newPartName = ''">
-                  <option value="">-- Choose Category --</option>
-                  <option *ngFor="let cat of inventoryCategories" [value]="cat">{{ cat }}</option>
-                </select>
+            <div class="wb-ticket-info">
+              <div class="wbt-row"><span class="wbt-lbl">Equipment</span><span class="wbt-val">{{
+                  workbenchTicket.equipmentName }}</span></div>
+              <div class="wbt-row"><span class="wbt-lbl">Category</span><span class="wbt-val">{{
+                  workbenchTicket.category }}</span></div>
+              <div class="wbt-row"><span class="wbt-lbl">Status</span><span class="wbt-val"><span
+                    class="status-badge-wb in-progress">In Progress</span></span></div>
+              <div class="wbt-row" *ngIf="workbenchEquipment"><span class="wbt-lbl">Serial</span><span
+                  class="wbt-val">{{ workbenchEquipment.serialNumber }}</span></div>
+              <div class="wbt-problem">
+                <span class="wbt-lbl">Problem description</span>
+                <p>{{ workbenchTicket.description }}</p>
               </div>
+            </div>
+          </div>
 
-              <div class="wb-form-group" [class.wb-disabled]="!selectedPartCategory">
-                <label class="wb-small-label">Part Name</label>
-                <select class="wb-input wb-select" [ngModel]="newPartName" (ngModelChange)="onPartSelect($event)" [disabled]="!selectedPartCategory">
-                  <option value="">-- Choose Part --</option>
-                  <option *ngFor="let part of partsInCategory" [value]="part.name">
-                    {{ part.name }} ({{ part.totalQty }} avail.)
-                  </option>
-                </select>
+          <!-- Work Timer -->
+          <div class="wb-card wb-timer-card">
+            <div class="wb-card-header">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                  stroke="#3b82f6" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <h4>Work Timer</h4>
               </div>
-
-              <div class="wb-form-group" style="width: 80px;">
-                <label class="wb-small-label">Qty <span *ngIf="selectedPartFromInventory" class="wb-max-hint">Max {{ selectedPartFromInventory.totalQty }}</span></label>
-                <input class="wb-input" type="number" [(ngModel)]="newPartQty" min="1">
-              </div>
-
-              <button class="wb-btn-add-part-btn" (click)="addPart()" [disabled]="!newPartName">
-                Add
+              <span class="timer-status" [class.running]="timerRunning">{{ timerRunning ? 'Running' : 'Paused' }}</span>
+            </div>
+            <div class="wb-timer-display">{{ formatTimer() }}</div>
+            <div class="wb-timer-controls">
+              <button class="wb-btn-start" (click)="startTimer()" [disabled]="timerRunning">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white"
+                  stroke="white" stroke-width="0">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Start
+              </button>
+              <button class="wb-btn-stop" (click)="stopTimer()" [disabled]="!timerRunning">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white"
+                  stroke="white" stroke-width="0">
+                  <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                </svg>
+                Stop
               </button>
             </div>
           </div>
-        </div>
 
-      </div><!-- /wb-col-left -->
+          <!-- Parts Used -->
+          <div class="wb-card">
+            <div class="wb-card-header">
+              <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
+                <h4>Parts Used</h4>
+                <span class="inventory-badge" *ngIf="userInventory.length > 0">
+                  📦 {{ userInventory.length }} items in stock
+                </span>
+              </div>
+            </div>
 
-      <!-- RIGHT COLUMN -->
-      <div class="wb-col-right">
+            <div class="wb-parts-list" *ngIf="partsUsed.length > 0">
+              <div class="wb-part-row" *ngFor="let part of partsUsed; let i = index">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="#3b82f6" stroke-width="2">
+                  <path
+                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                </svg>
+                <span class="wb-part-name">{{ part.name }}</span>
+                <span class="wb-part-qty">Qty: {{ part.qty }}</span>
+                <button class="wb-remove-part" (click)="removePart(i)">×</button>
+              </div>
+            </div>
 
-        <!-- Notes -->
-        <div class="wb-card wb-notes-card">
-          <div class="wb-card-header"><h4>Notes</h4></div>
-          <div class="wb-notes-list" *ngIf="workNotes.length > 0">
-            <div class="wb-note-item" *ngFor="let note of workNotes">— {{ note }}</div>
-          </div>
-          <div class="wb-notes-empty" *ngIf="workNotes.length === 0">No notes yet. Add your first observation below.</div>
-          <textarea class="wb-textarea" [(ngModel)]="newNoteText" placeholder="Add a note..." (keyup.enter)="addNote()" rows="3"></textarea>
-          <button class="wb-btn-add-note" (click)="addNote()">Add Note</button>
-        </div>
+            <div class="wb-add-part-form">
+              <div class="wb-form-row">
+                <div class="wb-form-group">
+                  <label class="wb-small-label">Category</label>
+                  <select class="wb-input wb-select" [(ngModel)]="selectedPartCategory"
+                    (change)="selectedPartFromInventory = null; newPartName = ''">
+                    <option value="">-- Choose Category --</option>
+                    <option *ngFor="let cat of inventoryCategories" [value]="cat">{{ cat }}</option>
+                  </select>
+                </div>
 
-        <!-- Ticket Timeline -->
-        <div class="wb-card wb-timeline-card">
-          <div class="wb-card-header">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-              <h4>Ticket Timeline</h4>
+                <div class="wb-form-group" [class.wb-disabled]="!selectedPartCategory">
+                  <label class="wb-small-label">Part Name</label>
+                  <select class="wb-input wb-select" [ngModel]="newPartName" (ngModelChange)="onPartSelect($event)"
+                    [disabled]="!selectedPartCategory">
+                    <option value="">-- Choose Part --</option>
+                    <option *ngFor="let part of partsInCategory" [value]="part.name">
+                      {{ part.name }} ({{ part.totalQty }} avail.)
+                    </option>
+                  </select>
+                </div>
+
+                <div class="wb-form-group" style="width: 80px;">
+                  <label class="wb-small-label">Qty <span *ngIf="selectedPartFromInventory" class="wb-max-hint">Max {{
+                      selectedPartFromInventory.totalQty }}</span></label>
+                  <input class="wb-input" type="number" [(ngModel)]="newPartQty" min="1">
+                </div>
+
+                <button class="wb-btn-add-part-btn" (click)="addPart()" [disabled]="!newPartName">
+                  Add
+                </button>
+              </div>
             </div>
           </div>
-          <div class="wb-timeline">
-            <div class="wb-tl-entry" *ngFor="let entry of workbenchTimeline">
-              <div class="wb-tl-dot" [style.background]="entry.color"></div>
-              <div class="wb-tl-content">
-                <div class="wb-tl-event">{{ entry.event }}</div>
-                <div class="wb-tl-meta">
-                  <span>{{ currentUser?.firstName || 'Technician' }}</span>
-                  <span>{{ entry.time | date:'HH:mm' }}</span>
-                  <span class="wb-tl-status-tag" *ngIf="entry.status" [style.color]="entry.color">{{ entry.status }}</span>
+
+        </div><!-- /wb-col-left -->
+
+        <!-- RIGHT COLUMN -->
+        <div class="wb-col-right">
+
+          <!-- Notes -->
+          <div class="wb-card wb-notes-card">
+            <div class="wb-card-header">
+              <h4>Notes</h4>
+            </div>
+            <div class="wb-notes-list" *ngIf="workNotes.length > 0">
+              <div class="wb-note-item" *ngFor="let note of workNotes">— {{ note }}</div>
+            </div>
+            <div class="wb-notes-empty" *ngIf="workNotes.length === 0">No notes yet. Add your first observation below.
+            </div>
+            <textarea class="wb-textarea" [(ngModel)]="newNoteText" placeholder="Add a note..."
+              (keyup.enter)="addNote()" rows="3"></textarea>
+            <button class="wb-btn-add-note" (click)="addNote()">Add Note</button>
+          </div>
+
+          <!-- Ticket Timeline -->
+          <div class="wb-card wb-timeline-card">
+            <div class="wb-card-header">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="#3b82f6" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <h4>Ticket Timeline</h4>
+              </div>
+            </div>
+            <div class="wb-timeline">
+              <div class="wb-tl-entry" *ngFor="let entry of workbenchTimeline">
+                <div class="wb-tl-dot" [style.background]="entry.color"></div>
+                <div class="wb-tl-content">
+                  <div class="wb-tl-event">{{ entry.event }}</div>
+                  <div class="wb-tl-meta">
+                    <span>{{ currentUser?.firstName || 'Technician' }}</span>
+                    <span>{{ entry.time | date:'HH:mm' }}</span>
+                    <span class="wb-tl-status-tag" *ngIf="entry.status" [style.color]="entry.color">{{ entry.status
+                      }}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-      </div><!-- /wb-col-right -->
+        </div><!-- /wb-col-right -->
 
       </div><!-- /wb-top-row -->
 
@@ -561,7 +728,8 @@
         <div class="wb-card-header">
           <div class="wb-kanban-title-row">
             <h4>Repair Tasks</h4>
-            <span class="checklist-progress-label">{{ completedChecklistCount }}/{{ repairChecklist.length }} done</span>
+            <span class="checklist-progress-label">{{ completedChecklistCount }}/{{ repairChecklist.length }}
+              done</span>
           </div>
         </div>
         <!-- Progress Bar -->
@@ -570,13 +738,14 @@
         </div>
         <!-- Add Task Row -->
         <div class="wb-add-task-row">
-          <input class="wb-input" [(ngModel)]="newTaskLabel" placeholder="Add a new task..." (keyup.enter)="addChecklistTask()">
+          <input class="wb-input" [(ngModel)]="newTaskLabel" placeholder="Add a new task..."
+            (keyup.enter)="addChecklistTask()">
           <button class="wb-btn-add-part" (click)="addChecklistTask()">+ Add Task</button>
         </div>
         <!-- Kanban Columns -->
         <div class="wb-kanban-board" cdkDropListGroup>
           <div class="wb-kanban-col" *ngFor="let col of checklistColumns">
-            
+
             <!-- Column Header -->
             <div class="wb-kanban-col-header">
               <span class="wb-kanban-dot" [style.background]="col.dotColor"></span>
@@ -585,19 +754,12 @@
             </div>
 
             <!-- Task Cards (CDK Drop List) -->
-            <div class="wb-kanban-tasks"
-                 cdkDropList
-                 [id]="col.key"
-                 [cdkDropListData]="getTasksForColumn(col.key)"
-                 (cdkDropListDropped)="onTaskDrop($event)"
-                 style="min-height: 100px;">
-              
-              <div class="wb-task-card"
-                   *ngFor="let task of getTasksForColumn(col.key)"
-                   cdkDrag
-                   [cdkDragData]="task"
-                   [class.done-card]="task.status === 'done'">
-                
+            <div class="wb-kanban-tasks" cdkDropList [id]="col.key" [cdkDropListData]="getTasksForColumn(col.key)"
+              (cdkDropListDropped)="onTaskDrop($event)" style="min-height: 100px;">
+
+              <div class="wb-task-card" *ngFor="let task of getTasksForColumn(col.key)" cdkDrag [cdkDragData]="task"
+                [class.done-card]="task.status === 'done'">
+
                 <!-- CDK Drag Placeholder -->
                 <div class="wb-task-placeholder" *cdkDragPlaceholder></div>
 
@@ -605,26 +767,34 @@
                 <ng-container *ngIf="!task.editing">
                   <span class="wb-task-label" [class.strikethrough]="task.status === 'done'">{{ task.label }}</span>
                   <div class="wb-task-actions">
-                    <button class="wb-task-btn edit" title="Edit" (click)="startEditTask(task.id); $event.stopPropagation()">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    <button class="wb-task-btn edit" title="Edit"
+                      (click)="startEditTask(task.id); $event.stopPropagation()">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
                     </button>
-                    <button class="wb-task-btn delete" title="Delete" (click)="deleteChecklistTask(task.id); $event.stopPropagation()">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    <button class="wb-task-btn delete" title="Delete"
+                      (click)="deleteChecklistTask(task.id); $event.stopPropagation()">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      </svg>
                     </button>
                   </div>
-                  <div class="wb-task-col-badge" [style.background]="col.color + '20'" [style.color]="col.color">{{ col.label }}</div>
+                  <div class="wb-task-col-badge" [style.background]="col.color + '20'" [style.color]="col.color">{{
+                    col.label }}</div>
                 </ng-container>
 
                 <!-- Edit mode -->
                 <ng-container *ngIf="task.editing">
-                  <input class="wb-task-edit-input"
-                         [value]="task.label"
-                         #editInput
-                         (keyup.enter)="saveEditTask(task.id, editInput.value)"
-                         (keyup.escape)="task.editing = false"
-                         (click)="$event.stopPropagation()"
-                         autofocus>
-                  <button class="wb-task-btn save" (click)="saveEditTask(task.id, editInput.value); $event.stopPropagation()">✓</button>
+                  <input class="wb-task-edit-input" [value]="task.label" #editInput
+                    (keyup.enter)="saveEditTask(task.id, editInput.value)" (keyup.escape)="task.editing = false"
+                    (click)="$event.stopPropagation()" autofocus>
+                  <button class="wb-task-btn save"
+                    (click)="saveEditTask(task.id, editInput.value); $event.stopPropagation()">✓</button>
                 </ng-container>
               </div>
 
@@ -647,15 +817,25 @@
       <div class="modal-header">
         <div class="modal-header-left">
           <div class="modal-header-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path
+                d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+              <line x1="12" y1="9" x2="12" y2="15" />
+            </svg>
           </div>
           <div>
             <h2>{{ isEditMode ? 'Edit Ticket' : 'Create Issue Ticket' }}</h2>
-            <p class="modal-subtitle">{{ isEditMode ? 'ID: ' + newTicket.id : (newTicket.equipmentName || 'New Service Request') }}</p>
+            <p class="modal-subtitle">{{ isEditMode ? 'ID: ' + newTicket.id : (newTicket.equipmentName || 'New Service
+              Request') }}</p>
           </div>
         </div>
         <button class="modal-close-btn" (click)="closeModal()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
         </button>
       </div>
 
@@ -688,16 +868,28 @@
         <div class="form-group">
           <label>Priority</label>
           <div class="priority-selector">
-            <button class="prio-btn prio-low" [class.active]="newTicket.priority === 'Low'" (click)="setPriority('Low')">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+            <button class="prio-btn prio-low" [class.active]="newTicket.priority === 'Low'"
+              (click)="setPriority('Low')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5">
+                <polyline points="18 15 12 9 6 15" />
+              </svg>
               Low
             </button>
-            <button class="prio-btn prio-medium" [class.active]="newTicket.priority === 'Medium'" (click)="setPriority('Medium')">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <button class="prio-btn prio-medium" [class.active]="newTicket.priority === 'Medium'"
+              (click)="setPriority('Medium')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
               Medium
             </button>
-            <button class="prio-btn prio-high" [class.active]="newTicket.priority === 'High'" (click)="setPriority('High')">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 9 12 15 6 9"/></svg>
+            <button class="prio-btn prio-high" [class.active]="newTicket.priority === 'High'"
+              (click)="setPriority('High')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5">
+                <polyline points="18 9 12 15 6 9" />
+              </svg>
               High
             </button>
           </div>
@@ -706,29 +898,43 @@
         <!-- Description -->
         <div class="form-group">
           <label>Description <span class="required">*</span></label>
-          <textarea [(ngModel)]="newTicket.description" rows="4" placeholder="Provide detailed technical information about the issue..."></textarea>
+          <textarea [(ngModel)]="newTicket.description" rows="4"
+            placeholder="Provide detailed technical information about the issue..."></textarea>
         </div>
 
         <!-- Attachments -->
         <div class="form-group">
           <label>Attachments <span class="optional">(optional)</span></label>
           <div class="attachment-dropzone" (click)="attachInput.click()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5">
+              <path
+                d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+            </svg>
             <span>Click to upload files</span>
             <span class="dropzone-hint">PDF, PNG, JPG, DOCX up to 10MB each</span>
           </div>
-          <input type="file" #attachInput multiple accept=".pdf,.png,.jpg,.jpeg,.docx" style="display:none" (change)="handleAttachmentUpload($event)">
+          <input type="file" #attachInput multiple accept=".pdf,.png,.jpg,.jpeg,.docx" style="display:none"
+            (change)="handleAttachmentUpload($event)">
 
           <!-- Attachment List -->
           <div class="attachment-list" *ngIf="attachmentFiles.length > 0">
             <div class="attachment-item" *ngFor="let file of attachmentFiles; let i = index">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
               <div class="attachment-info">
                 <span class="attachment-name">{{ file.name }}</span>
                 <span class="attachment-size">{{ file.size }}</span>
               </div>
               <button class="attachment-remove" (click)="removeAttachment(i)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </div>
           </div>
@@ -738,9 +944,14 @@
 
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeModal()">Cancel</button>
-        <button class="btn-submit" [disabled]="isSubmitting || !newTicket.title || !newTicket.description" (click)="createTicket()">
-          <svg *ngIf="!isSubmitting" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          {{ isEditMode ? (isSubmitting ? 'Updating...' : 'Update Ticket') : (isSubmitting ? 'Creating...' : 'Create Ticket') }}
+        <button class="btn-submit" [disabled]="isSubmitting || !newTicket.title || !newTicket.description"
+          (click)="createTicket()">
+          <svg *ngIf="!isSubmitting" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          {{ isEditMode ? (isSubmitting ? 'Updating...' : 'Update Ticket') : (isSubmitting ? 'Creating...' : 'Create
+          Ticket') }}
         </button>
       </div>
 
@@ -748,4 +959,3 @@
   </div>
 
 </div>
-

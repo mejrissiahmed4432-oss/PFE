@@ -4,7 +4,11 @@
   <div class="header" *ngIf="mode === 'list'">
     <div class="actions">
       <button class="primary-btn btn-premium" (click)="openAdd()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
         New Equipment
       </button>
     </div>
@@ -12,30 +16,20 @@
 
   <!-- List -->
   <div class="content" *ngIf="mode === 'list'">
-    <app-equipment-list
-      [refreshTrigger]="refreshFlag"
-      (editEvent)="openEdit($event)"
-      (viewEvent)="openView($event)"
+    <app-equipment-list [refreshTrigger]="refreshFlag" (editEvent)="openEdit($event)" (viewEvent)="openView($event)"
       (addSimilarEvent)="openAddSimilar($event)">
     </app-equipment-list>
   </div>
 
   <!-- Form (Edit / View only — Add now uses wizard) -->
   <div class="content" *ngIf="mode === 'form'">
-    <app-equipment-form
-      [equipment]="equipmentToEdit"
-      [viewOnly]="formViewOnly"
-      [isAddSimilar]="isAddSimilar"
+    <app-equipment-form [equipment]="equipmentToEdit" [viewOnly]="formViewOnly" [isAddSimilar]="isAddSimilar"
       (closeEvent)="closeForm($event)">
     </app-equipment-form>
   </div>
 
   <!-- Add Equipment Wizard (slide-in panel) -->
-  <app-equipment-wizard
-    [visible]="showWizard"
-    [prefillData]="wizardPrefillData"
-    
-    (closeEvent)="onWizardClose($event)">
+  <app-equipment-wizard [visible]="showWizard" [prefillData]="wizardPrefillData" (closeEvent)="onWizardClose($event)">
   </app-equipment-wizard>
 
 </div>

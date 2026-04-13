@@ -64,7 +64,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   filteredEquipments: EquipmentWithHistory[] = [];
   selectedEquipment: EquipmentWithHistory | null = null;
   selectedTicket: Ticket | null = null;
-  
+
   ticketsList: Ticket[] = [];
   filteredTickets: Ticket[] = [];
 
@@ -198,7 +198,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
       next: (requests) => {
         const approved = requests.filter(r => r.status === 'APPROVED');
         const itemsList: any[] = [];
-        
+
         approved.forEach(req => {
           (req.items || []).forEach(item => {
             const existing = itemsList.find(i => i.name.toLowerCase() === item.partName.toLowerCase());
@@ -213,7 +213,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
             }
           });
         });
-        
+
         this.userInventory = itemsList;
       },
       error: (err) => console.error('Failed to load user inventory', err)
@@ -222,7 +222,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   loadTickets(): void {
     // Determine whether to load all tickets or just the current technician's
-    const fetchCall = this.currentUser?.role === 'TECHNICIAN' 
+    const fetchCall = this.currentUser?.role === 'TECHNICIAN'
       ? this.ticketService.getTicketsByUser(this.currentUser.id)
       : this.ticketService.getTickets();
 
@@ -265,9 +265,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   applyTicketFilters(): void {
     // Only show tickets that are NOT 'Resolved' or 'Closed' (Still Open)
-    this.filteredTickets = this.ticketsList.filter(t => 
+    this.filteredTickets = this.ticketsList.filter(t =>
       t.status !== 'Resolved' && t.status !== 'Closed'
-    ).sort((a,b) => {
+    ).sort((a, b) => {
       const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
       const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
       return dateB - dateA; // Newest first
@@ -304,7 +304,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
     // 1. General Search query (Name, Brand, Model, Specification)
     if (this.searchQuery) {
       const q = this.searchQuery.toLowerCase();
-      result = result.filter(e => 
+      result = result.filter(e =>
         (e.equipmentName || '').toLowerCase().includes(q) ||
         (e.brand || '').toLowerCase().includes(q) ||
         (e.model || '').toLowerCase().includes(q) ||
@@ -327,7 +327,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
     if (this.filterType !== 'All Types' && this.filterType) {
       result = result.filter(e => e.type === this.filterType);
     }
-    
+
     this.filteredEquipments = result;
   }
 
@@ -348,7 +348,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
       issue: t.title,
       date: t.createdAt ? new Date(t.createdAt).toISOString().split('T')[0] : 'N/A',
       technician: 'Technician' // Placeholder until Ticket has assigned technician info
-    })).sort((a,b) => b.date.localeCompare(a.date));
+    })).sort((a, b) => b.date.localeCompare(a.date));
 
     // Map to ExtendedHistoryEntry (Rich Timeline)
     eq.extendedHistory = relatedTickets.map(t => ({
@@ -360,7 +360,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
       title: t.title,
       description: t.description,
       user: 'Requested by User'
-    })).sort((a,b) => b.referenceId.localeCompare(a.referenceId));
+    })).sort((a, b) => b.referenceId.localeCompare(a.referenceId));
 
     // Set Last Repair Date
     if (eq.repairHistory.length > 0) {
@@ -394,7 +394,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
       // Simulate QR reading finding EQ-001
       this.filterSerial = 'EQ-001';
       this.applyFilters();
-      
+
       const found = this.filteredEquipments.find(e => e.serialNumber === 'EQ-001');
       if (found) {
         this.selectEquipment(found);
@@ -415,8 +415,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
     if (!equipmentName) return false;
     // Block if there is any ticket that is NOT Resolved, Closed, or Completed
     const inactiveStatuses = ['Resolved', 'Closed', 'Completed', 'Done'];
-    return this.ticketsList.some(t => 
-      (t.equipmentName === equipmentName) && 
+    return this.ticketsList.some(t =>
+      (t.equipmentName === equipmentName) &&
       !inactiveStatuses.includes(t.status || '')
     );
   }
@@ -424,7 +424,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   // Ticket Creation Flow
   openTicketModal(): void {
     if (!this.selectedEquipment) return;
-    
+
     const eqName = this.selectedEquipment.name || this.selectedEquipment.equipmentName;
     if (this.hasActiveTicket(eqName)) {
       alert(`Cannot create a new ticket. There is already an active ticket for ${eqName}. Please complete or delete the existing ticket first.`);
@@ -503,14 +503,14 @@ export class TicketsComponent implements OnInit, OnDestroy {
       attachments: this.attachmentFiles.map(f => f.base64 || f.name)
     };
 
-    const request = this.isEditMode && this.newTicket.id 
+    const request = this.isEditMode && this.newTicket.id
       ? this.ticketService.updateTicket(this.newTicket.id, ticketData)
       : this.ticketService.createTicket(ticketData);
 
     request.subscribe({
       next: (result) => {
         console.log(this.isEditMode ? "Ticket updated" : "Ticket created", result);
-        
+
         if (this.isEditMode) {
           const idx = this.ticketsList.findIndex(t => t.id === result.id);
           if (idx !== -1) this.ticketsList[idx] = result;
@@ -518,16 +518,16 @@ export class TicketsComponent implements OnInit, OnDestroy {
         } else {
           this.ticketsList.unshift(result);
         }
-        
+
         this.closeModal();
         this.isSubmitting = false;
         this.applyTicketFilters();
-        
+
         if (!this.isEditMode && this.selectedEquipment) {
           // Update status locally
           this.selectedEquipment.status = 'In Maintenance';
           this.calculateEquipmentHistory(this.selectedEquipment);
-          
+
           // Persist status to backend
           const eqId = this.selectedEquipment.id || '';
           if (eqId) {
@@ -537,43 +537,43 @@ export class TicketsComponent implements OnInit, OnDestroy {
             });
           }
         }
-        
+
         this.viewMode = 'tickets';
       },
       error: (err) => {
-         console.error('Error saving ticket', err);
-         this.isSubmitting = false;
-         // Fallback for demo
-         if (this.isEditMode) {
-           const idx = this.ticketsList.findIndex(t => t.id === ticketData.id);
-           if (idx !== -1) this.ticketsList[idx] = ticketData;
-           this.selectedTicket = ticketData;
-         } else {
-           this.ticketsList.unshift(ticketData);
-         }
-         this.closeModal();
+        console.error('Error saving ticket', err);
+        this.isSubmitting = false;
+        // Fallback for demo
+        if (this.isEditMode) {
+          const idx = this.ticketsList.findIndex(t => t.id === ticketData.id);
+          if (idx !== -1) this.ticketsList[idx] = ticketData;
+          this.selectedTicket = ticketData;
+        } else {
+          this.ticketsList.unshift(ticketData);
+        }
+        this.closeModal();
       }
     });
   }
 
   deleteTicket(id: string | undefined): void {
     if (!id || !window.confirm('Are you sure you want to delete this ticket?')) return;
-    
+
     this.ticketService.deleteTicket(id).subscribe({
       next: () => {
         // Remove from memory
         this.ticketsList = this.ticketsList.filter(t => t.id !== id);
-        
+
         // Refresh detail state
         this.selectedTicket = null;
         if (this.selectedEquipment) {
           this.calculateEquipmentHistory(this.selectedEquipment);
         }
-        
+
         // Refresh lists and stats
         this.calculateStats();
         this.applyTicketFilters();
-        
+
         console.log('Ticket deleted successfully');
       },
       error: (err) => {
@@ -645,7 +645,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
         if (idx !== -1) this.ticketsList[idx] = res;
         this.applyTicketFilters();
       },
-      error: () => {}
+      error: () => { }
     });
     this.showWorkbench = true;
     this.loadWorkbenchState(ticket.id!);
@@ -758,9 +758,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   saveEditTask(id: string, newLabel: string): void {
     const task = this.repairChecklist.find(t => t.id === id);
-    if (task) { 
-      task.label = newLabel.trim() || task.label; 
-      task.editing = false; 
+    if (task) {
+      task.label = newLabel.trim() || task.label;
+      task.editing = false;
       this.saveWorkbenchState();
     }
   }
@@ -784,7 +784,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
       // Moving between columns
       const task = event.item.data;
       const newStatus = event.container.id as any; // We'll set column ID to the status key
-      
+
       this.moveTaskToColumn(task.id, newStatus);
     }
   }
@@ -810,15 +810,15 @@ export class TicketsComponent implements OnInit, OnDestroy {
       }
     }
 
-    const existing = this.partsUsed.find((p: {name: string; qty: number}) => p.name.toLowerCase() === name.toLowerCase());
+    const existing = this.partsUsed.find((p: { name: string; qty: number }) => p.name.toLowerCase() === name.toLowerCase());
     if (existing) {
       existing.qty += this.newPartQty;
     } else {
       this.partsUsed.push({ name, qty: this.newPartQty });
     }
-    
+
     this.workbenchTimeline.push({ event: `Part added: ${name} x${this.newPartQty}`, color: '#f59e0b', time: new Date() });
-    
+
     // Reset selection
     this.newPartName = '';
     this.newPartQty = 1;

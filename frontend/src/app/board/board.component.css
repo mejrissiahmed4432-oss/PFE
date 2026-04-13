@@ -87,13 +87,15 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 8px; /* Matching the icon's inner curvature */
+  border-radius: 8px;
+  /* Matching the icon's inner curvature */
 }
 
 .logo-img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Cover ensures it fills the 44px box */
+  object-fit: cover;
+  /* Cover ensures it fills the 44px box */
 }
 
 .brand-name {
@@ -141,7 +143,7 @@
   right: -16px;
   top: 24px;
   background: var(--c-white);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--c-border);
   z-index: 110;
   width: 32px;
@@ -227,11 +229,11 @@
    ────────────────────────────────────────────────────────── */
 .sidebar-footer {
   padding: 20px;
-  
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
+
   flex-direction: column;
   gap: 16px;
 }
@@ -250,7 +252,7 @@
   height: auto;
   object-fit: contain;
   transition: opacity var(--transition);
- 
+
   margin-bottom: 50px;
 }
 
@@ -370,7 +372,7 @@
   background-color: var(--c-white);
   border: 1px solid var(--c-border);
   border-radius: var(--r-md);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0,0,0,0.02);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
   opacity: 0;
   visibility: hidden;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -417,9 +419,11 @@
 
 .lang-btn {
   background-color: var(--c-input-bg) !important;
-  border-radius: 100px !important; /* Pill shape to fit icon + text */
+  border-radius: 100px !important;
+  /* Pill shape to fit icon + text */
   padding: 0 12px 0 8px !important;
-  width: auto !important; /* Allow width to grow with text */
+  width: auto !important;
+  /* Allow width to grow with text */
   height: 40px !important;
   display: flex !important;
   align-items: center !important;
@@ -517,6 +521,7 @@
   display: flex;
   flex-direction: column;
   background-color: transparent;
+  min-width: 0; /* Prevent flex items from expanding beyond parent */
 }
 
 /* TOP BAR */
@@ -622,7 +627,8 @@
 .action-icon {
   width: 20px;
   height: 20px;
-  stroke: #869ab8; /* Lighter, softer blue-gray matching image */
+  stroke: #869ab8;
+  /* Lighter, softer blue-gray matching image */
   stroke-width: 1.75;
 }
 
@@ -667,7 +673,8 @@
 }
 
 .notifications-menu {
-  width: 380px; /* Matched to typical drawer width */
+  width: 380px;
+  /* Matched to typical drawer width */
   right: -50px;
   left: auto;
   transform: translateY(10px);
@@ -738,10 +745,12 @@
   font-weight: 600;
   transition: color var(--transition);
 }
+
 .notif-text-btn:hover {
   color: #3b82f6;
   text-decoration: underline;
 }
+
 .notif-text-btn.danger:hover {
   color: #ef4444;
 }
@@ -758,9 +767,11 @@
 .notif-list::-webkit-scrollbar {
   width: 6px;
 }
+
 .notif-list::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .notif-list::-webkit-scrollbar-thumb {
   background-color: var(--c-border);
   border-radius: 4px;
@@ -794,7 +805,8 @@
   font-size: 0.9rem;
   color: #0f172a;
   line-height: 1.5;
-  padding-right: 12px; /* make room for close bit if it wraps */
+  padding-right: 12px;
+  /* make room for close bit if it wraps */
   word-break: break-word;
   white-space: normal;
 }
@@ -857,6 +869,7 @@
   font-size: 0.95rem;
   cursor: pointer;
 }
+
 .close-drawer-btn:hover {
   text-decoration: underline;
 }
@@ -866,7 +879,10 @@
   padding: 32px;
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+  max-width: 100%;
 }
+
 .content-area.no-padding {
   padding: 0;
   overflow: hidden;

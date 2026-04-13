@@ -65,7 +65,8 @@
   transition: all 0.2s;
 }
 
-.icon-toggle-btn:hover, .icon-toggle-btn.active {
+.icon-toggle-btn:hover,
+.icon-toggle-btn.active {
   background: #f1f5f9;
   border-color: #cbd5e1;
   color: #1e293b;
@@ -94,7 +95,7 @@
 .view-btn.active {
   background: white;
   color: #3b82f6;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .filters-panel {
@@ -109,8 +110,15 @@
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .filter-group {
@@ -199,11 +207,30 @@
   letter-spacing: 0.02em;
 }
 
-.badge.hardware { background: #eff6ff; color: #3b82f6; }
-.badge.software { background: #f0fdf4; color: #16a34a; }
-.badge.services { background: #fff7ed; color: #ea580c; }
-.badge.network { background: #fef2f2; color: #dc2626; }
-.badge.default { background: #f1f5f9; color: #64748b; }
+.badge.hardware {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.badge.software {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.badge.services {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.badge.network {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.badge.default {
+  background: #f1f5f9;
+  color: #64748b;
+}
 
 .actions-cell {
   text-align: right;
@@ -278,9 +305,18 @@
   background: #f1f5f9;
 }
 
-.action-icon.view:hover { color: #3b82f6; }
-.action-icon.edit:hover { color: #2563eb; }
-.action-icon.delete:hover { color: #ef4444; background: #fef2f2; }
+.action-icon.view:hover {
+  color: #3b82f6;
+}
+
+.action-icon.edit:hover {
+  color: #2563eb;
+}
+
+.action-icon.delete:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}
 
 .card-grid {
   display: grid;
@@ -349,8 +385,14 @@
   font-size: 0.9rem;
 }
 
-.info-row .label { color: #64748b; }
-.info-row .value { color: #1e293b; font-weight: 500; }
+.info-row .label {
+  color: #64748b;
+}
+
+.info-row .value {
+  color: #1e293b;
+  font-weight: 500;
+}
 
 .card-footer {
   display: flex;

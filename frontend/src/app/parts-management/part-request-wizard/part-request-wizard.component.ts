@@ -147,13 +147,10 @@ export class PartRequestWizardComponent implements OnInit {
 
   loadAllStock(): void {
     this.equipmentService.getAllEquipment().subscribe((data: any[]) => {
-      const partCategories = ['COMPONENT', 'STORAGE', 'PARTS', 'CONSUMABLE'];
-      // Pre-filter to only in-stock relevant items
+      // Pre-filter to only in-stock items.
+      // We admitted any category because filtering by specified category/type happens in onTypeChange.
       this.allStock = data.filter((item: any) => {
-        const cat = (item.category || '').toUpperCase();
-        const isInStock = this.getPartStatus(item) === 'In stock';
-        const isPart = partCategories.includes(cat) || cat.includes('COMPONENT') || cat.includes('STORAGE') || cat.includes('CONSUMABLE');
-        return isPart && isInStock;
+        return this.getPartStatus(item) === 'In stock';
       });
 
       // Update maxAvailable for any existing cart items (e.g. from editRequest)

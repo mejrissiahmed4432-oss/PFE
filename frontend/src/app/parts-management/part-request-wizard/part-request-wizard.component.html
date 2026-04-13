@@ -128,7 +128,9 @@
                     <div style="font-weight: 600; color: #1e293b;">{{ g.name }}</div>
                     <div style="font-size: 0.75rem; color: #64748b;">{{ g.brand }}</div>
                   </td>
-                  <td>{{ g.specification || '—' }}</td>
+                  <td style="max-width: 250px;">
+                    <div style="word-break: break-all; font-size: 0.85rem; color: #475569;">{{ g.specification || '—' }}</div>
+                  </td>
                   <td style="text-align: center;">
                     <span class="stock-badge" [style.background]="g.availableQte === 0 ? '#fee2e2' : ''"
                       [style.color]="g.availableQte === 0 ? '#dc2626' : ''">{{ g.availableQte }}</span>
