@@ -141,7 +141,7 @@
                   <td style="text-align: center;">
                     <span *ngIf="g.availableQte === 0" style="font-size: 0.75rem; color: #94a3b8;">—</span>
                     <input *ngIf="g.availableQte > 0" type="number" class="tbl-input" min="1" [(ngModel)]="g.requestQte"
-                      [disabled]="!g.selected" (blur)="validateQuantity(g)" (change)="validateQuantity(g)"
+                      [disabled]="!g.selected" (ngModelChange)="validateQuantity(g)"
                       style="text-align: center;">
                   </td>
                 </tr>
