@@ -17,12 +17,7 @@
       </div>
     </div>
     <div class="header-right">
-      <div class="filter-chips">
-        <button class="chip" [class.active]="currentFilter === 'All'" (click)="currentFilter = 'All'">All <span>{{ stats.total }}</span></button>
-        <button class="chip" [class.active]="currentFilter === 'Today'" (click)="currentFilter = 'Today'">Today</button>
-        <button class="chip" [class.active]="currentFilter === 'Upcoming'" (click)="currentFilter = 'Upcoming'">Upcoming</button>
-        <button class="chip" [class.active]="currentFilter === 'Completed'" (click)="currentFilter = 'Completed'">Completed</button>
-      </div>
+
       <button class="add-task-btn" (click)="showAddModal = true">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         Add Task
@@ -88,12 +83,14 @@
                  (cdkDropListDropped)="onDrop($event)">
               
               <div class="task-card" *ngFor="let task of todoTasks" cdkDrag (click)="openDetail(task)">
-                <div class="task-card-top">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <h4 class="task-title">{{ task.title }}</h4>
-                    <span *ngIf="$any(task).isOverdue" style="font-size: 10px; font-weight: 700; background: #fee2e2; color: #ef4444; padding: 2px 6px; border-radius: 12px; display: inline-flex; align-items: center;" [title]="'Rolled over from ' + task.originalDueDate">Overdue (Since {{ task.originalDueDate }})</span>
+                <div class="task-card-header">
+                  <div class="overdue-tag-wrapper" *ngIf="$any(task).isOverdue">
+                    <span class="overdue-badge" [title]="'Rolled over from ' + task.originalDueDate">Overdue (Since {{ task.originalDueDate }})</span>
                   </div>
-                  <span class="priority-badge" [class]="getPriorityClass(task.priority)">{{ task.priority | uppercase }}</span>
+                  <div class="task-card-top-row">
+                    <h4 class="task-title">{{ task.title }}</h4>
+                    <span class="priority-badge" [class]="getPriorityClass(task.priority)">{{ task.priority | uppercase }}</span>
+                  </div>
                 </div>
                 <p class="task-desc">{{ task.description }}</p>
                 <div class="task-footer">
@@ -128,12 +125,14 @@
                  (cdkDropListDropped)="onDrop($event)">
               
               <div class="task-card" *ngFor="let task of inProgressTasks" cdkDrag (click)="openDetail(task)">
-                <div class="task-card-top">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <h4 class="task-title">{{ task.title }}</h4>
-                    <span *ngIf="$any(task).isOverdue" style="font-size: 10px; font-weight: 700; background: #fee2e2; color: #ef4444; padding: 2px 6px; border-radius: 12px; display: inline-flex; align-items: center;" [title]="'Rolled over from ' + task.originalDueDate">Overdue (Since {{ task.originalDueDate }})</span>
+                <div class="task-card-header">
+                  <div class="overdue-tag-wrapper" *ngIf="$any(task).isOverdue">
+                    <span class="overdue-badge" [title]="'Rolled over from ' + task.originalDueDate">Overdue (Since {{ task.originalDueDate }})</span>
                   </div>
-                  <span class="priority-badge" [class]="getPriorityClass(task.priority)">{{ task.priority | uppercase }}</span>
+                  <div class="task-card-top-row">
+                    <h4 class="task-title">{{ task.title }}</h4>
+                    <span class="priority-badge" [class]="getPriorityClass(task.priority)">{{ task.priority | uppercase }}</span>
+                  </div>
                 </div>
                 <p class="task-desc">{{ task.description }}</p>
                 <div class="task-footer">
@@ -168,9 +167,11 @@
                  (cdkDropListDropped)="onDrop($event)">
               
               <div class="task-card completed" *ngFor="let task of doneTasks" cdkDrag (click)="openDetail(task)">
-                <div class="task-card-top">
-                  <h4 class="task-title">{{ task.title }}</h4>
-                  <span class="priority-badge" [class]="getPriorityClass(task.priority)">{{ task.priority | uppercase }}</span>
+                <div class="task-card-header">
+                  <div class="task-card-top-row">
+                    <h4 class="task-title">{{ task.title }}</h4>
+                    <span class="priority-badge" [class]="getPriorityClass(task.priority)">{{ task.priority | uppercase }}</span>
+                  </div>
                 </div>
                 <p class="task-desc">{{ task.description }}</p>
                 <div class="task-footer">
@@ -205,9 +206,11 @@
             
             <div class="history-list" *ngIf="historyTasks.length > 0">
               <div class="task-card history-card" *ngFor="let task of historyTasks" (click)="openDetail(task)">
-                <div class="task-card-top">
-                  <h4 class="task-title">{{ task.title }}</h4>
-                  <span class="history-badge">Archived</span>
+                <div class="task-card-header">
+                  <div class="task-card-top-row">
+                    <h4 class="task-title">{{ task.title }}</h4>
+                    <span class="history-badge">Archived</span>
+                  </div>
                 </div>
                 <p class="task-desc">{{ task.description }}</p>
                 <div class="task-footer">
@@ -246,7 +249,7 @@
              (click)="toggleDayFilter(day)">
           <span *ngIf="day" class="day-num">{{ day.getDate() }}</span>
           <div class="day-task-dots">
-            <span *ngIf="hasTasksOnDay(day).length > 0" class="dot-single-task"></span>
+            <span *ngIf="hasTasksOnDay(day).length > 0" class="dot-single-task" [ngClass]="{'has-history-dot': hasHistoryTasksOnDay(day)}"></span>
           </div>
         </div>
       </div>

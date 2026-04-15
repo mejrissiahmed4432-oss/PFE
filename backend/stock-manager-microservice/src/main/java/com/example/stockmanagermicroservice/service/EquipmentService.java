@@ -24,6 +24,9 @@ public class EquipmentService {
     private EquipmentRepository equipmentRepository;
 
     @Autowired
+    private AlertService alertService;
+
+    @Autowired
     private NotificationService notificationService;
 
     @Autowired
@@ -36,11 +39,11 @@ public class EquipmentService {
     private MongoTemplate mongoTemplate;
 
     public List<Equipment> getAllEquipment() {
-        return equipmentRepository.findAll();
+        return equipmentRepository.findAllExcludingFiles();
     }
 
     public List<Equipment> getEquipmentByShelfId(String shelfId) {
-        return equipmentRepository.findByShelfId(shelfId);
+        return equipmentRepository.findByShelfIdExcludingFiles(shelfId);
     }
 
     public boolean isSerialNumberUnique(String serialNumber, String excludeId) {
@@ -53,6 +56,11 @@ public class EquipmentService {
     }
 
     public Optional<Equipment> getEquipmentById(String id) {
+        return equipmentRepository.findByIdExcludingFiles(id);
+    }
+
+    /** Fetches the full Equipment object INCLUDING file data. Use only for file download endpoints. */
+    public Optional<Equipment> getEquipmentFiles(String id) {
         return equipmentRepository.findById(id);
     }
 
@@ -126,6 +134,7 @@ public class EquipmentService {
 
     public Equipment updateEquipment(String id, Equipment equipmentDetails) {
         return equipmentRepository.findById(id).map(equipment -> {
+            String oldName = equipment.getEquipmentName();
             String oldShelfId = equipment.getShelfId();
             Integer oldQte = equipment.getQte() != null ? equipment.getQte() : 1;
 
@@ -171,14 +180,30 @@ public class EquipmentService {
             equipment.setDepartment(equipmentDetails.getDepartment());
             equipment.setCreatedBy(equipmentDetails.getCreatedBy());
 
-            // File Documents (Conditional Update)
-            if (equipmentDetails.getInvoiceFileData() != null && !equipmentDetails.getInvoiceFileData().isEmpty()) {
-                equipment.setInvoiceFileName(equipmentDetails.getInvoiceFileName());
-                equipment.setInvoiceFileData(equipmentDetails.getInvoiceFileData());
+            // File Documents (Conditional update to avoid wiping un-fetched data)
+            if (equipmentDetails.getInvoiceFileName() != null) {
+                if ("DELETE".equals(equipmentDetails.getInvoiceFileName())) {
+                    equipment.setInvoiceFileName(null);
+                    equipment.setInvoiceFileData(null);
+                } else {
+                    equipment.setInvoiceFileName(equipmentDetails.getInvoiceFileName());
+                    // Keep existing if new data wasn't provided but name is there
+                    if (equipmentDetails.getInvoiceFileData() != null) {
+                        equipment.setInvoiceFileData(equipmentDetails.getInvoiceFileData());
+                    }
+                }
             }
-            if (equipmentDetails.getWarrantyFileData() != null && !equipmentDetails.getWarrantyFileData().isEmpty()) {
-                equipment.setWarrantyFileName(equipmentDetails.getWarrantyFileName());
-                equipment.setWarrantyFileData(equipmentDetails.getWarrantyFileData());
+
+            if (equipmentDetails.getWarrantyFileName() != null) {
+                if ("DELETE".equals(equipmentDetails.getWarrantyFileName())) {
+                    equipment.setWarrantyFileName(null);
+                    equipment.setWarrantyFileData(null);
+                } else {
+                    equipment.setWarrantyFileName(equipmentDetails.getWarrantyFileName());
+                    if (equipmentDetails.getWarrantyFileData() != null) {
+                        equipment.setWarrantyFileData(equipmentDetails.getWarrantyFileData());
+                    }
+                }
             }
 
             // Device Specifications
@@ -205,6 +230,11 @@ public class EquipmentService {
 
             equipment.setUpdatedAt(LocalDateTime.now());
             Equipment updated = equipmentRepository.save(equipment);
+
+            // Sync alerts if name changed
+            if (oldName != null && !oldName.equals(updated.getEquipmentName())) {
+                alertService.updateAlertsRelatedToNameChange(updated.getId(), oldName, updated.getEquipmentName());
+            }
 
             // If QR code was explicitly removed, force $unset in MongoDB to guarantee field
             // removal

@@ -67,26 +67,16 @@
   <div class="filters-panel" *ngIf="showFilters">
     <div class="filter-group">
       <label>Category</label>
-      <select [(ngModel)]="filterCategory" (change)="applyFilters()">
+      <select [(ngModel)]="filterCategory" (change)="onCategoryChange()">
         <option value="">All Categories</option>
-        <option value="Laptops">Laptops</option>
-        <option value="Monitors">Monitors</option>
-        <option value="Computers">Computers</option>
-        <option value="Networking">Networking</option>
-        <option value="Accessories">Accessories</option>
-        <option value="Storage">Storage</option>
+        <option *ngFor="let cat of categoriesList" [value]="cat.name">{{ cat.name }}</option>
       </select>
     </div>
-    <div class="filter-group">
-      <label>Brand</label>
-      <select [(ngModel)]="filterBrand" (change)="applyFilters()">
-        <option value="">All Brands</option>
-        <option value="Apple">Apple</option>
-        <option value="Dell">Dell</option>
-        <option value="HP">HP</option>
-        <option value="Cisco">Cisco</option>
-        <option value="Logitech">Logitech</option>
-        <option value="Samsung">Samsung</option>
+    <div class="filter-group" *ngIf="filterCategory">
+      <label>Type</label>
+      <select [(ngModel)]="filterType" (change)="applyFilters()">
+        <option value="">All Types</option>
+        <option *ngFor="let type of getAvailableTypes()" [value]="type">{{ type | titlecase }}</option>
       </select>
     </div>
     <div class="filter-group">

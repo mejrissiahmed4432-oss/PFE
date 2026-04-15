@@ -44,6 +44,20 @@ public class EquipmentController {
         return equipmentService.createEquipment(equipment);
     }
 
+    @GetMapping("/{id}/invoice-file")
+    public ResponseEntity<String> getInvoiceFile(@PathVariable String id) {
+        return equipmentService.getEquipmentFiles(id)
+                .map(eq -> ResponseEntity.ok(eq.getInvoiceFileData()))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{id}/warranty-file")
+    public ResponseEntity<String> getWarrantyFile(@PathVariable String id) {
+        return equipmentService.getEquipmentFiles(id)
+                .map(eq -> ResponseEntity.ok(eq.getWarrantyFileData()))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Equipment> updateEquipment(@PathVariable String id, @RequestBody Equipment equipment) {
         try {

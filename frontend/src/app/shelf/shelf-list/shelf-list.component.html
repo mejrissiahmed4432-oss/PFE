@@ -45,8 +45,18 @@
       </select>
     </div>
     <div class="filter-group">
+      <label>Category</label>
+      <select [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()">
+        <option value="">All Categories</option>
+        <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+      </select>
+    </div>
+    <div class="filter-group" *ngIf="selectedCategoryId">
       <label>Equipment Type</label>
-      <input type="text" [(ngModel)]="filterType" (input)="applyFilters()" placeholder="Filter by type...">
+      <select [(ngModel)]="filterType" (change)="applyFilters()">
+        <option value="">All Types</option>
+        <option *ngFor="let t of availableTypes" [value]="t.name">{{ t.name }}</option>
+      </select>
     </div>
     <div class="filter-group">
       <label>Shelf ID/Nb</label>

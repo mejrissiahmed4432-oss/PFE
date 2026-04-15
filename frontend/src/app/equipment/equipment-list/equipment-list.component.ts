@@ -76,7 +76,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   
   // Filters
   filterCategory: string = '';
-  filterBrand: string = '';
+  filterType: string = '';
   filterSupplier: string = '';
   filterPurchaseDate: string = '';
   filterShelfId: string | null = null;
@@ -168,6 +168,17 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     this.showFilters = !this.showFilters;
   }
 
+  onCategoryChange(): void {
+    this.filterType = '';
+    this.applyFilters();
+  }
+
+  getAvailableTypes(): string[] {
+    if (!this.filterCategory) return [];
+    const cat = this.categoriesList.find(c => c.name === this.filterCategory);
+    return cat?.types?.map(t => t.name) || [];
+  }
+
   applyFilters(): void {
     // 1. First filter the raw list
     this.filteredEquipments = this.equipments.filter(eq => {
@@ -177,14 +188,14 @@ export class EquipmentListComponent implements OnInit, OnChanges {
          eq.model?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
          eq.serialNumber?.toLowerCase().includes(this.searchQuery.toLowerCase())) : true;
       
-      const matchCategory = this.filterCategory ? eq.category === this.filterCategory : true;
-      const matchBrand = this.filterBrand ? eq.brand === this.filterBrand : true;
+      const matchCategory = this.filterCategory ? this.getCorrectCategory(eq) === this.filterCategory : true;
+      const matchType = this.filterType ? eq.type === this.filterType : true;
       const matchSupplier = this.filterSupplier ? eq.supplier === this.filterSupplier : true;
       const matchDate = this.filterPurchaseDate ? (eq.purchaseDate && eq.purchaseDate.startsWith(this.filterPurchaseDate)) : true;
       const matchShelf = this.filterShelfId ? eq.shelfId === this.filterShelfId : true;
       const matchSelectedShelf = this.filterSelectedShelf ? eq.shelfId === this.filterSelectedShelf : true;
       
-      return matchSearch && matchCategory && matchBrand && matchSupplier && matchDate && matchShelf && matchSelectedShelf;
+      return matchSearch && matchCategory && matchType && matchSupplier && matchDate && matchShelf && matchSelectedShelf;
     });
 
     // 2. Group the filtered results

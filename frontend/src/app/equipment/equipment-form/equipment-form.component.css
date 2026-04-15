@@ -401,6 +401,36 @@
   text-align: right;
   word-break: break-all;
   overflow-wrap: break-word;
+  flex: 1;
+  min-width: 0;
+}
+
+.attachment-row {
+  flex-direction: row !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 20px !important;
+}
+
+.attachment-row .info-label {
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.attachment-row .info-value {
+  text-align: right !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.attachment-row .doc-attachment-card {
+  width: 100% !important;
+  max-width: 320px;
+  padding: 10px 14px !important;
+  border-radius: 12px !important;
 }
 
 .info-value.mono {
@@ -1177,6 +1207,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 0;
 }
 
 .input-group.full-width {
@@ -1295,12 +1326,16 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
+  min-width: 0;
 }
 
 .doc-name {
   font-weight: 700;
   color: #0f172a;
   font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .doc-hint {
@@ -1441,4 +1476,40 @@
   font-size: 0.85rem;
   color: #475569;
   line-height: 1.5;
+}
+
+/* ─── File Removal Button ────────────────────────────────── */
+.remove-file-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.remove-file-btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.btn-outline-secondary {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px;
+  overflow: hidden;
+  text-align: left;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.btn-outline-secondary svg {
+  flex-shrink: 0;
 }

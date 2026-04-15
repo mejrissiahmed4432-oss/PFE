@@ -44,6 +44,7 @@ public class ShelfService {
 
     public Shelf updateShelf(String id, Shelf shelfDetails) {
         return shelfRepository.findById(id).map(shelf -> {
+            String oldNb = shelf.getNb();
             shelf.setNb(shelfDetails.getNb());
             shelf.setMaxQte(shelfDetails.getMaxQte());
             shelf.setMinQte(shelfDetails.getMinQte());
@@ -51,6 +52,12 @@ public class ShelfService {
             shelf.setEquipmentType(shelfDetails.getEquipmentType());
             updateShelfStatus(shelf);
             Shelf saved = shelfRepository.save(shelf);
+
+            // Sync alerts if name changed
+            if (oldNb != null && !oldNb.equals(saved.getNb())) {
+                alertService.updateAlertsRelatedToNameChange(saved.getId(), oldNb, saved.getNb());
+            }
+
             notificationService.createNotification("Shelf Updated: " + saved.getNb(),
                     "Shelf " + saved.getNb() + " configuration has been modified",
                     "INFO", "SHELF", saved.getId());
@@ -75,12 +82,15 @@ public class ShelfService {
     }
 
     public void updateShelfStatus(Shelf shelf) {
-        if (shelf.getCurrentQte() == null) shelf.setCurrentQte(0);
-        if (shelf.getMaxQte() == null) shelf.setMaxQte(0);
-        if (shelf.getMinQte() == null) shelf.setMinQte(0);
-        
+        if (shelf.getCurrentQte() == null)
+            shelf.setCurrentQte(0);
+        if (shelf.getMaxQte() == null)
+            shelf.setMaxQte(0);
+        if (shelf.getMinQte() == null)
+            shelf.setMinQte(0);
+
         String oldStatus = shelf.getStatus();
-        
+
         if (shelf.getCurrentQte() == 0) {
             shelf.setStatus("EMPTY");
         } else if (shelf.getCurrentQte() < shelf.getMinQte()) {
@@ -90,7 +100,7 @@ public class ShelfService {
         } else {
             shelf.setStatus("NORMAL");
         }
-        
+
         // Generate System Alerts for stock issues
         if (shelf.getStatus() != null && !shelf.getStatus().equals(oldStatus)) {
             if ("LOW".equals(shelf.getStatus())) {
@@ -100,6 +110,11 @@ public class ShelfService {
             } else if ("FULL".equals(shelf.getStatus())) {
                 alertService.createAlert("Shelf Full: Shelf " + shelf.getNb(),
                         "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") has reached maximum capacity.",
+                        "ERROR", "STOCK", shelf.getId());
+            } else if ("EMPTY".equals(shelf.getStatus())) {
+                alertService.createAlert("Stock Empty Alert: Shelf " + shelf.getNb(),
+                        "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType()
+                                + ") is completely empty. restocking is needed.",
                         "ERROR", "STOCK", shelf.getId());
             }
         }

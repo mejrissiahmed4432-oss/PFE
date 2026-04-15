@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import org.springframework.data.mongodb.repository.Query;
 
 @Repository
 public interface EquipmentRepository extends MongoRepository<Equipment, String> {
@@ -12,6 +13,16 @@ public interface EquipmentRepository extends MongoRepository<Equipment, String> 
     List<Equipment> findBySupplierId(String supplierId);
     List<Equipment> findByShelfId(String shelfId);
     List<Equipment> findByCategory(String category);
+
+    // Optimized queries for list views (exclude heavy base64 file data)
+    @Query(value = "{}", fields = "{ 'invoiceFileData': 0, 'warrantyFileData': 0 }")
+    List<Equipment> findAllExcludingFiles();
+
+    @Query(value = "{ 'shelfId' : ?0 }", fields = "{ 'invoiceFileData': 0, 'warrantyFileData': 0 }")
+    List<Equipment> findByShelfIdExcludingFiles(String shelfId);
+
+    @Query(value = "{ '_id' : ?0 }", fields = "{ 'invoiceFileData': 0, 'warrantyFileData': 0 }")
+    java.util.Optional<Equipment> findByIdExcludingFiles(String id);
     boolean existsByCategory(String category);
     boolean existsByTypeIgnoreCase(String type);
     boolean existsBySerialNumber(String serialNumber);

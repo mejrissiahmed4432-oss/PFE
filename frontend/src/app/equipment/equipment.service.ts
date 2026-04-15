@@ -64,4 +64,12 @@ export class EquipmentService {
   updateBulkBasicInfo(ids: string[], name: string, brand: string, model: string): Observable<Equipment[]> {
     return this.http.put<Equipment[]>(`${this.apiUrl}/bulk-update-basic`, { ids, name, brand, model });
   }
+
+  getInvoiceFile(id: string): Observable<string> {
+    return this.http.get(`${this.apiUrl}/${id}/invoice-file`, { responseType: 'text' });
+  }
+
+  getWarrantyFile(id: string): Observable<string> {
+    return this.http.get(`${this.apiUrl}/${id}/warranty-file`, { responseType: 'text' });
+  }
 }

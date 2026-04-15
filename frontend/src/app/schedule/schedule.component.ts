@@ -79,28 +79,7 @@ export class ScheduleComponent implements OnInit {
   loadTasks(): void {
     this.taskService.getTasks().subscribe({
       next: (data) => { 
-        const todayStr = this.formatDateKey(this.today);
-        
-        data.forEach(t => {
-          // If the task already has an original due date, it means it was rolled over before
-          if (t.originalDueDate) {
-            (t as any).isOverdue = true;
-          }
-
-          if (t.dueDate < todayStr) {
-            if (t.status === 'Completed') {
-              t.status = 'History';
-              this.taskService.updateTaskStatus(t.id, 'History').subscribe();
-            } else if (t.status === 'Pending' || t.status === 'In Progress') {
-              (t as any).isOverdue = true;
-              if (!t.originalDueDate) {
-                t.originalDueDate = t.dueDate;
-              }
-              t.dueDate = todayStr;
-              this.taskService.updateTask(t.id, t).subscribe();
-            }
-          }
-        });
+        data.forEach(t => this.processTask(t));
 
         if (this.currentUser) {
           const userFullName = `${this.currentUser.firstName} ${this.currentUser.lastName || ''}`.trim();
@@ -111,6 +90,29 @@ export class ScheduleComponent implements OnInit {
       },
       error: (err) => console.error('Failed to load tasks', err)
     });
+  }
+
+  processTask(t: Task): void {
+    const todayStr = this.formatDateKey(this.today);
+    
+    // If the task already has an original due date, it means it was rolled over before
+    if (t.originalDueDate) {
+      (t as any).isOverdue = true;
+    }
+
+    if (t.dueDate < todayStr) {
+      if (t.status === 'Completed') {
+        t.status = 'History';
+        this.taskService.updateTaskStatus(t.id, 'History').subscribe();
+      } else if (t.status === 'Pending' || t.status === 'In Progress') {
+        (t as any).isOverdue = true;
+        if (!t.originalDueDate) {
+          t.originalDueDate = t.dueDate;
+        }
+        t.dueDate = todayStr;
+        this.taskService.updateTask(t.id, t).subscribe();
+      }
+    }
   }
 
   buildCalendar(): void {
@@ -148,15 +150,22 @@ export class ScheduleComponent implements OnInit {
     return this.tasks.filter(t => t.dueDate === s);
   }
 
-  selectedDayFilter: Date | null = null;
+  selectedDayFilter: Date | null = this.today;
 
   toggleDayFilter(day: Date | null): void {
     if (!day) return;
     if (this.selectedDayFilter && this.isSameDay(this.selectedDayFilter, day)) {
-      this.selectedDayFilter = null;
+      // Revert to today if user tries to unselect
+      this.selectedDayFilter = this.today;
     } else {
       this.selectedDayFilter = day;
     }
+  }
+
+  hasHistoryTasksOnDay(date: Date | null): boolean {
+    if (!date) return false;
+    const s = this.formatDateKey(date);
+    return this.tasks.some(t => t.dueDate === s && t.status === 'History');
   }
 
   formatDateKey(date: Date): string {
@@ -249,6 +258,7 @@ export class ScheduleComponent implements OnInit {
 
       this.taskService.updateTaskStatus(task.id, newStatus).subscribe({
         next: (updatedTask) => {
+           this.processTask(updatedTask);
            this.alertService.createAlert(
               `Task Moved: ${updatedTask.title}`,
               `Task was moved to "${updatedTask.status}"`,
@@ -288,14 +298,15 @@ export class ScheduleComponent implements OnInit {
         if (updatedTask.assignedTo !== userFullName && this.currentUser) {
           if (index !== -1) this.tasks.splice(index, 1);
         } else {
+          this.processTask(updatedTask);
           if (index !== -1) this.tasks[index] = updatedTask;
         }
 
         this.closeDetail();
-        this.showToast(`✏️ Task "${updatedTask.title}" updated successfully`, 'info');
+        this.showToast(`✏️ Task \"${updatedTask.title}\" updated successfully`, 'info');
         this.alertService.createAlert(
           `Task Updated: ${updatedTask.title}`,
-          `Task "${updatedTask.title}" was updated — Status: ${updatedTask.status}, Due: ${updatedTask.dueDate}`,
+          `Task \"${updatedTask.title}\" was updated — Status: ${updatedTask.status}, Due: ${updatedTask.dueDate}`,
           'INFO', 'TASK', updatedTask.id
         ).subscribe();
         this.isSubmitting = false;
@@ -307,12 +318,13 @@ export class ScheduleComponent implements OnInit {
   updateInlineStatus(task: Task): void {
     this.taskService.updateTaskStatus(task.id, task.status).subscribe({
       next: (updatedTask) => {
+        this.processTask(updatedTask);
         const index = this.tasks.findIndex(t => t.id === task.id);
         if (index !== -1) this.tasks[index] = updatedTask;
-        this.showToast(`Status changed to "${updatedTask.status}"`, 'success');
+        this.showToast(`Status changed to \"${updatedTask.status}\"`, 'success');
         this.alertService.createAlert(
           `Task Status Changed: ${updatedTask.title}`,
-          `Status of "${updatedTask.title}" was changed to "${updatedTask.status}"`,
+          `Status of \"${updatedTask.title}\" was changed to \"${updatedTask.status}\"`,
           updatedTask.status === 'Completed' ? 'SUCCESS' : 'INFO', 'TASK', updatedTask.id
         ).subscribe();
       },
@@ -341,10 +353,10 @@ export class ScheduleComponent implements OnInit {
         }
         this.showAddModal = false;
         this.newTask = this.emptyTask();
-        this.showToast(`✅ Task "${createdTask.title}" created!`, 'success');
+        this.showToast(`✅ Task \"${createdTask.title}\" created!`, 'success');
         this.alertService.createAlert(
           `New Task Scheduled: ${createdTask.title}`,
-          `A new task "${createdTask.title}" was created — Type: ${createdTask.type}, Priority: ${createdTask.priority}, Due: ${createdTask.dueDate}`,
+          `A new task \"${createdTask.title}\" was created — Type: ${createdTask.type}, Priority: ${createdTask.priority}, Due: ${createdTask.dueDate}`,
           'INFO', 'TASK', createdTask.id
         ).subscribe();
         this.isSubmitting = false;
@@ -390,8 +402,6 @@ export class ScheduleComponent implements OnInit {
     }
   }
 
-
-
   closeAlert(event?: Event): void {
     if (event) event.stopPropagation();
     this.customAlert = null;
@@ -406,10 +416,19 @@ export class ScheduleComponent implements OnInit {
   formatDate(dateStr: string | undefined): string {
     if (!dateStr) return '—';
     try {
-      return new Date(dateStr).toLocaleString('en-US', {
+      // Si c'est juste une date YYYY-MM-DD, on ajoute l'heure locale 00:00 pour éviter le décalage UTC
+      let dateObj: Date;
+      if (dateStr.length === 10) {
+        dateObj = new Date(dateStr + 'T00:00:00');
+      } else {
+        // Si c'est une chaine ISO complete, on la traite mais on peut aussi forcer l'affichage local
+        dateObj = new Date(dateStr);
+      }
+
+      return dateObj.toLocaleString('en-GB', { // en-GB utilise naturellement le format 24h
         year: 'numeric', month: 'short', day: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-      });
+        hour: '2-digit', minute: '2-digit', hour12: false
+      }).replace(',', '');
     } catch { return dateStr; }
   }
 }

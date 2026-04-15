@@ -518,11 +518,6 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     }
   }
 
-  onSNSelectAll(event: any): void {
-    const checked = event.target.checked;
-    this.units.forEach(u => u.selectedForSN = checked);
-  }
-
   hasSelectedSN(): boolean {
     return this.units.some(u => u.selectedForSN);
   }
@@ -535,6 +530,22 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     return this.units.some(u => u.selectedForGeneralSync);
   }
 
+  hasSelectedPurchase(): boolean {
+    return this.units.some(u => u.selectedForInvoice);
+  }
+
+  hasSelectedWarranty(): boolean {
+    return this.units.some(u => u.selectedForWarranty);
+  }
+
+  isAllPurchaseSelected(): boolean {
+    return this.units && this.units.length > 0 && this.units.every(u => u.selectedForInvoice);
+  }
+
+  isAllWarrantySelected(): boolean {
+    return this.units && this.units.length > 0 && this.units.every(u => u.selectedForWarranty);
+  }
+
   onGeneralSelectAll(event: any): void {
     const checked = event.target.checked;
     this.units.forEach(u => u.selectedForGeneralSync = checked);
@@ -543,6 +554,21 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   onSpecSelectAll(event: any): void {
     const checked = event.target.checked;
     this.units.forEach(u => u.selectedForSpecSync = checked);
+  }
+
+  onSNSelectAll(event: any): void {
+    const checked = event.target.checked;
+    this.units.forEach(u => u.selectedForSN = checked);
+  }
+
+  onPurchaseSelectAll(event: any): void {
+    const checked = event.target.checked;
+    this.units.forEach(u => u.selectedForInvoice = checked);
+  }
+
+  onWarrantySelectAll(event: any): void {
+    const checked = event.target.checked;
+    this.units.forEach(u => u.selectedForWarranty = checked);
   }
 
   clearSelectedSerials(): void {

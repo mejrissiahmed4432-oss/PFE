@@ -86,7 +86,7 @@ public class AlertService {
                 boolean alreadyHasError = alertRepository.existsByCategoryAndRelatedIdAndType("WARRANTY", eq.getId(), "ERROR");
                 if (!alreadyHasError) {
                     createAlert("Warranty Expired: " + eq.getEquipmentName(),
-                            "Warranty for " + eq.getEquipmentName() + " expired on " + expDate + ".",
+                            "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") expired on " + expDate + ".",
                             "ERROR", "WARRANTY", eq.getId());
                 }
             } 
@@ -95,7 +95,7 @@ public class AlertService {
                 boolean alreadyHasWarning = alertRepository.existsByCategoryAndRelatedIdAndType("WARRANTY", eq.getId(), "WARNING");
                 if (!alreadyHasWarning) {
                     createAlert("Warranty Expiring: " + eq.getEquipmentName(),
-                            "Warranty for " + eq.getEquipmentName() + " will expire soon on " + expDate + ".",
+                            "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") will expire soon on " + expDate + ".",
                             "WARNING", "WARRANTY", eq.getId());
                 }
             }
@@ -106,6 +106,28 @@ public class AlertService {
         createAlert("System Pulse Check",
                 "This is a real-time test alert to verify the notification system is working perfectly.",
                 "INFO", "SYSTEM", null);
+    }
+
+    public void updateAlertsRelatedToNameChange(String relatedId, String oldName, String newName) {
+        if (oldName == null || newName == null || oldName.equals(newName)) return;
+        List<Alert> alerts = alertRepository.findByRelatedId(relatedId);
+        boolean changed = false;
+        for (Alert alert : alerts) {
+            boolean currentAlertChanged = false;
+            if (alert.getTitle() != null && alert.getTitle().contains(oldName)) {
+                alert.setTitle(alert.getTitle().replace(oldName, newName));
+                currentAlertChanged = true;
+            }
+            if (alert.getMessage() != null && alert.getMessage().contains(oldName)) {
+                alert.setMessage(alert.getMessage().replace(oldName, newName));
+                currentAlertChanged = true;
+            }
+            if (currentAlertChanged) changed = true;
+        }
+        if (changed) {
+            alertRepository.saveAll(alerts);
+            messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
+        }
     }
 
 }

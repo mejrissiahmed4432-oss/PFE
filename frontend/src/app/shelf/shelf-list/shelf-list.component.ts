@@ -5,7 +5,8 @@ import { Shelf } from '../shelf.model';
 import { ShelfFormComponent } from '../shelf-form/shelf-form.component';
 import { FormsModule } from '@angular/forms';
 import { EquipmentService } from '../../equipment/equipment.service';
-import { Equipment } from '../../equipment/equipment.model';
+import { CategoryService } from '../../category-manager/category.service';
+import { EquipmentCategory, CategoryType } from '../../category-manager/category.model';
 
 @Component({
   selector: 'app-shelf-list',
@@ -29,6 +30,11 @@ export class ShelfListComponent implements OnInit {
   filterType: string = '';
   filterNb: string = '';
 
+  // Dynamic Filters
+  categories: EquipmentCategory[] = [];
+  selectedCategoryId: string = '';
+  availableTypes: CategoryType[] = [];
+
   // Pagination
   currentPage: number = 1;
   itemsPerPage: number = 6;
@@ -47,11 +53,27 @@ export class ShelfListComponent implements OnInit {
 
   constructor(
     private shelfService: ShelfService,
-    private equipmentService: EquipmentService
+    private equipmentService: EquipmentService,
+    private categoryService: CategoryService
   ) {}
 
   ngOnInit(): void {
     this.loadShelves();
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.categoryService.getAllCategories().subscribe({
+      next: (data) => this.categories = data,
+      error: (error) => console.error('Error fetching categories', error)
+    });
+  }
+
+  onCategoryChange(): void {
+    this.filterType = ''; // Reset type filter when category changes
+    const category = this.categories.find(c => c.id === this.selectedCategoryId);
+    this.availableTypes = category?.types || [];
+    this.applyFilters();
   }
 
   loadShelves(): void {
@@ -73,6 +95,9 @@ export class ShelfListComponent implements OnInit {
   }
 
   applyFilters(): void {
+    const selectedCategory = this.categories.find(c => c.id === this.selectedCategoryId);
+    const categoryTypeNames = selectedCategory?.types?.map(t => t.name.toLowerCase()) || [];
+
     this.filteredShelves = this.shelves.filter(s => {
       const searchLower = this.searchQuery.toLowerCase();
       const matchSearch = !this.searchQuery || 
@@ -80,10 +105,17 @@ export class ShelfListComponent implements OnInit {
         (s.nb && s.nb.toString().includes(this.searchQuery));
       
       const matchStatus = !this.filterStatus || (s.status && s.status === this.filterStatus);
-      const matchType = !this.filterType || (s.equipmentType && s.equipmentType.toLowerCase().includes(this.filterType.toLowerCase()));
+      
+      // If a specific type is selected, match it exactly
+      const sTypeLower = s.equipmentType?.toLowerCase() || '';
+      const matchType = !this.filterType || sTypeLower === this.filterType.toLowerCase();
+      
+      // If a category is selected but no type, match if the shelf's type belongs to that category
+      const matchCategory = !this.selectedCategoryId || this.filterType || categoryTypeNames.includes(sTypeLower);
+      
       const matchNb = !this.filterNb || (s.nb && s.nb.toString().includes(this.filterNb));
       
-      return matchSearch && matchStatus && matchType && matchNb;
+      return matchSearch && matchStatus && matchType && matchCategory && matchNb;
     });
     
     this.currentPage = 1;

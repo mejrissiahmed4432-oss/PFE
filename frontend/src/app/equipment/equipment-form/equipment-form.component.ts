@@ -88,6 +88,9 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
           this.equipmentService.getEquipmentById(this.equipment.id).subscribe({
             next: (fullEq) => {
               this.formData = { ...fullEq };
+              if (this.viewOnly) {
+                this.equipment = { ...fullEq }; // Sync for Details view
+              }
               this.originalSN = !this.isAddSimilar ? (fullEq.serialNumber || '') : '';
               // Initialise QR checkbox based on whether the equipment already has a QR code
               this.formGenerateQr = !!(fullEq.qrCode);
@@ -513,8 +516,44 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     reader.readAsDataURL(file);
   }
 
-  downloadDocument(fileData?: string, fileName?: string): void {
-    if (!fileData || !fileName) return;
+  removeInvoiceFile(event: MouseEvent): void {
+    event.stopPropagation();
+    this.formData.invoiceFileName = "DELETE";
+    this.formData.invoiceFileData = null as any;
+  }
+
+  removeWarrantyFile(event: MouseEvent): void {
+    event.stopPropagation();
+    this.formData.warrantyFileName = "DELETE";
+    this.formData.warrantyFileData = null as any;
+  }
+
+  downloadDocument(fileType: 'invoice' | 'warranty', fileName?: string): void {
+    if (!this.equipment?.id || !fileName) return;
+
+    if (fileType === 'invoice') {
+      // Check if we already have it in formData (user just uploaded it during edit)
+      if (this.formData.invoiceFileData) {
+        this.executeDownload(this.formData.invoiceFileData, fileName);
+        return;
+      }
+      this.equipmentService.getInvoiceFile(this.equipment.id).subscribe({
+        next: (base64) => this.executeDownload(base64, fileName),
+        error: (err) => console.error('Failed to download invoice', err)
+      });
+    } else {
+      if (this.formData.warrantyFileData) {
+        this.executeDownload(this.formData.warrantyFileData, fileName);
+        return;
+      }
+      this.equipmentService.getWarrantyFile(this.equipment.id).subscribe({
+        next: (base64) => this.executeDownload(base64, fileName),
+        error: (err) => console.error('Failed to download warranty', err)
+      });
+    }
+  }
+
+  private executeDownload(fileData: string, fileName: string): void {
     const a = document.createElement('a');
     a.href = fileData;
     a.download = fileName;
