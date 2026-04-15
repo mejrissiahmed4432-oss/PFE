@@ -1,0 +1,11 @@
+package com.example.usermicroservice.repository;
+
+import com.example.usermicroservice.model.Alert;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import java.util.List;
+
+public interface AlertRepository extends MongoRepository<Alert, String> {
+    List<Alert> findByReadFalseOrderByCreatedAtDesc();
+    List<Alert> findAllByOrderByCreatedAtDesc();
+    boolean existsByCategoryAndRelatedIdAndType(String category, String relatedId, String type);
+}
