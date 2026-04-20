@@ -648,7 +648,7 @@
         <div class="field-group" style="margin-top: 20px;">
           <label class="field-label">Invoice / Facture Document <span class="field-optional">(optional)</span></label>
           <input type="file" #invoiceInput style="display: none" (change)="onInvoiceFileUpload($event)">
-          <div class="upload-zone" (click)="invoiceInput.click()" style="cursor: pointer;" *ngIf="!(purchaseMode === 'same' || quantity === 1) || !sharedInvoiceFileData">
+          <div class="upload-zone" (click)="invoiceInput.click()" style="cursor: pointer;" *ngIf="!(purchaseMode === 'same' || quantity === 1) || (!sharedInvoiceFileData && !sharedInvoiceFileName)">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
               stroke="#94a3b8" stroke-width="1.5">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -659,7 +659,7 @@
             <span *ngIf="purchaseMode === 'same' || quantity === 1">PDF, PNG, JPG up to 10MB</span>
             <span *ngIf="purchaseMode === 'different' && quantity > 1">Upload to selected rows</span>
           </div>
-          <div *ngIf="(purchaseMode === 'same' || quantity === 1) && sharedInvoiceFileData" 
+          <div *ngIf="(purchaseMode === 'same' || quantity === 1) && (sharedInvoiceFileData || sharedInvoiceFileName)" 
                style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
             <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
@@ -758,7 +758,7 @@
         <div class="field-group" style="margin-top: 20px;">
           <label class="field-label">Warranty Document <span class="field-optional">(optional)</span></label>
           <input type="file" #warrantyInput style="display: none" (change)="onWarrantyFileUpload($event)">
-          <div class="upload-zone" (click)="warrantyInput.click()" style="cursor: pointer;" *ngIf="!(warrantyMode === 'shared' || quantity === 1) || !sharedWarrantyFileData">
+          <div class="upload-zone" (click)="warrantyInput.click()" style="cursor: pointer;" *ngIf="!(warrantyMode === 'shared' || quantity === 1) || (!sharedWarrantyFileData && !sharedWarrantyFileName)">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
               stroke="#94a3b8" stroke-width="1.5">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -769,7 +769,7 @@
             <span *ngIf="warrantyMode === 'shared' || quantity === 1">PDF, PNG, JPG up to 10MB</span>
             <span *ngIf="warrantyMode === 'individual' && quantity > 1">Upload to selected rows</span>
           </div>
-          <div *ngIf="(warrantyMode === 'shared' || quantity === 1) && sharedWarrantyFileData" 
+          <div *ngIf="(warrantyMode === 'shared' || quantity === 1) && (sharedWarrantyFileData || sharedWarrantyFileName)" 
                style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
             <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
@@ -902,6 +902,7 @@
             <ng-container *ngIf="purchaseMode === 'same' || quantity === 1">
               <div class="review-row"><span>Supplier</span><strong>{{ sharedSupplier || '—' }}</strong></div>
               <div class="review-row"><span>Date</span><strong>{{ sharedPurchaseDate | date:'mediumDate' }}</strong></div>
+              <div class="review-row"><span>Invoice Ref</span><strong>{{ sharedInvoiceRef || '—' }}</strong></div>
               <div class="review-row"><span>Total Value</span>
                 <strong class="price-text">{{ (sharedPriceMode === 'total' ? sharedPrice : sharedPrice * quantity) |
                   number:'1.2-2' }} TND</strong>
@@ -919,7 +920,7 @@
             </ng-container>
           </div>
 
-          <div class="review-card" *ngIf="category === 'Asset'">
+          <div class="review-card">
             <div class="review-card-title">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
@@ -933,8 +934,8 @@
               <div class="review-row" *ngIf="!sharedWarrantyEnd"><span>Expires</span><strong>Not set</strong></div>
               <div class="review-row">
                 <span>Warranty Doc</span>
-                <strong *ngIf="!sharedWarrantyFileData" style="color: #64748b;">Not set</strong>
-                <strong *ngIf="sharedWarrantyFileData" style="color: #10b981;">Set</strong>
+                <strong *ngIf="!sharedWarrantyFileData && !sharedWarrantyFileName" style="color: #64748b;">Not set</strong>
+                <strong *ngIf="sharedWarrantyFileData || sharedWarrantyFileName" style="color: #10b981;">Set</strong>
               </div>
             </ng-container>
             <ng-container *ngIf="warrantyMode === 'individual' && quantity > 1">
@@ -970,6 +971,9 @@
                 <tr>
                   <th class="col-unit">#</th>
                   <th>Name</th>
+                  <th>Brand</th>
+                  <th>Model</th>
+                  <th>Specifications</th>
                   <th>Serial Number</th>
                 </tr>
               </thead>
@@ -977,6 +981,9 @@
                 <tr *ngFor="let u of reviewUnits; let i = index">
                   <td class="col-unit"><span class="unit-badge">{{ i + 1 }}</span></td>
                   <td class="font-medium">{{ u.name }}</td>
+                  <td>{{ u.brand }}</td>
+                  <td>{{ u.model }}</td>
+                  <td>{{ u.specs }}</td>
                   <td><code class="serial-sm">{{ u.serial }}</code></td>
                 </tr>
               </tbody>

@@ -637,20 +637,20 @@
 
     <div class="qr-panel-body" style="padding: 24px;">
       <p style="margin-bottom: 20px; color: #64748b; font-size: 0.9rem;">
-        Modifying these fields will apply the changes to <strong>all {{ editingGroup?.totalQuantity }} units</strong> in
+        Modifying <strong>brand field</strong> will apply the changes to <strong>all {{ editingGroup?.totalQuantity }} units</strong> in
         this group.
       </p>
 
       <div style="display: flex; flex-direction: column; gap: 16px;">
         <div style="display: flex; flex-direction: column; gap: 6px;">
-          <label style="font-size: 0.85rem; font-weight: 600; color: #475569;">Equipment Name <span
+          <label style="font-size: 0.85rem; font-weight: 600; color: #475569;">Group Name <span
               style="color: #ef4444;">*</span></label>
           <input type="text" [(ngModel)]="bulkEditForm.name"
             style="padding: 10px 12px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem; outline: none;"
-            placeholder="Enter equipment name">
+            placeholder="Enter group name">
           <div class="field-error-msg" *ngIf="!bulkEditForm.name"
             style="color: #ef4444; font-size: 0.75rem; font-weight: 500;">
-            Equipment name is required
+            Group name is required
           </div>
         </div>
 

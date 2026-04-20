@@ -30,4 +30,8 @@ public interface EquipmentRepository extends MongoRepository<Equipment, String> 
     boolean existsByShelfId(String shelfId);
     boolean existsBySupplierId(String supplierId);
     List<Equipment> findByTypeIgnoreCase(String type);
+
+    // Optimized query for type update — only fetches id + qrCode, skips heavy file data
+    @Query(value = "{ 'type' : { $regex: ?0, $options: 'i' } }", fields = "{ 'invoiceFileData': 0, 'warrantyFileData': 0, 'icon': 0, 'specification': 0 }")
+    List<Equipment> findByTypeIgnoreCaseExcludingFiles(String type);
 }

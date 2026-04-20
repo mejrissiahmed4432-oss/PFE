@@ -467,6 +467,10 @@
               <span class="info-label">Supplier</span>
               <span class="info-value">{{ equipment?.supplier || '—' }}</span>
             </div>
+            <div class="info-row">
+              <span class="info-label">Invoice Ref</span>
+              <span class="info-value">{{ equipment?.invoiceRef || '—' }}</span>
+            </div>
             <div class="info-row attachment-row">
               <span class="info-label">Invoice Attachment</span>
               <div class="info-value">
@@ -805,6 +809,10 @@
             <div class="input-group">
               <label>Purchase Price</label>
               <input type="number" [(ngModel)]="formData.purchasePrice" placeholder="0.00">
+            </div>
+            <div class="input-group">
+              <label>Invoice Ref</label>
+              <input type="text" [(ngModel)]="formData.invoiceRef" placeholder="Enter invoice reference">
             </div>
             <div class="input-group">
               <label>Invoice Document <span class="field-optional"

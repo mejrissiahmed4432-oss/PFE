@@ -8,6 +8,10 @@ import com.example.stockmanagermicroservice.repository.EquipmentCategoryReposito
 import com.example.stockmanagermicroservice.repository.EquipmentRepository;
 import com.example.stockmanagermicroservice.repository.ShelfRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +32,9 @@ public class EquipmentCategoryService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public List<EquipmentCategory> getAllCategories() {
         return repository.findAll();
@@ -51,11 +58,10 @@ public class EquipmentCategoryService {
             if (existingOpt.isPresent()) {
                 EquipmentCategory existing = existingOpt.get();
                 if (!existing.getName().equals(category.getName())) {
-                    List<Equipment> equipmentList = equipmentRepository.findByCategory(existing.getName());
-                    for (Equipment e : equipmentList) {
-                        e.setCategory(category.getName());
-                        equipmentRepository.save(e);
-                    }
+                    // Atomic: only update category field, no file data loaded
+                    Query q = new Query(Criteria.where("category").is(existing.getName()));
+                    Update u = new Update().set("category", category.getName());
+                    mongoTemplate.updateMulti(q, u, Equipment.class);
                 }
             }
         }
@@ -127,28 +133,33 @@ public class EquipmentCategoryService {
         if (qrChanged || nameChanged) {
             List<Equipment> equipmentList;
             if (nameChanged) {
-                equipmentList = equipmentRepository.findByTypeIgnoreCase(oldTypeName);
+                equipmentList = equipmentRepository.findByTypeIgnoreCaseExcludingFiles(oldTypeName);
             } else {
-                equipmentList = equipmentRepository.findByTypeIgnoreCase(newName);
+                equipmentList = equipmentRepository.findByTypeIgnoreCaseExcludingFiles(newName);
             }
             
             for (Equipment e : equipmentList) {
+                Update eu = new Update();
+                boolean needsUpdate = false;
                 if (nameChanged) {
-                    e.setType(newName);
+                    eu.set("type", newName);
+                    needsUpdate = true;
                 }
-                
                 if (qrChanged) {
                     if (updatedType.isRequiresQrCode()) {
-                        // Needs a QR code now, give it one if missing
                         if (e.getQrCode() == null || e.getQrCode().isEmpty()) {
-                            e.setQrCode("QR-" + System.currentTimeMillis() + "-" + e.getId());
+                            eu.set("qrCode", "QR-" + System.currentTimeMillis() + "-" + e.getId());
+                            needsUpdate = true;
                         }
                     } else {
-                        // QR code no longer required, remove it
-                        e.setQrCode(null);
+                        eu.unset("qrCode");
+                        needsUpdate = true;
                     }
                 }
-                equipmentRepository.save(e);
+                if (needsUpdate) {
+                    Query eq = new Query(Criteria.where("_id").is(e.getId()));
+                    mongoTemplate.updateFirst(eq, eu, Equipment.class);
+                }
             }
 
             if (nameChanged) {

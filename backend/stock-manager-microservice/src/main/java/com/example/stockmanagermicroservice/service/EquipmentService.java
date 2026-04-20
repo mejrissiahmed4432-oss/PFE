@@ -59,7 +59,10 @@ public class EquipmentService {
         return equipmentRepository.findByIdExcludingFiles(id);
     }
 
-    /** Fetches the full Equipment object INCLUDING file data. Use only for file download endpoints. */
+    /**
+     * Fetches the full Equipment object INCLUDING file data. Use only for file
+     * download endpoints.
+     */
     public Optional<Equipment> getEquipmentFiles(String id) {
         return equipmentRepository.findById(id);
     }
@@ -185,7 +188,7 @@ public class EquipmentService {
     }
 
     public Equipment updateEquipment(String id, Equipment equipmentDetails) {
-        return equipmentRepository.findById(id).map(equipment -> {
+        return equipmentRepository.findByIdExcludingFiles(id).map(equipment -> {
             String oldName = equipment.getEquipmentName();
             String oldShelfId = equipment.getShelfId();
             Integer oldQte = equipment.getQte() != null ? equipment.getQte() : 1;
@@ -233,6 +236,7 @@ public class EquipmentService {
             equipment.setPurchaseDate(equipmentDetails.getPurchaseDate());
             equipment.setWarrantyExpiration(equipmentDetails.getWarrantyExpiration());
             equipment.setPurchasePrice(equipmentDetails.getPurchasePrice());
+            equipment.setInvoiceRef(equipmentDetails.getInvoiceRef());
             equipment.setIcon(equipmentDetails.getIcon());
             equipment.setNote(equipmentDetails.getNote());
             equipment.setDepartment(equipmentDetails.getDepartment());
@@ -282,22 +286,43 @@ public class EquipmentService {
                 } else {
                     equipment.setQrCode(equipmentDetails.getQrCode());
                 }
-            } else {
-                // qrCode not specified in update — keep existing
             }
 
             equipment.setUpdatedAt(LocalDateTime.now());
-            Equipment updated = equipmentRepository.save(equipment);
+            
+            // Build dynamic update for light fields
+            org.bson.Document document = new org.bson.Document();
+            mongoTemplate.getConverter().write(equipment, document);
+            
+            Update update = new Update();
+            for (String key : document.keySet()) {
+                if (!key.equals("_id") && !key.equals("invoiceFileData") && !key.equals("warrantyFileData") && !key.equals("_class")) {
+                    update.set(key, document.get(key));
+                }
+            }
+            
+            if (clearQrCode) {
+                update.unset("qrCode");
+            }
+            
+            if (equipmentDetails.getInvoiceFileName() != null && "DELETE".equals(equipmentDetails.getInvoiceFileName())) {
+                update.unset("invoiceFileName");
+                update.unset("invoiceFileData");
+            } else if (equipmentDetails.getInvoiceFileData() != null) {
+                update.set("invoiceFileData", equipmentDetails.getInvoiceFileData());
+            }
+            
+            if (equipmentDetails.getWarrantyFileName() != null && "DELETE".equals(equipmentDetails.getWarrantyFileName())) {
+                update.unset("warrantyFileName");
+                update.unset("warrantyFileData");
+            } else if (equipmentDetails.getWarrantyFileData() != null) {
+                update.set("warrantyFileData", equipmentDetails.getWarrantyFileData());
+            }
+            
+            mongoTemplate.updateFirst(new org.springframework.data.mongodb.core.query.Query(org.springframework.data.mongodb.core.query.Criteria.where("_id").is(id)), update, Equipment.class);
+             Equipment updated = equipment;
 
             // Sync alerts if name changed (Deprecated - historical alerts act as point-in-time snapshot)
-
-            // If QR code was explicitly removed, force $unset in MongoDB to guarantee field
-            // removal
-            if (clearQrCode) {
-                Query query = new Query(Criteria.where("_id").is(id));
-                Update unsetUpdate = new Update().unset("qrCode");
-                mongoTemplate.updateFirst(query, unsetUpdate, Equipment.class);
-            }
 
             // Generate notification for equipment update
             String updater = (updated.getCreatedBy() != null && !updated.getCreatedBy().isEmpty())
@@ -339,7 +364,7 @@ public class EquipmentService {
     }
 
     public void deleteEquipment(String id) {
-        equipmentRepository.findById(id).ifPresent(equipment -> {
+        equipmentRepository.findByIdExcludingFiles(id).ifPresent(equipment -> {
             if (equipment.getShelfId() != null && !equipment.getShelfId().isEmpty()) {
                 int qte = equipment.getQte() != null ? equipment.getQte() : 1;
                 atomicUpdateShelfQuantity(equipment.getShelfId(), -qte);
@@ -374,7 +399,7 @@ public class EquipmentService {
         List<Equipment> saved = equipmentRepository.saveAll(items);
 
         // Notification for bulk update
-        notificationService.createNotification("Bulk Update Completed",
+        notificationService.createNotification("Group Update Completed",
                 items.size() + " equipment items were updated successfully",
                 "INFO", "EQUIPMENT", null, null, "STOCK_MANAGER");
 

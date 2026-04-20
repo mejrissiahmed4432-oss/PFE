@@ -55,11 +55,6 @@ export class CategoryManagerComponent implements OnInit {
     this.categoryService.getAllCategories().subscribe({
       next: (data) => {
         this.categories = data;
-        if (this.categories.length > 0 && Object.keys(this.expandedCategories).length === 0) {
-          if (this.categories[0].id) {
-            this.expandedCategories[this.categories[0].id] = true;
-          }
-        }
         this.isLoading = false;
       },
       error: () => { this.isLoading = false; }

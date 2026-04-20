@@ -164,28 +164,23 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
       mergeMap(group => group.pipe(
         debounceTime(500),
         switchMap(data => {
-          // One final internal duplicate check before touching the server
           const allSNs = this.quantity === 1 ? [this.sharedSerial] : this.units.map(u => u.serialNumber);
           const duplicates = allSNs.filter(s => s === data.sn).length;
-          
           if (duplicates > 1) {
             this.snStatusMap.set(data.sn, { checking: false, unique: false, error: 'Duplicate in current batch' });
             return EMPTY;
           }
-
-          // Trigger server check
           return this.equipmentService.checkSerialNumberUnique(data.sn).pipe(
             map(isUnique => ({ sn: data.sn, isUnique })),
-            timeout(5000), // Safety timeout to clear "Checking..." labels
+            timeout(5000),
             catchError(err => {
               console.error('SN Check Error:', err);
-              return of({ sn: data.sn, isUnique: true }); // Fallback to unique to allow save
+              return of({ sn: data.sn, isUnique: true });
             })
           );
         })
       ))
     ).subscribe(res => {
-      // Final state update
       this.snStatusMap.set(res.sn, { checking: false, unique: res.isUnique });
     });
   }
@@ -202,15 +197,12 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
       this.category = data.category as 'Asset' | 'Consumable';
     } else {
       this.selectedCategoryName = data.category || '';
-      // Heuristic for the internal Asset/Consumable tag if category is a real name
       if (['STORAGE', 'COMPONENT'].includes(this.selectedCategoryName.toUpperCase())) {
         this.category = 'Consumable';
       } else {
         this.category = 'Asset';
       }
     }
-    
-    // Auto-select category and populate types for prefill
     if (this.type) {
       const cat = this.categories.find(c =>
         c.types?.map(t => t.name.toLowerCase()).includes(this.type.toLowerCase())
@@ -220,12 +212,10 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         this.availableTypes = cat.types || [];
       }
     }
-    
     this.sharedName = data.equipmentName || '';
     this.sharedBrand = data.brand || '';
     this.sharedModel = data.model || '';
     this.sharedNotes = data.note || '';
-    
     // Specs
     this.sharedCpu = data.cpu || '';
     this.sharedRam = data.ram || '';
@@ -233,22 +223,31 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.sharedGpu = data.graphicsCard || '';
     this.sharedOs = data.operatingSystem || '';
     this.sharedSpecification = data.specification || '';
-    
     // Purchase
     this.sharedPurchaseDate = data.purchaseDate ? data.purchaseDate.toString().split('T')[0] : '';
     this.sharedSupplierId = data.supplierId || '';
     this.sharedSupplier = data.supplier || '';
     this.sharedPrice = data.purchasePrice || 0;
     this.sharedPriceMode = 'per-unit';
+    this.sharedInvoiceRef = data.invoiceRef || '';
+    // Invoice document — set filename immediately; fetch binary data if missing
     this.sharedInvoiceFileName = data.invoiceFileName || '';
     this.sharedInvoiceFileData = data.invoiceFileData || '';
-    
-    // Warranty
+    if (data.id && data.invoiceFileName && !data.invoiceFileData) {
+      this.equipmentService.getInvoiceFile(data.id)
+        .pipe(catchError(() => of('')))
+        .subscribe((fileData: string) => { this.sharedInvoiceFileData = fileData || ''; });
+    }
+    // Warranty document — set filename immediately; fetch binary data if missing
     this.sharedWarrantyEnd = data.warrantyExpiration ? data.warrantyExpiration.toString().split('T')[0] : '';
     this.sharedWarrantyFileName = data.warrantyFileName || '';
     this.sharedWarrantyFileData = data.warrantyFileData || '';
-
-    // Quantity & Serial (User requested empty serial)
+    if (data.id && data.warrantyFileName && !data.warrantyFileData) {
+      this.equipmentService.getWarrantyFile(data.id)
+        .pipe(catchError(() => of('')))
+        .subscribe((fileData: string) => { this.sharedWarrantyFileData = fileData || ''; });
+    }
+    // Quantity & Serial
     this.quantity = 1;
     this.sharedSerial = '';
     this.configMode = 'same';
@@ -627,13 +626,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         this.currentStep = 4; return;
       }
     }
-    if (this.currentStep === 4) {
-      if (this.category === 'Consumable') {
-        this.currentStep = 6;
-        this.loadShelves();
-        return;
-      }
-    }
+    // Warranty is now accessible for all categories so we no longer jump from 4 to 6.
     if (this.currentStep < 7) {
       this.currentStep++;
       if (this.currentStep === 6) this.loadShelves();
@@ -651,11 +644,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         this.currentStep = 2; return;
       }
     }
-    if (this.currentStep === 6) {
-      if (this.category === 'Consumable') {
-        this.currentStep = 4; return;
-      }
-    }
+    // Backward navigation from 6 (Storage) goes naturally to 5 (Warranty) for all.
     if (this.currentStep > 0) this.currentStep--;
   }
 
@@ -676,7 +665,11 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
       const savedStep = this.currentStep;
       this.currentStep = step;
       if (!this.isStepValid()) {
-        // Stop here — can't skip this invalid step
+        // Stop here — can't skip this invalid step.
+        // If we landed on the storage step, ensure shelves are loaded
+        if (this.currentStep === 6) {
+          this.loadShelves();
+        }
         return;
       }
       this.currentStep = savedStep;
@@ -696,7 +689,11 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.shelfService.getShelvesByType(this.type).subscribe({
       next: shelves => {
         this.availableShelves = shelves.filter(s => s.maxQte - s.currentQte > 0);
-        this.shelfAssignments = this.availableShelves.map(s => ({ shelf: s, assignCount: 0 }));
+        const prev = new Map(this.shelfAssignments?.map(a => [a.shelf.id, a.assignCount]) || []);
+        this.shelfAssignments = this.availableShelves.map(s => ({
+          shelf: s,
+          assignCount: prev.get(s.id) || 0
+        }));
       },
       error: err => console.error('Failed to load shelves', err)
     });
@@ -757,6 +754,8 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   private buildPayloads(): Equipment[] {
     const n = Number(this.quantity) || 1;
     const same = this.configMode === 'same';
+    // Specs have their own independent mode — must NOT use configMode
+    const specSame = this.specMode === 'same' || n === 1;
 
     const payloads = Array.from({ length: n }, (_, i) => {
       const u = this.units[i] || this.emptyUnit();
@@ -770,7 +769,8 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         equipmentName: same ? this.sharedName : u.name,
         brand: same ? this.sharedBrand : u.brand,
         model: same ? this.sharedModel : u.model,
-        note: same ? this.sharedNotes : '',
+        // Note is always shared for all units regardless of configMode
+        note: this.sharedNotes,
         type: this.type,
         category: this.selectedCategoryName,
         qte: 1,
@@ -779,17 +779,19 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         supplier: this.purchaseMode === 'same' ? this.sharedSupplier : u.supplier,
         purchaseDate: this.purchaseMode === 'same' ? this.sharedPurchaseDate : u.purchaseDate,
         purchasePrice: this.purchaseMode === 'same' ? price : u.purchasePrice,
+        invoiceRef: this.purchaseMode === 'same' ? this.sharedInvoiceRef : u.invoiceRef,
         warrantyExpiration: this.warrantyMode === 'shared' ? this.sharedWarrantyEnd : u.warrantyEnd,
         invoiceFileName: this.purchaseMode === 'same' ? this.sharedInvoiceFileName : u.invoiceFileName,
         invoiceFileData: this.purchaseMode === 'same' ? this.sharedInvoiceFileData : u.invoiceFileData,
         warrantyFileName: this.warrantyMode === 'shared' ? this.sharedWarrantyFileName : u.warrantyFileName,
         warrantyFileData: this.warrantyMode === 'shared' ? this.sharedWarrantyFileData : u.warrantyFileData,
-        cpu: same ? this.sharedCpu : u.cpu,
-        ram: same ? this.sharedRam : u.ram,
-        storage: same ? this.sharedStorage : u.storage,
-        graphicsCard: same ? this.sharedGpu : u.graphicsCard,
-        operatingSystem: same ? this.sharedOs : u.operatingSystem,
-        specification: same ? this.sharedSpecification : u.specification,
+        // Specs use specMode, independently of configMode
+        cpu: specSame ? this.sharedCpu : u.cpu,
+        ram: specSame ? this.sharedRam : u.ram,
+        storage: specSame ? this.sharedStorage : u.storage,
+        graphicsCard: specSame ? this.sharedGpu : u.graphicsCard,
+        operatingSystem: specSame ? this.sharedOs : u.operatingSystem,
+        specification: specSame ? this.sharedSpecification : u.specification,
         department: 'stock',
         status: 'Available',
         shelfId: '' // assigned below
@@ -856,9 +858,11 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.sharedPurchaseDate = new Date().toISOString().split('T')[0];
     this.sharedSupplierId = ''; this.sharedSupplier = '';
     this.sharedPriceMode = 'per-unit'; this.sharedPrice = 0; this.sharedInvoiceRef = '';
-    this.sharedInvoiceFile = null; this.sharedInvoiceFileName = '';
+    // Clear ALL invoice file state — including fileData to prevent stale icon on next open
+    this.sharedInvoiceFile = null; this.sharedInvoiceFileName = ''; this.sharedInvoiceFileData = '';
     this.warrantyMode = 'shared'; this.sharedWarrantyEnd = '';
-    this.sharedWarrantyFile = null; this.sharedWarrantyFileName = '';
+    // Clear ALL warranty file state — including fileData to prevent stale icon on next open
+    this.sharedWarrantyFile = null; this.sharedWarrantyFileName = ''; this.sharedWarrantyFileData = '';
     this.availableShelves = []; this.shelfAssignments = [];
     this.units = []; this.isSaving = false; this.saveError = '';
     this.prefillData = null;
@@ -881,13 +885,16 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   }
 
   // ── Review helpers ────────────────────────────────────────────────────
-  get reviewUnits(): { name: string; serial: string }[] {
+  get reviewUnits(): { name: string; serial: string; brand: string; model: string; specs: string }[] {
     return Array.from({ length: this.quantity }, (_, i) => {
       const u = this.units[i];
-      const serial = this.quantity === 1 ? this.sharedSerial : (u?.serialNumber || '—');
+      const serial = this.quantity === 1 ? (this.sharedSerial || '-') : (u?.serialNumber || '-');
       return {
-        name: this.configMode === 'same' ? this.sharedName : (u?.name || `Unit ${i + 1}`),
-        serial: serial
+        name: this.configMode === 'same' ? (this.sharedName || `Unit ${i + 1}`) : (u?.name || `Unit ${i + 1}`),
+        serial: serial,
+        brand: this.configMode === 'same' ? (this.sharedBrand || '-') : (u?.brand || '-'),
+        model: this.configMode === 'same' ? (this.sharedModel || '-') : (u?.model || '-'),
+        specs: this.specMode === 'same' ? (this.sharedSpecification || '-') : (u?.specification || '-')
       };
     });
   }

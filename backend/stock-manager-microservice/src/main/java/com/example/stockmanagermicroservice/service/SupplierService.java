@@ -5,6 +5,10 @@ import com.example.stockmanagermicroservice.model.Supplier;
 import com.example.stockmanagermicroservice.repository.EquipmentRepository;
 import com.example.stockmanagermicroservice.repository.SupplierRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +26,9 @@ public class SupplierService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAll();
@@ -64,16 +71,11 @@ public class SupplierService {
                     "Supplier " + updatedSupplier.getCompanyName() + " details have been modified",
                     "INFO", "SUPPLIER", updatedSupplier.getId(), null, "STOCK_MANAGER");
 
-            // Cascade update to Equipment if companyName changed
+            // Cascade update to Equipment if companyName changed — using atomic update (no file data loaded)
             if (oldCompanyName != null && !oldCompanyName.equals(newCompanyName)) {
-                // We use findBySupplierId to identify equipments belonging to this supplier
-                List<Equipment> relatedEquipments = equipmentRepository.findBySupplierId(id);
-                if (!relatedEquipments.isEmpty()) {
-                    for (Equipment eq : relatedEquipments) {
-                        eq.setSupplier(newCompanyName);
-                    }
-                    equipmentRepository.saveAll(relatedEquipments);
-                }
+                Query q = new Query(Criteria.where("supplierId").is(id));
+                Update u = new Update().set("supplier", newCompanyName);
+                mongoTemplate.updateMulti(q, u, Equipment.class);
             }
 
             return updatedSupplier;

@@ -153,6 +153,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
         graphicsCard: '',
         operatingSystem: '',
         specification: '',
+        invoiceRef: '',
         status: 'Available'
       };
     }
@@ -432,6 +433,18 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     // Only force qte = 1 for NEW items. For edits, preserve the current quantity (which might be 0).
     if (!this.equipment?.id || this.isAddSimilar) {
       payload.qte = 1;
+    }
+
+    // Performance Optimization: Prevent sending unaltered 5MB base64 strings
+    if (this.equipment && this.equipment.id) {
+      if (payload.invoiceFileName === this.equipment.invoiceFileName) {
+        delete payload.invoiceFileName;
+        delete payload.invoiceFileData;
+      }
+      if (payload.warrantyFileName === this.equipment.warrantyFileName) {
+        delete payload.warrantyFileName;
+        delete payload.warrantyFileData;
+      }
     }
 
     const doSave = (finalPayload: Equipment) => {

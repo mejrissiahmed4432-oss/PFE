@@ -4,6 +4,9 @@ import { EquipmentListComponent } from './equipment-list/equipment-list.componen
 import { EquipmentFormComponent } from './equipment-form/equipment-form.component';
 import { EquipmentWizardComponent } from './equipment-wizard/equipment-wizard.component';
 import { Equipment } from './equipment.model';
+import { EquipmentService } from './equipment.service';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-equipment',
@@ -20,8 +23,10 @@ export class EquipmentComponent implements OnInit {
   showWizard: boolean = false;
   wizardPrefillData: Equipment | null = null;
   isAddSimilar: boolean = false;
+  /** True while fetching file data for Add Similar — prevents wizard from opening prematurely */
+  isLoadingAddSimilar: boolean = false;
 
-  constructor() {}
+  constructor(private equipmentService: EquipmentService) {}
   ngOnInit(): void {}
 
   openAdd(): void {
@@ -47,8 +52,51 @@ export class EquipmentComponent implements OnInit {
   }
 
   openAddSimilar(equipment: Equipment): void {
-    this.wizardPrefillData = { ...equipment };
-    this.showWizard = true;
+    if (!equipment.id) {
+      // No id — open directly without file fetching
+      this.wizardPrefillData = { ...equipment };
+      this.showWizard = true;
+      return;
+    }
+
+    const hasInvoice = !!equipment.invoiceFileName;
+    const hasWarranty = !!equipment.warrantyFileName;
+
+    // No documents at all — open wizard immediately
+    if (!hasInvoice && !hasWarranty) {
+      this.wizardPrefillData = { ...equipment };
+      this.showWizard = true;
+      return;
+    }
+
+    // Fetch file data before opening wizard so doc fields are pre-filled
+    this.isLoadingAddSimilar = true;
+
+    const invoice$ = hasInvoice
+      ? this.equipmentService.getInvoiceFile(equipment.id).pipe(catchError(() => of('')))
+      : of('');
+
+    const warranty$ = hasWarranty
+      ? this.equipmentService.getWarrantyFile(equipment.id).pipe(catchError(() => of('')))
+      : of('');
+
+    forkJoin([invoice$, warranty$]).subscribe({
+      next: ([invoiceData, warrantyData]) => {
+        this.wizardPrefillData = {
+          ...equipment,
+          invoiceFileData: invoiceData || '',
+          warrantyFileData: warrantyData || ''
+        };
+        this.isLoadingAddSimilar = false;
+        this.showWizard = true;
+      },
+      error: () => {
+        // Fallback: open wizard without file data
+        this.wizardPrefillData = { ...equipment };
+        this.isLoadingAddSimilar = false;
+        this.showWizard = true;
+      }
+    });
   }
 
   closeForm(saved: boolean): void {
@@ -61,3 +109,4 @@ export class EquipmentComponent implements OnInit {
     }
   }
 }
+
