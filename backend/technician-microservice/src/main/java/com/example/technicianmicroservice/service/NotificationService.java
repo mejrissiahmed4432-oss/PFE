@@ -1,4 +1,4 @@
-package com.example.stockmanagermicroservice.service;
+package com.example.technicianmicroservice.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,4 +32,3 @@ public class NotificationService {
         }
     }
 }
-

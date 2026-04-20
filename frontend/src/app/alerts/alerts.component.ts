@@ -54,7 +54,10 @@ export class AlertsComponent implements OnInit, OnDestroy {
 
   loadAlerts(): void {
     this.isLoading = true;
-    this.alertService.getAlerts().subscribe({
+    const userId = this.currentUser?.id;
+    const role = this.currentUser?.role;
+    
+    this.alertService.getAlerts(userId, role).subscribe({
       next: (data) => {
         this.alerts = data;
         
@@ -136,6 +139,17 @@ export class AlertsComponent implements OnInit, OnDestroy {
     if (alert.read) return;
     this.alertService.markAsRead(alert.id).subscribe(() => {
       alert.read = true;
+      this.calculateStats();
+    });
+  }
+
+  markAllAsReadBulk(): void {
+    const userId = this.currentUser?.id;
+    const role = this.currentUser?.role;
+    
+    this.alertService.markAllAsRead(userId, role).subscribe(() => {
+      this.alerts.forEach(a => a.read = true);
+      this.calculateStats();
     });
   }
   

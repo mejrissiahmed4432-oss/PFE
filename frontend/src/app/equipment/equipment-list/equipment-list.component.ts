@@ -225,7 +225,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
       
       const group = groupsMap.get(key)!;
       group.items.push(eq);
-      group.totalQuantity++;
+      group.totalQuantity += (eq.qte !== undefined ? eq.qte : 1);
     });
 
     // 3. Finalize aggregation for each group
@@ -261,9 +261,8 @@ export class EquipmentListComponent implements OnInit, OnChanges {
       const statusCounts: Record<string, { label: string; count: number; cls: string }> = {};
       group.items.forEach(item => {
         const s = this.getEquipmentStatus(item);
-        const label = s.label.toLowerCase(); // Consistent keying
+        const label = s.label.toLowerCase();
         
-        // Keying based on original derived label to ensure distinct chips for each
         if (!statusCounts[label]) {
           statusCounts[label] = { 
             label: label, 
@@ -487,6 +486,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   }
 
   getEquipmentStatus(eq: any): { label: string; cls: string } {
+    if (eq.qte === 0) return { label: 'Out of Stock', cls: 'unassigned' };
     if (eq.status) {
       const s = eq.status.toLowerCase();
       if (s === 'broken') return { label: 'Broken', cls: 'expired' }; 

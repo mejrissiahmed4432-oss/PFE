@@ -110,6 +110,7 @@ export class PartRequestWizardComponent implements OnInit {
           partName: item.partName || '',
           category: item.category || '',
           type: item.type || '',
+          brand: item.brand || '',
           specification: item.specification || '',
           quantity: item.quantity || 1,
           isManual: !item.equipmentId,
@@ -493,6 +494,7 @@ export class PartRequestWizardComponent implements OnInit {
       partName: item.partName,
       category: item.category,
       type: item.type,
+      brand: item.brand,
       specification: item.specification,
       equipmentId: item.equipmentId,
       quantity: item.quantity

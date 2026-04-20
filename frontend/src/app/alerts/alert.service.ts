@@ -21,16 +21,29 @@ export class AlertService {
 
   constructor(private http: HttpClient) { }
 
-  getAlerts(): Observable<Alert[]> {
-    return this.http.get<Alert[]>(this.apiUrl);
+  getAlerts(userId?: string, role?: string): Observable<Alert[]> {
+    let params: any = {};
+    if (userId) params.userId = userId;
+    if (role) params.role = role;
+    return this.http.get<Alert[]>(this.apiUrl, { params });
   }
 
-  getUnreadAlerts(): Observable<Alert[]> {
-    return this.http.get<Alert[]>(`${this.apiUrl}/unread`);
+  getUnreadAlerts(userId?: string, role?: string): Observable<Alert[]> {
+    let params: any = {};
+    if (userId) params.userId = userId;
+    if (role) params.role = role;
+    return this.http.get<Alert[]>(`${this.apiUrl}/unread`, { params });
   }
 
   markAsRead(id: string): Observable<Alert> {
     return this.http.put<Alert>(`${this.apiUrl}/${id}/read`, {});
+  }
+
+  markAllAsRead(userId?: string, role?: string): Observable<void> {
+    let params: any = {};
+    if (userId) params.userId = userId;
+    if (role) params.role = role;
+    return this.http.put<void>(`${this.apiUrl}/read-all`, {}, { params });
   }
 
   deleteAlert(id: string): Observable<void> {

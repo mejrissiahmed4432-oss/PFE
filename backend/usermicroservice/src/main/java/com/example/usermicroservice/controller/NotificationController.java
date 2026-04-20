@@ -17,18 +17,30 @@ public class NotificationController {
     private NotificationService notificationService;
 
     @GetMapping
-    public ResponseEntity<List<Notification>> getAllNotifications(@RequestParam(required = false) String userId) {
-        return ResponseEntity.ok(notificationService.getAllNotifications(userId));
+    public ResponseEntity<List<Notification>> getAllNotifications(
+            @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String role) {
+        return ResponseEntity.ok(notificationService.getAllNotifications(userId, role));
     }
 
     @GetMapping("/unread")
-    public ResponseEntity<List<Notification>> getUnreadNotifications(@RequestParam(required = false) String userId) {
-        return ResponseEntity.ok(notificationService.getUnreadNotifications(userId));
+    public ResponseEntity<List<Notification>> getUnreadNotifications(
+            @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String role) {
+        return ResponseEntity.ok(notificationService.getUnreadNotifications(userId, role));
     }
 
     @PutMapping("/{id}/read")
     public ResponseEntity<Notification> markAsRead(@PathVariable String id) {
         return ResponseEntity.ok(notificationService.markAsRead(id));
+    }
+
+    @PutMapping("/read-all")
+    public ResponseEntity<Void> markAllAsRead(
+            @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String role) {
+        notificationService.markAllAsRead(userId, role);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
@@ -57,13 +69,15 @@ public class NotificationController {
         String category = body.get("category");
         String relatedId = body.get("relatedId");
         String recipientId = body.get("recipientId");
+        String targetRole = body.get("targetRole");
         
         System.out.println("[NotificationController] Received internal notification request:");
         System.out.println("  Title: " + title);
         System.out.println("  Recipient: " + recipientId);
+        System.out.println("  Target Role: " + targetRole);
         System.out.println("  Category: " + category);
 
-        notificationService.createNotification(title, message, type, category, relatedId, recipientId);
+        notificationService.createNotification(title, message, type, category, relatedId, recipientId, targetRole);
         return ResponseEntity.ok().build();
     }
 }

@@ -16,6 +16,7 @@ public class Notification {
     private String type; // SUCCESS, INFO, ERROR, WARNING
     private String category; // PART_REQUEST, TICKET, TASK, EQUIPMENT, etc.
     private String recipientId; // Optional: If assigned directly to a user
+    private String targetRole; // Optional: If assigned to a specific role (STOCK_MANAGER, TECHNICIAN, etc.)
     private boolean read;
     private String relatedId; 
     
@@ -25,12 +26,17 @@ public class Notification {
     public Notification() {}
 
     public Notification(String title, String message, String type, String category, String relatedId, String recipientId) {
+        this(title, message, type, category, relatedId, recipientId, null);
+    }
+
+    public Notification(String title, String message, String type, String category, String relatedId, String recipientId, String targetRole) {
         this.title = title;
         this.message = message;
         this.type = type;
         this.category = category;
         this.relatedId = relatedId;
         this.recipientId = recipientId;
+        this.targetRole = targetRole;
         this.read = false;
         this.createdAt = LocalDateTime.now();
     }
@@ -53,6 +59,9 @@ public class Notification {
 
     public String getRecipientId() { return recipientId; }
     public void setRecipientId(String recipientId) { this.recipientId = recipientId; }
+
+    public String getTargetRole() { return targetRole; }
+    public void setTargetRole(String targetRole) { this.targetRole = targetRole; }
 
     public boolean isRead() { return read; }
     public void setRead(boolean read) { this.read = read; }

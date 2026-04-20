@@ -17,18 +17,30 @@ public class AlertController {
     private AlertService alertService;
 
     @GetMapping
-    public ResponseEntity<List<Alert>> getAllAlerts() {
-        return ResponseEntity.ok(alertService.getAllAlerts());
+    public ResponseEntity<List<Alert>> getAllAlerts(
+            @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String role) {
+        return ResponseEntity.ok(alertService.getAllAlerts(userId, role));
     }
 
     @GetMapping("/unread")
-    public ResponseEntity<List<Alert>> getUnreadAlerts() {
-        return ResponseEntity.ok(alertService.getUnreadAlerts());
+    public ResponseEntity<List<Alert>> getUnreadAlerts(
+            @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String role) {
+        return ResponseEntity.ok(alertService.getUnreadAlerts(userId, role));
     }
 
     @PutMapping("/{id}/read")
     public ResponseEntity<Alert> markAsRead(@PathVariable String id) {
         return ResponseEntity.ok(alertService.markAsRead(id));
+    }
+
+    @PutMapping("/read-all")
+    public ResponseEntity<Void> markAllAsRead(
+            @RequestParam(required = false) String userId,
+            @RequestParam(required = false) String role) {
+        alertService.markAllAsRead(userId, role);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/internal/trigger")
@@ -44,7 +56,15 @@ public class AlertController {
         String type     = body.getOrDefault("type", "INFO");
         String category = body.getOrDefault("category", "TASK");
         String relatedId = body.get("relatedId");
-        alertService.createAlert(title, message, type, category, relatedId);
+        String recipientId = body.get("recipientId");
+        String targetRole = body.get("targetRole");
+        
+        System.out.println("[AlertController] Received internal alert request:");
+        System.out.println("  Title: " + title);
+        System.out.println("  Recipient: " + recipientId);
+        System.out.println("  Target Role: " + targetRole);
+        
+        alertService.createAlert(title, message, type, category, relatedId, recipientId, targetRole);
         return ResponseEntity.ok().build();
     }
 

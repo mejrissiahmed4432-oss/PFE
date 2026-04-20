@@ -11,9 +11,11 @@ import java.util.Optional;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final NotificationService notificationService;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, NotificationService notificationService) {
         this.taskRepository = taskRepository;
+        this.notificationService = notificationService;
     }
 
     public List<Task> getAllTasks() {
@@ -26,7 +28,23 @@ public class TaskService {
 
     public Task createTask(Task task) {
         task.prePersist();
-        return taskRepository.save(task);
+        Task saved = taskRepository.save(task);
+
+        if (saved.getAssignedTo() != null && !saved.getAssignedTo().isEmpty()) {
+            notificationService.createNotification(
+                "New Schedule Task",
+                "A new task '" + saved.getTitle() + "' has been assigned to you.",
+                "INFO", "SCHEDULE", saved.getId(), saved.getAssignedTo(), null
+            );
+        } else {
+            notificationService.createNotification(
+                "New Unassigned Task",
+                "A new task '" + saved.getTitle() + "' was created and needs assignment.",
+                "INFO", "SCHEDULE", saved.getId(), null, "TECHNICIAN"
+            );
+        }
+
+        return saved;
     }
 
     public Task updateTask(String id, Task updatedTask) {
@@ -41,7 +59,16 @@ public class TaskService {
                     task.setAssignedTo(updatedTask.getAssignedTo());
                     task.setOriginalDueDate(updatedTask.getOriginalDueDate());
                     task.preUpdate();
-                    return taskRepository.save(task);
+                    Task saved = taskRepository.save(task);
+
+                    if (saved.getAssignedTo() != null && !saved.getAssignedTo().isEmpty()) {
+                        notificationService.createNotification(
+                            "Task Updated",
+                            "The task '" + saved.getTitle() + "' has been updated.",
+                            "INFO", "SCHEDULE", saved.getId(), saved.getAssignedTo(), null
+                        );
+                    }
+                    return saved;
                 })
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
     }
@@ -51,12 +78,30 @@ public class TaskService {
                 .map(task -> {
                     task.setStatus(status);
                     task.preUpdate();
-                    return taskRepository.save(task);
+                    Task saved = taskRepository.save(task);
+
+                    if (saved.getAssignedTo() != null && !saved.getAssignedTo().isEmpty()) {
+                        notificationService.createNotification(
+                            "Task Status Changed",
+                            "The status of task '" + saved.getTitle() + "' is now: " + status,
+                            "SUCCESS", "SCHEDULE", saved.getId(), saved.getAssignedTo(), null
+                        );
+                    }
+                    return saved;
                 })
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
     }
 
     public void deleteTask(String id) {
+        taskRepository.findById(id).ifPresent(task -> {
+            if (task.getAssignedTo() != null && !task.getAssignedTo().isEmpty()) {
+                notificationService.createNotification(
+                    "Task Cancelled",
+                    "The task '" + task.getTitle() + "' has been cancelled and removed from your schedule.",
+                    "INFO", "SCHEDULE", id, task.getAssignedTo(), null
+                );
+            }
+        });
         taskRepository.deleteById(id);
     }
 }

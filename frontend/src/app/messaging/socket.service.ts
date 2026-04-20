@@ -9,7 +9,6 @@ import { AuthService } from '../auth.service';
 })
 export class SocketService {
   private stompClient: Client | null = null;
-  private alertsStompClient: Client | null = null;
   
   private messageSubject = new Subject<any>();
   private alertSubject = new Subject<void>();
@@ -31,45 +30,18 @@ export class SocketService {
     const user = this.authService.getCurrentUser();
     if (user) {
       this.connect(user.id);
-      this.connectAlerts();
     }
 
     // React to login/logout
     this.authService.user$.subscribe(user => {
       if (user) {
         this.connect(user.id);
-        this.connectAlerts();
       } else {
         this.disconnect();
-        this.disconnectAlerts();
       }
     });
   }
 
-  private connectAlerts() {
-    if (this.alertsStompClient && this.alertsStompClient.connected) return;
-
-    this.alertsStompClient = Stomp.over(() => new SockJS('/ws-alerts'));
-
-    this.alertsStompClient.onConnect = () => {
-      console.log('Connected to Alerts WebSocket');
-      this.alertsStompClient!.subscribe('/topic/alerts', (msg: Message) => {
-        this.alertSubject.next();
-      });
-      this.alertsStompClient!.subscribe('/topic/notifications', (msg: Message) => {
-        this.notificationSubject.next();
-      });
-    };
-
-    this.alertsStompClient.activate();
-  }
-
-  private disconnectAlerts() {
-    if (this.alertsStompClient) {
-      this.alertsStompClient.deactivate();
-      this.alertsStompClient = null;
-    }
-  }
 
   private connect(userId: string) {
     if (this.stompClient && this.stompClient.connected) {
@@ -113,6 +85,14 @@ export class SocketService {
       // Subscribe to global user online/offline status
       this.stompClient!.subscribe(`/topic/user-status`, (msg: Message) => {
         this.userStatusSubject.next(JSON.parse(msg.body));
+      });
+
+      // Unified Alerts and Notifications
+      this.stompClient!.subscribe('/topic/alerts', (msg: Message) => {
+        this.alertSubject.next();
+      });
+      this.stompClient!.subscribe('/topic/notifications', (msg: Message) => {
+        this.notificationSubject.next();
       });
     };
 

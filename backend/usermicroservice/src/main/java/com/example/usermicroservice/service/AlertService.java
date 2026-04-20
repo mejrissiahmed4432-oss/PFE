@@ -17,16 +17,22 @@ public class AlertService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    public List<Alert> getAllAlerts() {
-        return alertRepository.findAllByOrderByCreatedAtDesc().stream()
-                .filter(this::isSystemAlert)
-                .toList();
+    public List<Alert> getAllAlerts(String userId, String role) {
+        if ((userId == null || userId.isEmpty()) && (role == null || role.isEmpty())) {
+            return alertRepository.findAllByOrderByCreatedAtDesc().stream()
+                    .filter(this::isSystemAlert)
+                    .toList();
+        }
+        return alertRepository.findAllForUser(userId, role);
     }
 
-    public List<Alert> getUnreadAlerts() {
-        return alertRepository.findByReadFalseOrderByCreatedAtDesc().stream()
-                .filter(this::isSystemAlert)
-                .toList();
+    public List<Alert> getUnreadAlerts(String userId, String role) {
+        if ((userId == null || userId.isEmpty()) && (role == null || role.isEmpty())) {
+            return alertRepository.findByReadFalseOrderByCreatedAtDesc().stream()
+                    .filter(this::isSystemAlert)
+                    .toList();
+        }
+        return alertRepository.findUnreadForUser(userId, role);
     }
 
     private boolean isSystemAlert(Alert alert) {
@@ -42,8 +48,31 @@ public class AlertService {
         return saved;
     }
 
-    public void createAlert(String title, String message, String type, String category, String relatedId) {
-        Alert alert = new Alert(title, message, type, category, relatedId);
+    public void markAllAsRead(String userId, String role) {
+        List<Alert> unread = alertRepository.findUnreadForUser(userId, role);
+        unread.forEach(a -> a.setRead(true));
+        alertRepository.saveAll(unread);
+        messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
+    }
+
+    @Autowired
+    @org.springframework.context.annotation.Lazy
+    private NotificationService notificationService;
+
+    public void createAlert(String title, String message, String type, String category, String relatedId, String recipientId, String targetRole) {
+        // Enforce strict logic: Alerts are for WARNING/ERROR/URGENT only.
+        if (type != null && (type.equalsIgnoreCase("INFO") || type.equalsIgnoreCase("SUCCESS"))) {
+            // Reroute routine events to NotificationService
+            notificationService.createNotification(title, message, type, category, relatedId, recipientId, targetRole);
+            return;
+        }
+        
+        // If it's empty, default to WARNING
+        if (type == null || type.trim().isEmpty()) {
+            type = "WARNING";
+        }
+
+        Alert alert = new Alert(title, message, type, category, relatedId, recipientId, targetRole);
         alertRepository.save(alert);
         messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
     }

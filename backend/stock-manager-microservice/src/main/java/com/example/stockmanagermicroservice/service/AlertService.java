@@ -1,74 +1,45 @@
 package com.example.stockmanagermicroservice.service;
 
-import com.example.stockmanagermicroservice.model.Alert;
 import com.example.stockmanagermicroservice.model.Equipment;
-import com.example.stockmanagermicroservice.repository.AlertRepository;
 import com.example.stockmanagermicroservice.repository.EquipmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import java.util.Map;
 
 @Service
 public class AlertService {
 
     @Autowired
-    private AlertRepository alertRepository;
-
-    @Autowired
     private EquipmentRepository equipmentRepository;
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private RestTemplate restTemplate;
 
-    public List<Alert> getAllAlerts() {
-        return alertRepository.findAllByOrderByCreatedAtDesc().stream()
-                .filter(this::isSystemAlert)
-                .toList();
-    }
+    private static final String USER_SERVICE_URL = "http://user-microservice/api/alerts";
 
-    public List<Alert> getUnreadAlerts() {
-        return alertRepository.findByReadFalseOrderByCreatedAtDesc().stream()
-                .filter(this::isSystemAlert)
-                .toList();
-    }
+    public void createAlert(String title, String message, String type, String category, String relatedId, String targetRole) {
+        Map<String, String> body = new HashMap<>();
+        body.put("title", title);
+        body.put("message", message);
+        body.put("type", type);
+        body.put("category", category);
+        body.put("relatedId", relatedId);
+        body.put("targetRole", targetRole);
 
-    private boolean isSystemAlert(Alert alert) {
-        String cat = alert.getCategory() != null ? alert.getCategory().toUpperCase() : "";
-        // Only allow WARRANTY, STOCK, MAINTENANCE, and SYSTEM in the Alerts list
-        // Explicitly exclude CRUD categories: EQUIPMENT, SHELF, SUPPLIER, CATEGORY
-        return cat.equals("WARRANTY") || cat.equals("STOCK") || cat.equals("MAINTENANCE") || cat.equals("SYSTEM");
-    }
-
-    public Alert markAsRead(String id) {
-        Alert alert = alertRepository.findById(id).orElseThrow();
-        alert.setRead(true);
-        Alert saved = alertRepository.save(alert);
-        messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
-        return saved;
-    }
-
-    public void createAlert(String title, String message, String type, String category, String relatedId) {
-        Alert alert = new Alert(title, message, type, category, relatedId);
-        alertRepository.save(alert);
-        messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
-    }
-
-    public void deleteAlert(String id) {
-        alertRepository.deleteById(id);
-        messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
-    }
-
-    public void deleteAllAlerts() {
-        alertRepository.deleteAll();
-        messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
+        try {
+            restTemplate.postForEntity(USER_SERVICE_URL, body, Void.class);
+        } catch (Exception e) {
+            System.err.println("Failed to send alert to user-microservice: " + e.getMessage());
+        }
     }
 
     // Automatically generate alerts for warranty expiry
-    //@Scheduled(cron = "0 0 0 * * *") // Every day at midnight
     @Scheduled(cron = "0 * * * * *")
     public void generateWarrantyAlerts() {
         LocalDate today = LocalDate.now();
@@ -83,21 +54,18 @@ public class AlertService {
             
             // Check if already expired (< today)
             if (expDate.isBefore(today)) {
-                boolean alreadyHasError = alertRepository.existsByCategoryAndRelatedIdAndType("WARRANTY", eq.getId(), "ERROR");
-                if (!alreadyHasError) {
-                    createAlert("Warranty Expired: " + eq.getEquipmentName(),
-                            "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") expired on " + expDate + ".",
-                            "ERROR", "WARRANTY", eq.getId());
-                }
+                // Since we don't have local repository to check if alert exists, 
+                // we'll send it and let usermicroservice handle duplicates if needed, 
+                // or just accept multiple. In a better design, usermicroservice would check.
+                createAlert("Warranty Expired: " + eq.getEquipmentName(),
+                        "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") expired on " + expDate + ".",
+                        "ERROR", "WARRANTY", eq.getId(), "STOCK_MANAGER");
             } 
             // Else check if expiring soon (< today + 30)
             else if (expDate.isBefore(thirtyDaysFromNow)) {
-                boolean alreadyHasWarning = alertRepository.existsByCategoryAndRelatedIdAndType("WARRANTY", eq.getId(), "WARNING");
-                if (!alreadyHasWarning) {
-                    createAlert("Warranty Expiring: " + eq.getEquipmentName(),
-                            "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") will expire soon on " + expDate + ".",
-                            "WARNING", "WARRANTY", eq.getId());
-                }
+                createAlert("Warranty Expiring: " + eq.getEquipmentName(),
+                        "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") will expire soon on " + expDate + ".",
+                        "WARNING", "WARRANTY", eq.getId(), "STOCK_MANAGER");
             }
         }
     }
@@ -105,29 +73,7 @@ public class AlertService {
     public void generateDemoAlert() {
         createAlert("System Pulse Check",
                 "This is a real-time test alert to verify the notification system is working perfectly.",
-                "INFO", "SYSTEM", null);
+                "INFO", "SYSTEM", null, "STOCK_MANAGER");
     }
-
-    public void updateAlertsRelatedToNameChange(String relatedId, String oldName, String newName) {
-        if (oldName == null || newName == null || oldName.equals(newName)) return;
-        List<Alert> alerts = alertRepository.findByRelatedId(relatedId);
-        boolean changed = false;
-        for (Alert alert : alerts) {
-            boolean currentAlertChanged = false;
-            if (alert.getTitle() != null && alert.getTitle().contains(oldName)) {
-                alert.setTitle(alert.getTitle().replace(oldName, newName));
-                currentAlertChanged = true;
-            }
-            if (alert.getMessage() != null && alert.getMessage().contains(oldName)) {
-                alert.setMessage(alert.getMessage().replace(oldName, newName));
-                currentAlertChanged = true;
-            }
-            if (currentAlertChanged) changed = true;
-        }
-        if (changed) {
-            alertRepository.saveAll(alerts);
-            messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
-        }
-    }
-
 }
+

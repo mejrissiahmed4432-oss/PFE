@@ -1,6 +1,9 @@
 .requests-container {
-  padding: 0;
+  padding: 28px 32px;
   animation: fadeIn 0.5s ease-out;
+  background: linear-gradient(160deg, #f0f4ff 0%, #f8fafc 40%, #f0fdf4 100%);
+  min-height: 100vh;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
 /* ── Page Header ── */
@@ -33,8 +36,11 @@
   margin: 0;
   font-size: 2.2rem;
   font-weight: 800;
-  color: #020c18;
-  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.03em;
 }
 
 .header-text p {
@@ -103,13 +109,22 @@
 
 .stat-card {
   background: white;
-  padding: 12px 24px;
+  padding: 16px 24px;
   border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), 0 6px 20px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 1px solid #f1f5f9;
+  border-top: 3px solid #3b82f6;
+  border-left: 1px solid rgba(226, 232, 240, 0.8);
+  border-right: 1px solid rgba(226, 232, 240, 0.8);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
 }
 
 .stat-value {
@@ -129,10 +144,10 @@
 /* Table Card (From Manager) */
 .table-card {
   background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(99, 102, 241, 0.04);
+  border: 1px solid #e8edf5;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .data-table {
@@ -143,13 +158,13 @@
 
 .data-table th {
   padding: 14px 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid #e2e8f0;
-  background: #f8fafc;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid #f1f5f9;
+  background: #fafbfc;
 }
 
 .main-row td {
@@ -171,11 +186,25 @@
 }
 
 /* Utilities */
-.font-semibold { font-weight: 600; }
-.font-medium { font-weight: 500; }
-.text-dark { color: #0f172a; }
-.text-mute { color: #64748b; }
-.text-sm { font-size: 0.85rem; }
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.text-dark {
+  color: #0f172a;
+}
+
+.text-mute {
+  color: #64748b;
+}
+
+.text-sm {
+  font-size: 0.85rem;
+}
 
 .priority-dot {
   display: inline-block;
@@ -201,11 +230,30 @@
   letter-spacing: 0.02em;
 }
 
-.badge-approved { background: #dcfce7; color: #166534; }
-.badge-rejected { background: #fee2e2; color: #991b1b; }
-.badge-pending { background: #fef3c7; color: #92400e; }
-.badge-cancelled { background: #f1f5f9; color: #475569; }
-.badge-default { background: #e2e8f0; color: #334155; }
+.badge-approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.badge-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-cancelled {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.badge-default {
+  background: #e2e8f0;
+  color: #334155;
+}
 
 .badge-manual {
   font-size: 0.65rem;
@@ -341,4 +389,54 @@
   margin: 0;
   color: #64748b;
   font-size: 0.95rem;
+}
+
+/* --------------------------------------------
+   RESPONSIVE - REQUEST LIST
+-------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .requests-container {
+    padding: 20px 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .tabs-container {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 4px;
+  }
+
+  .data-table th,
+  .main-row td {
+    padding: 12px 14px;
+    font-size: 0.82rem;
+  }
+
+  .details-container {
+    padding: 0 16px 20px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .requests-container {
+    padding: 16px;
+  }
+
+  .header-text h1 {
+    font-size: 1.6rem;
+  }
+
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+  }
 }

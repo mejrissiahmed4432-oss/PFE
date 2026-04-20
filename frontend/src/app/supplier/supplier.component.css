@@ -1,6 +1,9 @@
 .supplier-container {
-  padding: 20px;
+  padding: 32px;
   animation: fadeIn 0.4s ease-out;
+  background-color: #f8fafc;
+  min-height: calc(100vh - 80px);
+  font-family: 'Inter', sans-serif;
 }
 
 @keyframes fadeIn {
@@ -40,4 +43,15 @@
 
 .content {
   margin-top: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .supplier-container { padding: 20px; }
+  .header { justify-content: stretch; }
+  .btn-premium { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 480px) {
+  .supplier-container { padding: 16px; }
 }

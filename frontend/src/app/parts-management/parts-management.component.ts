@@ -42,7 +42,7 @@ export class PartsManagementComponent implements OnInit {
 
   myRequests: PartRequest[] = [];
 
-  viewMode: 'table' | 'card' = 'card';
+  viewMode: 'table' | 'card' = 'table';
   searchQuery: string = '';
   showFilters: boolean = false;
 
@@ -121,10 +121,10 @@ export class PartsManagementComponent implements OnInit {
           category: item.category || 'Unknown',
           type: item.type || 'Unknown',
           specification: item.specification || '',
-          brand: '—',
+          brand: item.brand || '—',
           model: '—',
           qte: item.quantity,
-          status: 'In stock',
+          status: item.quantity === 0 ? 'Out of stock' : 'In stock',
           shelfId: item.equipmentId
         }))
       );
@@ -159,7 +159,7 @@ export class PartsManagementComponent implements OnInit {
 
     const groupsMap = new Map<string, GroupedPart>();
     this.filteredParts.forEach(item => {
-      const key = `${item.category}|${item.type}|${item.brand}|${item.model || ''}`;
+      const key = `${item.category}|${item.type}|${item.brand}|${item.model || ''}|${item.specification || ''}`;
       if (!groupsMap.has(key)) {
         groupsMap.set(key, {
           groupId: key,
@@ -177,7 +177,7 @@ export class PartsManagementComponent implements OnInit {
       }
       const group = groupsMap.get(key)!;
       group.items.push(item);
-      group.totalQuantity += (item.qte || 1); // Sum the quantities
+      group.totalQuantity += (item.qte !== undefined ? item.qte : 1); // Only fallback to 1 if field is missing, not if it's 0
     });
 
     this.groupedParts = Array.from(groupsMap.values()).map(group => {

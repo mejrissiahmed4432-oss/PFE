@@ -14,7 +14,7 @@
   width: 100%;
   max-width: 800px;
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -118,14 +118,20 @@
 }
 
 .scanner-box {
-  border: 2px dashed #e2e8f0;
-  border-radius: 16px;
-  padding: 40px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 20px;
+  padding: 48px;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   background: #f8fafc;
+  transition: all 0.3s ease;
+}
+
+.scanner-box:hover {
+  border-color: #3b82f6;
+  background: #f0f7ff;
 }
 
 .scanner-content h3 {
@@ -191,15 +197,17 @@
   align-items: center;
   padding: 16px 20px;
   background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border: 1px solid #e8edf5;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .equipment-row-item:hover {
-  border-color: #cbd5e1;
-  background: #f1f5f9;
+  border-color: #3b82f6;
+  background: #f8fafc;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
 .item-info h4 {
@@ -325,16 +333,19 @@
 }
 
 .grid-card {
-  padding: 16px;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid #e8edf5;
+  border-radius: 16px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
 }
 
 .grid-card:hover {
-  border-color: #cbd5e1;
+  border-color: #3b82f6;
   background: #f8fafc;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
 }
 
 .grid-card-head {
@@ -359,4 +370,21 @@
   font-size: 0.8rem;
   color: #64748b;
   line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .wizard-modal { width: 95%; max-height: 95vh; }
+  .wizard-header, .wizard-tabs, .wizard-content { padding: 16px 20px; }
+  .filters-row { grid-template-columns: 1fr; gap: 12px; }
+  .equipment-grid { grid-template-columns: 1fr; }
+  .tab-btn { padding: 12px 5px; font-size: 0.85rem; gap: 6px; }
+}
+
+@media (max-width: 480px) {
+  .wizard-modal { width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; }
+  .wizard-header h2 { font-size: 1.2rem; }
+  .scanner-box { padding: 24px; }
+  .scan-actions { flex-direction: column; }
+  .btn-black, .btn-outline { width: 100%; justify-content: center; }
 }

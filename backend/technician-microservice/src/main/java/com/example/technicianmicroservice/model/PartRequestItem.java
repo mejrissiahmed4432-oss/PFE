@@ -7,8 +7,17 @@ public class PartRequestItem {
     private String type;
     private String specification;
     private String equipmentId;
+    private String brand;
 
     public PartRequestItem() {}
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
 
     public String getPartName() {
         return partName;

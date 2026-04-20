@@ -1,8 +1,9 @@
 .equipment-container {
-  padding: 24px;
+  padding: 32px;
   background-color: #f8fafc;
   min-height: calc(100vh - 80px);
   animation: fadeIn 0.4s ease-out;
+  font-family: 'Inter', sans-serif;
 }
 
 .header {
@@ -116,9 +117,10 @@
 
 .detail-section {
   background: white;
-  border: 1px solid #f1f5f9;
-  border-radius: 10px;
-  padding: 20px;
+  border: 1px solid #e8edf5;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
 }
 
 .detail-section h4 {
@@ -166,16 +168,17 @@
 
 /* Badge */
 .badge {
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-transform: capitalize;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .badge.laptops {
   background: #ede9fe;
-  color: #5b21b6;
+  color: #6d28d9;
 }
 
 .badge.monitors {
@@ -190,7 +193,7 @@
 
 .badge.networking {
   background: #fef9c3;
-  color: #a16207;
+  color: #854d0e;
 }
 
 .badge.accessories {
@@ -200,7 +203,7 @@
 
 .badge.storage {
   background: #ffedd5;
-  color: #c2410c;
+  color: #9a3412;
 }
 
 .badge.default {
@@ -266,20 +269,21 @@
 }
 
 /* Responsive */
-@media (max-width: 900px) {
-  .detail-grid {
-    flex-direction: column;
-  }
+@media (max-width: 1024px) {
+  .detail-grid { flex-direction: column; }
+  .detail-side { width: 100%; }
+}
 
-  .detail-side {
-    width: 100%;
-  }
+@media (max-width: 768px) {
+  .equipment-container { padding: 20px; }
+  .detail-fields { grid-template-columns: 1fr; }
+  .detail-header { flex-direction: column; align-items: flex-start; }
+  .actions { width: 100%; }
+  .btn-premium { width: 100%; justify-content: center; }
+}
 
-  .detail-fields {
-    grid-template-columns: 1fr;
-  }
-
-  .equipment-container {
-    padding: 16px;
-  }
+@media (max-width: 480px) {
+  .equipment-container { padding: 16px; }
+  .detail-title-row h2 { font-size: 1.25rem; }
+  .detail-section { padding: 16px; }
 }

@@ -5,16 +5,18 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 400px; /* Panel width */
-  background: #ffffff;
-  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  width: 420px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.08);
+  z-index: 10000;
   transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   font-family: 'Inter', sans-serif;
   overflow: hidden;
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .ai-assistant-overlay.open {
@@ -121,13 +123,25 @@
 
 .chat-bubble {
   background: #ffffff;
-  border: 1.5px solid #06b6d4; /* Tealish/Cyan border from photo */
-  border-radius: 12px;
-  padding: 16px;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  border: 1px solid #e8edf5;
+  border-radius: 16px;
+  padding: 16px 18px;
+  font-size: 0.92rem;
+  line-height: 1.6;
   color: #334155;
-  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.08); /* Cyan glow */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  position: relative;
+}
+
+.chat-bubble::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #06b6d4, #3b82f6);
+  border-radius: 16px 0 0 16px;
 }
 
 .suggested-section {
@@ -150,15 +164,15 @@
 
 .prompt-pill {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
+  border: 1px solid #e8edf5;
+  border-radius: 14px;
   padding: 12px 16px;
   font-size: 0.85rem;
   color: #475569;
   text-align: center;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -169,8 +183,9 @@
 .prompt-pill:hover {
   border-color: #3b82f6;
   color: #3b82f6;
-  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.1);
-  transform: translateY(-1px);
+  background: #f0f7ff;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.1);
+  transform: translateY(-2px);
 }
 
 /* Input Area */
@@ -257,4 +272,11 @@
   cursor: pointer;
   border: 2px solid #ffffff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .ai-assistant-overlay { width: 100%; }
+  .ai-header { padding: 20px 16px; }
+  .prompts-grid { grid-template-columns: 1fr; }
 }

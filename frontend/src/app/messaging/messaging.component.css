@@ -1104,3 +1104,46 @@
     transform: translateY(0) scale(1);
   }
 }
+/* --------------------------------------------
+   RESPONSIVE - MESSAGING
+-------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .conversations-panel { width: 300px; }
+}
+
+@media (max-width: 768px) {
+  .messaging-layout { position: relative; }
+  .conversations-panel {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    width: 100%;
+    max-width: 100%;
+    transform: translateX(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* When a chat is active on mobile, we can slide out the conv list */
+  .messaging-layout.chat-active .conversations-panel {
+    transform: translateX(-100%);
+  }
+  
+  .chat-panel {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    width: 100%;
+  }
+
+  .chat-header { padding: 14px 20px; }
+  .messages-area { padding: 20px 20px; }
+  .msg-bubble-wrap { max-width: 85%; }
+}
+
+@media (max-width: 480px) {
+  .msg-bubble-wrap { max-width: 90%; }
+  .conv-header { padding: 16px 16px 12px; }
+  .chat-header { padding: 12px 16px; }
+  .messages-area { padding: 16px 16px; }
+}

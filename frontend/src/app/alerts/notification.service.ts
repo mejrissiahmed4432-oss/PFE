@@ -21,16 +21,29 @@ export class NotificationService {
 
   constructor(private http: HttpClient) { }
 
-  getNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>(this.apiUrl);
+  getNotifications(userId?: string, role?: string): Observable<Notification[]> {
+    let params: any = {};
+    if (userId) params.userId = userId;
+    if (role) params.role = role;
+    return this.http.get<Notification[]>(this.apiUrl, { params });
   }
 
-  getUnreadNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>(`${this.apiUrl}/unread`);
+  getUnreadNotifications(userId?: string, role?: string): Observable<Notification[]> {
+    let params: any = {};
+    if (userId) params.userId = userId;
+    if (role) params.role = role;
+    return this.http.get<Notification[]>(`${this.apiUrl}/unread`, { params });
   }
 
   markAsRead(id: string): Observable<Notification> {
     return this.http.put<Notification>(`${this.apiUrl}/${id}/read`, {});
+  }
+
+  markAllAsRead(userId?: string, role?: string): Observable<void> {
+    let params: any = {};
+    if (userId) params.userId = userId;
+    if (role) params.role = role;
+    return this.http.put<void>(`${this.apiUrl}/read-all`, {}, { params });
   }
 
   deleteNotification(id: string): Observable<void> {

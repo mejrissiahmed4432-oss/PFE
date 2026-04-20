@@ -98,22 +98,20 @@
         <table class="premium-table">
           <thead>
             <tr>
-              <th style="width: 50px;"></th>
-              <th style="width: 20%;">Name & Details</th>
-              <th style="width: 12%;">Type</th>
-              <th style="width: 12%;">Category</th>
-              <th style="width: 12%;">Brand/Model</th>
-              <th style="width: 8%;" class="text-center">Total Qty</th>
-              <th style="width: 14%;">Availability</th>
-              <th style="width: 10%;">Location</th>
-              <th style="width: 10%;" class="actions-cell">Actions</th>
+              <th class="col-expand"></th>
+              <th>Name</th>
+              <th>Brand</th>
+              <th>Category & Type</th>
+              <th>Specification</th>
+              <th style="width: 80px;">Qte</th>
+              <th class="actions-cell">Actions</th>
             </tr>
           </thead>
           <tbody *ngFor="let group of paginatedGroups">
             <tr class="group-header-row table-row-animate" [class.has-instances]="group.totalQuantity > 1"
               (click)="group.totalQuantity > 1 ? toggleGroup(group) : null">
 
-              <td style="width: 50px;" class="col-expand">
+              <td class="col-expand">
                 <button *ngIf="group.totalQuantity > 1" class="expand-btn" [class.expanded]="group.expanded"
                   (click)="$event.stopPropagation(); toggleGroup(group)">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -123,44 +121,47 @@
                 </button>
               </td>
 
-              <td style="width: 20%;">
+              <td>
                 <div class="font-bold text-dark">{{ group.name }}</div>
-                <div class="card-subtitle">{{ group.items[0].specification || '—' }}</div>
+                <div *ngIf="group.totalQuantity > 1" class="text-xs text-slate-400 font-medium mt-1"
+                  style="white-space: nowrap; word-break: normal;">(multiple instances)</div>
               </td>
-              <td style="width: 12%;">{{ group.type }}</td>
-              <td style="width: 12%;">{{ group.category }}</td>
-              <td style="width: 12%;">
-                <div>{{ group.brand }}</div>
-                <div class="card-subtitle">{{ group.model }}</div>
-              </td>
-              <td style="width: 8%;" class="text-center font-semibold">{{ group.totalQuantity }}</td>
-              <td style="width: 14%;">
-                <div class="status-summary-group">
-                  <span *ngFor="let s of group.statusSummary" class="summary-chip" [ngClass]="s.cls">
-                    {{ s.count }} {{ s.label }}
-                  </span>
-                </div>
-              </td>
-              <td style="width: 10%;">{{ group.commonLocation }}</td>
-              <td style="width: 10%;" class="actions-cell">
+              <td>{{ group.brand }}</td>
+              <td>{{ group.category }} / {{ group.type | titlecase }}</td>
+              <td>{{ group.items[0].specification || '—' }}</td>
+              <td class="font-semibold text-center">{{ group.totalQuantity }}</td>
+              <td class="actions-cell">
                 <button class="btn-request-sm" (click)="openRequestWizard(group); $event.stopPropagation()">
                   Request
                 </button>
               </td>
             </tr>
 
-            <!-- Expanded Instances -->
-            <tr *ngFor="let item of group.expanded ? group.items : []" class="instance-row">
-              <td></td>
-              <td colspan="4" class="text-mute font-medium">Instance ID: {{ item.id?.substring(0,8) }}</td>
-              <td class="text-center">1</td>
-              <td>
-                <span class="status-chip-mini" [ngClass]="getStatusColor(item.status)">
-                  {{ item.status }}
-                </span>
+            <!-- Expanded Asset Instances Row -->
+            <tr *ngIf="group.expanded" class="expandable-content-row">
+              <td colspan="7" class="p-0">
+                <div class="instances-container">
+                  <div class="instances-header">
+                    <h4>Part Instances</h4>
+                  </div>
+                  <table class="instances-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Specification</th>
+                        <th style="width: 100px;" class="text-center">Qte</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of group.items">
+                        <td class="font-medium text-dark">{{ item.equipmentName || '—' }}</td>
+                        <td>{{ item.specification || '—' }}</td>
+                        <td class="font-bold text-center" style="color: #3b82f6;">{{ item.qte }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </td>
-              <td>{{ getShelfLocation(item.shelfId) }}</td>
-              <td></td>
             </tr>
           </tbody>
         </table>

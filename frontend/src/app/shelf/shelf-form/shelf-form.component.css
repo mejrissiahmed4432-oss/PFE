@@ -17,8 +17,8 @@
   background: white;
   width: 100%;
   max-width: 600px;
-  border-radius: 16px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.06);
   animation: slideIn 0.3s ease-out;
   display: flex;
   flex-direction: column;
@@ -88,12 +88,13 @@
 }
 
 .form-control {
-  padding: 10px 14px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  padding: 11px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
   font-size: 14px;
   color: #0f172a;
   transition: all 0.2s;
+  background-color: white;
 }
 
 .form-control:focus {
@@ -157,12 +158,14 @@
 }
 
 .btn-primary {
-  background-color: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
 }
 
 .btn-primary:disabled {
@@ -244,4 +247,13 @@
 
 .prefix-input-group .form-control:focus {
   box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modal-container { width: 95%; max-height: 95vh; }
+  .form-row { grid-template-columns: 1fr; gap: 12px; }
+  .modal-header, .modal-body, .modal-footer { padding: 16px; }
+  .btn { width: 100%; }
+  .modal-footer { flex-direction: column; }
 }

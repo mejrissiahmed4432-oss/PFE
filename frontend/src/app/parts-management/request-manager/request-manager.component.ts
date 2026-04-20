@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { PartRequestService } from '../part-request.service';
 import { PartRequest } from '../part-request.model';
 import { AuthService } from '../../auth.service';
+import { EquipmentService } from '../../equipment/equipment.service';
 
 @Component({
   selector: 'app-request-manager',
@@ -24,7 +25,8 @@ export class RequestManagerComponent implements OnInit {
 
   constructor(
     private partRequestService: PartRequestService,
-    private authService: AuthService
+    private authService: AuthService,
+    private equipmentService: EquipmentService
   ) {}
 
   ngOnInit(): void {
@@ -84,9 +86,26 @@ export class RequestManagerComponent implements OnInit {
     event.stopPropagation(); // prevent expanding the row when clicking action buttons
     if (!requestId) return;
 
+    const requestToApprove = this.allRequests.find(r => r.id === requestId);
+
     this.processingId = requestId;
     this.partRequestService.updateStatus(requestId, status).subscribe({
       next: (updated) => {
+        if (status === 'APPROVED' && requestToApprove && requestToApprove.items) {
+          const consumed = requestToApprove.items.map(item => ({
+            name: item.partName,
+            brand: item.brand,
+            type: item.type,
+            specification: item.specification,
+            qty: item.quantity,
+            equipmentId: item.equipmentId
+          }));
+          this.equipmentService.consumeParts(consumed).subscribe({
+            next: () => console.log('Successfully decremented global stock for approved parts.'),
+            error: (err) => console.error('Failed to decrement global stock for approved parts.', err)
+          });
+        }
+
         // Update the local list
         const index = this.allRequests.findIndex(r => r.id === requestId);
         if (index !== -1) {

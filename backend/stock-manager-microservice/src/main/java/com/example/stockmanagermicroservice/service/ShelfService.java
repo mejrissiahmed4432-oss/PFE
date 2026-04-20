@@ -38,7 +38,7 @@ public class ShelfService {
         Shelf saved = shelfRepository.save(shelf);
         notificationService.createNotification("New Shelf Created: " + saved.getNb(),
                 "Shelf " + saved.getNb() + " (" + saved.getEquipmentType() + ") has been added",
-                "SUCCESS", "SHELF", saved.getId());
+                "SUCCESS", "SHELF", saved.getId(), null, "STOCK_MANAGER");
         return saved;
     }
 
@@ -53,14 +53,11 @@ public class ShelfService {
             updateShelfStatus(shelf);
             Shelf saved = shelfRepository.save(shelf);
 
-            // Sync alerts if name changed
-            if (oldNb != null && !oldNb.equals(saved.getNb())) {
-                alertService.updateAlertsRelatedToNameChange(saved.getId(), oldNb, saved.getNb());
-            }
+            // Sync alerts if name changed (Deprecated - historical alerts act as point-in-time snapshot)
 
             notificationService.createNotification("Shelf Updated: " + saved.getNb(),
                     "Shelf " + saved.getNb() + " configuration has been modified",
-                    "INFO", "SHELF", saved.getId());
+                    "INFO", "SHELF", saved.getId(), null, "STOCK_MANAGER");
             return saved;
         }).orElseThrow(() -> new RuntimeException("Shelf not found with id: " + id));
     }
@@ -76,7 +73,7 @@ public class ShelfService {
         shelfRepository.findById(id).ifPresent(shelf -> {
             notificationService.createNotification("Shelf Deleted: " + shelf.getNb(),
                     "Shelf " + shelf.getNb() + " has been removed",
-                    "ERROR", "SHELF", id);
+                    "INFO", "SHELF", id, null, "STOCK_MANAGER");
         });
         shelfRepository.deleteById(id);
     }
@@ -106,16 +103,16 @@ public class ShelfService {
             if ("LOW".equals(shelf.getStatus())) {
                 alertService.createAlert("Low Stock Alert: Shelf " + shelf.getNb(),
                         "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") is running low on stock.",
-                        "ERROR", "STOCK", shelf.getId());
+                        "ERROR", "STOCK", shelf.getId(), "STOCK_MANAGER");
             } else if ("FULL".equals(shelf.getStatus())) {
                 alertService.createAlert("Shelf Full: Shelf " + shelf.getNb(),
                         "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") has reached maximum capacity.",
-                        "ERROR", "STOCK", shelf.getId());
+                        "ERROR", "STOCK", shelf.getId(), "STOCK_MANAGER");
             } else if ("EMPTY".equals(shelf.getStatus())) {
                 alertService.createAlert("Stock Empty Alert: Shelf " + shelf.getNb(),
                         "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType()
                                 + ") is completely empty. restocking is needed.",
-                        "ERROR", "STOCK", shelf.getId());
+                        "ERROR", "STOCK", shelf.getId(), "STOCK_MANAGER");
             }
         }
     }

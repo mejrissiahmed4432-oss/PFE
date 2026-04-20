@@ -37,7 +37,7 @@ public class SupplierService {
         Supplier saved = supplierRepository.save(supplier);
         notificationService.createNotification("New Supplier Added: " + saved.getCompanyName(),
                 "Supplier " + saved.getCompanyName() + " has been registered",
-                "SUCCESS", "SUPPLIER", saved.getId());
+                "SUCCESS", "SUPPLIER", saved.getId(), null, "STOCK_MANAGER");
         return saved;
     }
 
@@ -62,7 +62,7 @@ public class SupplierService {
             // Generate notification for supplier update
             notificationService.createNotification("Supplier Updated: " + updatedSupplier.getCompanyName(),
                     "Supplier " + updatedSupplier.getCompanyName() + " details have been modified",
-                    "INFO", "SUPPLIER", updatedSupplier.getId());
+                    "INFO", "SUPPLIER", updatedSupplier.getId(), null, "STOCK_MANAGER");
 
             // Cascade update to Equipment if companyName changed
             if (oldCompanyName != null && !oldCompanyName.equals(newCompanyName)) {
@@ -88,7 +88,7 @@ public class SupplierService {
         supplierRepository.findById(id).ifPresent(supplier -> {
             notificationService.createNotification("Supplier Deleted: " + supplier.getCompanyName(),
                     "Supplier " + supplier.getCompanyName() + " has been removed",
-                    "ERROR", "SUPPLIER", id);
+                    "ERROR", "SUPPLIER", id, null, "STOCK_MANAGER");
         });
         supplierRepository.deleteById(id);
     }

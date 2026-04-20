@@ -2,6 +2,7 @@ export interface PartRequestItem {
   partName: string;
   category: string;
   type: string;
+  brand?: string;
   specification: string;
   quantity: number;
   equipmentId?: string;

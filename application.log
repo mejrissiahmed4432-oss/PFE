@@ -1,0 +1,788 @@
+2026-04-20T11:28:00.545+02:00  INFO 6356 --- [stock-manager-microservice] [main] .e.s.StockManagerMicroserviceApplication : Starting StockManagerMicroserviceApplication using Java 17.0.12 with PID 6356 (C:\Users\Asus\Desktop\Nouveau dossier\PFE\backend\stock-manager-microservice\target\classes started by Asus in C:\Users\Asus\Desktop\Nouveau dossier\PFE)
+2026-04-20T11:28:00.563+02:00  INFO 6356 --- [stock-manager-microservice] [main] .e.s.StockManagerMicroserviceApplication : No active profile set, falling back to 1 default profile: "default"
+2026-04-20T11:28:02.310+02:00  INFO 6356 --- [stock-manager-microservice] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-04-20T11:28:02.488+02:00  INFO 6356 --- [stock-manager-microservice] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 170 ms. Found 4 MongoDB repository interfaces.
+2026-04-20T11:28:02.902+02:00  INFO 6356 --- [stock-manager-microservice] [main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=0266168f-10a6-3248-9934-8b835652bef3
+2026-04-20T11:28:03.443+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$LoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$LoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-04-20T11:28:03.450+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.loadbalancer.config.BlockingLoadBalancerClientAutoConfiguration' of type [org.springframework.cloud.loadbalancer.config.BlockingLoadBalancerClientAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.454+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.loadbalancer.config.LoadBalancerAutoConfiguration' of type [org.springframework.cloud.loadbalancer.config.LoadBalancerAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.465+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.commons.config.CommonsConfigAutoConfiguration' of type [org.springframework.cloud.commons.config.CommonsConfigAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.471+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerDefaultMappingsProviderAutoConfiguration' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerDefaultMappingsProviderAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.473+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'loadBalancerClientsDefaultsMappingsProvider' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerDefaultMappingsProviderAutoConfiguration$$Lambda$572/0x000001eb3c45e000] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.474+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'defaultsBindHandlerAdvisor' of type [org.springframework.cloud.commons.config.DefaultsBindHandlerAdvisor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.495+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'spring.cloud.loadbalancer-org.springframework.cloud.client.loadbalancer.LoadBalancerClientsProperties' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerClientsProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.501+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'default.org.springframework.cloud.loadbalancer.config.LoadBalancerAutoConfiguration.LoadBalancerClientSpecification' of type [org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientSpecification] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.502+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'default.org.springframework.cloud.loadbalancer.config.BlockingLoadBalancerClientAutoConfiguration.LoadBalancerClientSpecification' of type [org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientSpecification] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.505+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'default.org.springframework.cloud.netflix.eureka.loadbalancer.LoadBalancerEurekaAutoConfiguration.LoadBalancerClientSpecification' of type [org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientSpecification] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.506+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'loadBalancerClientFactory' of type [org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.512+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'blockingLoadBalancerClient' of type [org.springframework.cloud.loadbalancer.blocking.client.BlockingLoadBalancerClient] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.521+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'stockManagerMicroserviceApplication' of type [com.example.stockmanagermicroservice.StockManagerMicroserviceApplication$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.542+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'restTemplate' of type [org.springframework.web.client.RestTemplate] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.547+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'loadBalancerServiceInstanceCookieTransformer' of type [org.springframework.cloud.loadbalancer.core.LoadBalancerServiceInstanceCookieTransformer] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.547+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'xForwarderHeadersTransformer' of type [org.springframework.cloud.loadbalancer.blocking.XForwardedHeadersTransformer] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.552+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.554+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'loadBalancerRequestFactory' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerRequestFactory] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.556+02:00  WARN 6356 --- [stock-manager-microservice] [main] trationDelegate$BeanPostProcessorChecker : Bean 'loadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-04-20T11:28:03.857+02:00  INFO 6356 --- [stock-manager-microservice] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2026-04-20T11:28:03.865+02:00  INFO 6356 --- [stock-manager-microservice] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-20T11:28:03.865+02:00  INFO 6356 --- [stock-manager-microservice] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-04-20T11:28:03.960+02:00  INFO 6356 --- [stock-manager-microservice] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-04-20T11:28:03.961+02:00  INFO 6356 --- [stock-manager-microservice] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3310 ms
+2026-04-20T11:28:04.322+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-srv-cluster0.w3bu3si.mongodb.net] org.mongodb.driver.cluster               : Adding discovered server ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017 to client view of cluster
+2026-04-20T11:28:04.324+02:00  INFO 6356 --- [stock-manager-microservice] [main] org.mongodb.driver.client                : MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync|spring-boot", "version": "4.11.1"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/17.0.12+8-LTS-286"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=majority, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=MongoCredential{mechanism=null, userName='romdhanemalek59_db_user', source='admin', password=<hidden>, mechanismProperties=<hidden>}, transportSettings=null, streamFactoryFactory=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@164d01ba, com.mongodb.Jep395RecordCodecProvider@18c880ea, com.mongodb.KotlinCodecProvider@5ac044ef]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[127.0.0.1:27017], srvHost=cluster0.w3bu3si.mongodb.net, srvServiceName=mongodb, mode=MULTIPLE, requiredClusterType=REPLICA_SET, requiredReplicaSetName='atlas-13xhg7-shard-0', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=30000, readTimeoutMS=30000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=30000, readTimeoutMS=30000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=true, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=JAVA_LEGACY, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null}
+2026-04-20T11:28:04.365+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-srv-cluster0.w3bu3si.mongodb.net] org.mongodb.driver.cluster               : Adding discovered server ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017 to client view of cluster
+2026-04-20T11:28:04.370+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-srv-cluster0.w3bu3si.mongodb.net] org.mongodb.driver.cluster               : Adding discovered server ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017 to client view of cluster
+2026-04-20T11:28:05.209+02:00  INFO 6356 --- [stock-manager-microservice] [main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestTemplate.
+2026-04-20T11:28:05.300+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, type=REPLICA_SET_PRIMARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=563432100, setName='atlas-13xhg7-shard-0', canonicalAddress=ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, hosts=[ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017], passives=[], arbiters=[], primary='ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='euw3-az3'}, Tag{name='cacheState', value='READY'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='EU_WEST_3'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=7fffffff00000000000000fc, setVersion=25, topologyVersion=TopologyVersion{processId=69dd5a17c89d35f3278eea37, counter=7}, lastWriteDate=Mon Apr 20 11:28:05 CEST 2026, lastUpdateTimeNanos=231299794988700}
+2026-04-20T11:28:05.300+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, type=REPLICA_SET_SECONDARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=583551600, setName='atlas-13xhg7-shard-0', canonicalAddress=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, hosts=[ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017], passives=[], arbiters=[], primary='ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='euw3-az1'}, Tag{name='cacheState', value='READY'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='EU_WEST_3'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=25, topologyVersion=TopologyVersion{processId=69dd5b129de2a8933eb8bac1, counter=5}, lastWriteDate=Mon Apr 20 11:28:05 CEST 2026, lastUpdateTimeNanos=231299794988700}
+2026-04-20T11:28:05.300+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, type=REPLICA_SET_SECONDARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=583551700, setName='atlas-13xhg7-shard-0', canonicalAddress=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, hosts=[ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017], passives=[], arbiters=[], primary='ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='euw3-az2'}, Tag{name='cacheState', value='READY'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='EU_WEST_3'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=25, topologyVersion=TopologyVersion{processId=69dd5c4e90de3f3b727eb004, counter=4}, lastWriteDate=Mon Apr 20 11:28:05 CEST 2026, lastUpdateTimeNanos=231299794988500}
+2026-04-20T11:28:05.306+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Discovered replica set primary ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017 with max election id 7fffffff00000000000000fc and max set version 25
+2026-04-20T11:28:05.325+02:00  INFO 6356 --- [stock-manager-microservice] [main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-04-20T11:28:05.482+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-04-20T11:28:05.493+02:00  INFO 6356 --- [stock-manager-microservice] [main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T11:28:05.530+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-04-20T11:28:05.531+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-04-20T11:28:05.531+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-04-20T11:28:05.532+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-04-20T11:28:05.532+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-04-20T11:28:05.532+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2026-04-20T11:28:05.533+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-04-20T11:28:06.040+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-04-20T11:28:06.044+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2026-04-20T11:28:06.049+02:00  INFO 6356 --- [stock-manager-microservice] [main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-04-20T11:28:06.055+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1776677286053 with initial instances count: 1
+2026-04-20T11:28:06.057+02:00  INFO 6356 --- [stock-manager-microservice] [main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application STOCK-MANAGER-MICROSERVICE with eureka with status UP
+2026-04-20T11:28:06.059+02:00  INFO 6356 --- [stock-manager-microservice] [main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1776677286059, current=UP, previous=STARTING]
+2026-04-20T11:28:06.061+02:00  INFO 6356 --- [stock-manager-microservice] [DiscoveryClient-InstanceInfoReplicator-0] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_STOCK-MANAGER-MICROSERVICE/192.168.0.103:stock-manager-microservice:8081: registering service...
+2026-04-20T11:28:06.092+02:00  INFO 6356 --- [stock-manager-microservice] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path ''
+2026-04-20T11:28:06.096+02:00  INFO 6356 --- [stock-manager-microservice] [main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8081
+2026-04-20T11:28:06.123+02:00  INFO 6356 --- [stock-manager-microservice] [DiscoveryClient-InstanceInfoReplicator-0] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_STOCK-MANAGER-MICROSERVICE/192.168.0.103:stock-manager-microservice:8081 - registration status: 204
+2026-04-20T11:28:06.462+02:00  INFO 6356 --- [stock-manager-microservice] [main] .e.s.StockManagerMicroserviceApplication : Started StockManagerMicroserviceApplication in 6.613 seconds (process running for 6.985)
+2026-04-20T11:33:05.537+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T11:38:05.554+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T11:40:38.731+02:00  INFO 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-20T11:40:38.736+02:00  INFO 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-04-20T11:40:39.119+02:00  INFO 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 377 ms
+2026-04-20T11:40:39.379+02:00  WARN 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 514bb879-5b6f-44fd-8c30-6f81676d17d3
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-04-20T11:40:39.806+02:00  INFO 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@6f9b2462, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4e6eb0e8, org.springframework.security.web.context.SecurityContextHolderFilter@4eaca08f, org.springframework.security.web.header.HeaderWriterFilter@5ef94e23, org.springframework.security.web.authentication.logout.LogoutFilter@61e62845, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@50194d2b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@fcb4c18, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@21357df5, org.springframework.security.web.access.ExceptionTranslationFilter@5cfc9921, org.springframework.security.web.access.intercept.AuthorizationFilter@6a396db4]
+2026-04-20T11:40:39.896+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:40:39.908+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T11:40:39.933+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T11:40:39.933+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:40:40.232+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:40:40.355+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:41:02.632+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:41:02.634+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:41:02.752+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:43:05.571+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T11:46:33.258+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Securing GET /api/dashboard/stats
+2026-04-20T11:46:33.259+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Secured GET /api/dashboard/stats
+2026-04-20T11:46:33.500+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:46:37.947+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /api/shelves
+2026-04-20T11:46:37.948+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Secured GET /api/shelves
+2026-04-20T11:46:37.948+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T11:46:37.949+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:46:37.949+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T11:46:37.949+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:46:37.951+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy        : Securing GET /api/suppliers
+2026-04-20T11:46:37.952+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy        : Secured GET /api/suppliers
+2026-04-20T11:46:38.047+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:46:38.109+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:46:38.135+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /api/suppliers
+2026-04-20T11:46:38.136+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /api/suppliers
+2026-04-20T11:46:38.299+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:46:38.815+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:46:38.839+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:46:38.840+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:46:38.841+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:46:38.928+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:46:49.146+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:46:49.150+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:46:49.263+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:46:50.433+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:46:50.433+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T11:46:50.435+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:46:50.436+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T11:46:50.605+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:46:50.614+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:46:54.804+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:46:54.804+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T11:46:54.807+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:46:54.807+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T11:46:54.992+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:46:54.992+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:04.992+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:48:04.993+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T11:48:04.995+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:48:04.996+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T11:48:05.131+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:05.159+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:05.576+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T11:48:13.519+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Securing POST /api/equipment/consume-parts
+2026-04-20T11:48:13.521+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Secured POST /api/equipment/consume-parts
+2026-04-20T11:48:14.091+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:18.673+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:48:18.676+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:48:18.870+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:24.361+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:48:24.362+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:48:24.479+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:24.917+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /api/shelves
+2026-04-20T11:48:24.920+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Secured GET /api/shelves
+2026-04-20T11:48:24.924+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:48:24.924+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy        : Securing GET /api/suppliers
+2026-04-20T11:48:24.924+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:48:24.924+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T11:48:24.926+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy        : Secured GET /api/suppliers
+2026-04-20T11:48:24.928+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T11:48:25.098+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:25.098+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:25.100+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:25.125+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /api/suppliers
+2026-04-20T11:48:25.125+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T11:48:25.127+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T11:48:25.128+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /api/suppliers
+2026-04-20T11:48:25.263+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:25.267+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:26.127+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:43.101+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Securing DELETE /api/equipment/69e505e40bdba46a4e2e4534
+2026-04-20T11:48:43.103+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Secured DELETE /api/equipment/69e505e40bdba46a4e2e4534
+2026-04-20T11:48:44.255+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:48:44.288+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T11:48:44.291+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T11:48:44.457+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:49:03.277+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Securing GET /api/shelves/type/RAM
+2026-04-20T11:49:03.277+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Secured GET /api/shelves/type/RAM
+2026-04-20T11:49:03.403+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:49:09.194+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Securing GET /api/shelves/type/RAM
+2026-04-20T11:49:09.197+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Secured GET /api/shelves/type/RAM
+2026-04-20T11:49:09.336+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:49:16.552+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy        : Securing GET /api/shelves/type/RAM
+2026-04-20T11:49:16.554+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy        : Secured GET /api/shelves/type/RAM
+2026-04-20T11:49:16.708+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:49:19.490+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment/check-serial/N5HEWJWPL6
+2026-04-20T11:49:19.491+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment/check-serial/N5HEWJWPL6
+2026-04-20T11:49:19.682+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:49:20.176+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /api/shelves/type/RAM
+2026-04-20T11:49:20.176+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /api/shelves/type/RAM
+2026-04-20T11:49:20.262+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:49:23.248+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Securing POST /api/equipment
+2026-04-20T11:49:23.252+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Secured POST /api/equipment
+2026-04-20T11:49:23.891+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:49:23.961+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T11:49:23.964+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T11:49:24.087+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T11:53:05.584+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T11:58:05.589+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T12:03:05.593+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T12:08:05.603+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T12:09:26.790+02:00  INFO 6356 --- [stock-manager-microservice] [scheduling-1] org.mongodb.driver.cluster               : No server chosen by ReadPreferenceServerSelector{readPreference=primary} from cluster description ClusterDescription{type=REPLICA_SET, connectionMode=MULTIPLE, serverDescriptions=[ServerDescription{address=ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketReadException: Exception receiving message}, caused by {java.net.SocketException: Connection reset}}, ServerDescription{address=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, type=REPLICA_SET_SECONDARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=132948748, setName='atlas-13xhg7-shard-0', canonicalAddress=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, hosts=[ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017], passives=[], arbiters=[], primary='ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='euw3-az2'}, Tag{name='cacheState', value='READY'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='EU_WEST_3'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=25, topologyVersion=TopologyVersion{processId=69dd5c4e90de3f3b727eb004, counter=4}, lastWriteDate=Mon Apr 20 12:08:47 CEST 2026, lastUpdateTimeNanos=233742041016000}, ServerDescription{address=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, type=REPLICA_SET_SECONDARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=109310980, setName='atlas-13xhg7-shard-0', canonicalAddress=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, hosts=[ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017], passives=[], arbiters=[], primary='ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='euw3-az1'}, Tag{name='cacheState', value='READY'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='EU_WEST_3'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=25, topologyVersion=TopologyVersion{processId=69dd5b129de2a8933eb8bac1, counter=5}, lastWriteDate=Mon Apr 20 12:08:47 CEST 2026, lastUpdateTimeNanos=233741886339700}]}. Waiting for 30000 ms before timing out
+2026-04-20T12:09:27.298+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketException: Hôte inconnu (ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net)
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:221) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.ServerAddressWithResolver.getSocketAddresses(ServerAddressWithResolver.java:68) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:100) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:78) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:211) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:196) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.UnknownHostException: Hôte inconnu (ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net)
+	at java.base/java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method) ~[na:na]
+	at java.base/java.net.InetAddress$PlatformNameService.lookupAllHostAddr(InetAddress.java:933) ~[na:na]
+	at java.base/java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1543) ~[na:na]
+	at java.base/java.net.InetAddress$NameServiceAddresses.get(InetAddress.java:852) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1532) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1384) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1305) ~[na:na]
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:213) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 7 common frames omitted
+
+2026-04-20T12:09:27.808+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:221) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.ServerAddressWithResolver.getSocketAddresses(ServerAddressWithResolver.java:68) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:100) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:78) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:211) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:196) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.UnknownHostException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net
+	at java.base/java.net.InetAddress$CachedAddresses.get(InetAddress.java:801) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1532) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1384) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1305) ~[na:na]
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:213) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 7 common frames omitted
+
+2026-04-20T12:09:37.411+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketException: Hôte inconnu (ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net)
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:221) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.ServerAddressWithResolver.getSocketAddresses(ServerAddressWithResolver.java:68) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:100) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:78) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:211) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:196) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.UnknownHostException: Hôte inconnu (ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net)
+	at java.base/java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method) ~[na:na]
+	at java.base/java.net.InetAddress$PlatformNameService.lookupAllHostAddr(InetAddress.java:933) ~[na:na]
+	at java.base/java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1543) ~[na:na]
+	at java.base/java.net.InetAddress$NameServiceAddresses.get(InetAddress.java:852) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1532) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1384) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1305) ~[na:na]
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:213) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 7 common frames omitted
+
+2026-04-20T12:09:37.913+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:221) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.ServerAddressWithResolver.getSocketAddresses(ServerAddressWithResolver.java:68) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:100) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:78) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:211) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:196) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.UnknownHostException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net
+	at java.base/java.net.InetAddress$CachedAddresses.get(InetAddress.java:801) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1532) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1384) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1305) ~[na:na]
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:213) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 7 common frames omitted
+
+2026-04-20T12:09:46.654+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketReadTimeoutException: Timeout while receiving message
+	at com.mongodb.internal.connection.InternalStreamConnection.translateReadException(InternalStreamConnection.java:728) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:606) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:451) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:404) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:224) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.SocketTimeoutException: Read timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:288) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:314) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:355) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:808) ~[na:na]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:966) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:484) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:478) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1461) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1065) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:175) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:200) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveResponseBuffers(InternalStreamConnection.java:739) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:603) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 5 common frames omitted
+
+2026-04-20T12:09:46.656+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:221) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.ServerAddressWithResolver.getSocketAddresses(ServerAddressWithResolver.java:68) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:100) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:78) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:211) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:196) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.UnknownHostException: ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net
+	at java.base/java.net.InetAddress$CachedAddresses.get(InetAddress.java:801) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1532) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1384) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1305) ~[na:na]
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:213) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 7 common frames omitted
+
+2026-04-20T12:09:46.706+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketReadTimeoutException: Timeout while receiving message
+	at com.mongodb.internal.connection.InternalStreamConnection.translateReadException(InternalStreamConnection.java:728) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:606) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:451) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:404) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:224) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.SocketTimeoutException: Read timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:288) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:314) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:355) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:808) ~[na:na]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:966) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:484) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:478) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1461) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1065) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:175) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:200) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveResponseBuffers(InternalStreamConnection.java:739) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:603) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 5 common frames omitted
+
+2026-04-20T12:09:46.718+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:221) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.ServerAddressWithResolver.getSocketAddresses(ServerAddressWithResolver.java:68) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:100) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:78) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:211) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:196) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.UnknownHostException: ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net
+	at java.base/java.net.InetAddress$CachedAddresses.get(InetAddress.java:801) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1532) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1384) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1305) ~[na:na]
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:213) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 7 common frames omitted
+
+2026-04-20T12:09:47.420+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketException: Hôte inconnu (ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net)
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:221) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.ServerAddressWithResolver.getSocketAddresses(ServerAddressWithResolver.java:68) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:100) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:78) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:211) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:196) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.UnknownHostException: Hôte inconnu (ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net)
+	at java.base/java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method) ~[na:na]
+	at java.base/java.net.InetAddress$PlatformNameService.lookupAllHostAddr(InetAddress.java:933) ~[na:na]
+	at java.base/java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1543) ~[na:na]
+	at java.base/java.net.InetAddress$NameServiceAddresses.get(InetAddress.java:852) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1532) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1384) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1305) ~[na:na]
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:213) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 7 common frames omitted
+
+2026-04-20T12:09:47.921+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:221) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.ServerAddressWithResolver.getSocketAddresses(ServerAddressWithResolver.java:68) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:100) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:78) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:211) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:196) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.UnknownHostException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net
+	at java.base/java.net.InetAddress$CachedAddresses.get(InetAddress.java:801) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1532) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1384) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1305) ~[na:na]
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:213) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 7 common frames omitted
+
+2026-04-20T12:09:56.793+02:00 ERROR 6356 --- [stock-manager-microservice] [scheduling-1] o.s.s.s.TaskUtils$LoggingErrorHandler    : Unexpected error occurred in scheduled task
+
+org.springframework.dao.DataAccessResourceFailureException: Exception receiving message
+	at org.springframework.data.mongodb.core.MongoExceptionTranslator.translateExceptionIfPossible(MongoExceptionTranslator.java:78) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.core.MongoTemplate.potentiallyConvertRuntimeException(MongoTemplate.java:2993) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.core.MongoTemplate.executeFindMultiInternal(MongoTemplate.java:2918) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.core.MongoTemplate.doFind(MongoTemplate.java:2592) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.core.MongoTemplate.doFind(MongoTemplate.java:2573) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.core.MongoTemplate.find(MongoTemplate.java:866) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.repository.support.SimpleMongoRepository.findAll(SimpleMongoRepository.java:402) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.repository.support.SimpleMongoRepository.findAll(SimpleMongoRepository.java:144) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.repository.support.SimpleMongoRepository.findAll(SimpleMongoRepository.java:64) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at jdk.internal.reflect.GeneratedMethodAccessor11.invoke(Unknown Source) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:277) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:516) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:285) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:628) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:168) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:143) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:70) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.data.mongodb.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:158) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220) ~[spring-aop-6.1.3.jar:6.1.3]
+	at jdk.proxy2/jdk.proxy2.$Proxy105.findAll(Unknown Source) ~[na:na]
+	at jdk.internal.reflect.GeneratedMethodAccessor10.invoke(Unknown Source) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137) ~[spring-tx-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220) ~[spring-aop-6.1.3.jar:6.1.3]
+	at jdk.proxy2/jdk.proxy2.$Proxy105.findAll(Unknown Source) ~[na:na]
+	at com.example.stockmanagermicroservice.service.AlertService.generateWarrantyAlerts(AlertService.java:48) ~[classes/:na]
+	at jdk.internal.reflect.GeneratedMethodAccessor12.invoke(Unknown Source) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.3.jar:6.1.3]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.3.jar:6.1.3]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.2.jar:1.12.2]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.3.jar:6.1.3]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.3.jar:6.1.3]
+	at org.springframework.scheduling.concurrent.ReschedulingRunnable.run(ReschedulingRunnable.java:96) ~[spring-context-6.1.3.jar:6.1.3]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: com.mongodb.MongoSocketReadException: Exception receiving message
+	at com.mongodb.internal.connection.InternalStreamConnection.translateReadException(InternalStreamConnection.java:730) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:606) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:451) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.sendAndReceive(InternalStreamConnection.java:372) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.UsageTrackingInternalConnection.sendAndReceive(UsageTrackingInternalConnection.java:114) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultConnectionPool$PooledConnection.sendAndReceive(DefaultConnectionPool.java:765) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.CommandProtocolImpl.execute(CommandProtocolImpl.java:76) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServer$DefaultServerProtocolExecutor.execute(DefaultServer.java:209) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerConnection.executeProtocol(DefaultServerConnection.java:115) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerConnection.command(DefaultServerConnection.java:83) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerConnection.command(DefaultServerConnection.java:74) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServer$OperationCountTrackingConnection.command(DefaultServer.java:299) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.createReadCommandAndExecute(SyncOperationHelper.java:273) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.FindOperation.lambda$execute$1(FindOperation.java:325) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.lambda$withSourceAndConnection$0(SyncOperationHelper.java:127) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.withSuppliedResource(SyncOperationHelper.java:152) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.lambda$withSourceAndConnection$1(SyncOperationHelper.java:126) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.withSuppliedResource(SyncOperationHelper.java:152) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.withSourceAndConnection(SyncOperationHelper.java:125) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.FindOperation.lambda$execute$2(FindOperation.java:322) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.lambda$decorateReadWithRetries$12(SyncOperationHelper.java:292) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.async.function.RetryingSyncSupplier.get(RetryingSyncSupplier.java:67) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.FindOperation.execute(FindOperation.java:333) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.FindOperation.execute(FindOperation.java:73) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.client.internal.MongoClientDelegate$DelegateOperationExecutor.execute(MongoClientDelegate.java:153) ~[mongodb-driver-sync-4.11.1.jar:na]
+	at com.mongodb.client.internal.MongoIterableImpl.execute(MongoIterableImpl.java:130) ~[mongodb-driver-sync-4.11.1.jar:na]
+	at com.mongodb.client.internal.MongoIterableImpl.iterator(MongoIterableImpl.java:90) ~[mongodb-driver-sync-4.11.1.jar:na]
+	at org.springframework.data.mongodb.core.MongoTemplate.executeFindMultiInternal(MongoTemplate.java:2905) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	... 54 common frames omitted
+Caused by: java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:328) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:355) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:808) ~[na:na]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:966) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:484) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:478) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1461) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1065) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:175) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:200) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveResponseBuffers(InternalStreamConnection.java:739) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:603) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 80 common frames omitted
+
+2026-04-20T12:10:00.001+02:00  INFO 6356 --- [stock-manager-microservice] [scheduling-1] org.mongodb.driver.cluster               : No server chosen by ReadPreferenceServerSelector{readPreference=primary} from cluster description ClusterDescription{type=REPLICA_SET, connectionMode=MULTIPLE, serverDescriptions=[ServerDescription{address=ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net}}, ServerDescription{address=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net}}, ServerDescription{address=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net}}]}. Waiting for 30000 ms before timing out
+2026-04-20T12:10:30.002+02:00 ERROR 6356 --- [stock-manager-microservice] [scheduling-1] o.s.s.s.TaskUtils$LoggingErrorHandler    : Unexpected error occurred in scheduled task
+
+org.springframework.dao.DataAccessResourceFailureException: Timed out after 30000 ms while waiting for a server that matches ReadPreferenceServerSelector{readPreference=primary}. Client view of cluster state is {type=REPLICA_SET, servers=[{address=ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net}}, {address=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net}}, {address=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net}}]
+	at org.springframework.data.mongodb.core.MongoExceptionTranslator.translateExceptionIfPossible(MongoExceptionTranslator.java:88) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.core.MongoTemplate.potentiallyConvertRuntimeException(MongoTemplate.java:2993) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.core.MongoTemplate.executeFindMultiInternal(MongoTemplate.java:2918) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.core.MongoTemplate.doFind(MongoTemplate.java:2592) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.core.MongoTemplate.doFind(MongoTemplate.java:2573) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.core.MongoTemplate.find(MongoTemplate.java:866) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.repository.support.SimpleMongoRepository.findAll(SimpleMongoRepository.java:402) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.repository.support.SimpleMongoRepository.findAll(SimpleMongoRepository.java:144) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.data.mongodb.repository.support.SimpleMongoRepository.findAll(SimpleMongoRepository.java:64) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at jdk.internal.reflect.GeneratedMethodAccessor11.invoke(Unknown Source) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker$RepositoryFragmentMethodInvoker.lambda$new$0(RepositoryMethodInvoker.java:277) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.doInvoke(RepositoryMethodInvoker.java:170) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.RepositoryMethodInvoker.invoke(RepositoryMethodInvoker.java:158) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.RepositoryComposition$RepositoryFragments.invoke(RepositoryComposition.java:516) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.RepositoryComposition.invoke(RepositoryComposition.java:285) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport$ImplementationMethodExecutionInterceptor.invoke(RepositoryFactorySupport.java:628) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.doInvoke(QueryExecutorMethodInterceptor.java:168) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.invoke(QueryExecutorMethodInterceptor.java:143) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.data.projection.DefaultMethodInvokingMethodInterceptor.invoke(DefaultMethodInvokingMethodInterceptor.java:70) ~[spring-data-commons-3.2.2.jar:3.2.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.data.mongodb.repository.support.CrudMethodMetadataPostProcessor$CrudMethodMetadataPopulatingMethodInterceptor.invoke(CrudMethodMetadataPostProcessor.java:158) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220) ~[spring-aop-6.1.3.jar:6.1.3]
+	at jdk.proxy2/jdk.proxy2.$Proxy105.findAll(Unknown Source) ~[na:na]
+	at jdk.internal.reflect.GeneratedMethodAccessor10.invoke(Unknown Source) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:351) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:137) ~[spring-tx-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.3.jar:6.1.3]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:220) ~[spring-aop-6.1.3.jar:6.1.3]
+	at jdk.proxy2/jdk.proxy2.$Proxy105.findAll(Unknown Source) ~[na:na]
+	at com.example.stockmanagermicroservice.service.AlertService.generateWarrantyAlerts(AlertService.java:48) ~[classes/:na]
+	at jdk.internal.reflect.GeneratedMethodAccessor12.invoke(Unknown Source) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.3.jar:6.1.3]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.3.jar:6.1.3]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.2.jar:1.12.2]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.3.jar:6.1.3]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.3.jar:6.1.3]
+	at org.springframework.scheduling.concurrent.ReschedulingRunnable.run(ReschedulingRunnable.java:96) ~[spring-context-6.1.3.jar:6.1.3]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:304) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: com.mongodb.MongoTimeoutException: Timed out after 30000 ms while waiting for a server that matches ReadPreferenceServerSelector{readPreference=primary}. Client view of cluster state is {type=REPLICA_SET, servers=[{address=ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net}}, {address=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net}}, {address=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net}}]
+	at com.mongodb.internal.connection.BaseCluster.createTimeoutException(BaseCluster.java:380) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.BaseCluster.selectServer(BaseCluster.java:125) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.AbstractMultiServerCluster.selectServer(AbstractMultiServerCluster.java:54) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.binding.ClusterBinding.getReadConnectionSource(ClusterBinding.java:116) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.client.internal.ClientSessionBinding.getConnectionSource(ClientSessionBinding.java:128) ~[mongodb-driver-sync-4.11.1.jar:na]
+	at com.mongodb.client.internal.ClientSessionBinding.getReadConnectionSource(ClientSessionBinding.java:92) ~[mongodb-driver-sync-4.11.1.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.withSuppliedResource(SyncOperationHelper.java:144) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.withSourceAndConnection(SyncOperationHelper.java:125) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.FindOperation.lambda$execute$2(FindOperation.java:322) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.SyncOperationHelper.lambda$decorateReadWithRetries$12(SyncOperationHelper.java:292) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.async.function.RetryingSyncSupplier.get(RetryingSyncSupplier.java:67) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.FindOperation.execute(FindOperation.java:333) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.operation.FindOperation.execute(FindOperation.java:73) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.client.internal.MongoClientDelegate$DelegateOperationExecutor.execute(MongoClientDelegate.java:153) ~[mongodb-driver-sync-4.11.1.jar:na]
+	at com.mongodb.client.internal.MongoIterableImpl.execute(MongoIterableImpl.java:130) ~[mongodb-driver-sync-4.11.1.jar:na]
+	at com.mongodb.client.internal.MongoIterableImpl.iterator(MongoIterableImpl.java:90) ~[mongodb-driver-sync-4.11.1.jar:na]
+	at org.springframework.data.mongodb.core.MongoTemplate.executeFindMultiInternal(MongoTemplate.java:2905) ~[spring-data-mongodb-4.2.2.jar:4.2.2]
+	... 54 common frames omitted
+
+2026-04-20T12:11:00.009+02:00  INFO 6356 --- [stock-manager-microservice] [scheduling-1] org.mongodb.driver.cluster               : No server chosen by ReadPreferenceServerSelector{readPreference=primary} from cluster description ClusterDescription{type=REPLICA_SET, connectionMode=MULTIPLE, serverDescriptions=[ServerDescription{address=ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net}}, ServerDescription{address=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net}}, ServerDescription{address=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, type=UNKNOWN, state=CONNECTING, exception={com.mongodb.MongoSocketException: ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net}, caused by {java.net.UnknownHostException: ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net}}]}. Waiting for 30000 ms before timing out
+2026-04-20T12:11:01.813+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, type=REPLICA_SET_SECONDARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1434449300, setName='atlas-13xhg7-shard-0', canonicalAddress=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, hosts=[ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017], passives=[], arbiters=[], primary='ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='euw3-az2'}, Tag{name='cacheState', value='READY'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='EU_WEST_3'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=25, topologyVersion=TopologyVersion{processId=69dd5c4e90de3f3b727eb004, counter=4}, lastWriteDate=Mon Apr 20 12:11:02 CEST 2026, lastUpdateTimeNanos=233876313619300}
+2026-04-20T12:11:01.823+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, type=REPLICA_SET_SECONDARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1443449400, setName='atlas-13xhg7-shard-0', canonicalAddress=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, hosts=[ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017], passives=[], arbiters=[], primary='ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='euw3-az1'}, Tag{name='cacheState', value='READY'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='EU_WEST_3'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=25, topologyVersion=TopologyVersion{processId=69dd5b129de2a8933eb8bac1, counter=5}, lastWriteDate=Mon Apr 20 12:11:02 CEST 2026, lastUpdateTimeNanos=233876322715500}
+2026-04-20T12:11:01.845+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, type=REPLICA_SET_PRIMARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=1465946200, setName='atlas-13xhg7-shard-0', canonicalAddress=ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, hosts=[ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017], passives=[], arbiters=[], primary='ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='euw3-az3'}, Tag{name='cacheState', value='READY'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='EU_WEST_3'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=7fffffff00000000000000fc, setVersion=25, topologyVersion=TopologyVersion{processId=69dd5a17c89d35f3278eea37, counter=7}, lastWriteDate=Mon Apr 20 12:11:02 CEST 2026, lastUpdateTimeNanos=233876345166300}
+2026-04-20T12:11:01.846+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Discovered replica set primary ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017 with max election id 7fffffff00000000000000fc and max set version 25
+2026-04-20T12:13:05.619+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T12:18:05.628+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T12:23:05.641+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T12:23:10.587+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketReadException: Exception receiving message
+	at com.mongodb.internal.connection.InternalStreamConnection.translateReadException(InternalStreamConnection.java:730) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:606) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:451) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:404) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:224) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:328) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:355) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:808) ~[na:na]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:966) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:484) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:478) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1461) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1065) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:175) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:200) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveResponseBuffers(InternalStreamConnection.java:739) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:603) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 5 common frames omitted
+
+2026-04-20T12:23:10.588+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketReadException: Exception receiving message
+	at com.mongodb.internal.connection.InternalStreamConnection.translateReadException(InternalStreamConnection.java:730) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:606) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:451) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:404) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:224) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:328) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:355) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:808) ~[na:na]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:966) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:484) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:478) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1461) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1065) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:175) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:200) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveResponseBuffers(InternalStreamConnection.java:739) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:603) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 5 common frames omitted
+
+2026-04-20T12:23:10.589+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketReadException: Exception receiving message
+	at com.mongodb.internal.connection.InternalStreamConnection.translateReadException(InternalStreamConnection.java:730) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:606) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveCommandMessageResponse(InternalStreamConnection.java:451) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receive(InternalStreamConnection.java:404) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:224) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:328) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:355) ~[na:na]
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:808) ~[na:na]
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:966) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:484) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:478) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1461) ~[na:na]
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1065) ~[na:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:175) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.read(SocketStream.java:200) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveResponseBuffers(InternalStreamConnection.java:739) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.receiveMessageWithAdditionalTimeout(InternalStreamConnection.java:603) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 5 common frames omitted
+
+2026-04-20T12:23:10.659+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017
+
+com.mongodb.MongoSocketException: Hôte inconnu (ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net)
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:221) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.ServerAddressWithResolver.getSocketAddresses(ServerAddressWithResolver.java:68) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.initializeSocket(SocketStream.java:100) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:78) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:211) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.lookupServerDescription(DefaultServerMonitor.java:196) ~[mongodb-driver-core-4.11.1.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:156) ~[mongodb-driver-core-4.11.1.jar:na]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+Caused by: java.net.UnknownHostException: Hôte inconnu (ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net)
+	at java.base/java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method) ~[na:na]
+	at java.base/java.net.InetAddress$PlatformNameService.lookupAllHostAddr(InetAddress.java:933) ~[na:na]
+	at java.base/java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1543) ~[na:na]
+	at java.base/java.net.InetAddress$NameServiceAddresses.get(InetAddress.java:852) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1532) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1384) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1305) ~[na:na]
+	at com.mongodb.ServerAddress.getSocketAddresses(ServerAddress.java:213) ~[mongodb-driver-core-4.11.1.jar:na]
+	... 7 common frames omitted
+
+2026-04-20T12:23:10.991+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, type=REPLICA_SET_SECONDARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=182612300, setName='atlas-13xhg7-shard-0', canonicalAddress=ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, hosts=[ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017], passives=[], arbiters=[], primary='ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='euw3-az1'}, Tag{name='cacheState', value='READY'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='EU_WEST_3'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=25, topologyVersion=TopologyVersion{processId=69dd5b129de2a8933eb8bac1, counter=5}, lastWriteDate=Mon Apr 20 12:23:11 CEST 2026, lastUpdateTimeNanos=234605491570900}
+2026-04-20T12:23:11.043+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, type=REPLICA_SET_SECONDARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=111285600, setName='atlas-13xhg7-shard-0', canonicalAddress=ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017, hosts=[ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017], passives=[], arbiters=[], primary='ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='euw3-az2'}, Tag{name='cacheState', value='READY'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='EU_WEST_3'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=25, topologyVersion=TopologyVersion{processId=69dd5c4e90de3f3b727eb004, counter=4}, lastWriteDate=Mon Apr 20 12:23:11 CEST 2026, lastUpdateTimeNanos=234605543289400}
+2026-04-20T12:23:20.828+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, type=REPLICA_SET_PRIMARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=118421400, setName='atlas-13xhg7-shard-0', canonicalAddress=ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, hosts=[ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-00.w3bu3si.mongodb.net:27017, ac-i2ozwno-shard-00-01.w3bu3si.mongodb.net:27017], passives=[], arbiters=[], primary='ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='euw3-az3'}, Tag{name='cacheState', value='READY'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='EU_WEST_3'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=7fffffff00000000000000fc, setVersion=25, topologyVersion=TopologyVersion{processId=69dd5a17c89d35f3278eea37, counter=7}, lastWriteDate=Mon Apr 20 12:23:21 CEST 2026, lastUpdateTimeNanos=234615328192700}
+2026-04-20T12:23:20.830+02:00  INFO 6356 --- [stock-manager-microservice] [cluster-ClusterId{value='69e5f1a45207b2135fbe3a0a', description='null'}-ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017] org.mongodb.driver.cluster               : Discovered replica set primary ac-i2ozwno-shard-00-02.w3bu3si.mongodb.net:27017 with max election id 7fffffff00000000000000fc and max set version 25
+2026-04-20T12:23:41.207+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T12:23:41.207+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T12:23:41.217+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T12:23:41.219+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T12:23:41.870+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:23:41.905+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:24:05.408+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /api/dashboard/stats
+2026-04-20T12:24:05.409+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Secured GET /api/dashboard/stats
+2026-04-20T12:24:05.633+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:24:08.132+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /api/shelves
+2026-04-20T12:24:08.137+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T12:24:08.137+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /api/shelves
+2026-04-20T12:24:08.138+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T12:24:08.320+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:24:08.326+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:24:08.741+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Securing GET /api/shelves
+2026-04-20T12:24:08.744+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Secured GET /api/shelves
+2026-04-20T12:24:08.744+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Securing GET /api/suppliers
+2026-04-20T12:24:08.748+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Secured GET /api/suppliers
+2026-04-20T12:24:08.758+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T12:24:08.758+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T12:24:08.760+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T12:24:08.761+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T12:24:08.830+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:24:08.830+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:24:08.852+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Securing GET /api/suppliers
+2026-04-20T12:24:08.852+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Secured GET /api/suppliers
+2026-04-20T12:24:08.933+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:24:09.242+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:24:09.261+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T12:24:09.264+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T12:24:09.357+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-8] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:24:09.360+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:24:14.930+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Securing GET /api/shelves/type/Laptop
+2026-04-20T12:24:14.933+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy        : Secured GET /api/shelves/type/Laptop
+2026-04-20T12:24:15.076+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-7] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:25:01.121+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment/check-serial/UN4B9HEH6V
+2026-04-20T12:25:01.122+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment/check-serial/UN4B9HEH6V
+2026-04-20T12:25:01.193+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:25:06.152+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /api/shelves/type/Laptop
+2026-04-20T12:25:06.156+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /api/shelves/type/Laptop
+2026-04-20T12:25:06.276+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:25:09.517+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Securing POST /api/equipment
+2026-04-20T12:25:09.522+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Secured POST /api/equipment
+2026-04-20T12:25:10.126+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:25:10.166+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T12:25:10.168+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T12:25:10.416+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:25:23.184+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T12:25:23.189+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T12:25:23.197+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T12:25:23.200+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T12:25:23.301+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:25:23.587+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:25:59.558+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Securing PUT /api/equipment/69e5ff055207b2135fbe3a0c
+2026-04-20T12:25:59.560+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Secured PUT /api/equipment/69e5ff055207b2135fbe3a0c
+2026-04-20T12:26:00.029+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:26:39.187+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T12:26:39.190+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T12:26:39.284+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:26:50.659+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T12:26:50.662+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T12:26:50.662+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T12:26:50.665+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T12:26:50.738+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:26:50.936+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:28:05.651+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T12:30:10.881+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment
+2026-04-20T12:30:10.881+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T12:30:10.883+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment
+2026-04-20T12:30:10.883+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T12:30:11.022+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-10] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:30:11.205+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:33:05.669+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-04-20T12:33:22.161+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy        : Securing PUT /api/equipment/69e5ff055207b2135fbe3a0c
+2026-04-20T12:33:22.164+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy        : Secured PUT /api/equipment/69e5ff055207b2135fbe3a0c
+2026-04-20T12:33:22.713+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-9] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:33:44.136+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T12:33:44.138+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T12:33:44.227+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:34:07.987+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T12:34:07.990+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T12:34:08.114+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-3] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:34:09.993+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Securing GET /api/equipment-categories
+2026-04-20T12:34:09.995+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy        : Secured GET /api/equipment-categories
+2026-04-20T12:34:10.103+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:36:03.744+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Securing GET /api/dashboard/stats
+2026-04-20T12:36:03.747+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy        : Secured GET /api/dashboard/stats
+2026-04-20T12:36:04.505+02:00 DEBUG 6356 --- [stock-manager-microservice] [http-nio-8081-exec-5] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2026-04-20T12:38:05.681+02:00  INFO 6356 --- [stock-manager-microservice] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration

@@ -72,4 +72,8 @@ export class EquipmentService {
   getWarrantyFile(id: string): Observable<string> {
     return this.http.get(`${this.apiUrl}/${id}/warranty-file`, { responseType: 'text' });
   }
+
+  consumeParts(parts: { name: string, brand?: string, type?: string, specification?: string, qty: number, equipmentId?: string }[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}/consume-parts`, parts);
+  }
 }

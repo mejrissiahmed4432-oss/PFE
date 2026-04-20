@@ -24,7 +24,7 @@ public class DashboardService {
     public DashboardStats getDashboardStats() {
         DashboardStats stats = new DashboardStats();
         
-        List<Equipment> allEquipment = equipmentRepository.findAll();
+        List<Equipment> allEquipment = equipmentRepository.findAllExcludingFiles();
         
         stats.setTotalEquipment(allEquipment.size());
         stats.setTotalSuppliers(supplierRepository.count());

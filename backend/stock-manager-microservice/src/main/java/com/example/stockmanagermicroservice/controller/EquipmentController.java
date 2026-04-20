@@ -16,8 +16,15 @@ public class EquipmentController {
     private EquipmentService equipmentService;
 
     @GetMapping
-    public List<Equipment> getAllEquipment() {
-        return equipmentService.getAllEquipment();
+    public ResponseEntity<?> getAllEquipment() {
+        try {
+            return ResponseEntity.ok(equipmentService.getAllEquipment());
+        } catch (Exception e) {
+            java.io.StringWriter sw = new java.io.StringWriter();
+            java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+            e.printStackTrace(pw);
+            return ResponseEntity.status(500).body("Error: " + e.getMessage() + "\nTrace: " + sw.toString());
+        }
     }
 
     @GetMapping("/shelf/{shelfId}")
@@ -91,5 +98,20 @@ public class EquipmentController {
         public String name;
         public String brand;
         public String model;
+    }
+
+    @PostMapping("/consume-parts")
+    public ResponseEntity<Void> consumeParts(@RequestBody List<PartConsumeRequest> requests) {
+        equipmentService.consumeParts(requests);
+        return ResponseEntity.ok().build();
+    }
+
+    public static class PartConsumeRequest {
+        public String name;
+        public String brand;
+        public String type;
+        public String specification;
+        public int qty;
+        public String equipmentId;
     }
 }

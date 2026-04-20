@@ -12,9 +12,9 @@ public interface NotificationRepository extends MongoRepository<Notification, St
     List<Notification> findAllByOrderByCreatedAtDesc();
 
     // Specific user-targeted queries
-    @org.springframework.data.mongodb.repository.Query("{ 'read': false, '$or': [ { 'recipientId': ?0 }, { 'recipientId': null } ] }")
-    List<Notification> findUnreadForUser(String recipientId);
+    @org.springframework.data.mongodb.repository.Query("{ 'read': false, '$or': [ { 'recipientId': ?0 }, { 'targetRole': ?1 }, { 'recipientId': null, 'targetRole': null } ] }")
+    List<Notification> findUnreadForUser(String recipientId, String targetRole);
 
-    @org.springframework.data.mongodb.repository.Query("{ '$or': [ { 'recipientId': ?0 }, { 'recipientId': null } ] }")
-    List<Notification> findAllForUser(String recipientId);
+    @org.springframework.data.mongodb.repository.Query("{ '$or': [ { 'recipientId': ?0 }, { 'targetRole': ?1 }, { 'recipientId': null, 'targetRole': null } ] }")
+    List<Notification> findAllForUser(String recipientId, String targetRole);
 }

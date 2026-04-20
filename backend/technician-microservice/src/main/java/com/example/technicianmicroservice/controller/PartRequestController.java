@@ -3,6 +3,7 @@ package com.example.technicianmicroservice.controller;
 import com.example.technicianmicroservice.model.PartRequest;
 import com.example.technicianmicroservice.service.PartRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,4 +44,22 @@ public class PartRequestController {
     public void deleteRequest(@PathVariable String id) {
         service.deleteRequest(id);
     }
+
+    @PostMapping("/consume-parts/{requesterId}")
+    public void consumeParts(@PathVariable String requesterId, @RequestBody List<PartConsumeRequest> partsToConsume) {
+        service.consumeParts(requesterId, partsToConsume);
+    }
+
+    public static class PartConsumeRequest {
+        public String name;
+        public String type;
+        public String specification;
+        public int qty;
+    }
+
+    // @PostMapping("/cleanup-requests")
+    // public ResponseEntity<Void> cleanupRequests(@RequestParam String requester) {
+    //     service.deleteRequestsByRequester(requester);
+    //     return ResponseEntity.ok().build();
+    // }
 }

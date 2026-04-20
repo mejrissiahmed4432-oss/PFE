@@ -34,4 +34,8 @@ export class PartRequestService {
   deleteRequest(requestId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${requestId}`);
   }
+
+  consumeParts(requesterId: string, parts: { name: string, type?: string, specification?: string, qty: number }[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}/consume-parts/${requesterId}`, parts);
+  }
 }

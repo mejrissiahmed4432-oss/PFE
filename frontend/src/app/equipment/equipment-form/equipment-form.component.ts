@@ -429,7 +429,10 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   saveEquipment(): void {
     this.isSaving = true;
     const payload = { ...this.formData } as Equipment;
-    payload.qte = 1; // Enforce single unit management
+    // Only force qte = 1 for NEW items. For edits, preserve the current quantity (which might be 0).
+    if (!this.equipment?.id || this.isAddSimilar) {
+      payload.qte = 1;
+    }
 
     const doSave = (finalPayload: Equipment) => {
       if (this.equipment && this.equipment.id) {

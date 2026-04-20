@@ -63,11 +63,11 @@ public class EquipmentCategoryService {
         if (category.getId() == null) {
             notificationService.createNotification("New Category Created: " + saved.getName(),
                     "Equipment category " + saved.getName() + " has been added",
-                    "SUCCESS", "CATEGORY", saved.getId());
+                    "SUCCESS", "CATEGORY", saved.getId(), null, "STOCK_MANAGER");
         } else {
             notificationService.createNotification("Category Updated: " + saved.getName(),
                     "Equipment category " + saved.getName() + " has been modified",
-                    "INFO", "CATEGORY", saved.getId());
+                    "INFO", "CATEGORY", saved.getId(), null, "STOCK_MANAGER");
         }
         return saved;
     }
@@ -205,7 +205,7 @@ public class EquipmentCategoryService {
 
             notificationService.createNotification("Category Deleted: " + category.getName(),
                     "Equipment category " + category.getName() + " has been removed",
-                    "ERROR", "CATEGORY", id);
+                    "ERROR", "CATEGORY", id, null, "STOCK_MANAGER");
             repository.deleteById(id);
         } else {
             throw new RuntimeException("Category not found with id: " + id);

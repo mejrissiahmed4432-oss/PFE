@@ -17,10 +17,15 @@ public class Ticket {
     private String priority; // "High", "Medium", "Low"
     private String status;   // "Open", "In Progress", "Resolved", "Closed" ...
     private String userId;   // Creator's ID (createdBy)
+    private String userName; // Creator's name
+    private String userRole; // Creator's role
     private String assignedTo; // Assigned technician ID
     private String equipmentName; // Equipment this ticket is for
     private String deadline;     // Optional deadline date
     private List<String> attachments; // Base64 or URLs of attachments
+    private String workNote;
+    private List<java.util.Map<String, Object>> repairTasks;
+    private List<java.util.Map<String, Object>> partsUsed;
     private String createdAt;
     private String updatedAt;
 
@@ -59,6 +64,10 @@ public class Ticket {
     public void setStatus(String status) { this.status = status; }
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
+    public String getUserRole() { return userRole; }
+    public void setUserRole(String userRole) { this.userRole = userRole; }
     public String getAssignedTo() { return assignedTo; }
     public void setAssignedTo(String assignedTo) { this.assignedTo = assignedTo; }
     public String getEquipmentName() { return equipmentName; }
@@ -67,6 +76,12 @@ public class Ticket {
     public void setDeadline(String deadline) { this.deadline = deadline; }
     public List<String> getAttachments() { return attachments; }
     public void setAttachments(List<String> attachments) { this.attachments = attachments; }
+    public String getWorkNote() { return workNote; }
+    public void setWorkNote(String workNote) { this.workNote = workNote; }
+    public List<java.util.Map<String, Object>> getRepairTasks() { return repairTasks; }
+    public void setRepairTasks(List<java.util.Map<String, Object>> repairTasks) { this.repairTasks = repairTasks; }
+    public List<java.util.Map<String, Object>> getPartsUsed() { return partsUsed; }
+    public void setPartsUsed(List<java.util.Map<String, Object>> partsUsed) { this.partsUsed = partsUsed; }
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
     public String getUpdatedAt() { return updatedAt; }

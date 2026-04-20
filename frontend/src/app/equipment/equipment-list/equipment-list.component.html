@@ -146,7 +146,7 @@
           <td>{{ group.category }} / {{ group.type | titlecase }}</td>
 
           <td>
-            <div *ngIf="group.totalQuantity === 1">
+            <div *ngIf="group.totalQuantity <= 1">
               <span class="status-chip" [ngClass]="getEquipmentStatus(group.items[0]).cls">
                 {{ getEquipmentStatus(group.items[0]).label }}
               </span>
@@ -164,7 +164,7 @@
           <td class="actions-cell">
             <div class="actions-wrap">
               <!-- Single Unit Actions -->
-              <ng-container *ngIf="group.totalQuantity === 1">
+              <ng-container *ngIf="group.totalQuantity <= 1">
                 <button class="action-icon view" (click)="viewEvent.emit(group.items[0]); $event.stopPropagation()"
                   title="View">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"

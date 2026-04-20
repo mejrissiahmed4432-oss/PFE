@@ -65,6 +65,50 @@ public class EquipmentService {
     }
 
     public Equipment createEquipment(Equipment equipment) {
+        // If no serial number is provided, check if an identical item already exists to merge quantity
+        if (equipment.getSerialNumber() == null || equipment.getSerialNumber().trim().isEmpty()) {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("equipmentName").is(equipment.getEquipmentName()));
+            query.addCriteria(Criteria.where("brand").is(equipment.getBrand()));
+            query.addCriteria(Criteria.where("type").is(equipment.getType()));
+            query.addCriteria(Criteria.where("category").is(equipment.getCategory()));
+            if (equipment.getSpecification() != null) {
+                query.addCriteria(Criteria.where("specification").is(equipment.getSpecification()));
+            }
+            // Also ensure it has no serial number
+            query.addCriteria(new Criteria().orOperator(
+                Criteria.where("serialNumber").is(null),
+                Criteria.where("serialNumber").is("")
+            ));
+
+            Equipment existing = mongoTemplate.findOne(query, Equipment.class);
+            if (existing != null) {
+                System.out.println("Found existing matching equipment (ID: " + existing.getId() + "). Merging quantity.");
+                int oldQte = existing.getQte() != null ? existing.getQte() : 0;
+                int newAddQte = equipment.getQte() != null ? equipment.getQte() : 1;
+                existing.setQte(oldQte + newAddQte);
+                existing.setUpdatedAt(LocalDateTime.now());
+                
+                // Update status if it was out of stock
+                if (existing.getQte() > 0 && ("Out of stock".equalsIgnoreCase(existing.getStatus()) || existing.getStatus() == null)) {
+                    existing.setStatus("Available");
+                    // If it was in OUT_OF_STOCK shelf, move it back to the requested shelf if provided
+                    if ("OUT_OF_STOCK".equals(existing.getShelfId()) && equipment.getShelfId() != null && !equipment.getShelfId().isEmpty()) {
+                        existing.setShelfId(equipment.getShelfId());
+                    }
+                }
+                
+                Equipment saved = equipmentRepository.save(existing);
+                
+                // Update shelf quantity for the existing item
+                if (saved.getShelfId() != null && !saved.getShelfId().isEmpty() && !"OUT_OF_STOCK".equals(saved.getShelfId())) {
+                    atomicUpdateShelfQuantity(saved.getShelfId(), newAddQte);
+                }
+                
+                return saved;
+            }
+        }
+
         equipment.setCreatedAt(LocalDateTime.now());
         equipment.setUpdatedAt(LocalDateTime.now());
 
@@ -86,6 +130,14 @@ public class EquipmentService {
             equipment.setQrCode(null);
         }
 
+        if (equipment.getQte() != null && equipment.getQte() > 0) {
+            if (equipment.getStatus() == null || equipment.getStatus().isEmpty() || "Out of stock".equalsIgnoreCase(equipment.getStatus())) {
+                equipment.setStatus("Available");
+            }
+        } else if (equipment.getQte() != null && equipment.getQte() == 0) {
+            equipment.setStatus("Out of stock");
+        }
+        
         if (equipment.getStatus() == null || equipment.getStatus().isEmpty()) {
             equipment.setStatus("Available");
         }
@@ -96,7 +148,7 @@ public class EquipmentService {
                 : "System";
         notificationService.createNotification("New " + saved.getType() + " Added",
                 "New " + saved.getType() + " " + saved.getBrand() + " " + saved.getModel() + " added by " + creator,
-                "SUCCESS", "EQUIPMENT", saved.getId());
+                "SUCCESS", "EQUIPMENT", saved.getId(), null, "STOCK_MANAGER");
 
         // Update shelf quantity (Atomically)
         if (saved.getShelfId() != null && !saved.getShelfId().isEmpty()) {
@@ -140,14 +192,20 @@ public class EquipmentService {
 
             String status = equipmentDetails.getStatus();
             String newShelfId = equipmentDetails.getShelfId();
-            Integer newQte = equipmentDetails.getQte() != null ? equipmentDetails.getQte() : 1;
+            Integer newQte = equipmentDetails.getQte() != null ? equipmentDetails.getQte() : oldQte;
 
             // Automatic Redirection Logic
+            if (newQte != null && newQte > 0 && "Out of stock".equalsIgnoreCase(status)) {
+                status = "Available";
+            } else if (newQte != null && newQte == 0) {
+                status = "Out of stock";
+            }
+
             if ("Maintenance".equals(status)) {
                 newShelfId = "MAINTENANCE_AREA";
             } else if ("Broken".equals(status)) {
                 newShelfId = "SCRAP_YARD";
-            } else if ("Out of Stock".equals(status)) {
+            } else if ("Out of Stock".equalsIgnoreCase(status)) {
                 newShelfId = "OUT_OF_STOCK";
             }
 
@@ -158,7 +216,7 @@ public class EquipmentService {
                 // Notification for location change
                 notificationService.createNotification("Location Changed: " + equipment.getEquipmentName(),
                         "Equipment moved from shelf " + (oldShelfId != null ? oldShelfId : "N/A") + " to " + newShelfId,
-                        "INFO", "EQUIPMENT", equipment.getId());
+                        "INFO", "EQUIPMENT", equipment.getId(), null, "STOCK_MANAGER");
             }
 
             equipment.setEquipmentName(equipmentDetails.getEquipmentName());
@@ -231,10 +289,7 @@ public class EquipmentService {
             equipment.setUpdatedAt(LocalDateTime.now());
             Equipment updated = equipmentRepository.save(equipment);
 
-            // Sync alerts if name changed
-            if (oldName != null && !oldName.equals(updated.getEquipmentName())) {
-                alertService.updateAlertsRelatedToNameChange(updated.getId(), oldName, updated.getEquipmentName());
-            }
+            // Sync alerts if name changed (Deprecated - historical alerts act as point-in-time snapshot)
 
             // If QR code was explicitly removed, force $unset in MongoDB to guarantee field
             // removal
@@ -250,7 +305,7 @@ public class EquipmentService {
                     : "System";
             notificationService.createNotification("Equipment Updated: " + updated.getEquipmentName(),
                     updated.getBrand() + " " + updated.getModel() + " was updated by " + updater,
-                    "INFO", "EQUIPMENT", updated.getId());
+                    "INFO", "EQUIPMENT", updated.getId(), null, "STOCK_MANAGER");
 
             // Handle Shelf Capacity Changes using existing logic
             boolean isMarker = "MAINTENANCE_AREA".equals(newShelfId) ||
@@ -292,7 +347,7 @@ public class EquipmentService {
             // Generate notification for equipment deletion
             notificationService.createNotification("Equipment Deleted: " + equipment.getEquipmentName(),
                     equipment.getBrand() + " " + equipment.getModel() + " has been removed from inventory",
-                    "ERROR", "EQUIPMENT", id);
+                    "INFO", "EQUIPMENT", id, null, "STOCK_MANAGER");
         });
         equipmentRepository.deleteById(id);
     }
@@ -321,7 +376,7 @@ public class EquipmentService {
         // Notification for bulk update
         notificationService.createNotification("Bulk Update Completed",
                 items.size() + " equipment items were updated successfully",
-                "INFO", "EQUIPMENT", null);
+                "INFO", "EQUIPMENT", null, null, "STOCK_MANAGER");
 
         return saved;
     }
@@ -336,5 +391,62 @@ public class EquipmentService {
                         .findFirst()
                         .orElse(true)) // Fallback if type not found in cat
                 .orElse(true); // Fallback if cat not found
+    }
+
+    public void consumeParts(List<com.example.stockmanagermicroservice.controller.EquipmentController.PartConsumeRequest> requests) {
+        for (com.example.stockmanagermicroservice.controller.EquipmentController.PartConsumeRequest req : requests) {
+            System.out.println("Processing consume request: name=" + req.name + ", type=" + req.type + ", id=" + req.equipmentId + ", qty=" + req.qty);
+            Query query = new Query();
+            if (req.equipmentId != null && !req.equipmentId.isEmpty()) {
+                query.addCriteria(Criteria.where("id").is(req.equipmentId));
+            } else {
+                if (req.name != null && !req.name.isEmpty()) {
+                    query.addCriteria(Criteria.where("equipmentName").regex("^" + req.name + "$", "i"));
+                }
+                if (req.brand != null && !req.brand.isEmpty()) {
+                    query.addCriteria(Criteria.where("brand").regex("^" + req.brand + "$", "i"));
+                }
+                if (req.type != null && !req.type.isEmpty()) {
+                    query.addCriteria(Criteria.where("type").regex("^" + req.type + "$", "i"));
+                }
+                if (req.specification != null && !req.specification.isEmpty()) {
+                    query.addCriteria(Criteria.where("specification").is(req.specification));
+                }
+            }
+            
+            List<Equipment> matches = mongoTemplate.find(query, Equipment.class);
+            System.out.println("Found " + matches.size() + " potential matches for consumption.");
+
+            int remainingToConsume = req.qty;
+            for (Equipment eq : matches) {
+                if (remainingToConsume <= 0) break;
+                
+                int current = eq.getQte() != null ? eq.getQte() : 1;
+                if (current <= 0) continue; // Skip out of stock items
+                
+                int deduct = Math.min(current, remainingToConsume);
+                int newQte = current - deduct;
+                remainingToConsume -= deduct;
+                
+                System.out.println("Updating equipment " + eq.getId() + " (" + eq.getEquipmentName() + "): " + current + " -> " + newQte);
+                
+                eq.setQte(newQte);
+                if (newQte <= 0) {
+                    eq.setQte(0);
+                    eq.setStatus("Out of stock");
+                }
+                equipmentRepository.save(eq);
+                
+                if (eq.getShelfId() != null && !eq.getShelfId().isEmpty() && 
+                    !"MAINTENANCE_AREA".equals(eq.getShelfId()) && 
+                    !"SCRAP_YARD".equals(eq.getShelfId()) && 
+                    !"OUT_OF_STOCK".equals(eq.getShelfId())) {
+                     atomicUpdateShelfQuantity(eq.getShelfId(), -deduct);
+                }
+            }
+            if (remainingToConsume > 0) {
+                System.out.println("Warning: Could only consume " + (req.qty - remainingToConsume) + " out of " + req.qty + " requested items.");
+            }
+        }
     }
 }

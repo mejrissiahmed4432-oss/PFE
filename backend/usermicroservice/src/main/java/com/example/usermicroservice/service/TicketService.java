@@ -14,6 +14,12 @@ public class TicketService {
     @Autowired
     private TicketRepository ticketRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private AlertService alertService;
+
     public List<Ticket> getAllTickets() {
         return ticketRepository.findAll();
     }
@@ -28,11 +34,40 @@ public class TicketService {
 
     public Ticket createTicket(Ticket ticket) {
         ticket.prePersist();
-        return ticketRepository.save(ticket);
+        Ticket saved = ticketRepository.save(ticket);
+        
+        if (saved.getAssignedTo() != null && !saved.getAssignedTo().isEmpty()) {
+            notificationService.createNotification(
+                "Ticket Assigned",
+                "Assignment for: '" + saved.getTitle() + "'. Category: " + saved.getCategory(),
+                "INFO", "TICKET", saved.getId(), saved.getAssignedTo(), null
+            );
+        } else {
+            // Unassigned ticket: broadcast to all TECHNICIANs
+            notificationService.createNotification(
+                "New Unassigned Ticket",
+                "A new ticket has been created and needs assignment: '" + saved.getTitle() + "'",
+                "INFO", "TICKET", saved.getId(), null, "TECHNICIAN"
+            );
+        }
+
+        // Notify Creator
+        if (saved.getUserId() != null) {
+            notificationService.createNotification(
+                "Ticket Created Successfully",
+                "Your ticket '" + saved.getTitle() + "' has been submitted and is currently " + saved.getStatus() + ".",
+                "SUCCESS", "TICKET", saved.getId(), saved.getUserId(), null
+            );
+        }
+        
+        return saved;
     }
 
     public Ticket updateTicket(String id, Ticket ticketDetails) {
         return ticketRepository.findById(id).map(ticket -> {
+            String oldStatus = ticket.getStatus();
+            String oldAssignedTo = ticket.getAssignedTo();
+            
             ticket.setTitle(ticketDetails.getTitle());
             ticket.setDescription(ticketDetails.getDescription());
             ticket.setCategory(ticketDetails.getCategory());
@@ -42,12 +77,62 @@ public class TicketService {
             ticket.setEquipmentName(ticketDetails.getEquipmentName());
             ticket.setDeadline(ticketDetails.getDeadline());
             ticket.setAttachments(ticketDetails.getAttachments());
+            ticket.setUserName(ticketDetails.getUserName());
+            ticket.setUserRole(ticketDetails.getUserRole());
+            ticket.setWorkNote(ticketDetails.getWorkNote());
+            ticket.setRepairTasks(ticketDetails.getRepairTasks());
+            ticket.setPartsUsed(ticketDetails.getPartsUsed());
             ticket.preUpdate();
-            return ticketRepository.save(ticket);
+            
+            Ticket updated = ticketRepository.save(ticket);
+            
+            // Notify if assignment changed
+            if (updated.getAssignedTo() != null && !updated.getAssignedTo().equals(oldAssignedTo)) {
+                notificationService.createNotification(
+                    "New Ticket Assignment",
+                    "A ticket has been assigned to you: " + updated.getTitle(),
+                    "INFO", "TICKET", updated.getId(), updated.getAssignedTo(), null
+                );
+            }
+            
+            // Notify if status changed
+            if (updated.getStatus() != null && !updated.getStatus().equals(oldStatus)) {
+                String statusMsg = "The status of ticket '" + updated.getTitle() + "' was updated to: " + updated.getStatus();
+                
+                // Notify assigned person
+                if (updated.getAssignedTo() != null) {
+                    notificationService.createNotification("Ticket Status Update", statusMsg, "INFO", "TICKET", updated.getId(), updated.getAssignedTo(), null);
+                }
+                
+                // Notify creator if different from assigned
+                if (updated.getUserId() != null && !updated.getUserId().equals(updated.getAssignedTo())) {
+                    notificationService.createNotification("Ticket Status Update", statusMsg, "INFO", "TICKET", updated.getId(), updated.getUserId(), null);
+                }
+
+                // If cancelled, alert STOCK_MANAGER
+                if (updated.getStatus().equalsIgnoreCase("Cancelled")) {
+                    alertService.createAlert(
+                        "Ticket Cancelled",
+                        "The ticket '" + updated.getTitle() + "' for equipment '" + updated.getEquipmentName() + "' was cancelled.",
+                        "ERROR", "MAINTENANCE", updated.getId(), null, "STOCK_MANAGER"
+                    );
+                }
+            }
+            
+            return updated;
         }).orElseThrow(() -> new RuntimeException("Ticket not found with id " + id));
     }
 
     public void deleteTicket(String id) {
+        ticketRepository.findById(id).ifPresent(ticket -> {
+            String msg = "Ticket '" + ticket.getTitle() + "' has been deleted.";
+            if (ticket.getUserId() != null) {
+                notificationService.createNotification("Ticket Deleted", msg, "INFO", "TICKET", id, ticket.getUserId(), null);
+            }
+            if (ticket.getAssignedTo() != null && !ticket.getAssignedTo().equals(ticket.getUserId())) {
+                notificationService.createNotification("Ticket Deleted", msg, "INFO", "TICKET", id, ticket.getAssignedTo(), null);
+            }
+        });
         ticketRepository.deleteById(id);
     }
 }

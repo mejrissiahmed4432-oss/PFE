@@ -15,6 +15,8 @@ public class Alert {
     private String message;
     private String type; // e.g., WARNING, INFO, ERROR, SUCCESS
     private String category; // e.g., WARRANTY, STOCK, MAINTENANCE
+    private String recipientId; // Optional: specific user
+    private String targetRole; // Optional: specific role
     private boolean read;
     private String relatedId; // ID of the equipment or supplier related to this alert
     
@@ -24,11 +26,17 @@ public class Alert {
     public Alert() {}
 
     public Alert(String title, String message, String type, String category, String relatedId) {
+        this(title, message, type, category, relatedId, null, null);
+    }
+
+    public Alert(String title, String message, String type, String category, String relatedId, String recipientId, String targetRole) {
         this.title = title;
         this.message = message;
         this.type = type;
         this.category = category;
         this.relatedId = relatedId;
+        this.recipientId = recipientId;
+        this.targetRole = targetRole;
         this.read = false;
         this.createdAt = LocalDateTime.now();
     }
@@ -51,6 +59,12 @@ public class Alert {
 
     public boolean isRead() { return read; }
     public void setRead(boolean read) { this.read = read; }
+
+    public String getRecipientId() { return recipientId; }
+    public void setRecipientId(String recipientId) { this.recipientId = recipientId; }
+
+    public String getTargetRole() { return targetRole; }
+    public void setTargetRole(String targetRole) { this.targetRole = targetRole; }
 
     public String getRelatedId() { return relatedId; }
     public void setRelatedId(String relatedId) { this.relatedId = relatedId; }

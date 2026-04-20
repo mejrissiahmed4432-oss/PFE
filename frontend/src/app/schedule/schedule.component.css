@@ -11,9 +11,11 @@
 
 /* No background — inherits from app shell */
 .schedule-page {
-  padding: 24px;
+  padding: 28px 32px;
   min-height: 100vh;
   animation: pageFadeIn 0.4s ease-out;
+  background: linear-gradient(160deg, #f0f4ff 0%, #f8fafc 40%, #f0fdf4 100%);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
 @keyframes pageFadeIn {
@@ -91,8 +93,11 @@
   margin: 0;
   font-size: 1.75rem;
   font-weight: 800;
-  color: #1e293b;
-  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.03em;
 }
 
 .sched-title-group p {
@@ -184,35 +189,38 @@
 }
 
 .stat-float {
-  background: rgba(255,255,255,0.85);
-  border: 1px solid rgba(255,255,255,0.9);
+  background: white;
+  border: 1px solid rgba(226,232,240,0.8);
   border-radius: 16px;
   padding: 18px 20px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  border-left: 4px solid #3b82f6;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-top: 3px solid #3b82f6;
 }
 
-.stat-float.progress { border-left-color: #f59e0b; }
-.stat-float.pending  { border-left-color: #6366f1; }
-.stat-float.done     { border-left-color: #10b981; }
+.stat-float:hover { transform: translateY(-3px); box-shadow: 0 4px 20px rgba(0,0,0,0.10); }
+.stat-float.progress { border-top-color: #f59e0b; }
+.stat-float.pending  { border-top-color: #6366f1; }
+.stat-float.done     { border-top-color: #10b981; }
 
 .stat-num {
-  font-size: 1.8rem;
+  font-size: 1.9rem;
   font-weight: 800;
   color: #1e293b;
   line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 .stat-lbl {
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: #94a3b8;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
 }
 
 /* ── Main Grid ─────────────────────────────────────────────── */
@@ -291,19 +299,21 @@
 }
 
 .kanban-column {
-  background: #f8fafc;
+  background: #f8faff;
+  border: 1px solid #e8edf5;
   border-radius: 16px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   min-width: 280px;
   flex: 1;
+  transition: border-color 0.2s;
 }
 
+.kanban-column:hover { border-color: #c7d2fe; }
+
 @media (max-width: 640px) {
-  .kanban-column {
-    min-width: 240px;
-  }
+  .kanban-column { min-width: 240px; }
 }
 
 .kanban-header {
@@ -361,23 +371,21 @@
 /* ── Task Card ────────────────────────────────────────────── */
 .task-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border: 1px solid #e8edf5;
+  border-radius: 13px;
   padding: 16px;
   cursor: grab;
   transition: all 0.2s ease;
   position: relative;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 
-.task-card:active {
-  cursor: grabbing;
-}
+.task-card:active { cursor: grabbing; }
 
 .task-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transform: translateY(-2px);
+  border-color: #a5b4fc;
+  box-shadow: 0 6px 20px rgba(99,102,241,0.1);
+  transform: translateY(-3px);
 }
 
 .task-card.completed {
@@ -1494,4 +1502,39 @@
 .dot-single-task.has-history-dot {
   background: #10b981 !important;
   box-shadow: 0 0 6px rgba(16, 185, 129, 0.6) !important;
+}
+
+/* --------------------------------------------
+   RESPONSIVE - SCHEDULE PAGE
+-------------------------------------------- */
+
+@media (max-width: 1280px) {
+  .schedule-page { padding: 20px 24px; }
+}
+
+@media (max-width: 1024px) {
+  .sched-grid { flex-direction: column !important; }
+  .calendar-panel { width: 100% !important; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .schedule-page { padding: 14px 14px; }
+  .sched-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .header-right { width: 100%; justify-content: space-between; }
+  .filter-chips { overflow-x: auto; padding-bottom: 4px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat-float { padding: 14px 16px; }
+  .stat-num { font-size: 1.5rem; }
+  .kanban-board { gap: 12px; }
+  .task-panel, .history-panel { padding: 14px; }
+  .field-grid-2, .field-grid-3 { grid-template-columns: 1fr; }
+  .modal-panel { max-width: 98vw; }
+}
+
+@media (max-width: 480px) {
+  .schedule-page { padding: 10px 10px; }
+  .add-task-btn span { display: none; }
+  .sched-title-group h1 { font-size: 1.35rem; }
+  .chip { padding: 6px 10px; font-size: 0.75rem; }
 }

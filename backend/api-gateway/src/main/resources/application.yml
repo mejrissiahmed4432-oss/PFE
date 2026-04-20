@@ -35,7 +35,7 @@ spring:
         - id: user-microservice
           uri: lb://user-microservice
           predicates:
-            - Path=/api/users/**, /api/messages/**, /api/tickets/**, /api/tickets
+            - Path=/api/users/**, /api/messages/**, /api/tickets/**, /api/tickets, /api/alerts/**, /api/alerts, /api/notifications/**, /api/notifications
         - id: equipment-route
           uri: lb://stock-manager-microservice
           predicates:
@@ -52,14 +52,6 @@ spring:
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/dashboard/**
-        - id: alerts-route
-          uri: lb://stock-manager-microservice
-          predicates:
-            - Path=/api/alerts/**, /api/alerts
-        - id: notifications-route
-          uri: lb://stock-manager-microservice
-          predicates:
-            - Path=/api/notifications/**, /api/notifications
         - id: categories-route
           uri: lb://stock-manager-microservice
           predicates:
@@ -68,10 +60,7 @@ spring:
           uri: lb://user-microservice
           predicates:
             - Path=/ws/**
-        - id: alerts-ws-route
-          uri: lb://stock-manager-microservice
-          predicates:
-            - Path=/ws-alerts/**
+
         - id: technician-route
           uri: lb://technician-microservice
           predicates:
