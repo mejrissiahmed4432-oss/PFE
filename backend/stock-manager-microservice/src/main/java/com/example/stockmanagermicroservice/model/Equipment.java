@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Document(collection = "equipment")
 public class Equipment {
     @Id
@@ -28,11 +30,14 @@ public class Equipment {
     private LocalDate purchaseDate;
     private LocalDate warrantyExpiration;
     private Double purchasePrice;
+    private String invoiceRef;
     
     // File Documents (Base64 encoded)
     private String invoiceFileName;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String invoiceFileData;
     private String warrantyFileName;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String warrantyFileData;
     
     private String qrCode;
@@ -106,6 +111,9 @@ public class Equipment {
     
     public Double getPurchasePrice() { return purchasePrice; }
     public void setPurchasePrice(Double purchasePrice) { this.purchasePrice = purchasePrice; }
+
+    public String getInvoiceRef() { return invoiceRef; }
+    public void setInvoiceRef(String invoiceRef) { this.invoiceRef = invoiceRef; }
     
     public String getInvoiceFileName() { return invoiceFileName; }
     public void setInvoiceFileName(String invoiceFileName) { this.invoiceFileName = invoiceFileName; }

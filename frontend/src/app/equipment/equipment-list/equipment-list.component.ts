@@ -367,22 +367,37 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   saveGroupEdit(): void {
     if (!this.editingGroup) return;
     if (!this.bulkEditForm.name || !this.bulkEditForm.brand) {
-      alert('Name and Brand are required.');
+      alert('Group name and Brand are required.');
       return;
     }
 
     this.isBulkSaving = true;
     const ids = this.editingGroup.items.map(item => item.id!);
+    const newGroupName = this.bulkEditForm.name;
+    const newBrand = this.bulkEditForm.brand;
+
+    // Only send brand to backend — individual equipment names are intentionally NOT updated
     this.equipmentService.updateBulkBasicInfo(
-      ids, 
-      this.bulkEditForm.name, 
-      this.bulkEditForm.brand, 
+      ids,
+      null as any,
+      newBrand,
       null as any
     ).subscribe({
       next: () => {
         this.isBulkSaving = false;
+        if (this.editingGroup) {
+          // Update group display name locally (does NOT cascade to individual equipment names)
+          this.editingGroup.name = newGroupName;
+          // Update brand on the group and all its items locally
+          this.editingGroup.brand = newBrand;
+          this.editingGroup.items.forEach(item => { item.brand = newBrand; });
+          // Sync brand back to the raw equipments array
+          this.editingGroup.items.forEach(item => {
+            const eq = this.equipments.find(e => e.id === item.id);
+            if (eq) eq.brand = newBrand;
+          });
+        }
         this.closeGroupEditModal();
-        this.loadEquipments();
       },
       error: (err: any) => {
         this.isBulkSaving = false;

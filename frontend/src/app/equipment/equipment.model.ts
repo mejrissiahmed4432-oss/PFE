@@ -36,6 +36,7 @@ export interface Equipment {
   graphicsCard?: string;
   operatingSystem?: string;
   specification?: string;
+  invoiceRef?: string;
 }
 
 export interface EquipmentCategory {
