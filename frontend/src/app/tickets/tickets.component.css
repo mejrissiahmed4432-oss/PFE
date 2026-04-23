@@ -4576,3 +4576,44 @@
   font-size: 0.85rem;
   color: #475569;
 }
+/* Verified Match Styling */
+.verified-match-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #22c55e;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+  padding: 2px;
+}
+
+.badge-system-verified {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: #dcfce7;
+  color: #15803d;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.part-name-main {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.part-type-sub {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 2px;
+}

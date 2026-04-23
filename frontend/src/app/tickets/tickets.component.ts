@@ -305,24 +305,31 @@ export class TicketsComponent implements OnInit, OnDestroy {
         const itemsList: any[] = [];
 
         approved.forEach(req => {
-          (req.items || []).forEach(item => {
-            const existing = itemsList.find(i => 
-              i.name.toLowerCase() === item.partName.toLowerCase() &&
-              (i.specification || '').toLowerCase() === (item.specification || '').toLowerCase()
-            );
-            if (existing) {
-              existing.totalQty += item.quantity;
-            } else {
-              itemsList.push({
-                name: item.partName,
-                totalQty: item.quantity,
-                category: item.category,
-                type: item.type,
-                specification: item.specification || '',
-                brand: '' // Model can be added if backend supports it
-              });
-            }
-          });
+          (req.items || [])
+            .filter(item => !item.returned)
+            .forEach(item => {
+              const isMatched = !!item.equipmentId && !!item.matchedEquipmentName;
+              const displayName = (isMatched ? item.matchedEquipmentName : item.partName) || 'Unknown Part';
+              const displaySpec = (isMatched ? (item.matchedSpecification || item.specification) : (item.specification || '')) || '';
+
+              const existing = itemsList.find(i => 
+                i.name.toLowerCase() === displayName.toLowerCase() &&
+                (i.specification || '').toLowerCase() === (displaySpec || '').toLowerCase()
+              );
+              if (existing) {
+                existing.totalQty += item.quantity;
+              } else {
+                itemsList.push({
+                  name: displayName,
+                  totalQty: item.quantity,
+                  category: item.category,
+                  type: item.type,
+                  specification: displaySpec,
+                  brand: item.brand || '',
+                  isMatched: isMatched
+                });
+              }
+            });
         });
 
         this.userInventory = itemsList;

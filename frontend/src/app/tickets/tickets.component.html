@@ -1009,8 +1009,16 @@
                       <input type="checkbox" [checked]="isPartSelected(part)" (change)="togglePartUsed(part, $event)">
                     </td>
                     <td>
-                      <div class="part-name-main">{{ part.name }}</div>
-                      <div class="part-type-sub">{{ part.type }}</div>
+                      <div class="part-name-main">
+                        {{ part.name }}
+                        <span *ngIf="part.isMatched" class="verified-match-icon" title="Matched to official inventory">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </span>
+                      </div>
+                      <div class="part-type-sub">
+                        {{ part.type }}
+                        <span *ngIf="part.isMatched" class="badge-system-verified">Verified</span>
+                      </div>
                     </td>
                     <td>
                       <div class="part-spec-text">{{ part.specification || '—' }}</div>
