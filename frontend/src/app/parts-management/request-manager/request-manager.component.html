@@ -76,8 +76,13 @@
             </td>
             <td style="text-align: right;">
               <div class="action-buttons" *ngIf="r.status === 'PENDING'">
-                <button class="btn-action check" (click)="updateStatus(r.id, 'APPROVED', $event)" [disabled]="processingId === r.id" title="Approve Request">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <button class="btn-action check" (click)="toggleExpand(r.id); $event.stopPropagation()" [disabled]="processingId === r.id" title="Process Request">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                  </svg>
+                  Process
                 </button>
                 <button class="btn-action x" (click)="updateStatus(r.id, 'REJECTED', $event)" [disabled]="processingId === r.id" title="Reject Request">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -99,26 +104,146 @@
                 <table class="nested-table">
                   <thead>
                     <tr>
-                      <th>Item Name</th>
-                      <th>Category & Type</th>
-                      <th>Specification</th>
-                      <th style="text-align: right;">Quantity</th>
+                      <th style="width: 50px; text-align: center;">Accept</th>
+                      <th>Requested Item</th>
+                      <th>Spec</th>
+                      <th style="width: 80px; text-align: center;">Qty</th>
+                      <th>Matching Stock Selection</th>
+                      <th style="text-align: right;">Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let item of r.items">
+                    <tr *ngFor="let item of r.items; let idx = index" 
+                        [class.item-accepted]="isItemChecked(r, idx)"
+                        [class.item-already-processed]="isItemAlreadyProcessed(item)">
+
+                      <!-- Checkbox cell: disabled for already-processed items -->
+                      <td style="text-align: center;">
+                        <ng-container *ngIf="isItemAlreadyProcessed(item); else normalCheckbox">
+                          <div class="processed-badge-stack">
+                            <span class="badge-allocated-sm" title="This item was allocated in a previous partial approval">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                              Done
+                            </span>
+                            <button class="btn-undo-item" (click)="resetProcessedItem(r, idx)" title="Reset to unprocessed to allow editing">
+                              Undo
+                            </button>
+                          </div>
+                        </ng-container>
+                        <ng-template #normalCheckbox>
+                          <input type="checkbox"
+                                 [checked]="isItemChecked(r, idx)"
+                                 (change)="toggleItemSelection(r, idx)"
+                                 class="item-check">
+                        </ng-template>
+                      </td>
+
+                      <!-- Item name & category -->
                       <td>
-                        <div class="item-name">
-                          {{ item.partName }}
-                          <span class="badge-manual" *ngIf="!item.equipmentId">Custom</span>
+                        <div class="item-name">{{ item.matchedEquipmentName || item.partName }}</div>
+                        <div class="text-xs text-mute">{{ item.category }} / {{ item.type }}</div>
+                      </td>
+
+                      <!-- Spec -->
+                      <td class="text-sm">{{ item.matchedSpecification || item.specification || '—' }}</td>
+
+                      <!-- Qty -->
+                      <td style="text-align: center; font-weight: 600;">{{ item.quantity }}</td>
+
+                      <!-- Matching stock column -->
+                      <td>
+                        <!-- Already allocated in a past partial approval -->
+                        <ng-container *ngIf="isItemAlreadyProcessed(item)">
+                          <div class="already-allocated-badge">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Allocated to Technician
+                          </div>
+                        </ng-container>
+
+                        <!-- If it's NOT processed, show either the 'Available in Stock' or the 'Picker' summary -->
+                        <ng-container *ngIf="!isItemAlreadyProcessed(item)">
+                          
+                          <!-- Technician selected it from stock directly -->
+                          <div class="stock-verified-badge" *ngIf="isTechnicianStockSelection(item)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Available in Stock
+                          </div>
+
+                          <!-- Manager matched it (or needs to match it) -->
+                          <div class="picker-summary-container" *ngIf="!isTechnicianStockSelection(item)">
+                            <div class="picked-summary" *ngIf="getPickedCount(r, idx) > 0 || item.equipmentId">
+                              <!-- Show current pick from local state OR from persisted state -->
+                              <ng-container *ngIf="getPickedCount(r, idx) > 0; else persistedPick">
+                                <div class="picked-tag" *ngFor="let p of getPickedList(r, idx)">
+                                  <span>{{ p.equipmentName || p.type }} ({{ p.serialNumber }})</span>
+                                  <button class="remove-pick" (click)="removePickedEquipment(r, idx, p.id)">×</button>
+                                </div>
+                              </ng-container>
+                              <ng-template #persistedPick>
+                                <div class="picked-tag">
+                                  <span>{{ item.matchedEquipmentName || item.partName }} ({{ item.matchedSerialNumber || '...' }})</span>
+                                  <button class="remove-pick" (click)="removePickedEquipment(r, idx, item.equipmentId!)">×</button>
+                                </div>
+                              </ng-template>
+                            </div>
+                            
+                            <div class="no-picks" *ngIf="getPickedCount(r, idx) === 0 && !item.equipmentId">
+                              <span class="text-xs text-mute italic">No items picked yet</span>
+                            </div>
+                          </div>
+                        </ng-container>
+
+                        <!-- Picker Dropdown -->
+                        <div class="stock-picker-overlay" *ngIf="showPickerForItem === getItemKey(r, idx)">
+                          <div class="picker-header">
+                            <span>Available {{ item.type }}</span>
+                            <button class="close-picker" (click)="showPickerForItem = null">×</button>
+                          </div>
+                          <div class="picker-body">
+                            <div *ngIf="isLoadingStock" class="picker-loading">Loading stock...</div>
+                            <div *ngFor="let eq of availableStockByItem.get(getItemKey(r, idx))"
+                                 class="stock-option"
+                                 [class.picked]="isPicked(r, idx, eq.id)"
+                                 (click)="pickEquipment(r, idx, eq)">
+                              <div class="stock-info">
+                                <span class="stock-name">{{ eq.equipmentName }}</span>
+                                <span class="stock-sn">S/N: {{ eq.serialNumber }}</span>
+                              </div>
+                              <div class="stock-spec text-xs">{{ eq.specification }}</div>
+                            </div>
+                            <div *ngIf="!isLoadingStock && availableStockByItem.get(getItemKey(r, idx))?.length === 0" class="no-stock">
+                              No available matching equipment found in stock.
+                            </div>
+                          </div>
                         </div>
                       </td>
-                      <td class="text-mute">{{ item.category }} / {{ item.type }}</td>
-                      <td class="text-mute">{{ item.specification || '—' }}</td>
-                      <td style="text-align: right; font-weight: 600; color: #0f172a;">{{ item.quantity }}</td>
+
+                      <!-- Action column: Match from Stock button only for unprocessed custom items -->
+                      <td style="text-align: right;">
+                        <ng-container *ngIf="!isItemAlreadyProcessed(item)">
+                          <!-- Match button: Only show for items that are NOT originally from stock -->
+                          <button class="btn-match" *ngIf="!isTechnicianStockSelection(item)" (click)="togglePicker(r, item, idx)"
+                                  [class.active]="showPickerForItem === getItemKey(r, idx)">
+                            {{ (getPickedCount(r, idx) >= item.quantity || item.equipmentId) ? 'Change Selection' : 'Match from Stock' }}
+                          </button>
+                          <!-- For originally stock items, show a static label -->
+                          <span class="text-xs text-mute font-medium" *ngIf="isTechnicianStockSelection(item)">System Verified</span>
+                        </ng-container>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
+
+                <div class="details-footer" *ngIf="r.status === 'PENDING'">
+                  <div class="footer-note" *ngIf="!canCompleteRequest(r)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    Check the items you want to accept to finalize approval.
+                  </div>
+                  <button class="btn-complete-approval" *ngIf="canCompleteRequest(r)" (click)="completeApproval(r)" [disabled]="processingId === r.id" [class.partial]="!isAllChecked(r)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    {{ isAllChecked(r) ? 'Finalize & Approve Request' : 'Process Selected (Partial Approval)' }}
+                  </button>
+                </div>
               </div>
             </td>
           </tr>
@@ -136,3 +261,31 @@
     </div>
   </div>
 </div>
+
+<!-- ─────────────────────────────────────────────
+     CUSTOM ALERT MODAL
+     ───────────────────────────────────────────── -->
+<div class="alert-overlay" *ngIf="alertConfig.show" (click)="closeAlert()">
+  <div class="alert-modal" (click)="$event.stopPropagation()">
+    <div class="alert-icon-wrap" [ngClass]="alertConfig.type">
+      <!-- Warning Icon -->
+      <svg *ngIf="alertConfig.type === 'warning'" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+      
+      <!-- Error Icon -->
+      <svg *ngIf="alertConfig.type === 'error'" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+      
+      <!-- Success Icon -->
+      <svg *ngIf="alertConfig.type === 'success'" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+    </div>
+
+    <div class="alert-content">
+      <h2>{{ alertConfig.title }}</h2>
+      <p>{{ alertConfig.message }}</p>
+      
+      <button class="alert-btn" [ngClass]="alertConfig.type" (click)="closeAlert()">
+        OK
+      </button>
+    </div>
+  </div>
+</div>
+

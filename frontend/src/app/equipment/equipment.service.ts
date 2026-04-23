@@ -73,7 +73,21 @@ export class EquipmentService {
     return this.http.get(`${this.apiUrl}/${id}/warranty-file`, { responseType: 'text' });
   }
 
-  consumeParts(parts: { name: string, brand?: string, type?: string, specification?: string, qty: number, equipmentId?: string }[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}/consume-parts`, parts);
+  consumeParts(parts: any[]): Observable<any> {
+    // This is the legacy method that was causing 405 because it didn't match the new backend structure
+    // We'll keep it for compatibility if needed but prefer allocateParts
+    return this.http.post(`${this.apiUrl}/allocate-parts`, { parts });
+  }
+
+  allocateParts(technicianId: string, technicianName: string, parts: any[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}/allocate-parts`, {
+      requesterId: technicianId,
+      requesterName: technicianName,
+      parts: parts
+    });
+  }
+
+  returnPart(id: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${id}/return`, {});
   }
 }

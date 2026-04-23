@@ -26,6 +26,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   @Input() viewOnly: boolean = false;
   @Input() isAddSimilar: boolean = false;
   @Output() closeEvent = new EventEmitter<boolean>();
+  @Output() viewOtherEvent = new EventEmitter<string>();
 
   formData: Partial<Equipment> = {};
   isSaving: boolean = false;
@@ -584,6 +585,13 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
     const s = this.allShelves.find(x => x.id === shelfId);
     return s ? `Shelf ${s.nb}` : shelfId;
+  }
+
+  getDisplayDepartment(eq: Equipment | null): string {
+    if (!eq) return '—';
+    if (eq.allocatedToTechnicianName) return 'Technician';
+    if (eq.assignedToEquipmentName) return 'Deployed';
+    return eq.department || '—';
   }
 
   onDetailInvoiceUpdate(event: Event): void {

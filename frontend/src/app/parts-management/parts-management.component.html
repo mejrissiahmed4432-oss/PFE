@@ -131,9 +131,14 @@
               <td>{{ group.items[0].specification || '—' }}</td>
               <td class="font-semibold text-center">{{ group.totalQuantity }}</td>
               <td class="actions-cell">
-                <button class="btn-request-sm" (click)="openRequestWizard(group); $event.stopPropagation()">
-                  Request
-                </button>
+                <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                  <button class="btn-request-sm" (click)="openRequestWizard(group); $event.stopPropagation()">
+                    Request
+                  </button>
+                  <button *ngIf="group.items.length === 1" class="btn-return-sm" (click)="returnPartToStock(group.items[0]); $event.stopPropagation()">
+                    Return
+                  </button>
+                </div>
               </td>
             </tr>
 
@@ -150,6 +155,7 @@
                         <th>Name</th>
                         <th>Specification</th>
                         <th style="width: 100px;" class="text-center">Qte</th>
+                        <th style="width: 80px;" class="text-center">Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -157,6 +163,11 @@
                         <td class="font-medium text-dark">{{ item.equipmentName || '—' }}</td>
                         <td>{{ item.specification || '—' }}</td>
                         <td class="font-bold text-center" style="color: #3b82f6;">{{ item.qte }}</td>
+                        <td class="text-center">
+                          <button class="btn-return-sm" (click)="returnPartToStock(item); $event.stopPropagation()">
+                            Return
+                          </button>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -250,4 +261,39 @@
     [initialPartSelection]="preselectedGroup"
     (closeWizard)="onWizardClose($event)">
   </app-part-request-wizard>
+
+  <!-- ─────────────────────────────────────────────
+       CUSTOM ALERT MODAL (Matches Photo Design)
+       ───────────────────────────────────────────── -->
+  <div class="alert-overlay" *ngIf="alertConfig.show" (click)="closeAlert()">
+    <div class="alert-modal" (click)="$event.stopPropagation()">
+      <div class="alert-icon-wrap" [ngClass]="alertConfig.type">
+        <!-- Warning Icon (Triangle with !) -->
+        <svg *ngIf="alertConfig.type === 'warning' || alertConfig.type === 'error'" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+        
+        <!-- Success Icon (Checkmark) - User might want this or the triangle, but let's use check for success -->
+        <svg *ngIf="alertConfig.type === 'success'" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      </div>
+
+      <div class="alert-content">
+        <h2>{{ alertConfig.title }}</h2>
+        <p>{{ alertConfig.message }}</p>
+        
+        <div *ngIf="alertConfig.isConfirm; else singleBtn" class="alert-actions">
+          <button class="btn-cancel-alert" (click)="closeAlert()">
+            Cancel
+          </button>
+          <button class="alert-btn" [ngClass]="alertConfig.type" (click)="handleConfirm()">
+            Confirm
+          </button>
+        </div>
+        
+        <ng-template #singleBtn>
+          <button class="alert-btn" [ngClass]="alertConfig.type" (click)="closeAlert()">
+            OK
+          </button>
+        </ng-template>
+      </div>
+    </div>
+  </div>
 </div>

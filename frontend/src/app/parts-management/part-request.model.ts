@@ -6,6 +6,12 @@ export interface PartRequestItem {
   specification: string;
   quantity: number;
   equipmentId?: string;
+  // Set by stock manager when matching a custom part to a real inventory item
+  matchedEquipmentName?: string;
+  matchedSpecification?: string;
+  matchedSerialNumber?: string;
+  processed?: boolean;
+  returned?: boolean;
 }
 
 export interface PartRequest {

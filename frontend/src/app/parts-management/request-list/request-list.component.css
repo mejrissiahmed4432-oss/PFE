@@ -258,8 +258,19 @@
 .badge-manual {
   font-size: 0.65rem;
   padding: 2px 6px;
-  background: #e0e7ff;
-  color: #3730a3;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.badge-matched {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  background: #dcfce7;
+  color: #166534;
   border-radius: 4px;
   margin-left: 8px;
   font-weight: 600;

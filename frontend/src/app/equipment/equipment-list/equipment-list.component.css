@@ -79,6 +79,11 @@
   color: #15803d;
 }
 
+.summary-chip.in-use {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
 .summary-chip.unassigned {
   background: #f1f5f9;
   color: #64748b;
@@ -188,6 +193,11 @@
   color: #16a34a;
 }
 
+.status-chip-mini.in-use {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
 .status-chip-mini.expired {
   background: #fee2e2;
   color: #ef4444;
@@ -204,6 +214,16 @@
   border: 1px solid #fde68a;
 }
 
+.status-chip-mini.allocated {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.status-chip-mini.assigned {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
 .status-chip {
   padding: 4px 12px;
   border-radius: 12px;
@@ -216,6 +236,11 @@
 .status-chip.active {
   background: #dcfce7;
   color: #16a34a;
+}
+
+.status-chip.in-use {
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 .status-chip.expired {
@@ -232,6 +257,16 @@
   background: #fef9c3;
   color: #a16207;
   border: 1px solid #fde68a;
+}
+
+.status-chip.allocated {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.status-chip.assigned {
+  background: #e0e7ff;
+  color: #4338ca;
 }
 
 .actions-mini {
@@ -335,6 +370,14 @@
 
 .status-dot.unassigned {
   background: #94a3b8;
+}
+
+.status-dot.allocated {
+  background: #f97316;
+}
+
+.status-dot.assigned {
+  background: #6366f1;
 }
 
 .mini-actions {

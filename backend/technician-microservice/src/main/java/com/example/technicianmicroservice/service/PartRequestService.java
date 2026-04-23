@@ -17,12 +17,25 @@ public class PartRequestService {
     @Autowired
     private NotificationService notificationService;
 
-    // @PostConstruct
-    // public void init() {
-    //     System.out.println("Starting cleanup for technician Moetez...");
-    //     deleteRequestsByRequester("moetez");
-    //     System.out.println("Cleanup completed.");
-    // }
+    @Autowired
+    private org.springframework.web.client.RestTemplate restTemplate;
+
+    private static final String STOCK_MANAGER_URL = "http://stock-manager-microservice/api/equipment/consume-parts";
+
+    @org.springframework.context.event.EventListener(org.springframework.boot.context.event.ApplicationReadyEvent.class)
+    public void init() {
+        // System.out.println("Starting cleanup for technician Moetez...");
+        // deleteRequestsByRequester("moetez");
+        // System.out.println("Cleanup completed.");
+    }
+
+    private void deleteRequestsByRequester(String requesterId) {
+        List<PartRequest> requests = repository.findByRequesterId(requesterId);
+        repository.deleteAll(requests);
+        
+        List<PartRequest> requestsEmail = repository.findByRequesterId("moetez@gmail.com");
+        repository.deleteAll(requestsEmail);
+    }
     public PartRequest createRequest(PartRequest request) {
         request.setStatus("PENDING");
         PartRequest saved = repository.save(request);
@@ -67,6 +80,30 @@ public class PartRequestService {
                 if ("APPROVED".equals(status)) {
                     title = "Request Accepted ✅";
                     msg = "Your part request has been approved. You can now use the parts in your workbench.";
+                    
+                    try {
+                        java.util.Map<String, Object> allocateRequest = new java.util.HashMap<>();
+                        allocateRequest.put("requesterId", saved.getRequesterId());
+                        allocateRequest.put("requesterName", saved.getRequesterName());
+                        
+                        List<java.util.Map<String, Object>> parts = new java.util.ArrayList<>();
+                        if (saved.getItems() != null) {
+                            for (com.example.technicianmicroservice.model.PartRequestItem item : saved.getItems()) {
+                                java.util.Map<String, Object> part = new java.util.HashMap<>();
+                                part.put("name", item.getPartName());
+                                part.put("specification", item.getSpecification());
+                                part.put("qty", item.getQuantity());
+                                parts.add(part);
+                            }
+                        }
+                        allocateRequest.put("parts", parts);
+                        
+                        restTemplate.postForEntity("http://stock-manager-microservice/api/equipment/allocate-parts", allocateRequest, Void.class);
+                        System.out.println("Forwarded allocation to Stock Manager for requester: " + saved.getRequesterId());
+                    } catch (Exception e) {
+                        System.err.println("Failed to forward allocation to Stock Manager: " + e.getMessage());
+                        e.printStackTrace();
+                    }
                 } else if ("REJECTED".equals(status)) {
                     title = "Request Refused ❌";
                     msg = "Your part request has been refused by the stock manager.";
@@ -84,8 +121,8 @@ public class PartRequestService {
 
     public PartRequest updateRequest(String id, PartRequest updateDetails) {
         PartRequest request = repository.findById(id).orElseThrow(() -> new RuntimeException("Request not found"));
-        if (!"PENDING".equals(request.getStatus())) {
-            throw new RuntimeException("Cannot update a request that is not PENDING");
+        if (!"PENDING".equals(request.getStatus()) && !"APPROVED".equals(request.getStatus())) {
+            throw new RuntimeException("Cannot update a request that is not PENDING or APPROVED");
         }
         if (updateDetails.getItems() != null) request.setItems(updateDetails.getItems());
         if (updateDetails.getPriority() != null) request.setPriority(updateDetails.getPriority());
@@ -133,6 +170,15 @@ public class PartRequestService {
                 }
                 repository.save(req);
             }
+        }
+        
+        // ── Forward to Stock Manager for physical inventory update ──
+        try {
+            restTemplate.postForEntity(STOCK_MANAGER_URL + "/" + requesterId, consumedParts, Void.class);
+            System.out.println("Forwarded consumption to Stock Manager: " + consumedParts.size() + " items for requester " + requesterId);
+        } catch (Exception e) {
+            System.err.println("Failed to forward consumption to Stock Manager: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

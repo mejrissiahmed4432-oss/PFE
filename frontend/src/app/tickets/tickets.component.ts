@@ -146,6 +146,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
   get filteredInventory(): any[] {
     let result = [...this.userInventory];
     
+    // Only show parts with quantity > 0
+    result = result.filter(p => p.totalQty > 0);
+    
     if (this.inventoryFilterCategory) {
       result = result.filter(p => p.category === this.inventoryFilterCategory);
     }
@@ -180,10 +183,12 @@ export class TicketsComponent implements OnInit, OnDestroy {
     const checked = event.target.checked;
     if (checked) {
       const max = this.getPartMaxQty(part);
-      if (max < 1) {
+      if (max < 1 || (part.status && part.status.toLowerCase() === 'in use')) {
         this.validationAlert = {
-          title: 'Out of Stock',
-          message: `"${part.name}" is currently out of stock and cannot be used.`
+          title: max < 1 ? 'Out of Stock' : 'Part In Use',
+          message: max < 1 
+            ? `"${part.name}" is currently out of stock and cannot be used.`
+            : `"${part.name}" is already assigned to another machine (${part.assignedToEquipmentName || 'Unknown'}).`
         };
         if (event.target) event.target.checked = false;
         return;
@@ -1006,7 +1011,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
             name: p.name,
             type: p.type,
             specification: p.specification,
-            qty: p.qty
+            qty: p.qty,
+            assignedToEquipmentName: res.equipmentName,
+            assignedToEquipmentId: this.workbenchEquipment?.id
           }));
           
           if (this.currentUser?.id) {

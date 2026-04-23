@@ -62,6 +62,10 @@ public class Equipment {
     private String operatingSystem;
     private String specification;
     private String status;
+    private String assignedToEquipmentName;
+    private String assignedToEquipmentId;
+    private String allocatedToTechnicianName;
+    private String allocatedToTechnicianId;
 
     // Constructors
     public Equipment() {}
@@ -171,4 +175,16 @@ public class Equipment {
 
     public String getSpecification() { return specification; }
     public void setSpecification(String specification) { this.specification = specification; }
+
+    public String getAssignedToEquipmentName() { return assignedToEquipmentName; }
+    public void setAssignedToEquipmentName(String assignedToEquipmentName) { this.assignedToEquipmentName = assignedToEquipmentName; }
+
+    public String getAssignedToEquipmentId() { return assignedToEquipmentId; }
+    public void setAssignedToEquipmentId(String assignedToEquipmentId) { this.assignedToEquipmentId = assignedToEquipmentId; }
+
+    public String getAllocatedToTechnicianName() { return allocatedToTechnicianName; }
+    public void setAllocatedToTechnicianName(String allocatedToTechnicianName) { this.allocatedToTechnicianName = allocatedToTechnicianName; }
+
+    public String getAllocatedToTechnicianId() { return allocatedToTechnicianId; }
+    public void setAllocatedToTechnicianId(String allocatedToTechnicianId) { this.allocatedToTechnicianId = allocatedToTechnicianId; }
 }

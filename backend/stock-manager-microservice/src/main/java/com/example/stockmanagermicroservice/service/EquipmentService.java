@@ -7,6 +7,8 @@ import com.example.stockmanagermicroservice.model.Shelf;
 import com.example.stockmanagermicroservice.repository.EquipmentCategoryRepository;
 import com.example.stockmanagermicroservice.repository.EquipmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -37,6 +39,40 @@ public class EquipmentService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    /**
+     * On startup, automatically remove any stale "Out of Stock" records that share
+     * a serial number with an "Allocated" record. These were created by the old
+     * allocateParts bug and should be cleaned up once.
+     */
+    @EventListener(ApplicationReadyEvent.class)
+    public void onStartupCleanup() {
+        int removedDuplicates = cleanupDuplicateOutOfStockRecords();
+        if (removedDuplicates > 0) {
+            System.out.println("[EquipmentService] Startup cleanup: removed " + removedDuplicates + " stale Out-of-Stock duplicate(s).");
+        }
+        
+        // Wipe all parts for moetez as requested (Commented out after initial run)
+        /*
+        int removedMoetez = cleanupTechnicianParts("moetez");
+        if (removedMoetez > 0) {
+            System.out.println("[EquipmentService] Cleanup: removed " + removedMoetez + " parts allocated to 'moetez'.");
+        }
+        */
+    }
+
+    private int cleanupTechnicianParts(String technicianId) {
+        Query query = new Query(new Criteria().orOperator(
+            Criteria.where("allocatedToTechnicianId").is(technicianId),
+            Criteria.where("allocatedToTechnicianId").is("moetez@gmail.com")
+        ));
+        List<Equipment> toDelete = mongoTemplate.find(query, Equipment.class);
+        int count = toDelete.size();
+        for (Equipment eq : toDelete) {
+            equipmentRepository.delete(eq);
+        }
+        return count;
+    }
 
     public List<Equipment> getAllEquipment() {
         return equipmentRepository.findAllExcludingFiles();
@@ -418,7 +454,7 @@ public class EquipmentService {
                 .orElse(true); // Fallback if cat not found
     }
 
-    public void consumeParts(List<com.example.stockmanagermicroservice.controller.EquipmentController.PartConsumeRequest> requests) {
+    public void consumeParts(String requesterId, List<com.example.stockmanagermicroservice.controller.EquipmentController.PartConsumeRequest> requests) {
         for (com.example.stockmanagermicroservice.controller.EquipmentController.PartConsumeRequest req : requests) {
             System.out.println("Processing consume request: name=" + req.name + ", type=" + req.type + ", id=" + req.equipmentId + ", qty=" + req.qty);
             Query query = new Query();
@@ -437,10 +473,31 @@ public class EquipmentService {
                 if (req.specification != null && !req.specification.isEmpty()) {
                     query.addCriteria(Criteria.where("specification").is(req.specification));
                 }
+                if (requesterId != null && !requesterId.isEmpty()) {
+                    query.addCriteria(Criteria.where("allocatedToTechnicianId").is(requesterId));
+                    query.addCriteria(Criteria.where("status").is("Allocated"));
+                }
             }
             
             List<Equipment> matches = mongoTemplate.find(query, Equipment.class);
             System.out.println("Found " + matches.size() + " potential matches for consumption.");
+
+            // Fallback for legacy workflow where parts are consumed directly from Available
+            if (matches.isEmpty() && requesterId != null && !requesterId.isEmpty()) {
+                System.out.println("No allocated parts found, trying to consume from general stock");
+                Query fallbackQuery = new Query();
+                if (req.name != null && !req.name.isEmpty()) {
+                    fallbackQuery.addCriteria(Criteria.where("equipmentName").regex("^" + req.name + "$", "i"));
+                }
+                if (req.specification != null && !req.specification.isEmpty()) {
+                    fallbackQuery.addCriteria(Criteria.where("specification").is(req.specification));
+                }
+                fallbackQuery.addCriteria(new Criteria().orOperator(
+                    Criteria.where("status").is("Available"),
+                    Criteria.where("status").is(null)
+                ));
+                matches = mongoTemplate.find(fallbackQuery, Equipment.class);
+            }
 
             int remainingToConsume = req.qty;
             for (Equipment eq : matches) {
@@ -462,10 +519,19 @@ public class EquipmentService {
                 }
                 equipmentRepository.save(eq);
                 
+                // Create a new record for the Assigned part
+                Equipment assignedPart = cloneEquipment(eq);
+                assignedPart.setQte(deduct);
+                assignedPart.setStatus("Installed");
+                assignedPart.setAssignedToEquipmentName(req.assignedToEquipmentName);
+                assignedPart.setAssignedToEquipmentId(req.assignedToEquipmentId);
+                equipmentRepository.save(assignedPart);
+                
                 if (eq.getShelfId() != null && !eq.getShelfId().isEmpty() && 
                     !"MAINTENANCE_AREA".equals(eq.getShelfId()) && 
                     !"SCRAP_YARD".equals(eq.getShelfId()) && 
-                    !"OUT_OF_STOCK".equals(eq.getShelfId())) {
+                    !"OUT_OF_STOCK".equals(eq.getShelfId()) && 
+                    !"Allocated".equals(eq.getStatus())) { // Only deduct from shelf if we are consuming from general stock
                      atomicUpdateShelfQuantity(eq.getShelfId(), -deduct);
                 }
             }
@@ -473,5 +539,163 @@ public class EquipmentService {
                 System.out.println("Warning: Could only consume " + (req.qty - remainingToConsume) + " out of " + req.qty + " requested items.");
             }
         }
+    }
+
+    public void allocateParts(String technicianId, String technicianName, List<com.example.stockmanagermicroservice.controller.EquipmentController.PartConsumeRequest> requests) {
+        for (com.example.stockmanagermicroservice.controller.EquipmentController.PartConsumeRequest req : requests) {
+            Query query = new Query();
+            if (req.equipmentId != null && !req.equipmentId.isEmpty()) {
+                query.addCriteria(Criteria.where("id").is(req.equipmentId));
+            } else {
+                if (req.name != null && !req.name.isEmpty()) {
+                    query.addCriteria(Criteria.where("equipmentName").regex("^" + req.name + "$", "i"));
+                }
+                if (req.specification != null && !req.specification.isEmpty()) {
+                    query.addCriteria(Criteria.where("specification").is(req.specification));
+                }
+                // Only find available items
+                query.addCriteria(new Criteria().orOperator(
+                    Criteria.where("status").is("Available"),
+                    Criteria.where("status").is(null)
+                ));
+            }
+            List<Equipment> matches = mongoTemplate.find(query, Equipment.class);
+            int remainingToAllocate = req.qty;
+            for (Equipment eq : matches) {
+                if (remainingToAllocate <= 0) break;
+
+                int current = eq.getQte() != null ? eq.getQte() : 1;
+                if (current <= 0) continue;
+
+                int deduct = Math.min(current, remainingToAllocate);
+                int newQte = current - deduct;
+                remainingToAllocate -= deduct;
+
+                if (eq.getShelfId() != null && !eq.getShelfId().isEmpty() &&
+                    !"MAINTENANCE_AREA".equals(eq.getShelfId()) &&
+                    !"SCRAP_YARD".equals(eq.getShelfId()) &&
+                    !"OUT_OF_STOCK".equals(eq.getShelfId())) {
+                    atomicUpdateShelfQuantity(eq.getShelfId(), -deduct);
+                }
+
+                // If there is leftover stock (partial deduction from a multi-unit record),
+                // create a separate record ONLY for the remaining available quantity.
+                if (newQte > 0) {
+                    Equipment leftover = cloneEquipment(eq);
+                    leftover.setQte(newQte);
+                    leftover.setStatus("Available");
+                    leftover.setAllocatedToTechnicianId(null);
+                    leftover.setAllocatedToTechnicianName(null);
+                    equipmentRepository.save(leftover);
+                }
+
+                // Update the EXISTING record in-place to Allocated.
+                // DO NOT clone — the old code was cloning and saving a new "Allocated" record
+                // while setting the original to "Out of Stock", causing duplicate rows.
+                eq.setQte(deduct);
+                eq.setStatus("Allocated");
+                eq.setAllocatedToTechnicianId(technicianId);
+                eq.setAllocatedToTechnicianName(technicianName);
+                eq.setUpdatedAt(LocalDateTime.now());
+                equipmentRepository.save(eq);
+            }
+        }
+    }
+
+    public void returnPartToStock(String equipmentId) {
+        java.util.Optional<Equipment> optEq = equipmentRepository.findById(equipmentId);
+        if (!optEq.isPresent()) {
+            System.err.println("returnPartToStock: Equipment not found for id: " + equipmentId);
+            throw new RuntimeException("Equipment not found: " + equipmentId);
+        }
+        Equipment eq = optEq.get();
+        System.out.println("returnPartToStock: Found equipment [" + eq.getId() + "] status=" + eq.getStatus() + " name=" + eq.getEquipmentName());
+        
+        String oldStatus = eq.getStatus();
+        eq.setStatus("Available");
+        eq.setAllocatedToTechnicianId(null);
+        eq.setAllocatedToTechnicianName(null);
+        eq.setUpdatedAt(LocalDateTime.now());
+        equipmentRepository.save(eq);
+        System.out.println("returnPartToStock: Status changed from [" + oldStatus + "] to [Available]");
+        
+        // Restore shelf quantity if not a virtual shelf
+        if ("Allocated".equals(oldStatus) &&
+            eq.getShelfId() != null && !eq.getShelfId().isEmpty() &&
+            !"MAINTENANCE_AREA".equals(eq.getShelfId()) &&
+            !"SCRAP_YARD".equals(eq.getShelfId()) &&
+            !"OUT_OF_STOCK".equals(eq.getShelfId())) {
+            atomicUpdateShelfQuantity(eq.getShelfId(), eq.getQte() != null ? eq.getQte() : 1);
+        }
+    }
+
+    
+    private Equipment cloneEquipment(Equipment eq) {
+        Equipment clone = new Equipment();
+        clone.setEquipmentName(eq.getEquipmentName());
+        clone.setBrand(eq.getBrand());
+        clone.setModel(eq.getModel());
+        clone.setSerialNumber(eq.getSerialNumber());
+        clone.setCategory(eq.getCategory());
+        clone.setType(eq.getType());
+        clone.setSupplier(eq.getSupplier());
+        clone.setSupplierId(eq.getSupplierId());
+        clone.setShelfId(eq.getShelfId());
+        clone.setDepartment(eq.getDepartment());
+        clone.setPurchaseDate(eq.getPurchaseDate());
+        clone.setWarrantyExpiration(eq.getWarrantyExpiration());
+        clone.setPurchasePrice(eq.getPurchasePrice());
+        clone.setInvoiceRef(eq.getInvoiceRef());
+        clone.setInvoiceFileName(eq.getInvoiceFileName());
+        clone.setInvoiceFileData(eq.getInvoiceFileData());
+        clone.setWarrantyFileName(eq.getWarrantyFileName());
+        clone.setWarrantyFileData(eq.getWarrantyFileData());
+        clone.setQrCode(eq.getQrCode());
+        clone.setIcon(eq.getIcon());
+        clone.setNote(eq.getNote());
+        clone.setCpu(eq.getCpu());
+        clone.setRam(eq.getRam());
+        clone.setStorage(eq.getStorage());
+        clone.setGraphicsCard(eq.getGraphicsCard());
+        clone.setOperatingSystem(eq.getOperatingSystem());
+        clone.setSpecification(eq.getSpecification());
+        clone.setCreatedAt(LocalDateTime.now());
+        clone.setUpdatedAt(LocalDateTime.now());
+        clone.setCreatedBy(eq.getCreatedBy());
+        return clone;
+    }
+
+    /**
+     * Cleans up "Out of Stock" records that are duplicates of an "Allocated" record
+     * with the same serial number. These were created by the old allocateParts bug that
+     * set the original record to "Out of Stock" then saved a cloned "Allocated" record.
+     *
+     * @return the number of duplicate records removed
+     */
+    public int cleanupDuplicateOutOfStockRecords() {
+        // 1. Find all Allocated records that have a non-empty serial number
+        Query allocatedQuery = new Query();
+        allocatedQuery.addCriteria(Criteria.where("status").is("Allocated"));
+        allocatedQuery.addCriteria(Criteria.where("serialNumber").exists(true).ne("").ne(null));
+        List<Equipment> allocated = mongoTemplate.find(allocatedQuery, Equipment.class);
+
+        int removed = 0;
+        for (Equipment alloc : allocated) {
+            String serial = alloc.getSerialNumber();
+            if (serial == null || serial.trim().isEmpty()) continue;
+
+            // 2. Find any "Out of Stock" record with the same serial number but a different ID
+            Query dupQuery = new Query();
+            dupQuery.addCriteria(Criteria.where("serialNumber").is(serial.trim()));
+            dupQuery.addCriteria(Criteria.where("status").is("Out of stock"));
+            dupQuery.addCriteria(Criteria.where("_id").ne(alloc.getId()));
+
+            List<Equipment> duplicates = mongoTemplate.find(dupQuery, Equipment.class);
+            for (Equipment dup : duplicates) {
+                equipmentRepository.deleteById(dup.getId());
+                removed++;
+            }
+        }
+        return removed;
     }
 }

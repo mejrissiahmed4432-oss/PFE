@@ -68,6 +68,16 @@ export class PartsManagementComponent implements OnInit {
   availableStockOptions: any[] = [];
   selectedStockItem: any = null;
 
+  // Custom Alert State
+  alertConfig = {
+    show: false,
+    title: '',
+    message: '',
+    type: 'success' as 'success' | 'warning' | 'error',
+    isConfirm: false,
+    onConfirm: () => {}
+  };
+
   constructor(
     private equipmentService: EquipmentService,
     private partRequestService: PartRequestService,
@@ -110,23 +120,35 @@ export class PartsManagementComponent implements OnInit {
   }
 
   loadParts(): void {
-    // Instead of global equipment, load the user's approved requests to build their inventory
+    // Load the user's approved requests to build their inventory
     this.partRequestService.getMyRequests(this.user.id).subscribe((requests: PartRequest[]) => {
       const approved = requests.filter(r => r.status === 'APPROVED');
 
-      this.parts = approved.flatMap(r => 
-        (r.items || []).map(item => ({
-          ...r,
-          equipmentName: item.partName,
-          category: item.category || 'Unknown',
-          type: item.type || 'Unknown',
-          specification: item.specification || '',
-          brand: item.brand || '—',
-          model: '—',
-          qte: item.quantity,
-          status: item.quantity === 0 ? 'Out of stock' : 'In stock',
-          shelfId: item.equipmentId
-        }))
+      this.parts = approved.flatMap(r =>
+        (r.items || [])
+          .filter(item => !item.returned)
+          .map(item => {
+          // For custom items that the manager has matched to a real stock item,
+          // show the matched equipment info instead of what the technician typed.
+          const isMatched = !!item.equipmentId && !!item.matchedEquipmentName;
+          return {
+            ...r,
+            requestId: r.id,
+            originalItem: item,
+            equipmentName: isMatched ? item.matchedEquipmentName : item.partName,
+            category: item.category || 'Unknown',
+            type: item.type || 'Unknown',
+            specification: isMatched ? (item.matchedSpecification || item.specification) : item.specification,
+            brand: item.brand || '—',
+            model: '—',
+            qte: item.quantity,
+            status: item.quantity === 0 ? 'Out of stock' : 'In stock',
+            shelfId: item.equipmentId,
+            equipmentId: item.equipmentId,
+            isCustom: !item.equipmentId,
+            isMatched: isMatched
+          };
+        })
       );
       this.applyFilters();
     });
@@ -248,6 +270,89 @@ export class PartsManagementComponent implements OnInit {
       this.loadMyRequests();
       this.loadParts(); // Refresh inventory if any auto-approved items (future-proofing)
     }
+  }
+
+  returnPartToStock(item: any): void {
+    if (!item.equipmentId) {
+      console.warn("Cannot return a part without an equipmentId");
+      return;
+    }
+    
+    this.showConfirm(
+      'Return to Stock',
+      `Are you sure you want to return "${item.equipmentName}" to stock? This will make the part available for other technicians.`,
+      () => {
+        this.equipmentService.returnPart(item.equipmentId).subscribe({
+          next: () => {
+            // Show Success Alert like the photo
+            this.showAlert(
+              'Part Returned',
+              `You have successfully returned "${item.equipmentName}" to the stock inventory.`,
+              'success'
+            );
+
+            // Also update the request item to mark as returned so it disappears from UI
+            if (item.requestId && item.originalItem) {
+              this.partRequestService.getMyRequests(this.user.id).subscribe(requests => {
+                const requestToUpdate = requests.find(r => r.id === item.requestId);
+                if (requestToUpdate) {
+                  // Find the exact item in the request
+                  const reqItem = requestToUpdate.items.find(i => 
+                    i.partName === item.originalItem.partName && 
+                    i.equipmentId === item.originalItem.equipmentId
+                  );
+                  if (reqItem) {
+                    reqItem.returned = true;
+                    this.partRequestService.updateRequest(item.requestId, requestToUpdate).subscribe({
+                      next: () => {
+                        this.loadParts(); // refresh UI
+                      }
+                    });
+                  }
+                }
+              });
+            } else {
+              this.loadParts();
+            }
+          },
+          error: (err) => {
+            this.showAlert('Error', 'Failed to return the part to stock.', 'error');
+            console.error("Error returning part", err);
+          }
+        });
+      }
+    );
+  }
+
+  showAlert(title: string, message: string, type: 'success' | 'warning' | 'error' = 'success') {
+    this.alertConfig = { 
+      show: true, 
+      title, 
+      message, 
+      type, 
+      isConfirm: false,
+      onConfirm: () => {} 
+    };
+  }
+
+  showConfirm(title: string, message: string, onConfirm: () => void) {
+    this.alertConfig = {
+      show: true,
+      title,
+      message,
+      type: 'warning',
+      isConfirm: true,
+      onConfirm
+    };
+  }
+
+  handleConfirm() {
+    this.alertConfig.onConfirm();
+    this.closeAlert();
+  }
+
+  closeAlert() {
+    this.alertConfig.show = false;
   }
 
   getStatusColor(status: string): string {

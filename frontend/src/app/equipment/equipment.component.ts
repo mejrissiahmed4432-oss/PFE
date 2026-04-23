@@ -99,6 +99,21 @@ export class EquipmentComponent implements OnInit {
     });
   }
 
+  viewOtherEquipment(equipmentId: string): void {
+    this.equipmentService.getEquipmentById(equipmentId).subscribe({
+      next: (eq) => {
+        if (eq) {
+          // Temporarily set mode to something else to force Angular to recreate the form
+          this.mode = 'list';
+          setTimeout(() => {
+            this.openView(eq);
+          }, 0);
+        }
+      },
+      error: (err) => console.error('Failed to load equipment', err)
+    });
+  }
+
   closeForm(saved: boolean): void {
     this.mode = 'list';
     this.equipmentToEdit = null;

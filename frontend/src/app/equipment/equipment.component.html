@@ -24,7 +24,8 @@
   <!-- Form (Edit / View only — Add now uses wizard) -->
   <div class="content" *ngIf="mode === 'form'">
     <app-equipment-form [equipment]="equipmentToEdit" [viewOnly]="formViewOnly" [isAddSimilar]="isAddSimilar"
-      (closeEvent)="closeForm($event)">
+      (closeEvent)="closeForm($event)"
+      (viewOtherEvent)="viewOtherEquipment($event)">
     </app-equipment-form>
   </div>
 

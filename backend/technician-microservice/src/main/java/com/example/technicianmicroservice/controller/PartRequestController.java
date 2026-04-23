@@ -55,6 +55,8 @@ public class PartRequestController {
         public String type;
         public String specification;
         public int qty;
+        public String assignedToEquipmentName;
+        public String assignedToEquipmentId;
     }
 
     // @PostMapping("/cleanup-requests")

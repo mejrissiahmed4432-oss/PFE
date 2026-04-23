@@ -8,6 +8,12 @@ public class PartRequestItem {
     private String specification;
     private String equipmentId;
     private String brand;
+    // Set by stock manager when matching a custom part to a real inventory item
+    private String matchedEquipmentName;
+    private String matchedSpecification;
+    private String matchedSerialNumber;
+    private Boolean processed; // Tracks if this specific item has been allocated
+    private Boolean returned; // Tracks if this item has been returned to stock
 
     public PartRequestItem() {}
 
@@ -65,5 +71,45 @@ public class PartRequestItem {
 
     public void setEquipmentId(String equipmentId) {
         this.equipmentId = equipmentId;
+    }
+
+    public String getMatchedEquipmentName() {
+        return matchedEquipmentName;
+    }
+
+    public void setMatchedEquipmentName(String matchedEquipmentName) {
+        this.matchedEquipmentName = matchedEquipmentName;
+    }
+
+    public String getMatchedSpecification() {
+        return matchedSpecification;
+    }
+
+    public void setMatchedSpecification(String matchedSpecification) {
+        this.matchedSpecification = matchedSpecification;
+    }
+
+    public String getMatchedSerialNumber() {
+        return matchedSerialNumber;
+    }
+
+    public void setMatchedSerialNumber(String matchedSerialNumber) {
+        this.matchedSerialNumber = matchedSerialNumber;
+    }
+
+    public Boolean getProcessed() {
+        return processed;
+    }
+
+    public void setProcessed(Boolean processed) {
+        this.processed = processed;
+    }
+
+    public Boolean getReturned() {
+        return returned;
+    }
+
+    public void setReturned(Boolean returned) {
+        this.returned = returned;
     }
 }

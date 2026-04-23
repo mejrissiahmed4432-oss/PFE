@@ -252,8 +252,10 @@
                   'tag-active': equipment?.status === 'Available',
                   'tag-expired': equipment?.status === 'Broken',
                   'tag-maintenance': equipment?.status === 'Maintenance',
-                  'tag-unassigned': equipment?.status === 'Out of Stock'
-                }">{{ equipment?.status || 'Available' }}</span>
+                  'tag-unassigned': equipment?.status === 'Out of Stock' || equipment?.status === 'In Use',
+                  'tag-allocated': equipment?.status === 'Allocated',
+                  'tag-assigned': equipment?.status === 'Assigned' || equipment?.status === 'Installed'
+                }">{{ (equipment?.status === 'Assigned' || equipment?.status === 'Installed') ? 'Installed' : (equipment?.status || 'Available') }}</span>
               </span>
             </div>
             <div class="info-row">
@@ -272,6 +274,57 @@
               <span class="info-label">Specifications</span>
               <span class="info-value">{{ equipment?.specification }}</span>
             </div>
+          </div>
+        </div>
+
+        <div class="info-card" *ngIf="equipment?.assignedToEquipmentName || equipment?.allocatedToTechnicianName">
+          <div class="info-card-header">
+            <div class="info-card-icon blue">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              </svg>
+            </div>
+            <span>Lifecycle Tracking</span>
+          </div>
+          <div class="info-rows">
+            <ng-container *ngIf="equipment?.allocatedToTechnicianName">
+              <div class="info-row">
+                <span class="info-label">Assigned to Technician</span>
+                <span class="info-value">
+                  <span class="tag tag-cat" style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa;">
+                    {{ equipment?.allocatedToTechnicianName }}
+                  </span>
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Allocation Date</span>
+                <span class="info-value">{{ equipment?.createdAt | date:'mediumDate' }}</span>
+              </div>
+            </ng-container>
+            
+            <ng-container *ngIf="equipment?.assignedToEquipmentName">
+              <div class="info-row">
+                <span class="info-label">Installed In (Equipment)</span>
+                <span class="info-value" style="display: flex; gap: 8px; align-items: center;">
+                  <span class="tag tag-cat" style="background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe;">
+                    {{ equipment?.assignedToEquipmentName }}
+                  </span>
+                  <button *ngIf="equipment?.assignedToEquipmentId" class="btn-redirect" (click)="viewOtherEvent.emit(equipment!.assignedToEquipmentId!)" title="View Equipment">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                  </button>
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Installation Date</span>
+                <span class="info-value">{{ equipment?.createdAt | date:'mediumDate' }}</span>
+              </div>
+            </ng-container>
           </div>
         </div>
 
@@ -302,9 +355,9 @@
               <span class="info-label">Created By</span>
               <span class="info-value">{{ equipment?.createdBy || currentUserName || '—' }}</span>
             </div>
-            <div class="info-row" *ngIf="equipment?.department">
+            <div class="info-row" *ngIf="getDisplayDepartment(equipment) !== '—'">
               <span class="info-label">Department</span>
-              <span class="info-value">{{ equipment?.department }}</span>
+              <span class="info-value">{{ getDisplayDepartment(equipment) }}</span>
             </div>
           </div>
         </div>

@@ -105,12 +105,15 @@
                     <tr *ngFor="let item of req.items">
                       <td>
                         <div class="item-name">
-                          {{ item.partName }}
-                          <span class="badge-manual" *ngIf="!item.equipmentId">Custom</span>
+                          <!-- If matched by manager, show matched name; else show original typed name -->
+                          {{ item.matchedEquipmentName || item.partName }}
+                          <span class="badge-manual" *ngIf="!item.equipmentId">Pending Match</span>
+                          <span class="badge-matched" *ngIf="item.equipmentId && item.matchedEquipmentName">Matched ✓</span>
                         </div>
+                        <div class="text-xs text-mute" *ngIf="item.brand">{{ item.brand }}</div>
                       </td>
                       <td class="text-mute">{{ item.category }} / {{ item.type }}</td>
-                      <td class="text-mute">{{ item.specification || '—' }}</td>
+                      <td class="text-mute">{{ item.matchedSpecification || item.specification || '—' }}</td>
                       <td style="text-align: right; font-weight: 600; color: #0f172a;">{{ item.quantity }}</td>
                     </tr>
                   </tbody>

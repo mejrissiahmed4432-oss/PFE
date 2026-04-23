@@ -37,6 +37,10 @@ export interface Equipment {
   operatingSystem?: string;
   specification?: string;
   invoiceRef?: string;
+  assignedToEquipmentName?: string;
+  assignedToEquipmentId?: string;
+  allocatedToTechnicianName?: string;
+  allocatedToTechnicianId?: string;
 }
 
 export interface EquipmentCategory {

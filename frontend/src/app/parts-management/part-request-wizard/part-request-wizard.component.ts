@@ -148,10 +148,9 @@ export class PartRequestWizardComponent implements OnInit {
 
   loadAllStock(): void {
     this.equipmentService.getAllEquipment().subscribe((data: any[]) => {
-      // Pre-filter to only in-stock items.
-      // We admitted any category because filtering by specified category/type happens in onTypeChange.
+      // Pre-filter to only Available items as requested.
       this.allStock = data.filter((item: any) => {
-        return this.getPartStatus(item) === 'In stock';
+        return this.getPartStatus(item) === 'Available';
       });
 
       // Update maxAvailable for any existing cart items (e.g. from editRequest)
@@ -208,11 +207,18 @@ export class PartRequestWizardComponent implements OnInit {
   getPartStatus(item: any): string {
     if (item.status) {
       const s = item.status.toLowerCase();
-      if (s === 'broken' || s === 'maintenance' || s === 'out of stock') return 'Out of stock';
-      if (s === 'in stock') return 'In stock';
+      // Explicitly check for available/in stock
+      if (s === 'available' || s === 'in stock') return 'Available';
+      
+      if (s === 'broken' || s === 'maintenance' || s === 'out of stock' || s === 'allocated' || s === 'installed' || s === 'assigned') {
+        return 'Unavailable';
+      }
     }
-    if (!item.shelfId) return 'Out of stock';
-    return 'In stock';
+    
+    // Fallback: If it has a shelf and no blocking status, it's available
+    if (!item.shelfId || item.shelfId === 'OUT_OF_STOCK') return 'Unavailable';
+    
+    return 'Available';
   }
 
   close(): void {

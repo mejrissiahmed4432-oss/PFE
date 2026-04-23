@@ -230,6 +230,12 @@ export class EquipmentListComponent implements OnInit, OnChanges {
 
     // 3. Finalize aggregation for each group
     this.groupedEquipments = Array.from(groupsMap.values()).map(group => {
+      // Sort items so items with quantity > 0 are first (prioritize active parts over ghost records)
+      group.items.sort((a, b) => {
+        const qteA = a.qte !== undefined ? a.qte : 1;
+        const qteB = b.qte !== undefined ? b.qte : 1;
+        return qteB - qteA;
+      });
       const first = group.items[0];
       
       // Calculate common attributes
@@ -260,6 +266,10 @@ export class EquipmentListComponent implements OnInit, OnChanges {
       // Status Summary — capture all unique status results
       const statusCounts: Record<string, { label: string; count: number; cls: string }> = {};
       group.items.forEach(item => {
+        const qte = item.qte !== undefined ? item.qte : 1;
+        // Skip 0-quantity ghost records in the summary if the group has active items
+        if (qte === 0 && group.totalQuantity > 0) return;
+
         const s = this.getEquipmentStatus(item);
         const label = s.label.toLowerCase();
         
@@ -272,7 +282,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
           if (label === 'active') statusCounts[label].label = 'avail';
           if (label === 'expired') statusCounts[label].label = 'maint';
         }
-        statusCounts[label].count++;
+        statusCounts[label].count += qte === 0 ? 1 : qte;
       });
       group.statusSummary = Object.values(statusCounts).sort((a,b) => b.count - a.count);
 
@@ -507,7 +517,10 @@ export class EquipmentListComponent implements OnInit, OnChanges {
       if (s === 'broken') return { label: 'Broken', cls: 'expired' }; 
       if (s === 'maintenance') return { label: 'Maintenance', cls: 'maintenance' };
       if (s === 'out of stock') return { label: 'Out of Stock', cls: 'unassigned' };
+      if (s === 'in use') return { label: 'In Use', cls: 'in-use' };
       if (s === 'available' || s === 'in stock') return { label: 'Available', cls: 'active' };
+      if (s === 'allocated') return { label: 'Allocated', cls: 'allocated' };
+      if (s === 'installed' || s === 'assigned') return { label: 'Installed', cls: 'assigned' };
       
       // Fallback for any other status string
       return { label: eq.status, cls: 'unassigned' };

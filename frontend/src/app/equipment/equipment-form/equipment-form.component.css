@@ -227,10 +227,46 @@
   color: #64748b;
 }
 
+.tag-allocated {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.tag-assigned {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
 .tag-maintenance {
   background: #fef9c3;
   color: #a16207;
   border: 1px solid #fde68a;
+}
+
+.btn-redirect {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  background: #f8faff;
+  border: 1.5px solid #e0e7ff;
+  border-radius: 8px;
+  color: #6366f1;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(99, 102, 241, 0.05);
+}
+
+.btn-redirect:hover {
+  background: #6366f1;
+  color: white;
+  border-color: #6366f1;
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.25);
+}
+
+.btn-redirect:active {
+  transform: translateY(0) scale(0.95);
 }
 
 .hero-actions {
@@ -1509,4 +1545,81 @@
 
 .btn-outline-secondary svg {
   flex-shrink: 0;
+}
+/* -- Lifecycle History -- */
+.lifecycle-history {
+  margin-top: 20px;
+  padding-left: 10px;
+  position: relative;
+}
+
+.lifecycle-history::before {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: #e2e8f0;
+}
+
+.lifecycle-item {
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 24px;
+}
+
+.lifecycle-item:last-child {
+  margin-bottom: 0;
+}
+
+.lifecycle-dot {
+  position: absolute;
+  left: 9px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px #3b82f6;
+  z-index: 1;
+}
+
+.lifecycle-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lifecycle-event-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lifecycle-type {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #1e293b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.lifecycle-date {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.lifecycle-details {
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.lifecycle-performer {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-style: italic;
+  margin-top: 2px;
 }

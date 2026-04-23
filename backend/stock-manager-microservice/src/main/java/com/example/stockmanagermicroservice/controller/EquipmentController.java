@@ -100,10 +100,38 @@ public class EquipmentController {
         public String model;
     }
 
-    @PostMapping("/consume-parts")
-    public ResponseEntity<Void> consumeParts(@RequestBody List<PartConsumeRequest> requests) {
-        equipmentService.consumeParts(requests);
+    @PostMapping("/consume-parts/{requesterId}")
+    public ResponseEntity<Void> consumeParts(@PathVariable String requesterId, @RequestBody List<PartConsumeRequest> requests) {
+        equipmentService.consumeParts(requesterId, requests);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/allocate-parts")
+    public ResponseEntity<Void> allocateParts(@RequestBody PartAllocateRequest request) {
+        equipmentService.allocateParts(request.requesterId, request.requesterName, request.parts);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/return")
+    public ResponseEntity<Void> returnPart(@PathVariable String id) {
+        equipmentService.returnPartToStock(id);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * One-time cleanup: removes "Out of Stock" records that have the same serial number
+     * as an existing "Allocated" record. These were created by a previous bug in allocateParts.
+     */
+    @DeleteMapping("/cleanup-duplicates")
+    public ResponseEntity<String> cleanupDuplicates() {
+        int removed = equipmentService.cleanupDuplicateOutOfStockRecords();
+        return ResponseEntity.ok("Removed " + removed + " duplicate Out of Stock record(s).");
+    }
+
+    public static class PartAllocateRequest {
+        public String requesterId;
+        public String requesterName;
+        public List<PartConsumeRequest> parts;
     }
 
     public static class PartConsumeRequest {
@@ -113,5 +141,7 @@ public class EquipmentController {
         public String specification;
         public int qty;
         public String equipmentId;
+        public String assignedToEquipmentName;
+        public String assignedToEquipmentId;
     }
 }
