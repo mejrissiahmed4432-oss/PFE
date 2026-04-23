@@ -1,243 +1,239 @@
 <div class="dashboard-wrapper">
-  
+
   <!-- Header -->
   <header class="page-header">
-    <h1>Rapports & Analytics</h1>
-    <p>Analyses complètes et insights sur la gestion du stock informatique</p>
+    <div class="header-left">
+      <h1>Reports & Analytics</h1>
+      <p>Dynamic analytics based on real-time IT inventory data</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-excel" (click)="exportExcel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Excel
+      </button>
+      <button class="btn btn-pdf" (click)="exportPdf()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        PDF
+      </button>
+    </div>
   </header>
 
   <!-- Controls Bar -->
   <div class="controls-bar">
-    <div class="controls-left">
-      <div class="filter-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+    <div class="controls-group">
+      <div class="filter-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        <span>Filters</span>
       </div>
-      <select class="custom-select" [(ngModel)]="selectedReport">
-        <option value="Tous les rapports">Tous les rapports</option>
-        <option value="Rapport équipements">Rapport équipements</option>
-        <option value="Rapport emplacements">Rapport emplacements</option>
-        <option value="Rapport fournisseurs">Rapport fournisseurs</option>
-        <option value="Rapport coûts">Rapport coûts</option>
-        <option value="Rapport demandes">Rapport demandes</option>
-      </select>
+      
+      <div class="divider"></div>
 
-      <div class="date-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div class="report-chips-wrapper">
+        <div class="report-chip all-chip" 
+             [class.active]="selectedReports.length === availableReports.length"
+             (click)="toggleAllReports()">
+          All
+        </div>
+        <div *ngFor="let report of availableReports" 
+             class="report-chip" 
+             [class.active]="isReportSelected(report)"
+             (click)="toggleReport(report)">
+          {{ report.replace(' Report', '') }}
+        </div>
       </div>
-      <select class="custom-select" [(ngModel)]="selectedPeriod">
-        <option value="1 mois">1 mois</option>
-        <option value="3 mois">3 mois</option>
-        <option value="6 mois">6 mois</option>
-        <option value="1 an">1 an</option>
-      </select>
 
-      <button class="btn btn-light" (click)="refresh()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.44l5.66 5.66"/></svg>
-        Actualiser
-      </button>
-    </div>
+      <div class="divider"></div>
 
-    <div class="controls-right">
-      <button class="btn btn-excel" (click)="exportExcel()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Exporter Excel
-      </button>
-      <button class="btn btn-pdf" (click)="exportPdf()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Exporter PDF
-      </button>
-      <button class="btn btn-custom">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        Rapport personnalisé
-      </button>
+      <div class="period-chips-wrapper">
+        <div *ngFor="let p of ['1 month', '3 months', '6 months', '1 year']" 
+             class="period-chip" 
+             [class.active]="selectedPeriod === p"
+             (click)="setPeriod(p)">
+          {{ p }}
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- KPIs -->
-  <div class="kpi-grid">
-    <!-- Value -->
-    <div class="kpi-card">
-      <div class="kpi-top">
-        <div class="kpi-icon icon-blue">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </div>
-        <div class="kpi-trend trend-up">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-          {{ kpis.valeurTrend }}
-        </div>
-      </div>
-      <div class="kpi-label">Valeur Totale du Stock</div>
-      <div class="kpi-value">{{ kpis.valeurTotale | number }} €</div>
-    </div>
-
-    <!-- Rotation -->
-    <div class="kpi-card">
-      <div class="kpi-top">
-        <div class="kpi-icon icon-green">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.44l5.66 5.66"/></svg>
-        </div>
-        <div class="kpi-trend trend-up">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-          {{ kpis.rotationTrend }}
-        </div>
-      </div>
-      <div class="kpi-label">Taux de Rotation Moyen</div>
-      <div class="kpi-value">{{ kpis.rotation }}</div>
-    </div>
-
-    <!-- Satisfaction -->
-    <div class="kpi-card">
-      <div class="kpi-top">
-        <div class="kpi-icon icon-purple">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        </div>
-        <div class="kpi-trend trend-up">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-          {{ kpis.satisfactionTrend }}
-        </div>
-      </div>
-      <div class="kpi-label">Taux de Satisfaction</div>
-      <div class="kpi-value">{{ kpis.satisfaction }}</div>
-    </div>
-
-    <!-- Reduction -->
-    <div class="kpi-card">
-      <div class="kpi-top">
-        <div class="kpi-icon icon-orange">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>
-        </div>
-        <div class="kpi-trend trend-up">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-          {{ kpis.reductionTrend }}
-        </div>
-      </div>
-      <div class="kpi-label">Réduction des Coûts</div>
-      <div class="kpi-value">{{ kpis.reductionCouts }}</div>
-    </div>
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading data...</p>
   </div>
 
-  <!-- Charts Grid -->
-  <div class="charts-grid-main">
-    <!-- Evolution Chart -->
-    <div class="chart-box">
-      <div class="chart-header">
-        <div>
-          <h3>Évolution Globale du Stock</h3>
-          <p>Tendances sur {{ selectedPeriod }}</p>
-        </div>
-        <div class="chart-icon icon-blue-light">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        </div>
-      </div>
-      <div class="chart-container">
-        <canvas baseChart [data]="evolutionData" [options]="evolutionOptions" type="line"></canvas>
-      </div>
-    </div>
+  <ng-container *ngIf="!isLoading">
 
-    <!-- Costs Chart -->
-    <div class="chart-box">
-      <div class="chart-header">
-        <div>
-          <h3>Analyse des Coûts</h3>
-          <p>Répartition mensuelle</p>
-        </div>
-        <div class="chart-icon icon-orange-light">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </div>
-      </div>
-      <div class="chart-container">
-        <canvas baseChart [data]="costsData" [options]="costsOptions" type="line"></canvas>
-      </div>
-    </div>
-
-    <!-- Category Performance Chart -->
-    <div class="chart-box">
-      <div class="chart-header">
-        <div>
-          <h3>Performance par Catégorie</h3>
-          <p>Taux de rotation et satisfaction</p>
-        </div>
-        <div class="chart-icon icon-purple-light">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        </div>
-      </div>
-      <div class="chart-container">
-        <canvas baseChart [data]="perfData" [options]="perfOptions" type="bar"></canvas>
-      </div>
-    </div>
-
-    <!-- Placeholder for Empty State like mockup -->
-    <div class="chart-box">
-       <div class="chart-header">
-         <div>
-           <h3>Utilisation des Emplacements</h3>
-           <p>Taux d'occupation par zone</p>
-         </div>
-         <div class="chart-icon icon-green-light">
-           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-         </div>
-       </div>
-       <div class="chart-container empty-graph-sim">
-         <div class="axis-y">
-           <span>Zone D-</span>
-           <span>Zone C-</span>
-           <span>Zone B-</span>
-           <span>Zone A-</span>
-         </div>
-         <div class="axis-x">
-           <span></span><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
-         </div>
-         <div class="grid-lines"></div>
-       </div>
-    </div>
-
-    <!-- Top 5 Equipments -->
-    <div class="chart-box top-list-box">
-      <div class="chart-header">
-        <div>
-          <h3>Top 5 Équipements</h3>
-          <p>Les plus demandés sur la période</p>
-        </div>
-        <div class="chart-icon icon-blue-light">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-      </div>
-      <div class="top-list">
-        <div class="list-item" *ngFor="let eq of topEquipments; let i = index">
-          <div class="item-rank" [class.rank-1]="i === 0" [class.rank-2]="i === 1" [class.rank-3]="i === 2">
-            {{ i + 1 }}
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <!-- Valeur Totale -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon icon-blue">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           </div>
-          <div class="item-details">
-            <h4>{{ eq.name }}</h4>
-            <div class="item-meta">
-              <span>{{ eq.demandes }} demandes</span>
-              <span class="dot"></span>
-              <span>Délai moy: {{ eq.delai }}</span>
-              <ng-container *ngIf="eq.ruptures > 0">
+          <div class="kpi-badge badge-blue">Stock</div>
+        </div>
+        <div class="kpi-label">Total Stock Value</div>
+        <div class="kpi-value">{{ kpis.valeurTotale | number:'1.0-0' }} €</div>
+      </div>
+
+      <!-- Total Équipements -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon icon-green">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="kpi-badge badge-green">Inventory</div>
+        </div>
+        <div class="kpi-label">Equipment in Stock</div>
+        <div class="kpi-value">{{ kpis.totalEquipments }}</div>
+      </div>
+
+      <!-- Demandes en Attente -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon icon-orange">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="kpi-badge badge-orange">Period: {{ selectedPeriod }}</div>
+        </div>
+        <div class="kpi-label">Pending Requests</div>
+        <div class="kpi-value" [class.alert-value]="kpis.pendingRequests > 0">{{ kpis.pendingRequests }}</div>
+      </div>
+
+      <!-- Alertes Étagères -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon" [class.icon-red]="kpis.shelfAlerts > 0" [class.icon-green]="kpis.shelfAlerts === 0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="kpi-badge" [class.badge-red]="kpis.shelfAlerts > 0" [class.badge-green]="kpis.shelfAlerts === 0">
+            {{ kpis.shelfAlerts > 0 ? 'Critical' : 'OK' }}
+          </div>
+        </div>
+        <div class="kpi-label">Shelf Stock Alerts</div>
+        <div class="kpi-value" [class.alert-value]="kpis.shelfAlerts > 0">{{ kpis.shelfAlerts }}</div>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid-main">
+      <!-- 1. Inventaire par Catégorie -->
+      <div class="chart-box" *ngIf="showSection('category')">
+        <div class="chart-header">
+          <div>
+            <h3>Inventory by Category</h3>
+            <p>Equipment distribution by category</p>
+          </div>
+          <div class="chart-icon icon-blue-light">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas baseChart [data]="categoryData" [options]="categoryOptions" type="bar"></canvas>
+        </div>
+      </div>
+
+      <!-- 2. Répartition par Type (Doughnut) -->
+      <div class="chart-box" *ngIf="showSection('type')">
+        <div class="chart-header">
+          <div>
+            <h3>Distribution by Type</h3>
+            <p>IT fleet composition</p>
+          </div>
+          <div class="chart-icon icon-purple-light">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas baseChart [data]="typeData" [options]="typeOptions" type="doughnut"></canvas>
+        </div>
+      </div>
+
+      <!-- 3. Statut des Demandes -->
+      <div class="chart-box" *ngIf="showSection('requests')">
+        <div class="chart-header">
+          <div>
+            <h3>Part Request Status</h3>
+            <p>Requests over the last {{ selectedPeriod }}</p>
+          </div>
+          <div class="chart-icon icon-orange-light">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas baseChart [data]="requestStatusData" [options]="requestStatusOptions" type="bar"></canvas>
+        </div>
+      </div>
+
+      <!-- 4. Utilisation Étagères -->
+      <div class="chart-box" *ngIf="showSection('shelves')">
+        <div class="chart-header">
+          <div>
+            <h3>Shelf Usage</h3>
+            <p>Fill rate per shelf</p>
+          </div>
+          <div class="chart-icon icon-green-light">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas baseChart [data]="shelfData" [options]="shelfOptions" type="bar"></canvas>
+        </div>
+      </div>
+
+      <!-- 5. Top 5 Équipements les plus chers -->
+      <div class="chart-box top-list-box" *ngIf="showSection('top5')">
+        <div class="chart-header">
+          <div>
+            <h3>Top 5 Most Expensive Equipment</h3>
+            <p>High-value assets in the fleet</p>
+          </div>
+          <div class="chart-icon icon-blue-light">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+        </div>
+        <div class="top-list" *ngIf="topEquipments.length > 0">
+          <div class="list-item" *ngFor="let eq of topEquipments; let i = index">
+            <div class="item-rank" [class.rank-1]="i === 0" [class.rank-2]="i === 1" [class.rank-3]="i === 2">
+              {{ i + 1 }}
+            </div>
+            <div class="item-details">
+              <h4>{{ eq.name }}</h4>
+              <div class="item-meta">
+                <span>{{ eq.brand }}</span>
                 <span class="dot"></span>
-                <span class="alert-text">{{ eq.ruptures }} ruptures</span>
-              </ng-container>
+                <span>{{ eq.category }}</span>
+                <span class="dot"></span>
+                <span class="price-text">{{ eq.price | number:'1.0-0' }} €</span>
+                <span class="dot"></span>
+                <span>Qty: {{ eq.qte }}</span>
+              </div>
             </div>
           </div>
         </div>
+        <div class="empty-state" *ngIf="topEquipments.length === 0">
+          <p>No equipment with a price specified</p>
+        </div>
+      </div>
+
+      <!-- 6. Performance Fournisseurs -->
+      <div class="chart-box" *ngIf="showSection('suppliers')">
+        <div class="chart-header">
+          <div>
+            <h3>Supplier Performance</h3>
+            <p>Quality rating per supplier (/5)</p>
+          </div>
+          <div class="chart-icon icon-purple-light">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas baseChart [data]="supplierData" [options]="supplierOptions" type="bar"></canvas>
+        </div>
       </div>
     </div>
 
-    <!-- Demandes par Departement Chart -->
-    <div class="chart-box">
-      <div class="chart-header">
-        <div>
-          <h3>Demandes par Département</h3>
-          <p>Statut des demandes internes</p>
-        </div>
-        <div class="chart-icon icon-purple-light">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        </div>
-      </div>
-      <div class="chart-container">
-         <canvas baseChart [data]="demandesData" [options]="demandesOptions" type="bar"></canvas>
-      </div>
-    </div>
-  </div>
+  </ng-container>
 
 </div>
