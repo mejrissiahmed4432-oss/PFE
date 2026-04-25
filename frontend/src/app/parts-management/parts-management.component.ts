@@ -204,7 +204,14 @@ export class PartsManagementComponent implements OnInit {
 
     this.groupedParts = Array.from(groupsMap.values()).map(group => {
       const first = group.items[0];
-      group.commonLocation = group.items.every(i => i.shelfId === first.shelfId) ? this.getShelfLocation(first.shelfId) : 'Mixed';
+      const availableItems = group.items.filter(i => i.status === 'Available');
+      if (availableItems.length > 0) {
+        const firstAvail = availableItems[0];
+        const allSameShelf = availableItems.every(i => i.shelfId === firstAvail.shelfId);
+        group.commonLocation = allSameShelf ? this.getShelfLocation(firstAvail.shelfId, 'Available') : 'Mixed Shelves';
+      } else {
+        group.commonLocation = this.getShelfLocation(first.shelfId, first.status);
+      }
 
       const counts: Record<string, number> = {};
       group.items.forEach(i => {
@@ -252,8 +259,12 @@ export class PartsManagementComponent implements OnInit {
     group.expanded = !group.expanded;
   }
 
-  getShelfLocation(shelfId?: string): string {
-    if (!shelfId) return 'Unassigned';
+  getShelfLocation(shelfId?: string, status?: string): string {
+    if (!shelfId) {
+      if (status === 'Allocated') return 'Allocated (Not on Shelf)';
+      if (status === 'Assigned' || status === 'Installed') return 'Installed (Not on Shelf)';
+      return 'Unassigned';
+    }
     const s = this.shelves.find(x => x.id === shelfId);
     return s ? `Shelf ${s.nb}` : 'Unknown';
   }

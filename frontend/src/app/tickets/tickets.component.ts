@@ -450,7 +450,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
         (e.equipmentName || '').toLowerCase().includes(q) ||
         (e.brand || '').toLowerCase().includes(q) ||
         (e.model || '').toLowerCase().includes(q) ||
-        (e.specification || '').toLowerCase().includes(q)
+        Object.values(e.specifications || {}).join(' ').toLowerCase().includes(q)
       );
     }
 
@@ -560,16 +560,53 @@ export class TicketsComponent implements OnInit, OnDestroy {
   handleQRUpload(event: any): void {
     const file = event.target.files[0];
     if (file) {
-      // Simulate QR reading finding EQ-001
-      this.filterSerial = 'EQ-001';
-      this.applyFilters();
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const image = new Image();
+        image.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = image.width;
+          canvas.height = image.height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return;
+          ctx.drawImage(image, 0, 0);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          
+          // Use the jsQR library we added to index.html
+          const code = (window as any).jsQR(imageData.data, imageData.width, imageData.height);
+          
+          if (code && code.data) {
+            let extractedSerial = code.data;
+            try {
+              // If it's a JSON string (our app's standard format)
+              const data = JSON.parse(code.data);
+              extractedSerial = data.serial || data.id || code.data;
+            } catch (e) {
+              // Not JSON, use raw string
+            }
 
-      const found = this.filteredEquipments.find(e => e.serialNumber === 'EQ-001');
-      if (found) {
-        this.selectEquipment(found);
-      }
+            console.log('Decoded QR Serial:', extractedSerial);
+            this.filterSerial = extractedSerial;
+            this.applyFilters();
+
+            // If we found matching equipment, select it automatically for a better UX
+            if (this.filteredEquipments.length > 0) {
+              // Try to find an exact match first
+              const exactMatch = this.filteredEquipments.find(eq => 
+                (eq.serialNumber || '').toLowerCase() === extractedSerial.toLowerCase() ||
+                eq.id === extractedSerial
+              );
+              this.selectEquipment(exactMatch || this.filteredEquipments[0]);
+            }
+          } else {
+            alert('QR Code not detected. Please ensure the image is clear and contains a valid code.');
+          }
+        };
+        image.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
-    // Reset file input
+    // Reset file input so same file can be uploaded again if needed
     event.target.value = '';
   }
 
@@ -581,13 +618,17 @@ export class TicketsComponent implements OnInit, OnDestroy {
   }
 
   hasActiveTicket(equipmentName: string | undefined): boolean {
-    if (!equipmentName) return false;
+    return !!this.getActiveTicketForEquipment(equipmentName);
+  }
+
+  getActiveTicketForEquipment(equipmentName: string | undefined): Ticket | null {
+    if (!equipmentName) return null;
     // Block if there is any ticket that is NOT Resolved, Closed, or Completed
     const inactiveStatuses = ['Resolved', 'Closed', 'Completed', 'Cancelled'];
-    return this.ticketsList.some(t =>
+    return this.ticketsList.find(t =>
       (t.equipmentName === equipmentName) &&
       !inactiveStatuses.includes(t.status || '')
-    );
+    ) || null;
   }
 
   // Ticket Creation Flow
@@ -695,16 +736,28 @@ export class TicketsComponent implements OnInit, OnDestroy {
         this.applyTicketFilters();
 
         if (!this.isEditMode && this.selectedEquipment) {
-          // Update status locally
+          // New ticket: Update status to In Maintenance
           this.selectedEquipment.status = 'In Maintenance';
           this.calculateEquipmentHistory(this.selectedEquipment);
 
-          // Persist status to backend
           const eqId = this.selectedEquipment.id || '';
           if (eqId) {
             this.equipmentService.updateEquipment(eqId, this.selectedEquipment).subscribe({
               next: () => console.log('Equipment status updated to In Maintenance'),
               error: (err) => console.error('Failed to update equipment status', err)
+            });
+          }
+        } else if (this.isEditMode && result.status && ['Closed', 'Resolved', 'Cancelled', 'Completed'].includes(result.status)) {
+          // Update ticket to finished status: Reset equipment to Available
+          const eq = this.equipments.find(e => e.name === result.equipmentName || e.equipmentName === result.equipmentName);
+          if (eq) {
+            eq.status = 'Available';
+            this.equipmentService.updateEquipment(eq.id!, eq).subscribe({
+              next: () => {
+                console.log('Equipment status reset to Available after ticket resolution/cancellation');
+                this.calculateEquipmentHistory(eq);
+              },
+              error: (err) => console.error('Failed to reset equipment status', err)
             });
           }
         }
@@ -730,10 +783,29 @@ export class TicketsComponent implements OnInit, OnDestroy {
   deleteTicket(id: string | undefined): void {
     if (!id || !window.confirm('Are you sure you want to delete this ticket?')) return;
 
+    // Find ticket first to get equipment name for status reset
+    const ticketToDelete = this.ticketsList.find(t => t.id === id);
+    const eqName = ticketToDelete?.equipmentName;
+
     this.ticketService.deleteTicket(id).subscribe({
       next: () => {
         // Remove from memory
         this.ticketsList = this.ticketsList.filter(t => t.id !== id);
+
+        // ── RESET EQUIPMENT STATUS TO AVAILABLE ──
+        if (eqName) {
+          const eq = this.equipments.find(e => e.name === eqName || e.equipmentName === eqName);
+          if (eq) {
+            eq.status = 'Available';
+            this.equipmentService.updateEquipment(eq.id!, eq).subscribe({
+              next: () => {
+                console.log('Equipment status reset to Available after ticket deletion');
+                this.calculateEquipmentHistory(eq);
+              },
+              error: (err) => console.error('Failed to reset equipment status', err)
+            });
+          }
+        }
 
         // Refresh detail state
         this.selectedTicket = null;
@@ -749,12 +821,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error deleting ticket', err);
-        // Fallback for demo
+        // Fallback for demo: still remove from list
         this.ticketsList = this.ticketsList.filter(t => t.id !== id);
         this.selectedTicket = null;
-        if (this.selectedEquipment) {
-          this.calculateEquipmentHistory(this.selectedEquipment);
-        }
         this.applyTicketFilters();
       }
     });

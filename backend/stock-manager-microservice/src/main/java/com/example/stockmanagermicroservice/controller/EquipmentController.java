@@ -51,6 +51,11 @@ public class EquipmentController {
         return equipmentService.createEquipment(equipment);
     }
 
+    @PostMapping("/bulk")
+    public List<Equipment> createBulkEquipment(@RequestBody List<Equipment> equipments) {
+        return equipmentService.createBulkEquipment(equipments);
+    }
+
     @GetMapping("/{id}/invoice-file")
     public ResponseEntity<String> getInvoiceFile(@PathVariable String id) {
         return equipmentService.getEquipmentFiles(id)
@@ -138,7 +143,7 @@ public class EquipmentController {
         public String name;
         public String brand;
         public String type;
-        public String specification;
+        public java.util.Map<String, String> specifications;
         public int qty;
         public String equipmentId;
         public String assignedToEquipmentName;

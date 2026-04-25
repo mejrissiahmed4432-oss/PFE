@@ -283,40 +283,14 @@
 
         <!-- SAME spec mode -->
         <ng-container *ngIf="specMode === 'same' || quantity === 1">
-          <!-- Complex Specs for Devices/Servers (Conditional) -->
-          <div class="spec-grid" *ngIf="isDeviceCategory" style="margin-bottom: 20px;">
-            <div class="field-group">
-              <label class="field-label">CPU</label>
-              <input class="field-input" [(ngModel)]="sharedCpu" placeholder="e.g. Intel Core i7-12700H">
-            </div>
-            <div class="field-group">
-              <label class="field-label">RAM</label>
-              <input class="field-input" [(ngModel)]="sharedRam" placeholder="e.g. 16GB DDR5">
-            </div>
-            <div class="field-group">
-              <label class="field-label">Storage</label>
-              <input class="field-input" [(ngModel)]="sharedStorage" placeholder="e.g. 512GB NVMe SSD">
-            </div>
-            <div class="field-group" *ngIf="type === 'pc' || type === 'laptop'">
-              <label class="field-label">Graphics Card</label>
-              <input class="field-input" [(ngModel)]="sharedGpu" placeholder="e.g. NVIDIA RTX 3060">
-            </div>
-            <div class="field-group" *ngIf="type === 'server'">
-              <label class="field-label">Network Interface</label>
-              <input class="field-input" [(ngModel)]="sharedNetInterface" placeholder="e.g. 10GbE Dual-Port">
-            </div>
-            <div class="field-group">
-              <label class="field-label">Operating System</label>
-              <input class="field-input" [(ngModel)]="sharedOs" placeholder="e.g. Windows 11 Pro">
-            </div>
+          <div *ngIf="specKeys.length === 0" style="padding: 20px; text-align: center; color: #64748b; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+            No specific specification fields defined for this equipment type.
           </div>
-
-          <!-- General Specification (Always show) -->
-          <div class="field-group">
-            <label class="field-label">specification <span class="req">*</span></label>
-            <textarea class="field-textarea" [(ngModel)]="sharedSpecification" rows="4"
-              placeholder="Technical details, screen size, connectors, or any specific configuration..."></textarea>
-            <div *ngIf="!sharedSpecification" class="error-msg">Specification is required.</div>
+          <div class="field-row-3" *ngIf="specKeys.length > 0">
+            <div class="field-group" *ngFor="let key of specKeys">
+              <label class="field-label">{{ key }}</label>
+              <input class="field-input" [(ngModel)]="sharedSpecifications[key]" placeholder="Enter {{ key }}...">
+            </div>
           </div>
         </ng-container>
 
@@ -349,17 +323,8 @@
                   <th class="col-unit">#</th>
                   <th>Serial Nb <span class="req">*</span></th>
 
-                  <!-- Device Columns Header -->
-                  <ng-container *ngIf="isDeviceCategory">
-                    <th>CPU</th>
-                    <th>RAM</th>
-                    <th>Storage</th>
-                    <th *ngIf="type === 'pc' || type === 'laptop'">GPU</th>
-                    <th>OS</th>
-                  </ng-container>
-
-                  <!-- specification Column Header (Always) -->
-                  <th>specification <span class="req">*</span></th>
+                  <!-- Dynamic Columns Header -->
+                  <th *ngFor="let key of specKeys">{{ key }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -381,20 +346,9 @@
                       style="font-size: 10px; color: #ef4444;">{{ getSNError(u.serialNumber) || 'Not unique' }}</div>
                   </td>
 
-                  <!-- Device Columns -->
-                  <ng-container *ngIf="isDeviceCategory">
-                    <td><input class="tbl-input" [(ngModel)]="u.cpu" placeholder="CPU"></td>
-                    <td><input class="tbl-input" [(ngModel)]="u.ram" placeholder="RAM"></td>
-                    <td><input class="tbl-input" [(ngModel)]="u.storage" placeholder="Storage"></td>
-                    <td *ngIf="type === 'pc' || type === 'laptop'"><input class="tbl-input" [(ngModel)]="u.graphicsCard"
-                        placeholder="GPU"></td>
-                    <td><input class="tbl-input" [(ngModel)]="u.operatingSystem" placeholder="OS"></td>
-                  </ng-container>
-
-                  <!-- Specification Column (Always) -->
-                  <td>
-                    <input class="tbl-input" [(ngModel)]="u.specification" placeholder="specification...">
-                    <div *ngIf="!u.specification" class="error-msg" style="font-size: 10px;">Required</div>
+                  <!-- Dynamic Columns -->
+                  <td *ngFor="let key of specKeys">
+                    <input class="tbl-input" [(ngModel)]="u.specifications[key]" placeholder="{{ key }}">
                   </td>
                 </tr>
               </tbody>

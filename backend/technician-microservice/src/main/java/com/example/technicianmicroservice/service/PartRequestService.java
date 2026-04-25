@@ -18,6 +18,9 @@ public class PartRequestService {
     private NotificationService notificationService;
 
     @Autowired
+    private AlertService alertService;
+
+    @Autowired
     private org.springframework.web.client.RestTemplate restTemplate;
 
     private static final String STOCK_MANAGER_URL = "http://stock-manager-microservice/api/equipment/consume-parts";
@@ -35,6 +38,9 @@ public class PartRequestService {
         
         List<PartRequest> requestsEmail = repository.findByRequesterId("moetez@gmail.com");
         repository.deleteAll(requestsEmail);
+
+        List<PartRequest> requestsId = repository.findByRequesterId("69d5170dfd668941de3716b3");
+        repository.deleteAll(requestsId);
     }
     public PartRequest createRequest(PartRequest request) {
         request.setStatus("PENDING");
@@ -45,6 +51,16 @@ public class PartRequestService {
             "New Request",
             "A new part request with " + (saved.getItems() != null ? saved.getItems().size() : 0) + " items has been submitted. Priority: " + saved.getPriority(),
             "INFO", "PART_REQUEST", saved.getId(), null, "STOCK_MANAGER"
+        );
+        
+        alertService.triggerSystemAlert(
+            "REQUEST_PENDING_" + saved.getId(),
+            "REQUEST_PENDING",
+            "HIGH".equalsIgnoreCase(saved.getPriority()) ? "HIGH" : "MEDIUM",
+            "ROLE",
+            "STOCK_MANAGER",
+            "Pending Part Request",
+            "Part request from " + saved.getRequesterName() + " is pending review. Priority: " + saved.getPriority() + "."
         );
         
         // We no longer notify the requester upon submission per user request
@@ -66,6 +82,10 @@ public class PartRequestService {
         request.setStatus(status);
         PartRequest saved = repository.save(request);
         
+            if (!"PENDING".equalsIgnoreCase(status) && "PENDING".equalsIgnoreCase(oldStatus)) {
+                alertService.resolveSystemAlert("REQUEST_PENDING_" + requestId);
+            }
+
             // Notify Technician (Requester) if status changed
             if (!status.equals(oldStatus)) {
                 String type = "INFO";
@@ -141,6 +161,7 @@ public class PartRequestService {
             throw new RuntimeException("Cannot cancel a request that is not PENDING");
         }
         repository.delete(request);
+        alertService.resolveSystemAlert("REQUEST_PENDING_" + id);
         
         // Removed 'Request Cancelled' notification per user request
     }

@@ -49,6 +49,10 @@ export class EquipmentService {
     return this.http.post<Equipment>(this.apiUrl, equipment);
   }
 
+  createBulkEquipment(equipments: Equipment[]): Observable<Equipment[]> {
+    return this.http.post<Equipment[]>(`${this.apiUrl}/bulk`, equipments);
+  }
+
   updateEquipment(id: string, equipment: Equipment): Observable<Equipment> {
     return this.http.put<Equipment>(`${this.apiUrl}/${id}`, equipment);
   }

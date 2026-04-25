@@ -38,11 +38,13 @@ export class CategoryManagerComponent implements OnInit {
   showTypeModal = false;
   typeModalMode: 'add' | 'edit' = 'add';
   typeModalCategoryId: string | null = null;
-  typeModalForm: CategoryType = { name: '', requiresQrCode: false };
+  typeModalForm: CategoryType = { name: '', requiresQrCode: false, specificationFields: [] };
   typeModalOriginalName = '';          // used when editing
   typeModalNameError: string | null = null;
   typeModalQrError: string | null = null;
   typeModalHasEquipment = false;       // whether equipment already uses this type
+  newSpecField = '';
+  showSpecFields = false;
 
   constructor(private categoryService: CategoryService) {}
 
@@ -211,11 +213,13 @@ export class CategoryManagerComponent implements OnInit {
     if (!categoryId) return;
     this.typeModalMode = 'add';
     this.typeModalCategoryId = categoryId;
-    this.typeModalForm = { name: '', requiresQrCode: false };
+    this.typeModalForm = { name: '', requiresQrCode: false, specificationFields: [] };
+    this.newSpecField = '';
     this.typeModalOriginalName = '';
     this.typeModalNameError = null;
     this.typeModalQrError = null;
     this.typeModalHasEquipment = false;
+    this.showSpecFields = false;
     // Expand category so user sees the new type after save
     this.expandedCategories[categoryId] = true;
     this.showTypeModal = true;
@@ -225,12 +229,14 @@ export class CategoryManagerComponent implements OnInit {
     if (!categoryId) return;
     this.typeModalMode = 'edit';
     this.typeModalCategoryId = categoryId;
-    this.typeModalForm = { name: type.name, requiresQrCode: type.requiresQrCode };
+    this.typeModalForm = { name: type.name, requiresQrCode: type.requiresQrCode, specificationFields: type.specificationFields ? [...type.specificationFields] : [] };
+    this.newSpecField = '';
     this.typeModalOriginalName = type.name;
     this.typeModalNameError = null;
     this.typeModalQrError = null;
     // We'll check dynamically if equipment is linked (disable QR toggle hint)
     this.typeModalHasEquipment = false;
+    this.showSpecFields = false;
     this.showTypeModal = true;
   }
 
@@ -253,7 +259,8 @@ export class CategoryManagerComponent implements OnInit {
 
     const payload: CategoryType = {
       name: this.typeModalForm.name.trim(),
-      requiresQrCode: this.typeModalForm.requiresQrCode
+      requiresQrCode: this.typeModalForm.requiresQrCode,
+      specificationFields: this.typeModalForm.specificationFields
     };
 
     if (this.typeModalMode === 'add') {
@@ -295,6 +302,25 @@ export class CategoryManagerComponent implements OnInit {
     this.typeModalCategoryId = null;
     this.typeModalNameError = null;
     this.typeModalQrError = null;
+  }
+
+  addSpecField(): void {
+    const val = this.newSpecField.trim();
+    if (val) {
+      if (!this.typeModalForm.specificationFields) {
+        this.typeModalForm.specificationFields = [];
+      }
+      if (!this.typeModalForm.specificationFields.includes(val)) {
+        this.typeModalForm.specificationFields.push(val);
+      }
+      this.newSpecField = '';
+    }
+  }
+
+  removeSpecField(index: number): void {
+    if (this.typeModalForm.specificationFields) {
+      this.typeModalForm.specificationFields.splice(index, 1);
+    }
   }
 
   getTypeKey(type?: string): string {

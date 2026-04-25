@@ -498,11 +498,25 @@
       </div>
 
       <div class="detail-actions" *ngIf="selectedEquipment">
-        <button class="btn-create-ticket" *ngIf="viewMode === 'equipment'"
-          [disabled]="hasActiveTicket(selectedEquipment.name || selectedEquipment.equipmentName)"
-          (click)="openTicketModal()">
-          Create Ticket
-        </button>
+        <!-- Start Working / Create Ticket shortcut: Only shown in Equipment mode -->
+        <ng-container *ngIf="viewMode === 'equipment'">
+          <ng-container *ngIf="getActiveTicketForEquipment(selectedEquipment.name || selectedEquipment.equipmentName) as activeTicket; else noActiveTicket">
+            <button class="btn-start-work" (click)="startWorkbench(activeTicket)" style="flex: 1; margin-top: 0;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              Start Working
+            </button>
+          </ng-container>
+          
+          <ng-template #noActiveTicket>
+            <button class="btn-create-ticket" (click)="openTicketModal()">
+              Create Ticket
+            </button>
+          </ng-template>
+        </ng-container>
+
+        <!-- History button: Should always be visible if equipment is selected -->
         <button class="btn-view-history" (click)="showFullHistory = true">View Full History</button>
       </div>
 
@@ -775,7 +789,12 @@
           </div>
           <div class="info-item">
             <span class="info-label">Specification</span>
-            <span class="info-value">{{ workbenchEquipment?.specification || '—' }}</span>
+            <span class="info-value">
+              <ng-container *ngFor="let spec of workbenchEquipment?.specifications | keyvalue | slice:0:1; let isLast=last">
+                {{ spec.value }}{{ (workbenchEquipment?.specifications | keyvalue)?.length! > 1 ? '...' : '' }}
+              </ng-container>
+              <span *ngIf="!(workbenchEquipment?.specifications | keyvalue)?.length">—</span>
+            </span>
           </div>
           <div class="info-item">
             <span class="info-label">Status</span>

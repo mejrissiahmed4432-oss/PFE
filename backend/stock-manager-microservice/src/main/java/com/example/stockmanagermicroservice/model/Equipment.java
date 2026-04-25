@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "equipment")
 public class Equipment {
@@ -55,17 +57,13 @@ public class Equipment {
     private String createdBy;
 
     // Device Specifications
-    private String cpu;
-    private String ram;
-    private String storage;
-    private String graphicsCard;
-    private String operatingSystem;
-    private String specification;
+    private java.util.Map<String, String> specifications = new java.util.HashMap<>();
     private String status;
     private String assignedToEquipmentName;
     private String assignedToEquipmentId;
     private String allocatedToTechnicianName;
     private String allocatedToTechnicianId;
+    private List<LifecycleEntry> lifecycle = new ArrayList<>();
 
     // Constructors
     public Equipment() {}
@@ -158,23 +156,8 @@ public class Equipment {
     public Boolean getLocationChanged() { return locationChanged; }
     public void setLocationChanged(Boolean locationChanged) { this.locationChanged = locationChanged; }
 
-    public String getCpu() { return cpu; }
-    public void setCpu(String cpu) { this.cpu = cpu; }
-
-    public String getRam() { return ram; }
-    public void setRam(String ram) { this.ram = ram; }
-
-    public String getStorage() { return storage; }
-    public void setStorage(String storage) { this.storage = storage; }
-
-    public String getGraphicsCard() { return graphicsCard; }
-    public void setGraphicsCard(String graphicsCard) { this.graphicsCard = graphicsCard; }
-
-    public String getOperatingSystem() { return operatingSystem; }
-    public void setOperatingSystem(String operatingSystem) { this.operatingSystem = operatingSystem; }
-
-    public String getSpecification() { return specification; }
-    public void setSpecification(String specification) { this.specification = specification; }
+    public java.util.Map<String, String> getSpecifications() { return specifications; }
+    public void setSpecifications(java.util.Map<String, String> specifications) { this.specifications = specifications; }
 
     public String getAssignedToEquipmentName() { return assignedToEquipmentName; }
     public void setAssignedToEquipmentName(String assignedToEquipmentName) { this.assignedToEquipmentName = assignedToEquipmentName; }
@@ -187,4 +170,7 @@ public class Equipment {
 
     public String getAllocatedToTechnicianId() { return allocatedToTechnicianId; }
     public void setAllocatedToTechnicianId(String allocatedToTechnicianId) { this.allocatedToTechnicianId = allocatedToTechnicianId; }
+
+    public List<LifecycleEntry> getLifecycle() { return lifecycle; }
+    public void setLifecycle(List<LifecycleEntry> lifecycle) { this.lifecycle = lifecycle; }
 }

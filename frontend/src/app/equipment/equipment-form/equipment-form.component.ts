@@ -148,12 +148,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
         purchaseDate: this.formatDate(new Date()),
         warrantyExpiration: '',
         createdBy: this.currentUserName,
-        cpu: '',
-        ram: '',
-        storage: '',
-        graphicsCard: '',
-        operatingSystem: '',
-        specification: '',
+        specifications: {},
         invoiceRef: '',
         status: 'Available'
       };
@@ -169,6 +164,18 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   onTypeChange(): void {
     if (!this.formData.type) return;
+    
+    // Update specifications based on type schema
+    const typeObj = this.availableTypes.find(t => t.name === this.formData.type);
+    if (typeObj && typeObj.specificationFields) {
+      const currentSpecs = { ...(this.formData.specifications || {}) };
+      const newSpecs: Record<string, string> = {};
+      typeObj.specificationFields.forEach(field => {
+        newSpecs[field] = currentSpecs[field] || '';
+      });
+      this.formData.specifications = newSpecs;
+    }
+
     this.loadAvailableShelves();
   }
 
@@ -328,7 +335,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   }
 
   get isFormInvalid(): boolean {
-    const isBasicInfoMissing = !this.formData.equipmentName || !this.formData.brand || !this.isSerialNumberValid() || !this.formData.specification;
+    const isBasicInfoMissing = !this.formData.equipmentName || !this.formData.brand || !this.isSerialNumberValid();
     const isShelfMissingForInStock = (this.formData.status === 'Available' || this.formData.status === 'In Stock') && (!this.formData.shelfId || this.formData.shelfId === '');
     return isBasicInfoMissing || isShelfMissingForInStock || !this.isSNAvailable || this.isCheckingSN;
   }
@@ -577,8 +584,12 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     a.click();
   }
 
-  getShelfLocation(shelfId?: string): string {
-    if (!shelfId || shelfId === '') return 'Unassigned';
+  getShelfLocation(shelfId?: string, status?: string): string {
+    if (!shelfId || shelfId === '') {
+      if (status === 'Allocated') return 'Allocated (Not on Shelf)';
+      if (status === 'Assigned' || status === 'Installed') return 'Installed (Not on Shelf)';
+      return 'Unassigned';
+    }
     if (shelfId === 'MAINTENANCE_AREA') return 'Maintenance Area';
     if (shelfId === 'SCRAP_YARD') return 'Scrap Yard';
     if (shelfId === 'OUT_OF_STOCK') return 'Out of Stock';
@@ -645,6 +656,10 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   }
 
   isComputerCategory(): boolean {
+    // Show specs tab if there are dynamic specifications defined
+    if (this.formData.specifications && Object.keys(this.formData.specifications).length > 0) {
+      return true;
+    }
     const type = this.formData.type || '';
     const category = this.formData.category?.toUpperCase() || '';
     return category === 'DEVICE' || category === 'SERVER' || ['pc', 'laptop', 'server', 'tablet', 'phone'].includes(type);

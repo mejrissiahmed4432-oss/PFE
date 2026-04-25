@@ -111,13 +111,17 @@ export class BoardComponent implements OnInit {
   }
 
   loadUnreadCount(): void {
+    if (!this.user) return;
+    const userId = this.user.id;
+    const role = this.user.role;
+
     // 1. Load System Alerts (Stock/Warranty/System)
-    this.alertService.getAlerts().subscribe(alerts => {
+    this.alertService.getAlerts(userId, role).subscribe(alerts => {
       this.unreadAlertsCount = alerts.filter(a => !a.read).length;
     });
 
     // 2. Load Notifications (CRUD/User Actions)
-    this.notificationService.getNotifications().subscribe(notifications => {
+    this.notificationService.getNotifications(userId, role).subscribe(notifications => {
       this.notificationsList = notifications
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .map(n => this.mapNotifToNotificationItem(n));
@@ -179,7 +183,8 @@ export class BoardComponent implements OnInit {
 
   markAllNotificationsAsRead(event: Event): void {
     event.stopPropagation();
-    this.notificationService.getUnreadNotifications().subscribe(notifications => {
+    if (!this.user) return;
+    this.notificationService.getUnreadNotifications(this.user.id, this.user.role).subscribe(notifications => {
       notifications.forEach(n => {
         this.notificationService.markAsRead(n.id).subscribe();
       });

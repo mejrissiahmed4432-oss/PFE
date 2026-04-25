@@ -4617,3 +4617,39 @@
   color: #64748b;
   margin-top: 2px;
 }
+/* Start Working Button - Blue Theme */
+.btn-start-work {
+  flex: 1;
+  padding: 14px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.btn-start-work:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+  filter: brightness(1.1);
+}
+
+.btn-start-work:active {
+  transform: translateY(0);
+}
+
+.btn-start-work svg {
+  transition: transform 0.3s ease;
+}
+
+.btn-start-work:hover svg {
+  transform: translateX(2px) scale(1.1);
+}

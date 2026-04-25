@@ -104,10 +104,20 @@
           </div>
         </div>
 
+        <!-- Filters -->
+        <div class="two-col" style="margin-bottom: 16px;" *ngIf="selectedType">
+          <div class="field-group">
+            <input type="text" class="field-input" placeholder="Filter by Brand..." [(ngModel)]="searchBrand">
+          </div>
+          <div class="field-group">
+            <input type="text" class="field-input" placeholder="Filter by Specification..." [(ngModel)]="searchSpec">
+          </div>
+        </div>
+
         <!-- Stock Table -->
         <div *ngIf="selectedType">
           <label class="field-label">Matches Found in Stock</label>
-          <div class="unit-table-wrap" *ngIf="availableStockGroups.length > 0">
+          <div class="unit-table-wrap" *ngIf="displayedStockGroups.length > 0">
             <table class="unit-table">
               <thead>
                 <tr>
@@ -119,7 +129,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let g of availableStockGroups" [class.selected-row]="g.selected"
+                <tr *ngFor="let g of displayedStockGroups" [class.selected-row]="g.selected"
                   [style.opacity]="g.availableQte === 0 ? '0.55' : '1'">
                   <td style="text-align: center;">
                     <input type="checkbox" [(ngModel)]="g.selected" [disabled]="g.availableQte === 0">
@@ -149,7 +159,7 @@
             </table>
           </div>
 
-          <div *ngIf="availableStockGroups.length === 0" class="no-stock-banner">
+          <div *ngIf="displayedStockGroups.length === 0" class="no-stock-banner">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"></circle>

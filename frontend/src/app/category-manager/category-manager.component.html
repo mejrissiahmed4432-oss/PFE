@@ -250,6 +250,35 @@
           {{ typeModalQrError }}
         </div>
       </div>
+      <!-- Specification Fields -->
+      <div class="form-group" style="margin-top: 20px;">
+        <label (click)="showSpecFields = !showSpecFields" style="cursor: pointer; display: flex; align-items: center; user-select: none; transition: color 0.2s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color=''">
+          Specification Fields <span style="font-size: 0.8rem; font-weight: normal; color: #64748b; margin-left: 8px;">(e.g., RAM, CPU, Storage)</span>
+          <div style="flex: 1"></div>
+          <div style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: #f1f5f9; border-radius: 4px; transition: background 0.2s;">
+            <svg *ngIf="!showSpecFields" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <svg *ngIf="showSpecFields" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+          </div>
+        </label>
+        
+        <div *ngIf="showSpecFields" style="margin-top: 12px; animation: fadeIn 0.2s ease-out;">
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <input type="text" class="form-control" [(ngModel)]="newSpecField" placeholder="Add a specification field..." (keyup.enter)="addSpecField()">
+            <button type="button" class="btn btn-secondary" style="padding: 0 16px;" (click)="addSpecField()">Add</button>
+          </div>
+          <div class="spec-chips-container" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; background: #f8fafc; border-radius: 8px; min-height: 48px; border: 1px dashed #cbd5e1;">
+            <div *ngIf="!typeModalForm.specificationFields || typeModalForm.specificationFields.length === 0" style="color: #94a3b8; font-size: 0.85rem; width: 100%; text-align: center; margin-top: 2px;">
+              No specification fields defined yet.
+            </div>
+            <div *ngFor="let field of typeModalForm.specificationFields; let i = index" class="spec-chip" style="display: flex; align-items: center; background: white; border: 1px solid #e2e8f0; padding: 4px 10px; border-radius: 16px; font-size: 0.85rem; color: #334155; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+              {{ field }}
+              <button type="button" (click)="removeSpecField(i)" style="background: none; border: none; padding: 0; margin-left: 6px; cursor: pointer; color: #94a3b8; display: flex; align-items: center; justify-content: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
     <div class="modal-footer">

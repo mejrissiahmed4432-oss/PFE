@@ -128,6 +128,7 @@ public class EquipmentCategoryService {
         // Apply changes
         existing.setName(newName);
         existing.setRequiresQrCode(updatedType.isRequiresQrCode());
+        existing.setSpecificationFields(updatedType.getSpecificationFields());
 
         // Process existing equipment based on changes
         if (qrChanged || nameChanged) {

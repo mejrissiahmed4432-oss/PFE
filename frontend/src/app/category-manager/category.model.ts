@@ -1,6 +1,7 @@
 export interface CategoryType {
   name: string;
   requiresQrCode: boolean;
+  specificationFields?: string[];
 }
 
 export interface EquipmentCategory {

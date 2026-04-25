@@ -21,26 +21,36 @@ public class AlertService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private static final String USER_SERVICE_URL = "http://user-microservice/api/alerts";
+    private static final String USER_SERVICE_SYSTEM_ALERT_URL = "http://user-microservice/api/alerts/system";
+    private static final String USER_SERVICE_RESOLVE_ALERT_URL = "http://user-microservice/api/alerts/system/{key}/resolve";
 
-    public void createAlert(String title, String message, String type, String category, String relatedId, String targetRole) {
+    public void triggerSystemAlert(String key, String type, String priority, String targetType, String targetId, String title, String message) {
         Map<String, String> body = new HashMap<>();
+        body.put("key", key);
+        body.put("type", type);
+        body.put("priority", priority);
+        body.put("targetType", targetType);
+        if (targetId != null) body.put("targetId", targetId);
         body.put("title", title);
         body.put("message", message);
-        body.put("type", type);
-        body.put("category", category);
-        body.put("relatedId", relatedId);
-        body.put("targetRole", targetRole);
 
         try {
-            restTemplate.postForEntity(USER_SERVICE_URL, body, Void.class);
+            restTemplate.postForEntity(USER_SERVICE_SYSTEM_ALERT_URL, body, Void.class);
         } catch (Exception e) {
-            System.err.println("Failed to send alert to user-microservice: " + e.getMessage());
+            System.err.println("Failed to send system alert to user-microservice: " + e.getMessage());
+        }
+    }
+
+    public void resolveSystemAlert(String key) {
+        try {
+            restTemplate.postForEntity(USER_SERVICE_RESOLVE_ALERT_URL, null, Void.class, key);
+        } catch (Exception e) {
+            System.err.println("Failed to resolve system alert in user-microservice: " + e.getMessage());
         }
     }
 
     // Automatically generate alerts for warranty expiry
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 * * * *") // Run every hour
     public void generateWarrantyAlerts() {
         LocalDate today = LocalDate.now();
         LocalDate thirtyDaysFromNow = today.plusDays(30);
@@ -51,29 +61,39 @@ public class AlertService {
 
         for (Equipment eq : equipmentWithWarranty) {
             LocalDate expDate = eq.getWarrantyExpiration();
+            String expiredKey = "WARRANTY_EXPIRED_" + eq.getId();
+            String expiringKey = "WARRANTY_EXPIRING_" + eq.getId();
             
-            // Check if already expired (< today)
             if (expDate.isBefore(today)) {
-                // Since we don't have local repository to check if alert exists, 
-                // we'll send it and let usermicroservice handle duplicates if needed, 
-                // or just accept multiple. In a better design, usermicroservice would check.
-                createAlert("Warranty Expired: " + eq.getEquipmentName(),
-                        "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") expired on " + expDate + ".",
-                        "ERROR", "WARRANTY", eq.getId(), "STOCK_MANAGER");
+                // Already expired
+                triggerSystemAlert(
+                    expiredKey,
+                    "WARRANTY_EXPIRED",
+                    "HIGH",
+                    "ROLE",
+                    "STOCK_MANAGER",
+                    "Warranty Expired: " + eq.getEquipmentName(),
+                    "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") expired on " + expDate + "."
+                );
+                // Resolve expiring alert if it exists
+                resolveSystemAlert(expiringKey);
             } 
-            // Else check if expiring soon (< today + 30)
             else if (expDate.isBefore(thirtyDaysFromNow)) {
-                createAlert("Warranty Expiring: " + eq.getEquipmentName(),
-                        "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") will expire soon on " + expDate + ".",
-                        "WARNING", "WARRANTY", eq.getId(), "STOCK_MANAGER");
+                // Expiring soon
+                triggerSystemAlert(
+                    expiringKey,
+                    "WARRANTY_EXPIRING",
+                    "MEDIUM",
+                    "ROLE",
+                    "STOCK_MANAGER",
+                    "Warranty Expiring: " + eq.getEquipmentName(),
+                    "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") will expire soon on " + expDate + "."
+                );
+            } else {
+                // Warranty extended or not close to expiry, resolve any existing alerts
+                resolveSystemAlert(expiredKey);
+                resolveSystemAlert(expiringKey);
             }
         }
     }
-
-    public void generateDemoAlert() {
-        createAlert("System Pulse Check",
-                "This is a real-time test alert to verify the notification system is working perfectly.",
-                "INFO", "SYSTEM", null, "STOCK_MANAGER");
-    }
 }
-

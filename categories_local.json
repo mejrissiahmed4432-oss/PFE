@@ -1,0 +1,265 @@
+﻿{
+    "value":  [
+                  {
+                      "id":  "69e7ad52244be0586347fe1c",
+                      "name":  "DEVICE",
+                      "icon":  "monitor",
+                      "types":  [
+                                    {
+                                        "name":  "Laptop",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+                                                                    "cpu",
+                                                                    "ram"
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "System Unit",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Desktop",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Smartphone",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Tablet",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    }
+                                ]
+                  },
+                  {
+                      "id":  "69e7ad52244be0586347fe1d",
+                      "name":  "PERIPHERAL",
+                      "icon":  "mouse",
+                      "types":  [
+                                    {
+                                        "name":  "Monitor",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Keyboard",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Mouse",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Printer",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Scanner",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Headset",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Webcam",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "HDMI Cable",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "USB Cable",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Charger",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Adapter",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Docking Station",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "USB Hub",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    }
+                                ]
+                  },
+                  {
+                      "id":  "69e7ad52244be0586347fe1e",
+                      "name":  "NETWORK",
+                      "icon":  "wifi",
+                      "types":  [
+                                    {
+                                        "name":  "Router",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Switch",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Access Point",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Firewall",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    }
+                                ]
+                  },
+                  {
+                      "id":  "69e7ad52244be0586347fe1f",
+                      "name":  "STORAGE",
+                      "icon":  "hard-drive",
+                      "types":  [
+                                    {
+                                        "name":  "SSD",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "HDD",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "NVMe",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "USB Flash",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Ext. HDD",
+                                        "requiresQrCode":  true,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    }
+                                ]
+                  },
+                  {
+                      "id":  "69e7ad52244be0586347fe20",
+                      "name":  "COMPONENT",
+                      "icon":  "cpu",
+                      "types":  [
+                                    {
+                                        "name":  "RAM",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+                                                                    "ram"
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "CPU",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "GPU",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "Motherboard",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    },
+                                    {
+                                        "name":  "NIC",
+                                        "requiresQrCode":  false,
+                                        "specificationFields":  [
+
+                                                                ]
+                                    }
+                                ]
+                  }
+              ],
+    "Count":  5
+}

@@ -4,6 +4,9 @@ import com.example.usermicroservice.model.Notification;
 import com.example.usermicroservice.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,18 +20,50 @@ public class NotificationService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     public List<Notification> getAllNotifications(String userId, String role) {
-        if ((userId == null || userId.isEmpty()) && (role == null || role.isEmpty())) {
+        if (isParamEmpty(userId) && isParamEmpty(role)) {
             return notificationRepository.findAllByOrderByCreatedAtDesc();
         }
-        return notificationRepository.findAllForUser(userId, role);
+        
+        Criteria criteria = new Criteria().orOperator(
+            Criteria.where("recipientId").is(userId),
+            Criteria.where("targetRole").is(role),
+            new Criteria().andOperator(
+                Criteria.where("recipientId").is(null),
+                Criteria.where("targetRole").is(null)
+            )
+        );
+        
+        Query query = new Query(criteria).with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt"));
+        return mongoTemplate.find(query, Notification.class);
     }
 
     public List<Notification> getUnreadNotifications(String userId, String role) {
-        if ((userId == null || userId.isEmpty()) && (role == null || role.isEmpty())) {
+        if (isParamEmpty(userId) && isParamEmpty(role)) {
             return notificationRepository.findByReadFalseOrderByCreatedAtDesc();
         }
-        return notificationRepository.findUnreadForUser(userId, role);
+        
+        Criteria criteria = new Criteria().andOperator(
+            Criteria.where("read").is(false),
+            new Criteria().orOperator(
+                Criteria.where("recipientId").is(userId),
+                Criteria.where("targetRole").is(role),
+                new Criteria().andOperator(
+                    Criteria.where("recipientId").is(null),
+                    Criteria.where("targetRole").is(null)
+                )
+            )
+        );
+        
+        Query query = new Query(criteria).with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt"));
+        return mongoTemplate.find(query, Notification.class);
+    }
+
+    private boolean isParamEmpty(String param) {
+        return param == null || param.isEmpty() || "null".equals(param) || "undefined".equals(param);
     }
 
     public Notification markAsRead(String id) {
@@ -41,7 +76,7 @@ public class NotificationService {
     }
 
     public void markAllAsRead(String userId, String role) {
-        List<Notification> unread = notificationRepository.findUnreadForUser(userId, role);
+        List<Notification> unread = getUnreadNotifications(userId, role);
         unread.forEach(n -> n.setRead(true));
         notificationRepository.saveAll(unread);
         messagingTemplate.convertAndSend("/topic/notifications", "UPDATE");
@@ -55,7 +90,16 @@ public class NotificationService {
         // Enforce strict logic: Notifications are for INFO/SUCCESS only.
         if (type != null && (type.equalsIgnoreCase("ERROR") || type.equalsIgnoreCase("WARNING") || type.equalsIgnoreCase("URGENT"))) {
             // Reroute critical events to AlertService
-            alertService.createAlert(title, message, type, category, relatedId, recipientId, targetRole);
+            String key = "SYSTEM_ALERT_" + (relatedId != null ? relatedId : java.util.UUID.randomUUID().toString());
+            alertService.createOrUpdateAlert(
+                key,
+                "SYSTEM",
+                "HIGH",
+                (targetRole != null && !targetRole.isEmpty()) ? "ROLE" : "USER",
+                (targetRole != null && !targetRole.isEmpty()) ? targetRole : recipientId,
+                title,
+                message
+            );
             return;
         }
 

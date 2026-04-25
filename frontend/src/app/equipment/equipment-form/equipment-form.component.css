@@ -1623,3 +1623,255 @@
   font-style: italic;
   margin-top: 2px;
 }
+
+/* Lifecycle Timeline Styling */
+.lifecycle-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-left: 8px;
+  margin-top: 8px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 16px;
+  position: relative;
+  padding-bottom: 24px;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 20px;
+  bottom: -4px;
+  width: 2px;
+  background: #e2e8f0;
+}
+
+.timeline-item:last-child::before {
+  display: none;
+}
+
+.timeline-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #cbd5e1;
+  z-index: 1;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.timeline-marker.active { border-color: #3b82f6; }
+.timeline-marker.success { border-color: #10b981; }
+.timeline-marker.warning { border-color: #f59e0b; }
+.timeline-marker.danger { border-color: #ef4444; }
+
+.timeline-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.timeline-action {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.timeline-date {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.timeline-details {
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.timeline-performer {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.timeline-performer svg {
+  color: #94a3b8;
+}
+/* ─── Lifecycle Tab ─── */
+.lifecycle-container {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  border: 1px solid #e8edf5;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.lifecycle-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.lifecycle-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lifecycle-title h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #1e293b;
+}
+
+.lifecycle-title p {
+  margin: 4px 0 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  padding-left: 8px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 24px;
+}
+
+.timeline-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.marker-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  border: 3px solid white;
+  box-shadow: 0 0 0 1px #e2e8f0;
+  z-index: 1;
+}
+
+.marker-line {
+  flex: 1;
+  width: 2px;
+  background: #f1f5f9;
+  margin: 4px 0;
+}
+
+/* Status specific dots */
+.marker-dot.status-created { background: #3b82f6; box-shadow: 0 0 0 1px #3b82f6; }
+.marker-dot.status-allocated { background: #f59e0b; box-shadow: 0 0 0 1px #f59e0b; }
+.marker-dot.status-installed { background: #8b5cf6; box-shadow: 0 0 0 1px #8b5cf6; }
+.marker-dot.status-returned-to-stock { background: #10b981; box-shadow: 0 0 0 1px #10b981; }
+
+.timeline-content {
+  padding-bottom: 32px;
+  flex: 1;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.entry-status {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.entry-date {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.entry-desc {
+  margin: 0 0 12px 0;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.entry-footer {
+  display: flex;
+  align-items: center;
+}
+
+.entry-actor {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #f1f5f9;
+}
+
+.entry-actor strong {
+  color: #334155;
+}
+
+.empty-lifecycle {
+  padding: 60px 0;
+  text-align: center;
+}
+
+.empty-icon {
+  color: #cbd5e1;
+  margin-bottom: 16px;
+}
+
+.empty-lifecycle h4 {
+  margin: 0 0 8px 0;
+  color: #64748b;
+}
+
+.empty-lifecycle p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}

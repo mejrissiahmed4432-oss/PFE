@@ -30,17 +30,20 @@ export interface Equipment {
   createdBy?: string;
   status?: string;
   // Device Specifications
-  cpu?: string;
-  ram?: string;
-  storage?: string;
-  graphicsCard?: string;
-  operatingSystem?: string;
-  specification?: string;
+  specifications?: { [key: string]: string };
   invoiceRef?: string;
   assignedToEquipmentName?: string;
   assignedToEquipmentId?: string;
   allocatedToTechnicianName?: string;
   allocatedToTechnicianId?: string;
+  lifecycle?: LifecycleEntry[];
+}
+
+export interface LifecycleEntry {
+  status: string;
+  timestamp: string;
+  description: string;
+  actor: string;
 }
 
 export interface EquipmentCategory {

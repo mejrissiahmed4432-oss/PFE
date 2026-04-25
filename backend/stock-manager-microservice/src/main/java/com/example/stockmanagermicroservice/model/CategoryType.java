@@ -1,8 +1,12 @@
 package com.example.stockmanagermicroservice.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CategoryType {
     private String name;
     private boolean requiresQrCode;
+    private List<String> specificationFields = new ArrayList<>();
 
     public CategoryType() {}
 
@@ -16,4 +20,7 @@ public class CategoryType {
 
     public boolean isRequiresQrCode() { return requiresQrCode; }
     public void setRequiresQrCode(boolean requiresQrCode) { this.requiresQrCode = requiresQrCode; }
+
+    public List<String> getSpecificationFields() { return specificationFields; }
+    public void setSpecificationFields(List<String> specificationFields) { this.specificationFields = specificationFields; }
 }
