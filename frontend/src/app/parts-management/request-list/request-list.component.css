@@ -1,7 +1,7 @@
 .requests-container {
   padding: 28px 32px;
   animation: fadeIn 0.5s ease-out;
-  background: linear-gradient(160deg, #f0f4ff 0%, #f8fafc 40%, #f0fdf4 100%);
+  background: transparent;
   min-height: 100vh;
   font-family: 'Inter', 'Segoe UI', sans-serif;
 }

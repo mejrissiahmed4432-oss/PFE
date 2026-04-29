@@ -48,7 +48,6 @@ public class ShelfService {
             shelf.setNb(shelfDetails.getNb());
             shelf.setMaxQte(shelfDetails.getMaxQte());
             shelf.setMinQte(shelfDetails.getMinQte());
-            shelf.setCurrentQte(shelfDetails.getCurrentQte());
             shelf.setEquipmentType(shelfDetails.getEquipmentType());
             updateShelfStatus(shelf);
             Shelf saved = shelfRepository.save(shelf);
@@ -72,8 +71,8 @@ public class ShelfService {
 
         shelfRepository.findById(id).ifPresent(shelf -> {
             notificationService.createNotification("Shelf Deleted: " + shelf.getNb(),
-                    "Shelf " + shelf.getNb() + " has been removed",
-                    "INFO", "SHELF", id, null, "STOCK_MANAGER");
+                    "Shelf " + shelf.getNb() + " has been removed from system",
+                    "WARNING", "SHELF", id, null, "STOCK_MANAGER");
         });
         shelfRepository.deleteById(id);
     }
@@ -100,19 +99,26 @@ public class ShelfService {
 
         // Generate System Alerts for stock issues
         if (shelf.getStatus() != null && !shelf.getStatus().equals(oldStatus)) {
+            String lowKey = "SHELF_LOW_" + shelf.getId();
+            String fullKey = "SHELF_FULL_" + shelf.getId();
+            String emptyKey = "SHELF_EMPTY_" + shelf.getId();
+            
             if ("LOW".equals(shelf.getStatus())) {
-                alertService.createAlert("Low Stock Alert: Shelf " + shelf.getNb(),
-                        "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") is running low on stock.",
-                        "ERROR", "STOCK", shelf.getId(), "STOCK_MANAGER");
+                alertService.triggerSystemAlert(lowKey, "SYSTEM", "MEDIUM", "ROLE", "STOCK_MANAGER", "Low Stock Alert: Shelf " + shelf.getNb(), "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") is running low on stock.");
+                alertService.resolveSystemAlert(fullKey);
+                alertService.resolveSystemAlert(emptyKey);
             } else if ("FULL".equals(shelf.getStatus())) {
-                alertService.createAlert("Shelf Full: Shelf " + shelf.getNb(),
-                        "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") has reached maximum capacity.",
-                        "ERROR", "STOCK", shelf.getId(), "STOCK_MANAGER");
+                alertService.triggerSystemAlert(fullKey, "SYSTEM", "MEDIUM", "ROLE", "STOCK_MANAGER", "Shelf Full: Shelf " + shelf.getNb(), "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") has reached maximum capacity.");
+                alertService.resolveSystemAlert(lowKey);
+                alertService.resolveSystemAlert(emptyKey);
             } else if ("EMPTY".equals(shelf.getStatus())) {
-                alertService.createAlert("Stock Empty Alert: Shelf " + shelf.getNb(),
-                        "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType()
-                                + ") is completely empty. restocking is needed.",
-                        "ERROR", "STOCK", shelf.getId(), "STOCK_MANAGER");
+                alertService.triggerSystemAlert(emptyKey, "SYSTEM", "HIGH", "ROLE", "STOCK_MANAGER", "Stock Empty Alert: Shelf " + shelf.getNb(), "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") is completely empty. restocking is needed.");
+                alertService.resolveSystemAlert(lowKey);
+                alertService.resolveSystemAlert(fullKey);
+            } else {
+                alertService.resolveSystemAlert(lowKey);
+                alertService.resolveSystemAlert(fullKey);
+                alertService.resolveSystemAlert(emptyKey);
             }
         }
     }

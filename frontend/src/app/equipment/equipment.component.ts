@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EquipmentListComponent } from './equipment-list/equipment-list.component';
 import { EquipmentFormComponent } from './equipment-form/equipment-form.component';
@@ -19,6 +19,7 @@ export class EquipmentComponent implements OnInit {
   mode: 'list' | 'form' = 'list';
   equipmentToEdit: Equipment | null = null;
   formViewOnly: boolean = false;
+  @Input() natureFilter: 'Asset' | 'Consumable' | '' = '';
   refreshFlag: number = 0;
   showWizard: boolean = false;
   wizardPrefillData: Equipment | null = null;
@@ -124,4 +125,3 @@ export class EquipmentComponent implements OnInit {
     }
   }
 }
-

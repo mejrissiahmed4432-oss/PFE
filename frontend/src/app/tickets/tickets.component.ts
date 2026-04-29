@@ -11,6 +11,7 @@ import { EquipmentCategory } from '../category-manager/category.model';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { PartRequestService } from '../parts-management/part-request.service';
 import { PartRequest } from '../parts-management/part-request.model';
+import { LiveWorkbenchComponent } from './live-workbench/live-workbench.component';
 
 export interface RepairHistoryEntry {
   issue: string;
@@ -45,7 +46,7 @@ export interface EquipmentWithHistory extends Equipment {
 @Component({
   selector: 'app-tickets',
   standalone: true,
-  imports: [CommonModule, FormsModule, DragDropModule],
+  imports: [CommonModule, FormsModule, DragDropModule, LiveWorkbenchComponent],
   templateUrl: './tickets.component.html',
   styleUrl: './tickets.component.css'
 })
@@ -102,32 +103,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
   workbenchTicket: Ticket | null = null;
   workbenchEquipment: EquipmentWithHistory | null = null;
 
-
-
-  // Kanban Checklist Tasks (session-only)
-  repairChecklist: { id: string; label: string; status: 'todo' | 'in-progress' | 'waiting' | 'testing' | 'done'; editing: boolean }[] = [];
-  newTaskLabel: string = '';
-  draggedTaskId: string | null = null;
-
-  // Notes
-  workNote: string = '';
-  showCancelConfirmation: boolean = false;
-  showCompleteConfirmation: boolean = false;
-  validationAlert: { title: string; message: string } | null = null;
-
-  // Parts Used (Workbench)
-  partsUsed: { name: string; qty: number; type?: string; specification?: string }[] = [];
-  inventorySearchQuery: string = '';
-  inventoryFilterCategory: string = '';
-  inventoryFilterType: string = '';
-  inventoryAvailableTypes: string[] = [];
-  showInventoryTable: boolean = true;
-  showSelectedParts: boolean = true;
-
-  // Timelines
-  workbenchTimeline: { event: string; status?: string; color: string; time: Date }[] = [];
-  showWorkbenchTimeline: boolean = true;
-
   // Technician Inventory
   userInventory: { 
     name: string; 
@@ -137,125 +112,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
     specification: string;
     brand?: string;
   }[] = [];
-
-  get inventoryCategories(): string[] {
-    const cats = this.userInventory.map(i => i.category).filter(c => !!c);
-    return Array.from(new Set(cats)).sort();
-  }
-
-  get filteredInventory(): any[] {
-    let result = [...this.userInventory];
-    
-    // Only show parts with quantity > 0
-    result = result.filter(p => p.totalQty > 0);
-    
-    if (this.inventoryFilterCategory) {
-      result = result.filter(p => p.category === this.inventoryFilterCategory);
-    }
-    
-    if (this.inventoryFilterType) {
-      result = result.filter(p => p.type === this.inventoryFilterType);
-    }
-    
-    if (this.inventorySearchQuery) {
-      const q = this.inventorySearchQuery.toLowerCase();
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(q) || 
-        p.specification.toLowerCase().includes(q) ||
-        (p.brand || '').toLowerCase().includes(q)
-      );
-    }
-    
-    return result;
-  }
-
-  onInventoryCategoryChange(): void {
-    this.inventoryFilterType = '';
-    const cat = this.categories.find(c => c.name === this.inventoryFilterCategory);
-    this.inventoryAvailableTypes = cat && cat.types ? cat.types.map(t => typeof t === 'string' ? t : t.name) : [];
-  }
-
-  isPartSelected(part: any): boolean {
-    return this.partsUsed.some(p => p.name === part.name && p.specification === part.specification);
-  }
-
-  togglePartUsed(part: any, event: any): void {
-    const checked = event.target.checked;
-    if (checked) {
-      const max = this.getPartMaxQty(part);
-      if (max < 1 || (part.status && part.status.toLowerCase() === 'in use')) {
-        this.validationAlert = {
-          title: max < 1 ? 'Out of Stock' : 'Part In Use',
-          message: max < 1 
-            ? `"${part.name}" is currently out of stock and cannot be used.`
-            : `"${part.name}" is already assigned to another machine (${part.assignedToEquipmentName || 'Unknown'}).`
-        };
-        if (event.target) event.target.checked = false;
-        return;
-      }
-      if (!this.isPartSelected(part)) {
-        this.partsUsed.push({ 
-          name: part.name, 
-          qty: 1, 
-          type: part.type, 
-          specification: part.specification 
-        });
-      }
-    } else {
-      this.partsUsed = this.partsUsed.filter(p => !(p.name === part.name && p.specification === part.specification));
-    }
-    this.workbenchTimeline.push({ 
-      event: `Part ${checked ? 'added' : 'removed'}: ${part.name}`, 
-      color: checked ? '#f59e0b' : '#ef4444', 
-      time: new Date() 
-    });
-    this.saveWorkbenchState();
-  }
-
-  updatePartUsedQty(part: any, newQty: number | string): void {
-    const qty = parseInt(newQty.toString(), 10) || 0;
-    const max = this.getPartMaxQty(part);
-    
-    if (qty > max) {
-      this.validationAlert = {
-        title: 'Stock Limit Exceeded',
-        message: `You requested ${qty} units of "${part.name}", but only ${max} are available. The quantity has been reset to the maximum available.`
-      };
-    }
-
-    const found = this.partsUsed.find(p => p.name === part.name && p.specification === part.specification);
-    if (found) {
-      const targetQty = Math.min(Math.max(1, qty), max);
-      // If we are setting it to the same value it already had (clamping), 
-      // Angular might not refresh the input field. We force it by toggling.
-      if (found.qty === targetQty && qty > max) {
-        found.qty = 0;
-        setTimeout(() => found.qty = targetQty, 0);
-      } else {
-        found.qty = targetQty;
-      }
-    }
-    this.saveWorkbenchState();
-  }
-
-  getPartMaxQty(part: any): number {
-    const invPart = this.userInventory.find(p => p.name === part.name && p.specification === part.specification);
-    return invPart ? invPart.totalQty : 999;
-  }
-
-  getPartUsedQty(part: any): number {
-    const found = this.partsUsed.find(p => p.name === part.name && p.specification === part.specification);
-    return found ? found.qty : 1;
-  }
-
-  // Kanban Columns Definition (Stable reference for CDK)
-  readonly checklistColumns = [
-    { key: 'todo', label: 'To Do', color: '#64748b', dotColor: '#94a3b8' },
-    { key: 'in-progress', label: 'In Progress', color: '#3b82f6', dotColor: '#3b82f6' },
-    { key: 'waiting', label: 'Waiting for Parts', color: '#f59e0b', dotColor: '#f59e0b' },
-    { key: 'testing', label: 'Testing', color: '#8b5cf6', dotColor: '#8b5cf6' },
-    { key: 'done', label: 'Done', color: '#10b981', dotColor: '#10b981' }
-  ];
 
   constructor(
     private ticketService: TicketService,
@@ -292,6 +148,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
     this.categoryService.getAllCategories().subscribe({
       next: (data) => {
         this.categories = data;
+        this.applyFilters();
       },
       error: (err) => console.error('Error loading categories', err)
     });
@@ -450,7 +307,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
         (e.equipmentName || '').toLowerCase().includes(q) ||
         (e.brand || '').toLowerCase().includes(q) ||
         (e.model || '').toLowerCase().includes(q) ||
-        (e.specification || '').toLowerCase().includes(q)
+        Object.values(e.specifications || {}).join(' ').toLowerCase().includes(q)
       );
     }
 
@@ -468,6 +325,20 @@ export class TicketsComponent implements OnInit, OnDestroy {
     // 4. Type filter
     if (this.filterType !== 'All Types' && this.filterType) {
       result = result.filter(e => e.type === this.filterType);
+    }
+
+    // 5. Exclude Consumables
+    if (this.categories && this.categories.length > 0) {
+      result = result.filter(e => {
+        const cat = this.categories.find(c => c.name === e.category);
+        if (cat && cat.types) {
+          const tInfo = cat.types.find(t => t.name === e.type);
+          if (tInfo && tInfo.nature === 'Consumable') {
+            return false;
+          }
+        }
+        return true;
+      });
     }
 
     this.filteredEquipments = result;
@@ -560,16 +431,53 @@ export class TicketsComponent implements OnInit, OnDestroy {
   handleQRUpload(event: any): void {
     const file = event.target.files[0];
     if (file) {
-      // Simulate QR reading finding EQ-001
-      this.filterSerial = 'EQ-001';
-      this.applyFilters();
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const image = new Image();
+        image.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = image.width;
+          canvas.height = image.height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return;
+          ctx.drawImage(image, 0, 0);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          
+          // Use the jsQR library we added to index.html
+          const code = (window as any).jsQR(imageData.data, imageData.width, imageData.height);
+          
+          if (code && code.data) {
+            let extractedSerial = code.data;
+            try {
+              // If it's a JSON string (our app's standard format)
+              const data = JSON.parse(code.data);
+              extractedSerial = data.serial || data.id || code.data;
+            } catch (e) {
+              // Not JSON, use raw string
+            }
 
-      const found = this.filteredEquipments.find(e => e.serialNumber === 'EQ-001');
-      if (found) {
-        this.selectEquipment(found);
-      }
+            console.log('Decoded QR Serial:', extractedSerial);
+            this.filterSerial = extractedSerial;
+            this.applyFilters();
+
+            // If we found matching equipment, select it automatically for a better UX
+            if (this.filteredEquipments.length > 0) {
+              // Try to find an exact match first
+              const exactMatch = this.filteredEquipments.find(eq => 
+                (eq.serialNumber || '').toLowerCase() === extractedSerial.toLowerCase() ||
+                eq.id === extractedSerial
+              );
+              this.selectEquipment(exactMatch || this.filteredEquipments[0]);
+            }
+          } else {
+            alert('QR Code not detected. Please ensure the image is clear and contains a valid code.');
+          }
+        };
+        image.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
-    // Reset file input
+    // Reset file input so same file can be uploaded again if needed
     event.target.value = '';
   }
 
@@ -581,13 +489,17 @@ export class TicketsComponent implements OnInit, OnDestroy {
   }
 
   hasActiveTicket(equipmentName: string | undefined): boolean {
-    if (!equipmentName) return false;
+    return !!this.getActiveTicketForEquipment(equipmentName);
+  }
+
+  getActiveTicketForEquipment(equipmentName: string | undefined): Ticket | null {
+    if (!equipmentName) return null;
     // Block if there is any ticket that is NOT Resolved, Closed, or Completed
     const inactiveStatuses = ['Resolved', 'Closed', 'Completed', 'Cancelled'];
-    return this.ticketsList.some(t =>
+    return this.ticketsList.find(t =>
       (t.equipmentName === equipmentName) &&
       !inactiveStatuses.includes(t.status || '')
-    );
+    ) || null;
   }
 
   // Ticket Creation Flow
@@ -695,16 +607,28 @@ export class TicketsComponent implements OnInit, OnDestroy {
         this.applyTicketFilters();
 
         if (!this.isEditMode && this.selectedEquipment) {
-          // Update status locally
+          // New ticket: Update status to In Maintenance
           this.selectedEquipment.status = 'In Maintenance';
           this.calculateEquipmentHistory(this.selectedEquipment);
 
-          // Persist status to backend
           const eqId = this.selectedEquipment.id || '';
           if (eqId) {
             this.equipmentService.updateEquipment(eqId, this.selectedEquipment).subscribe({
               next: () => console.log('Equipment status updated to In Maintenance'),
               error: (err) => console.error('Failed to update equipment status', err)
+            });
+          }
+        } else if (this.isEditMode && result.status && ['Closed', 'Resolved', 'Cancelled', 'Completed'].includes(result.status)) {
+          // Update ticket to finished status: Reset equipment to Available
+          const eq = this.equipments.find(e => e.name === result.equipmentName || e.equipmentName === result.equipmentName);
+          if (eq) {
+            eq.status = 'Available';
+            this.equipmentService.updateEquipment(eq.id!, eq).subscribe({
+              next: () => {
+                console.log('Equipment status reset to Available after ticket resolution/cancellation');
+                this.calculateEquipmentHistory(eq);
+              },
+              error: (err) => console.error('Failed to reset equipment status', err)
             });
           }
         }
@@ -730,10 +654,29 @@ export class TicketsComponent implements OnInit, OnDestroy {
   deleteTicket(id: string | undefined): void {
     if (!id || !window.confirm('Are you sure you want to delete this ticket?')) return;
 
+    // Find ticket first to get equipment name for status reset
+    const ticketToDelete = this.ticketsList.find(t => t.id === id);
+    const eqName = ticketToDelete?.equipmentName;
+
     this.ticketService.deleteTicket(id).subscribe({
       next: () => {
         // Remove from memory
         this.ticketsList = this.ticketsList.filter(t => t.id !== id);
+
+        // ── RESET EQUIPMENT STATUS TO AVAILABLE ──
+        if (eqName) {
+          const eq = this.equipments.find(e => e.name === eqName || e.equipmentName === eqName);
+          if (eq) {
+            eq.status = 'Available';
+            this.equipmentService.updateEquipment(eq.id!, eq).subscribe({
+              next: () => {
+                console.log('Equipment status reset to Available after ticket deletion');
+                this.calculateEquipmentHistory(eq);
+              },
+              error: (err) => console.error('Failed to reset equipment status', err)
+            });
+          }
+        }
 
         // Refresh detail state
         this.selectedTicket = null;
@@ -749,12 +692,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error deleting ticket', err);
-        // Fallback for demo
+        // Fallback for demo: still remove from list
         this.ticketsList = this.ticketsList.filter(t => t.id !== id);
         this.selectedTicket = null;
-        if (this.selectedEquipment) {
-          this.calculateEquipmentHistory(this.selectedEquipment);
-        }
         this.applyTicketFilters();
       }
     });
@@ -794,19 +734,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   startWorkbench(ticket: Ticket): void {
     this.workbenchTicket = { ...ticket };
     this.workbenchEquipment = this.selectedEquipment;
-    // Reset session state
-    this.repairChecklist = [];
-    this.newTaskLabel = '';
-    this.draggedTaskId = null;
-    this.workNote = '';
-    this.partsUsed = [];
-    this.inventorySearchQuery = '';
-    this.inventoryFilterCategory = '';
-    this.inventoryFilterType = '';
-    this.workbenchTimeline = [
-      { event: 'Ticket created', status: 'Open', color: '#3b82f6', time: ticket.createdAt ? new Date(ticket.createdAt) : new Date() },
-      { event: 'Workbench started', status: 'In Progress', color: '#10b981', time: new Date() }
-    ];
+    
     // Update ticket status to In Progress
     const updated: Ticket = { ...ticket, status: 'In Progress' };
     this.ticketService.updateTicket(ticket.id!, updated).subscribe({
@@ -818,171 +746,44 @@ export class TicketsComponent implements OnInit, OnDestroy {
       error: () => { }
     });
     this.showWorkbench = true;
-    this.loadWorkbenchState(ticket.id!);
   }
 
-  // ── Workbench Persistence ──
-  private saveWorkbenchState(): void {
+  onWorkbenchCancel(): void {
     if (!this.workbenchTicket?.id) return;
-    const state = {
-      repairChecklist: this.repairChecklist,
-      workNote: this.workNote,
-      partsUsed: this.partsUsed,
-      timeline: this.workbenchTimeline
-    };
-    if (this.workbenchTicket?.id) {
-      localStorage.setItem(`wb_state_${this.workbenchTicket.id}`, JSON.stringify(state));
-    }
-  }
+    
+    const eqName = this.workbenchTicket.equipmentName;
+    const ticketId = this.workbenchTicket.id;
 
-  private loadWorkbenchState(ticketId: string): void {
-    const saved = localStorage.getItem(`wb_state_${ticketId}`);
-    if (saved) {
-      try {
-        const state = JSON.parse(saved);
-        this.repairChecklist = state.repairChecklist || [];
-        this.workNote = state.workNote || '';
-        this.partsUsed = state.partsUsed || [];
-        this.workbenchTimeline = state.timeline || this.workbenchTimeline;
-      } catch (e) {
-        console.error('Failed to load workbench state', e);
+    this.ticketService.deleteTicket(ticketId).subscribe({
+      next: () => {
+        this.ticketsList = this.ticketsList.filter(t => t.id !== ticketId);
+        const eq = this.equipments.find(e => e.name === eqName || e.equipmentName === eqName);
+        if (eq) {
+          eq.status = 'Available';
+          this.equipmentService.updateEquipment(eq.id!, eq).subscribe({
+            next: () => {
+              this.calculateEquipmentHistory(eq);
+            }
+          });
+        }
+        this.applyTicketFilters();
+        this.calculateStats();
+        this.showWorkbench = false;
+        this.workbenchTicket = null;
+        this.viewMode = 'tickets';
       }
-    }
+    });
   }
 
-  private clearWorkbenchState(ticketId: string): void {
-    localStorage.removeItem(`wb_state_${ticketId}`);
-  }
-
-  exitWorkbench(): void {
-    this.saveWorkbenchState();
-    this.showWorkbench = false;
-    this.workbenchTicket = null;
-  }
-
-  // ── Kanban Checklist Methods ──
-
-  getTasksForColumn(col: string): typeof this.repairChecklist {
-    return this.repairChecklist.filter(t => t.status === col);
-  }
-
-  get checklistProgress(): number {
-    if (!this.repairChecklist.length) return 0;
-    return Math.round((this.repairChecklist.filter(c => c.status === 'done').length / this.repairChecklist.length) * 100);
-  }
-
-  get completedChecklistCount(): number {
-    return this.repairChecklist.filter(c => c.status === 'done').length;
-  }
-
-  addChecklistTask(): void {
-    const label = this.newTaskLabel.trim();
-    if (!label) return;
-    const newTask = { id: Date.now().toString(), label, status: 'todo' as const, editing: false };
-    this.repairChecklist.push(newTask);
-    this.workbenchTimeline.push({ event: `Task added: "${label}"`, color: '#3b82f6', time: new Date() });
-    this.newTaskLabel = '';
-    this.saveWorkbenchState();
-  }
-
-  deleteChecklistTask(id: string): void {
-    const task = this.repairChecklist.find(t => t.id === id);
-    this.repairChecklist = this.repairChecklist.filter(t => t.id !== id);
-    if (task) {
-      this.workbenchTimeline.push({ event: `Task removed: "${task.label}"`, color: '#ef4444', time: new Date() });
-      this.saveWorkbenchState();
-    }
-  }
-
-  startEditTask(id: string): void {
-    this.repairChecklist.forEach(t => t.editing = false);
-    const task = this.repairChecklist.find(t => t.id === id);
-    if (task) task.editing = true;
-  }
-
-  saveEditTask(id: string, newLabel: string): void {
-    const task = this.repairChecklist.find(t => t.id === id);
-    if (task) {
-      task.label = newLabel.trim() || task.label;
-      task.editing = false;
-      this.saveWorkbenchState();
-    }
-  }
-
-  moveTaskToColumn(id: string, status: 'todo' | 'in-progress' | 'waiting' | 'testing' | 'done'): void {
-    const task = this.repairChecklist.find(t => t.id === id);
-    if (!task || task.status === status) return;
-    task.status = status;
-    if (status === 'done') {
-      this.workbenchTimeline.push({ event: `Completed: "${task.label}"`, color: '#10b981', time: new Date() });
-    }
-    this.saveWorkbenchState();
-  }
-
-  // ── Angular CDK Drag & Drop handlers ──
-  onTaskDrop(event: CdkDragDrop<any[]>): void {
-    if (event.previousContainer === event.container) {
-      // Reordering in the same column
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      // Moving between columns
-      const task = event.item.data;
-      const newStatus = event.container.id as any; // We'll set column ID to the status key
-
-      this.moveTaskToColumn(task.id, newStatus);
-    }
-  }
-
-  onNoteChange(): void {
-    this.saveWorkbenchState();
-  }
-
-  // addPart was replaced by togglePartUsed in the inventory table.
-  
-  removePart(index: number): void {
-    this.partsUsed.splice(index, 1);
-    this.saveWorkbenchState();
-  }
-
-  completeRepair(): void {
+  onWorkbenchComplete(event: { workNote: string; repairTasks: any[]; partsUsed: any[] }): void {
     if (!this.workbenchTicket?.id) return;
     
-    // 1. Validation: Must have at least one task
-    if (this.repairChecklist.length === 0) {
-      this.validationAlert = {
-        title: 'Empty Checklist',
-        message: 'Your workbench checklist is empty. Please add at least one task or diagnostic step before completing the repair.'
-      };
-      return;
-    }
-
-    // 2. Validation: All tasks must be 'done'
-    const pendingTasks = this.repairChecklist.filter(t => t.status !== 'done');
-    if (pendingTasks.length > 0) {
-      this.validationAlert = {
-        title: 'Pending Tasks',
-        message: `There are ${pendingTasks.length} task(s) that are not yet completed. Please move them to the "Done" column or delete them to proceed.`
-      };
-      return;
-    }
-
-    this.showCompleteConfirmation = true;
-  }
-
-  closeValidationAlert(): void {
-    this.validationAlert = null;
-  }
-
-  confirmCompleteRepair(): void {
-    if (!this.workbenchTicket?.id) return;
-    
-    // Bundled session data
     const updated: Ticket = { 
       ...this.workbenchTicket, 
       status: 'Completed',
-      workNote: this.workNote,
-      repairTasks: this.repairChecklist.map(t => ({ label: t.label, status: t.status })),
-      partsUsed: this.partsUsed
+      workNote: event.workNote,
+      repairTasks: event.repairTasks,
+      partsUsed: event.partsUsed
     };
 
     this.ticketService.updateTicket(this.workbenchTicket.id, updated).subscribe({
@@ -990,115 +791,42 @@ export class TicketsComponent implements OnInit, OnDestroy {
         const idx = this.ticketsList.findIndex(t => t.id === res.id);
         if (idx !== -1) this.ticketsList[idx] = res;
 
-        // ── UPDATE EQUIPMENT STATUS TO AVAILABLE ──
         const eqName = res.equipmentName;
         const eq = this.equipments.find(e => e.name === eqName || e.equipmentName === eqName);
         if (eq) {
           eq.status = 'Available';
           this.equipmentService.updateEquipment(eq.id!, eq).subscribe({
-            next: () => {
-              console.log('Equipment status reset to Available');
-              this.calculateEquipmentHistory(eq); // Refresh history
-            },
-            error: (err) => console.error('Failed to update equipment status', err)
+            next: () => this.calculateEquipmentHistory(eq)
           });
         }
 
         this.applyTicketFilters();
-        this.clearWorkbenchState(this.workbenchTicket!.id!);
         this.showWorkbench = false;
+        this.workbenchTicket = null;
         this.selectedTicket = null;
         this.selectedEquipment = null;
-        this.workbenchTicket = null;
-        this.showCompleteConfirmation = false;
         
-        // ── CONSUME PARTS ──
-        if (this.partsUsed && this.partsUsed.length > 0) {
-          const consumed = this.partsUsed.map(p => ({
+        if (event.partsUsed && event.partsUsed.length > 0) {
+          const consumed = event.partsUsed.map(p => ({
             name: p.name,
-            type: p.type,
-            specification: p.specification,
             qty: p.qty,
+            specification: p.specification,
             assignedToEquipmentName: res.equipmentName,
             assignedToEquipmentId: this.workbenchEquipment?.id
           }));
           
           if (this.currentUser?.id) {
             this.partRequestService.consumeParts(this.currentUser.id, consumed).subscribe({
-              next: () => {
-                console.log('Parts consumed from technician inventory');
-                this.loadUserInventory(); // Refresh technician inventory
-              },
-              error: (err) => console.error('Error consuming parts from technician inventory', err)
+              next: () => this.loadUserInventory()
             });
           }
         }
-
-        // Return to my tickets view
         this.viewMode = 'tickets';
-      },
-      error: () => {
-        alert('Failed to update ticket status. Please try again.');
-        this.showCompleteConfirmation = false;
       }
     });
   }
 
-  closeCompleteConfirmation(): void {
-    this.showCompleteConfirmation = false;
-  }
 
-  cancelRepair(): void {
-    if (!this.workbenchTicket?.id) return;
-    this.showCancelConfirmation = true;
-  }
-
-  confirmCancelTicket(): void {
-    if (!this.workbenchTicket?.id) return;
-    
-    // Instead of updating status to Cancelled, we delete the ticket as requested
-    const eqName = this.workbenchTicket.equipmentName;
-    const ticketId = this.workbenchTicket.id;
-
-    this.ticketService.deleteTicket(ticketId).subscribe({
-      next: () => {
-        // Remove from local list
-        this.ticketsList = this.ticketsList.filter(t => t.id !== ticketId);
-        
-        // ── RESET EQUIPMENT STATUS ON CANCEL (DELETE) ──
-        const eq = this.equipments.find(e => e.name === eqName || e.equipmentName === eqName);
-        if (eq) {
-          eq.status = 'Available';
-          this.equipmentService.updateEquipment(eq.id!, eq).subscribe({
-            next: () => {
-              console.log('Equipment status reset to Available after cancellation');
-              this.calculateEquipmentHistory(eq);
-            },
-            error: (err) => console.error('Failed to reset equipment status', err)
-          });
-        }
-
-        this.applyTicketFilters();
-        this.calculateStats();
-        this.clearWorkbenchState(ticketId);
-        this.showWorkbench = false;
-        this.selectedTicket = null;
-        this.selectedEquipment = null;
-        this.workbenchTicket = null;
-        this.showCancelConfirmation = false;
-        
-        this.viewMode = 'tickets';
-      },
-      error: () => {
-        alert('Failed to cancel (delete) ticket. Please try again.');
-        this.showCancelConfirmation = false;
-      }
-    });
-  }
-
-  closeCancelConfirmation(): void {
-    this.showCancelConfirmation = false;
-  }
 
   reopenTicket(ticket: Ticket): void {
     if (!ticket.id) return;

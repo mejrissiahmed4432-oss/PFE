@@ -58,6 +58,16 @@ export class PartRequestWizardComponent implements OnInit {
   // Selection Filters
   selectedCategory: string = '';
   selectedType: string = '';
+  searchBrand: string = '';
+  searchSpec: string = '';
+
+  get displayedStockGroups(): StockGroup[] {
+    return this.availableStockGroups.filter(g => {
+      const matchBrand = !this.searchBrand || g.brand.toLowerCase().includes(this.searchBrand.toLowerCase());
+      const matchSpec = !this.searchSpec || (g.specification || '').toLowerCase().includes(this.searchSpec.toLowerCase());
+      return matchBrand && matchSpec;
+    });
+  }
 
   initialSelectionProcessed: boolean = false;
   categoriesLoaded: boolean = false;
@@ -156,10 +166,19 @@ export class PartRequestWizardComponent implements OnInit {
       // Update maxAvailable for any existing cart items (e.g. from editRequest)
       this.cart.forEach(item => {
         if (!item.isManual) {
-          const totalInSystem = this.allStock.filter(p => 
-            (p.equipmentName || p.type || '').trim() === item.partName &&
-            (p.specification || '').trim() === (item.specification || '').trim()
-          ).length;
+          const totalInSystem = this.allStock.filter(p => {
+            const pName = (p.equipmentName || p.type || '').trim();
+            let pSpec = '';
+            if (p.specifications && typeof p.specifications === 'object') {
+              pSpec = Object.entries(p.specifications)
+                .filter(([_, v]) => v !== null && v !== undefined && v !== '')
+                .map(([k, v]) => `${k}: ${v}`)
+                .join(', ');
+            } else if (p.specification) {
+              pSpec = (p.specification || '').toString().trim();
+            }
+            return pName === item.partName && pSpec === (item.specification || '').trim();
+          }).length;
           item.maxAvailable = totalInSystem;
           
           if (item.quantity > totalInSystem && totalInSystem > 0) {
@@ -205,20 +224,32 @@ export class PartRequestWizardComponent implements OnInit {
   }
 
   getPartStatus(item: any): string {
-    if (item.status) {
-      const s = item.status.toLowerCase();
-      // Explicitly check for available/in stock
-      if (s === 'available' || s === 'in stock') return 'Available';
-      
-      if (s === 'broken' || s === 'maintenance' || s === 'out of stock' || s === 'allocated' || s === 'installed' || s === 'assigned') {
-        return 'Unavailable';
-      }
+    const s = (item.status || '').toLowerCase().trim();
+    const shelf = (item.shelfId || '').trim();
+    
+    // 1. HARD BLOCK: If status is installed, assigned, or allocated, it is UNAVAILABLE
+    // We use keyword matching to be extra safe
+    if (s.includes('install') || s.includes('assign') || s.includes('allocat') || 
+        s === 'broken' || s === 'maintenance' || s === 'out of stock') {
+      return 'Unavailable';
     }
     
-    // Fallback: If it has a shelf and no blocking status, it's available
-    if (!item.shelfId || item.shelfId === 'OUT_OF_STOCK') return 'Unavailable';
+    // 2. HARD BLOCK: If it's linked to another piece of equipment, it's UNAVAILABLE
+    if (item.installedIn) {
+      return 'Unavailable';
+    }
+
+    // 3. HARD BLOCK: If it has no shelf ID, it's UNAVAILABLE
+    if (!shelf || shelf === '' || shelf === 'OUT_OF_STOCK') {
+      return 'Unavailable';
+    }
     
-    return 'Available';
+    // 4. Only 'available' or 'in stock' items with a valid shelf are Allowed
+    if (s === 'available' || s === 'in stock' || s === '') {
+      return 'Available';
+    }
+    
+    return 'Unavailable';
   }
 
   close(): void {
@@ -288,6 +319,8 @@ export class PartRequestWizardComponent implements OnInit {
     const selectedCat = this.categories.find(c => c.name === this.selectedCategory);
     this.availableTypes = selectedCat ? (selectedCat.types || []).map((t: any) => typeof t === 'string' ? t : t.name) : [];
     this.selectedType = '';
+    this.searchBrand = '';
+    this.searchSpec = '';
     this.availableStockGroups = [];
   }
 
@@ -315,7 +348,16 @@ export class PartRequestWizardComponent implements OnInit {
     filtered.forEach(item => {
       const eName = (item.equipmentName || item.type || '').trim();
       const eBrand = (item.brand || 'No Brand').trim();
-      const eSpec = (item.specification || '').trim();
+      
+      let eSpec = '';
+      if (item.specifications && typeof item.specifications === 'object') {
+        eSpec = Object.entries(item.specifications)
+          .filter(([_, v]) => v !== null && v !== undefined && v !== '')
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(', ');
+      } else if (item.specification) {
+        eSpec = (item.specification || '').toString().trim();
+      }
 
       const key = `${eName.toLowerCase()}|${eBrand.toLowerCase()}|${eSpec.toLowerCase()}`;
 
@@ -339,6 +381,13 @@ export class PartRequestWizardComponent implements OnInit {
     });
 
     this.availableStockGroups = Array.from(map.values()).map(group => {
+      // Sort items so the oldest is picked first
+      group.items.sort((a, b) => {
+        const d1 = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const d2 = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return d1 - d2;
+      });
+
       // Find matching items in cart (same name and spec), including manual entries from edit mode
       const cartQte = this.cart
         .filter(c => c.selected && c.partName === group.name && (c.specification || '') === (group.specification || ''))
@@ -467,7 +516,8 @@ export class PartRequestWizardComponent implements OnInit {
         message: 'Please select at least one item or fill out the specification.'
       };
     } else {
-      // Optional: Auto advance or show success logic
+      // Re-run type change logic to recalculate available stock based on the new cart contents
+      this.onTypeChange();
     }
   }
 

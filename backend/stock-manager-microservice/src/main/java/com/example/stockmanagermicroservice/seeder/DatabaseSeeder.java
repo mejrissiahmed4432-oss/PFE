@@ -1,8 +1,11 @@
 package com.example.stockmanagermicroservice.seeder;
 
+import com.example.stockmanagermicroservice.dto.ApplicationDTO;
 import com.example.stockmanagermicroservice.model.CategoryType;
 import com.example.stockmanagermicroservice.model.EquipmentCategory;
+import com.example.stockmanagermicroservice.repository.ApplicationRepository;
 import com.example.stockmanagermicroservice.repository.EquipmentCategoryRepository;
+import com.example.stockmanagermicroservice.service.ApplicationService;
 import org.bson.Document;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -53,6 +56,41 @@ public class DatabaseSeeder {
         };
     }
 
+    @Bean
+    CommandLineRunner initApplications(ApplicationRepository repository,
+                                       ApplicationService applicationService) {
+        return args -> {
+            if (repository.count() == 0) {
+                System.out.println("[Seeder] Seeding default Applications...");
+                
+                seedApp(applicationService, "Google Chrome", "v120.0", "Google", "Browser", "Free", null, 0);
+                seedApp(applicationService, "Visual Studio Code", "v1.85", "Microsoft", "Utility", "Free", null, 0);
+                seedApp(applicationService, "Microsoft Word", "v2024", "Microsoft", "Office", "Subscription", "XXXXX-XXXXX-XXXXX", 50);
+                seedApp(applicationService, "Adobe Photoshop", "v2024", "Adobe", "Utility", "Paid", "YYYYY-YYYYY-YYYYY", 10);
+                seedApp(applicationService, "Slack", "v4.36", "Slack Technologies", "Other", "Free", null, 0);
+                seedApp(applicationService, "Docker Desktop", "v4.26", "Docker Inc.", "Utility", "Free", null, 0);
+
+                System.out.println("[Seeder] Application seeding complete.");
+            } else {
+                System.out.println("[Seeder] Applications already exist. Skipping seed.");
+            }
+        };
+    }
+
+    private void seedApp(ApplicationService service, String name, String version, String vendor, 
+                         String category, String licenseType, String licenseKey, int totalLicenses) {
+        ApplicationDTO dto = new ApplicationDTO();
+        dto.setName(name);
+        dto.setVersion(version);
+        dto.setVendor(vendor);
+        dto.setCategory(category);
+        dto.setLicenseType(licenseType);
+        dto.setLicenseKey(licenseKey);
+        dto.setTotalLicenses(totalLicenses);
+        dto.setStatus("Active");
+        service.createApplication(dto);
+    }
+
     /**
      * Reads every raw document in equipment_categories. For each one, if the
      * 'types' array holds plain String entries, replaces them with
@@ -101,7 +139,7 @@ public class DatabaseSeeder {
         category.setName(name);
         category.setIcon(icon);
         List<CategoryType> types = typeNames.stream()
-                .map(t -> new CategoryType(t, requiresQrCode))
+                .map(t -> new CategoryType(t, requiresQrCode, "Asset"))
                 .collect(Collectors.toList());
         category.setTypes(types);
         return category;

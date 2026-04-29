@@ -24,11 +24,13 @@ import { RequestListComponent } from '../parts-management/request-list/request-l
 import { RequestManagerComponent } from '../parts-management/request-manager/request-manager.component';
 import { TicketsComponent } from '../tickets/tickets.component';
 import { ReportsComponent } from '../reports/reports.component';
+import { OsManagementComponent } from '../os-management/os-management.component';
+import { ApplicationManagementComponent } from '../application-management/application-management.component';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent],
   providers: [MessagingService],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
@@ -39,6 +41,8 @@ export class BoardComponent implements OnInit {
   isAssistantOpen: boolean = false;
   isSidebarCollapsed: boolean = false;
   activeTab: string = 'dashboard'; // Defaulting to dashboard for view
+  selectedNatureFilter: 'Asset' | 'Consumable' | '' = '';
+  selectedResourceFilter: string = '';
   unreadAlertsCount: number = 0;
   unreadMessagesCount: number = 0;
   private userSub: Subscription | undefined;
@@ -111,13 +115,17 @@ export class BoardComponent implements OnInit {
   }
 
   loadUnreadCount(): void {
+    if (!this.user) return;
+    const userId = this.user.id;
+    const role = this.user.role;
+
     // 1. Load System Alerts (Stock/Warranty/System)
-    this.alertService.getAlerts().subscribe(alerts => {
+    this.alertService.getAlerts(userId, role).subscribe(alerts => {
       this.unreadAlertsCount = alerts.filter(a => !a.read).length;
     });
 
     // 2. Load Notifications (CRUD/User Actions)
-    this.notificationService.getNotifications().subscribe(notifications => {
+    this.notificationService.getNotifications(userId, role).subscribe(notifications => {
       this.notificationsList = notifications
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .map(n => this.mapNotifToNotificationItem(n));
@@ -179,7 +187,8 @@ export class BoardComponent implements OnInit {
 
   markAllNotificationsAsRead(event: Event): void {
     event.stopPropagation();
-    this.notificationService.getUnreadNotifications().subscribe(notifications => {
+    if (!this.user) return;
+    this.notificationService.getUnreadNotifications(this.user.id, this.user.role).subscribe(notifications => {
       notifications.forEach(n => {
         this.notificationService.markAsRead(n.id).subscribe();
       });
@@ -222,7 +231,7 @@ export class BoardComponent implements OnInit {
     switch (this.activeTab) {
       case 'dashboard': return 'Dashboard';
       case 'stock': return 'Stock (Shelves)';
-      case 'equipment': return 'Equipment Management';
+      case 'equipment': return 'Inventory';
       case 'suppliers': return 'Suppliers';
       case 'orders': return 'Orders';
       case 'alerts': return 'Service Reminders';
@@ -232,7 +241,7 @@ export class BoardComponent implements OnInit {
       case 'categories': return 'Equipment Categories';
       case 'profile': return 'My Profile';
       case 'settings': return 'Account Settings';
-      case 'parts': return 'Parts Management';
+      case 'parts': return this.selectedResourceFilter ? `Resources - ${this.selectedResourceFilter}` : 'Resources';
       case 'requests': return 'My Part Requests';
       case 'manager-requests': return 'Incoming Part Requests';
       case 'tickets': return 'Support Tickets';
@@ -240,9 +249,23 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  clearFiltersAndGoToEquipment(): void {
+  clearFiltersAndGoToEquipment(nature: 'Asset' | 'Consumable' | '' = ''): void {
     this.equipmentService.setShelfFilter(null, null);
+    this.selectedNatureFilter = nature;
     this.activeTab = 'equipment';
+  }
+
+  setResourceFilter(filter: string): void {
+    if (filter === '') {
+      if (this.user?.role === 'IT_MANAGER') {
+        this.selectedResourceFilter = 'Operating Systems';
+      } else {
+        this.selectedResourceFilter = 'Parts';
+      }
+    } else {
+      this.selectedResourceFilter = filter;
+    }
+    this.activeTab = 'parts';
   }
 
   openMessages(): void {

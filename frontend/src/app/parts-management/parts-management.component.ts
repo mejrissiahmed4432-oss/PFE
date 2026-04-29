@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EquipmentService } from '../equipment/equipment.service';
@@ -39,6 +39,7 @@ export class PartsManagementComponent implements OnInit {
   parts: any[] = [];
   filteredParts: any[] = [];
   groupedParts: GroupedPart[] = [];
+  @Input() resourceFilter: string = '';
 
   myRequests: PartRequest[] = [];
 
@@ -98,6 +99,12 @@ export class PartsManagementComponent implements OnInit {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['resourceFilter']) {
+      this.applyFilters();
+    }
+  }
+
   loadSuppliers(): void {
     this.supplierService.getAllSuppliers().subscribe(data => this.suppliers = data);
   }
@@ -128,8 +135,6 @@ export class PartsManagementComponent implements OnInit {
         (r.items || [])
           .filter(item => !item.returned)
           .map(item => {
-          // For custom items that the manager has matched to a real stock item,
-          // show the matched equipment info instead of what the technician typed.
           const isMatched = !!item.equipmentId && !!item.matchedEquipmentName;
           return {
             ...r,
@@ -150,7 +155,47 @@ export class PartsManagementComponent implements OnInit {
           };
         })
       );
+
+      // Inject Mock Resources if real ones aren't found
+      this.injectMockResources();
+      
       this.applyFilters();
+    });
+  }
+
+  private injectMockResources(): void {
+    const mocks = [
+      // Operating Systems
+      { equipmentName: 'Windows 11 Pro (23H2)', category: 'Operating Systems', type: 'OS', brand: 'Microsoft', qte: 1, status: 'In stock', specification: 'Retail License' },
+      { equipmentName: 'Ubuntu 24.04 LTS', category: 'Operating Systems', type: 'OS', brand: 'Canonical', qte: 1, status: 'In stock', specification: 'Stable Release' },
+      
+      // Applications
+      { equipmentName: 'Adobe Creative Cloud', category: 'Applications', type: 'Software', brand: 'Adobe', qte: 5, status: 'In stock', specification: 'Suite 2024' },
+      { equipmentName: 'Microsoft Office 365', category: 'Applications', type: 'Software', brand: 'Microsoft', qte: 12, status: 'In stock', specification: 'Business Premium' },
+      
+      // Drivers
+      { equipmentName: 'NVIDIA RTX Drivers', category: 'Drivers', type: 'Driver', brand: 'NVIDIA', qte: 1, status: 'In stock', specification: 'Game Ready 555.xx' },
+      { equipmentName: 'Realtek Audio Driver', category: 'Drivers', type: 'Driver', brand: 'Realtek', qte: 1, status: 'In stock', specification: 'High Definition Audio' },
+      
+      // Tools
+      { equipmentName: 'WinDirStat', category: 'Tools', type: 'Utility', brand: 'Open Source', qte: 1, status: 'In stock', specification: 'Disk Usage Stats' },
+      { equipmentName: 'CPU-Z', category: 'Tools', type: 'Utility', brand: 'CPUID', qte: 1, status: 'In stock', specification: 'System Info' },
+      
+      // Other
+      { equipmentName: 'Company Email Signatures', category: 'Other', type: 'Asset', brand: 'Medina', qte: 1, status: 'In stock', specification: 'Standard Template' }
+    ];
+
+    // Only add mocks if we don't have real items for these categories
+    mocks.forEach(m => {
+      const exists = this.parts.some(p => p.category === m.category);
+      if (!exists) {
+        this.parts.push({
+          ...m,
+          requestId: 'mock-' + Math.random(),
+          isCustom: true,
+          isMatched: false
+        });
+      }
     });
   }
 
@@ -176,7 +221,25 @@ export class PartsManagementComponent implements OnInit {
       const matchCategory = !this.filterCategory || part.category === this.filterCategory;
       const matchType = !this.filterType || part.type === this.filterType;
 
-      return matchSearch && matchCategory && matchType;
+      // New Resource Filter Logic
+      let matchResource = true;
+      if (this.resourceFilter && this.resourceFilter !== 'Parts') {
+        // If filter is "Operating Systems", "Applications", etc.
+        // We look for categories or types that match
+        const filterLower = this.resourceFilter.toLowerCase();
+        matchResource = (part.category?.toLowerCase() === filterLower) || 
+                        (part.type?.toLowerCase() === filterLower) ||
+                        (part.equipmentName?.toLowerCase().includes(filterLower));
+      } else if (this.resourceFilter === 'Parts') {
+        // "Parts" refers to physical components, excluding Software/OS/Apps
+        const softwareTerms = ['os', 'operating system', 'application', 'app', 'driver', 'tool', 'software'];
+        matchResource = !softwareTerms.some(term => 
+          (part.category?.toLowerCase().includes(term)) || 
+          (part.type?.toLowerCase().includes(term))
+        );
+      }
+
+      return matchSearch && matchCategory && matchType && matchResource;
     });
 
     const groupsMap = new Map<string, GroupedPart>();
@@ -204,7 +267,14 @@ export class PartsManagementComponent implements OnInit {
 
     this.groupedParts = Array.from(groupsMap.values()).map(group => {
       const first = group.items[0];
-      group.commonLocation = group.items.every(i => i.shelfId === first.shelfId) ? this.getShelfLocation(first.shelfId) : 'Mixed';
+      const availableItems = group.items.filter(i => i.status === 'Available');
+      if (availableItems.length > 0) {
+        const firstAvail = availableItems[0];
+        const allSameShelf = availableItems.every(i => i.shelfId === firstAvail.shelfId);
+        group.commonLocation = allSameShelf ? this.getShelfLocation(firstAvail.shelfId, 'Available') : 'Mixed Shelves';
+      } else {
+        group.commonLocation = this.getShelfLocation(first.shelfId, first.status);
+      }
 
       const counts: Record<string, number> = {};
       group.items.forEach(i => {
@@ -252,8 +322,12 @@ export class PartsManagementComponent implements OnInit {
     group.expanded = !group.expanded;
   }
 
-  getShelfLocation(shelfId?: string): string {
-    if (!shelfId) return 'Unassigned';
+  getShelfLocation(shelfId?: string, status?: string): string {
+    if (!shelfId) {
+      if (status === 'Allocated') return 'Allocated (Not on Shelf)';
+      if (status === 'Assigned' || status === 'Installed') return 'Installed (Not on Shelf)';
+      return 'Unassigned';
+    }
     const s = this.shelves.find(x => x.id === shelfId);
     return s ? `Shelf ${s.nb}` : 'Unknown';
   }

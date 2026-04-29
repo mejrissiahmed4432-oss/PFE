@@ -110,6 +110,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
                 const exactTypeMatch = this.availableTypes.find(t => t.name.toLowerCase().trim() === currentType);
                 if (exactTypeMatch) {
                   this.formData.type = exactTypeMatch.name;
+                  this.syncSpecificationsWithSchema();
                 }
               } else {
                 // Fallback for types not in any functional category
@@ -148,12 +149,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
         purchaseDate: this.formatDate(new Date()),
         warrantyExpiration: '',
         createdBy: this.currentUserName,
-        cpu: '',
-        ram: '',
-        storage: '',
-        graphicsCard: '',
-        operatingSystem: '',
-        specification: '',
+        specifications: {},
         invoiceRef: '',
         status: 'Available'
       };
@@ -169,7 +165,38 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   onTypeChange(): void {
     if (!this.formData.type) return;
+    
+    // Update specifications based on type schema
+    const typeObj = this.availableTypes.find(t => t.name === this.formData.type);
+    if (typeObj && typeObj.specificationFields) {
+      const currentSpecs = { ...(this.formData.specifications || {}) };
+      const newSpecs: Record<string, string> = {};
+      typeObj.specificationFields.forEach(field => {
+        newSpecs[field] = currentSpecs[field] || '';
+      });
+      this.formData.specifications = newSpecs;
+    }
+
     this.loadAvailableShelves();
+  }
+
+  syncSpecificationsWithSchema(): void {
+    if (!this.formData.type) return;
+
+    const typeObj = this.availableTypes.find(t => t.name === this.formData.type);
+    if (typeObj && typeObj.specificationFields) {
+      const currentSpecs = { ...(this.formData.specifications || {}) };
+      const newSpecs: Record<string, string> = { ...currentSpecs };
+      
+      // Ensure all fields from the current schema exist in the specifications object
+      typeObj.specificationFields.forEach(field => {
+        if (!(field in newSpecs)) {
+          newSpecs[field] = '';
+        }
+      });
+      
+      this.formData.specifications = newSpecs;
+    }
   }
 
   onCategoryChange(): void {
@@ -328,7 +355,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   }
 
   get isFormInvalid(): boolean {
-    const isBasicInfoMissing = !this.formData.equipmentName || !this.formData.brand || !this.isSerialNumberValid() || !this.formData.specification;
+    const isBasicInfoMissing = !this.formData.equipmentName || !this.formData.brand || !this.isSerialNumberValid();
     const isShelfMissingForInStock = (this.formData.status === 'Available' || this.formData.status === 'In Stock') && (!this.formData.shelfId || this.formData.shelfId === '');
     return isBasicInfoMissing || isShelfMissingForInStock || !this.isSNAvailable || this.isCheckingSN;
   }
@@ -577,8 +604,12 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     a.click();
   }
 
-  getShelfLocation(shelfId?: string): string {
-    if (!shelfId || shelfId === '') return 'Unassigned';
+  getShelfLocation(shelfId?: string, status?: string): string {
+    if (!shelfId || shelfId === '') {
+      if (status === 'Allocated') return 'Allocated (Not on Shelf)';
+      if (status === 'Assigned' || status === 'Installed') return 'Installed (Not on Shelf)';
+      return 'Unassigned';
+    }
     if (shelfId === 'MAINTENANCE_AREA') return 'Maintenance Area';
     if (shelfId === 'SCRAP_YARD') return 'Scrap Yard';
     if (shelfId === 'OUT_OF_STOCK') return 'Out of Stock';
@@ -645,6 +676,10 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   }
 
   isComputerCategory(): boolean {
+    // Show specs tab if there are dynamic specifications defined
+    if (this.formData.specifications && Object.keys(this.formData.specifications).length > 0) {
+      return true;
+    }
     const type = this.formData.type || '';
     const category = this.formData.category?.toUpperCase() || '';
     return category === 'DEVICE' || category === 'SERVER' || ['pc', 'laptop', 'server', 'tablet', 'phone'].includes(type);
@@ -673,5 +708,9 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   isLegacyType(): boolean {
     if (!this.formData.type || !this.availableTypes) return false;
     return !this.availableTypes.some(t => t.name === this.formData.type);
+  }
+
+  trackByKey(index: number, item: any): string {
+    return item.key;
   }
 }

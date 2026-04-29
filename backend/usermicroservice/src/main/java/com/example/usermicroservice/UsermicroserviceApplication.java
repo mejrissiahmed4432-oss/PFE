@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@org.springframework.data.mongodb.config.EnableMongoAuditing
 @SpringBootApplication
 @RestController
 public class UsermicroserviceApplication {

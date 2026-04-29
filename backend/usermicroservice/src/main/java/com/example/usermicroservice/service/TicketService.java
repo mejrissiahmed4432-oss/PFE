@@ -1,6 +1,9 @@
 package com.example.usermicroservice.service;
 
 import com.example.usermicroservice.model.Ticket;
+import com.example.usermicroservice.model.AlertType;
+import com.example.usermicroservice.model.AlertPriority;
+import com.example.usermicroservice.model.TargetType;
 import com.example.usermicroservice.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -110,12 +113,34 @@ public class TicketService {
                 }
 
                 // If cancelled, alert STOCK_MANAGER
-                if (updated.getStatus().equalsIgnoreCase("Cancelled")) {
-                    alertService.createAlert(
+                if ("Cancelled".equalsIgnoreCase(updated.getStatus())) {
+                    alertService.createOrUpdateAlert(
+                        "TICKET_CANCELLED_" + updated.getId(),
+                        "SYSTEM",
+                        "HIGH",
+                        "ROLE",
+                        "STOCK_MANAGER",
                         "Ticket Cancelled",
-                        "The ticket '" + updated.getTitle() + "' for equipment '" + updated.getEquipmentName() + "' was cancelled.",
-                        "ERROR", "MAINTENANCE", updated.getId(), null, "STOCK_MANAGER"
+                        "The ticket '" + updated.getTitle() + "' for equipment '" + updated.getEquipmentName() + "' was cancelled."
                     );
+                }
+
+                // If overdue, trigger alert
+                if ("Overdue".equalsIgnoreCase(updated.getStatus())) {
+                    alertService.createOrUpdateAlert(
+                        "TICKET_OVERDUE_" + updated.getId(),
+                        "TICKET_OVERDUE",
+                        "HIGH",
+                        "ROLE",
+                        "STOCK_MANAGER",
+                        "Ticket Overdue: " + updated.getTitle(),
+                        "Ticket ID " + updated.getId() + " has been marked as overdue."
+                    );
+                }
+
+                // If resolved or closed, resolve the overdue alert if it exists
+                if ("Resolved".equalsIgnoreCase(updated.getStatus()) || "Closed".equalsIgnoreCase(updated.getStatus())) {
+                    alertService.resolveAlert("TICKET_OVERDUE_" + updated.getId());
                 }
             }
             

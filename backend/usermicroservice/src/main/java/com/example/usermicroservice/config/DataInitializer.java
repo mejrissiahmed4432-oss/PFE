@@ -20,14 +20,14 @@ public class DataInitializer {
     CommandLineRunner initDatabase(UserRepository repository) {
         return args -> {
            
-            String adminEmail = "ahmed@gmail.com";
+            String adminEmail = "ali@gmail.com";
             if (repository.findByEmail(adminEmail).isEmpty()) {
                 User admin = new User(
-                    "ahmed",
+                    "ali",
                     "mejrissi", 
                     adminEmail, 
                     passwordEncoder.encode("1234656Aa"), 
-                    Role.STOCK_MANAGER
+                    Role.IT_MANAGER
                 );
 
 

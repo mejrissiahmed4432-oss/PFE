@@ -663,3 +663,16 @@ th.actions-cell {
   background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
   transform: translateY(-1px);
 }
+.nature-selector{display:flex;gap:12px;margin-top:8px}
+.nature-option{flex:1;display:flex;align-items:center;gap:12px;padding:12px;background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;cursor:pointer;transition:.2s;position:relative}
+.nature-option:hover{border-color:#cbd5e1;background:#f1f5f9}
+.nature-option.active{border-color:#3b82f6;background:#eff6ff}
+.nature-icon{width:36px;height:36px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#64748b;border:1px solid #e2e8f0}
+.nature-option.active .nature-icon{color:#3b82f6;border-color:#bfdbfe}
+.nature-info{display:flex;flex-direction:column;gap:2px}
+.nature-title{font-size:.9rem;font-weight:700;color:#1e293b}
+.nature-desc{font-size:.75rem;color:#64748b}
+.nature-check{position:absolute;top:-8px;right:-8px;width:20px;height:20px;background:#3b82f6;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(59,130,246,.3)}
+
+.nature-badge{font-size:.65rem;padding:2px 6px;border-radius:4px;background:#f1f5f9;color:#64748b;font-weight:600;text-transform:uppercase;margin-left:4px;letter-spacing:.02em}
+.nature-badge.cons{background:#fef3c7;color:#92400e}

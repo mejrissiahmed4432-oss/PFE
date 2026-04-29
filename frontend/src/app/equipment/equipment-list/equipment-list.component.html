@@ -263,7 +263,7 @@
                         {{ getEquipmentStatus(item).label }}
                       </span>
                     </td>
-                    <td>{{ getShelfLocation(item.shelfId) }}</td>
+                    <td>{{ getShelfLocation(item.shelfId, item.status) }}</td>
                     <td>{{ item.supplier || '—' }}</td>
 
                     <td class="actions-cell">
@@ -473,7 +473,7 @@
             </div>
             <div class="info-block" style="grid-column: span 2;">
               <span class="label">Location</span>
-              <span class="value font-medium">{{ getShelfLocation(group.items[0].shelfId) }}</span>
+              <span class="value font-medium">{{ getShelfLocation(group.items[0].shelfId, group.items[0].status) }}</span>
             </div>
           </div>
         </div>

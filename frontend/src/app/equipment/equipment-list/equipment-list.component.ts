@@ -82,6 +82,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   filterShelfId: string | null = null;
   filterShelfNb: string | null = null;
   filterSelectedShelf: string = '';
+  @Input() natureFilter: 'Asset' | 'Consumable' | '' = '';
 
   // QR Modal state
   qrModalEquipment: Equipment | null = null;
@@ -123,6 +124,9 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['refreshTrigger'] && !changes['refreshTrigger'].firstChange) {
       this.loadEquipments();
+    }
+    if (changes['natureFilter']) {
+      this.applyFilters();
     }
   }
 
@@ -194,8 +198,9 @@ export class EquipmentListComponent implements OnInit, OnChanges {
       const matchDate = this.filterPurchaseDate ? (eq.purchaseDate && eq.purchaseDate.startsWith(this.filterPurchaseDate)) : true;
       const matchShelf = this.filterShelfId ? eq.shelfId === this.filterShelfId : true;
       const matchSelectedShelf = this.filterSelectedShelf ? eq.shelfId === this.filterSelectedShelf : true;
+      const matchNature = this.natureFilter ? this.getNatureByType(eq.type) === this.natureFilter : true;
       
-      return matchSearch && matchCategory && matchType && matchSupplier && matchDate && matchShelf && matchSelectedShelf;
+      return matchSearch && matchCategory && matchType && matchSupplier && matchDate && matchShelf && matchSelectedShelf && matchNature;
     });
 
     // 2. Group the filtered results
@@ -245,7 +250,17 @@ export class EquipmentListComponent implements OnInit, OnChanges {
 
       group.commonSupplier = group.items.every(item => item.supplier === first.supplier) ? (first.supplier || '—') : '—';
       group.commonPurchaseDate = group.items.every(item => item.purchaseDate === first.purchaseDate) ? (first.purchaseDate || '') : '';
-      group.commonLocation = group.items.every(item => item.shelfId === first.shelfId) ? this.getShelfLocation(first.shelfId) : 'Mixed';
+      // Calculate common location: prioritize the physical shelf of Available items
+      const availableItems = group.items.filter(item => this.getEquipmentStatus(item).label === 'Available');
+      if (availableItems.length > 0) {
+        const firstAvail = availableItems[0];
+        const allSameShelf = availableItems.every(item => item.shelfId === firstAvail.shelfId);
+        group.commonLocation = allSameShelf ? this.getShelfLocation(firstAvail.shelfId, 'Available') : 'Mixed Shelves';
+      } else {
+        // No available items, show location of the first allocated/installed unit
+        group.commonLocation = this.getShelfLocation(first.shelfId, first.status);
+      }
+
       group.commonWarranty = group.items.every(item => item.warrantyExpiration === first.warrantyExpiration) ? (first.warrantyExpiration || '') : '';
       group.commonModel = group.items.every(item => item.model === first.model) ? (first.model || '—') : 'Mixed';
 
@@ -258,9 +273,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
         item.model === first.model &&
         item.purchasePrice === first.purchasePrice &&
         item.category === first.category &&
-        item.cpu === first.cpu &&
-        item.ram === first.ram &&
-        item.storage === first.storage
+        JSON.stringify(item.specifications || {}) === JSON.stringify(first.specifications || {})
       );
 
       // Status Summary — capture all unique status results
@@ -533,8 +546,12 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     return { label: 'Available', cls: 'active' };
   }
 
-  getShelfLocation(shelfId?: string): string {
-    if (!shelfId || shelfId === '') return 'Unassigned';
+  getShelfLocation(shelfId?: string, status?: string): string {
+    if (!shelfId || shelfId === '') {
+      if (status === 'Allocated') return 'Allocated (Not on Shelf)';
+      if (status === 'Assigned' || status === 'Installed') return 'Installed (Not on Shelf)';
+      return 'Unassigned';
+    }
     if (shelfId === 'MAINTENANCE_AREA') return 'Maintenance Area';
     if (shelfId === 'SCRAP_YARD') return 'Scrap Yard';
     if (shelfId === 'OUT_OF_STOCK') return 'Out of Stock';
@@ -573,5 +590,27 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     }
 
     return eq.category || 'Asset';
+  }
+
+  getNatureByType(typeName: string | undefined): string {
+    if (!typeName) return 'Asset';
+    const typeLower = typeName.toLowerCase();
+    
+    for (const cat of this.categoriesList) {
+      const foundType = cat.types?.find(t => t.name.toLowerCase() === typeLower);
+      if (foundType && foundType.nature) {
+        return foundType.nature;
+      }
+    }
+    
+    // Fallback logic for common types if nature is not set yet
+    if (['laptop', 'computer', 'server', 'router', 'printer', 'monitor', 'ups'].some(t => typeLower.includes(t))) {
+      return 'Asset';
+    }
+    if (['ram', 'hdd', 'ssd', 'cable', 'battery', 'mouse', 'keyboard'].some(t => typeLower.includes(t))) {
+      return 'Consumable';
+    }
+    
+    return 'Asset';
   }
 }

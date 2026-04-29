@@ -2,6 +2,7 @@ package com.example.usermicroservice.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -11,39 +12,51 @@ public class Alert {
     @Id
     private String id;
     
+    @Indexed
+    private String key; // Unique deterministic key for deduplication (e.g., LOW_STOCK_item_123)
+    
     private String title;
     private String message;
-    private String type; // e.g., WARNING, INFO, ERROR, SUCCESS
-    private String category; // e.g., WARRANTY, STOCK, MAINTENANCE
-    private String recipientId; // Optional: specific user
-    private String targetRole; // Optional: specific role
-    private boolean read;
-    private String relatedId; // ID of the equipment or supplier related to this alert
+    
+    private String type;
+    private String priority;
+    
+    @Indexed
+    private String status; // ACTIVE or RESOLVED
+    
+    private String targetType; // USER or ROLE
+    private String targetId; // userId or roleName (e.g., "STOCK_MANAGER")
+    
+    // Optional metadata
+    private String category;
+    private String relatedId;
     
     @CreatedDate
     private LocalDateTime createdAt;
+    private LocalDateTime lastSentAt;
+    private LocalDateTime resolvedAt;
 
     public Alert() {}
 
-    public Alert(String title, String message, String type, String category, String relatedId) {
-        this(title, message, type, category, relatedId, null, null);
-    }
-
-    public Alert(String title, String message, String type, String category, String relatedId, String recipientId, String targetRole) {
+    public Alert(String key, String title, String message, String type, String priority, String targetType, String targetId) {
+        this.key = key;
         this.title = title;
         this.message = message;
         this.type = type;
-        this.category = category;
-        this.relatedId = relatedId;
-        this.recipientId = recipientId;
-        this.targetRole = targetRole;
-        this.read = false;
+        this.priority = priority;
+        this.status = "ACTIVE";
+        this.targetType = targetType;
+        this.targetId = targetId;
         this.createdAt = LocalDateTime.now();
+        this.lastSentAt = LocalDateTime.now();
     }
 
     // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+
+    public String getKey() { return key; }
+    public void setKey(String key) { this.key = key; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -53,22 +66,28 @@ public class Alert {
 
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
+    public String getPriority() { return priority; }
+    public void setPriority(String priority) { this.priority = priority; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public String getTargetType() { return targetType; }
+    public void setTargetType(String targetType) { this.targetType = targetType; }
+
+    public String getTargetId() { return targetId; }
+    public void setTargetId(String targetId) { this.targetId = targetId; }
 
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
-
-    public boolean isRead() { return read; }
-    public void setRead(boolean read) { this.read = read; }
-
-    public String getRecipientId() { return recipientId; }
-    public void setRecipientId(String recipientId) { this.recipientId = recipientId; }
-
-    public String getTargetRole() { return targetRole; }
-    public void setTargetRole(String targetRole) { this.targetRole = targetRole; }
 
     public String getRelatedId() { return relatedId; }
     public void setRelatedId(String relatedId) { this.relatedId = relatedId; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getLastSentAt() { return lastSentAt; }
+    public void setLastSentAt(LocalDateTime lastSentAt) { this.lastSentAt = lastSentAt; }
+
+    public LocalDateTime getResolvedAt() { return resolvedAt; }
+    public void setResolvedAt(LocalDateTime resolvedAt) { this.resolvedAt = resolvedAt; }
 }

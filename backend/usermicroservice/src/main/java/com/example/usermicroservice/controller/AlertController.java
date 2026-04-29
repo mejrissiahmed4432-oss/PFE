@@ -16,30 +16,52 @@ public class AlertController {
     @Autowired
     private AlertService alertService;
 
+    @Autowired
+    private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
+    
     @GetMapping
-    public ResponseEntity<List<Alert>> getAllAlerts(
+    public ResponseEntity<?> getAllAlerts(
             @RequestParam(required = false) String userId,
             @RequestParam(required = false) String role) {
-        return ResponseEntity.ok(alertService.getAllAlerts(userId, role));
+        try {
+            return ResponseEntity.ok(alertService.getAllAlerts(userId, role));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error fetching alerts: " + e.getMessage());
+        }
     }
 
-    @GetMapping("/unread")
-    public ResponseEntity<List<Alert>> getUnreadAlerts(
+    @GetMapping("/active")
+    public ResponseEntity<?> getActiveAlerts(
             @RequestParam(required = false) String userId,
             @RequestParam(required = false) String role) {
-        return ResponseEntity.ok(alertService.getUnreadAlerts(userId, role));
+        try {
+            return ResponseEntity.ok(alertService.getActiveAlerts(userId, role));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error fetching active alerts: " + e.getMessage());
+        }
     }
 
-    @PutMapping("/{id}/read")
-    public ResponseEntity<Alert> markAsRead(@PathVariable String id) {
-        return ResponseEntity.ok(alertService.markAsRead(id));
+    @GetMapping("/debug/raw")
+    public ResponseEntity<?> getRawAlerts() {
+        try {
+            return ResponseEntity.ok(mongoTemplate.findAll(java.util.Map.class, "alerts"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 
-    @PutMapping("/read-all")
-    public ResponseEntity<Void> markAllAsRead(
+    @PutMapping("/{id}/resolve")
+    public ResponseEntity<Alert> markAsResolved(@PathVariable String id) {
+        return ResponseEntity.ok(alertService.markAsResolved(id));
+    }
+
+    @PutMapping("/resolve-all")
+    public ResponseEntity<Void> markAllAsResolved(
             @RequestParam(required = false) String userId,
             @RequestParam(required = false) String role) {
-        alertService.markAllAsRead(userId, role);
+        alertService.markAllAsResolved(userId, role);
         return ResponseEntity.ok().build();
     }
 
@@ -49,22 +71,30 @@ public class AlertController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping
-    public ResponseEntity<Void> createAlert(@RequestBody java.util.Map<String, String> body) {
-        String title    = body.getOrDefault("title", "Notification");
-        String message  = body.getOrDefault("message", "");
-        String type     = body.getOrDefault("type", "INFO");
-        String category = body.getOrDefault("category", "TASK");
-        String relatedId = body.get("relatedId");
-        String recipientId = body.get("recipientId");
-        String targetRole = body.get("targetRole");
+    // New internal robust alert endpoint
+    @PostMapping("/system")
+    public ResponseEntity<Void> createOrUpdateSystemAlert(@RequestBody java.util.Map<String, String> body) {
+        String key = body.get("key");
+        if (key == null || key.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        String type = body.getOrDefault("type", "SYSTEM");
+        String priority = body.getOrDefault("priority", "MEDIUM");
+        String targetType = body.getOrDefault("targetType", "ROLE");
+        String targetId = body.get("targetId");
+        String title = body.getOrDefault("title", "System Alert");
+        String message = body.getOrDefault("message", "");
         
-        System.out.println("[AlertController] Received internal alert request:");
-        System.out.println("  Title: " + title);
-        System.out.println("  Recipient: " + recipientId);
-        System.out.println("  Target Role: " + targetRole);
-        
-        alertService.createAlert(title, message, type, category, relatedId, recipientId, targetRole);
+        System.out.println("[AlertController] System alert triggered: " + key);
+        alertService.createOrUpdateAlert(key, type, priority, targetType, targetId, title, message);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/system/{key}/resolve")
+    public ResponseEntity<Void> resolveSystemAlert(@PathVariable String key) {
+        System.out.println("[AlertController] System alert resolved: " + key);
+        alertService.resolveAlert(key);
         return ResponseEntity.ok().build();
     }
 

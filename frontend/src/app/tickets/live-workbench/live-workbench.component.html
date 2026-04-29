@@ -1,0 +1,566 @@
+<div class="wb-container">
+
+  <!-- HEADER -->
+  <div class="wb-card wb-header-card">
+    <div class="header-left">
+      <button class="back-btn" (click)="suspend()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <div class="header-title-group">
+        <h2 class="title">Live Workbench</h2>
+        <p class="subtitle">{{ getEquipmentName() }} · {{ getEquipmentType() }}</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="status-badge active">Active</span>
+      <button class="btn-cancel-styled" (click)="showCancelDialog = true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+        Cancel Ticket
+      </button>
+    </div>
+  </div>
+
+  <!-- STEPPER -->
+  <div class="wb-card wb-stepper-card">
+    <nav class="wb-stepper">
+      <ng-container *ngFor="let step of steps; let i = index">
+        <div class="wb-step-item" [class.active]="state.currentStep === step.key" [class.completed]="isStepCompleted(step.key)" (click)="goToStep(step.key)">
+          <div class="wb-step-circle">
+            <span *ngIf="isStepCompleted(step.key)">✓</span>
+            <span *ngIf="!isStepCompleted(step.key)">{{ i + 1 }}</span>
+          </div>
+          <span class="wb-step-label">{{ step.label }}</span>
+        </div>
+        <div class="wb-step-connector" *ngIf="i < steps.length - 1" [class.completed]="isStepCompleted(step.key)"></div>
+      </ng-container>
+    </nav>
+  </div>
+
+  <!-- TWO-COLUMN LAYOUT -->
+  <div class="wb-main-layout">
+    <div class="wb-column-main">
+
+      <!-- Equipment Info Card (Diagnosis only) -->
+      <div *ngIf="state.currentStep === 'diagnosis'" class="equipment-info-card">
+        <div class="eic-header">
+          <div class="eic-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+          </div>
+          <div class="eic-details">
+            <h3>{{ getEquipmentName() }}</h3>
+            <p>{{ getEquipmentType() }}</p>
+            <div class="eic-meta">
+              <span class="eic-sn">SN: {{ equipment.serialNumber || 'N/A' }}</span>
+              <span class="eic-brand" *ngIf="equipment.brand">{{ equipment.brand }}</span>
+              <span class="eic-model" *ngIf="equipment.model">{{ equipment.model }}</span>
+            </div>
+          </div>
+          <div class="eic-status"><span class="status-badge maintenance">In Maintenance</span></div>
+        </div>
+
+        <div class="eic-specs-section" *ngIf="equipment.specifications && (equipment.specifications | keyvalue).length > 0">
+          <div class="specs-grid">
+            <div class="spec-item" *ngFor="let spec of equipment.specifications | keyvalue">
+              <span class="spec-label">{{ spec.key }}</span>
+              <span class="spec-value">{{ spec.value }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="eic-problem">
+          <div class="problem-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <strong>Problem</strong>
+          </div>
+          <p>{{ ticket.description || 'No description provided.' }}</p>
+        </div>
+      </div>
+
+      <!-- MAIN CARD -->
+      <div class="wb-card wb-content-card">
+        <div *ngIf="isLoading" class="wb-loading">
+          <div class="wb-spinner"></div>
+          <p>Configuring workbench...</p>
+        </div>
+
+        <div *ngIf="!isLoading" class="wb-body">
+          <!-- Step Progress Header -->
+          <div class="step-progress-header">
+            <h3 class="step-progress-title">{{ currentStepLabel }}</h3>
+            <div class="progress-line-container">
+              <div class="progress-line-fill" [style.width.%]="getProgressPercentage()"></div>
+            </div>
+          </div>
+
+          <div class="step-error-alert" *ngIf="stepError">{{ stepError }}</div>
+
+          <!-- ── STEP 1: DIAGNOSIS ── -->
+          <div *ngIf="state.currentStep === 'diagnosis'" class="wb-step-view">
+           
+
+            <div class="diagnosis-form-group">
+              <label>Diagnosis Result <span class="required">*</span></label>
+              <textarea class="diag-textarea" [(ngModel)]="state.diagnosisResult" placeholder="Enter your diagnosis..."></textarea>
+            </div>
+
+            <div class="diagnosis-form-group">
+              <label>Category</label>
+              <div class="category-grid">
+                <div class="category-chip" *ngFor="let cat of availableCategories" [class.active]="hasCategory(cat.id)" (click)="toggleCategory(cat.id)">
+                  <span class="cat-icon">{{ cat.icon }}</span>
+                  <span class="cat-label">{{ cat.label }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="diagnosis-form-group">
+              <label>Additional Notes</label>
+              <textarea class="diag-textarea" [(ngModel)]="state.additionalNotes" placeholder="Any additional observations..."></textarea>
+            </div>
+          </div>
+
+          <!-- ── STEP 2: PLAN ACTIONS ── -->
+          <div *ngIf="state.currentStep === 'plan'" class="wb-step-view">
+            <div class="plan-header">
+              <button class="btn-add-action" (click)="addAction()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Add Action
+              </button>
+            </div>
+
+            <div *ngIf="state.actions.length === 0" class="empty-state">
+              <p>No actions planned yet. Click "Add Action" to begin.</p>
+            </div>
+
+            <div class="action-cards-list">
+              <div class="action-plan-card" *ngFor="let action of state.actions; trackBy: trackById">
+                <div class="apc-body">
+                  <div class="apc-icon">{{ getCategoryIcon(action.category) }}</div>
+                  <div class="apc-fields">
+                    <div class="apc-row-2">
+                      <div class="apc-field">
+                        <label>Category</label>
+                        <select [(ngModel)]="action.category" (ngModelChange)="updateAction(action.id, 'category', $event)">
+                          <option *ngFor="let cat of ALL_ACTION_CATEGORIES" [value]="cat">{{ cat }}</option>
+                        </select>
+                      </div>
+                      <div class="apc-field">
+                        <label>Action Type</label>
+                        <select [(ngModel)]="action.type">
+                          <option *ngFor="let t of getActionTypesForCategory(action.category)" [value]="t">{{ t }}</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="apc-row-2">
+                      <div class="apc-field">
+                        <label>Target</label>
+                        <input type="text" [(ngModel)]="action.target" placeholder="e.g., RAM, OS, Network Config">
+                      </div>
+                    </div>
+                    <div class="apc-field full">
+                      <label>Description</label>
+                      <textarea [(ngModel)]="action.description" placeholder="Describe the action..."></textarea>
+                    </div>
+                    <div class="apc-footer">
+                      <span class="action-status-badge" [class]="getStatusClass(action.status)">{{ action.status }}</span>
+                      <button class="btn-delete-action" (click)="removeAction(action.id)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── STEP 3: RESOURCES ── -->
+          <div *ngIf="state.currentStep === 'resources'" class="wb-step-view">
+            <div *ngIf="state.actions.length === 0" class="empty-state">
+              <p>No actions planned. Please complete the previous step first.</p>
+            </div>
+
+            <div *ngIf="state.actions.length > 0" class="resource-split-view">
+              <!-- Left: Actions List -->
+              <div class="resource-sidebar">
+                <h4 class="resource-side-title">Actions</h4>
+                <div class="resource-action-list">
+                  <button *ngFor="let action of state.actions" 
+                          class="res-action-item" 
+                          [class.active]="selectedActionId === action.id"
+                          (click)="selectActionForResources(action.id)">
+                    <div class="ra-main">{{ action.type }} {{ action.target }}</div>
+                    <div class="ra-sub">{{ action.category }}</div>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right: Resource Content -->
+              <div class="resource-main-content">
+                <div *ngIf="!selectedAction" class="resource-placeholder">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                  <p>Select an action to view required resources</p>
+                </div>
+
+                <div *ngIf="selectedAction">
+                  <!-- Hardware Case -->
+                  <div *ngIf="selectedAction.category === 'Hardware' || selectedAction.category === 'Consumables' || selectedAction.category === 'Storage'">
+                    <div class="res-header">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                      <h4>Hardware Parts Inventory</h4>
+                    </div>
+                    <div class="res-items-grid">
+                      <div *ngFor="let part of userInventory" class="res-card-item">
+                        <div class="rc-info">
+                          <p class="rc-name">{{ part.name }}</p>
+                          <p class="rc-location">Location: {{ part.location || 'Section A-1' }}</p>
+                        </div>
+                        <span class="rc-stock">Stock: {{ part.totalQty }}</span>
+                      </div>
+                      <div *ngIf="userInventory.length === 0" class="res-empty-box">No parts found in inventory for this category.</div>
+                    </div>
+                  </div>
+
+                  <!-- Software Case -->
+                  <div *ngIf="selectedAction.category === 'Software' || selectedAction.category === 'Firmware'">
+                    <div class="res-header">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                      <h4>Software & Packages</h4>
+                    </div>
+                    <div class="res-items-grid">
+                      <div class="res-card-item">
+                        <div class="rc-info">
+                          <p class="rc-name">Windows 11 Pro</p>
+                          <p class="rc-location">Version: 23H2</p>
+                        </div>
+                      </div>
+                      <div class="res-card-item">
+                        <div class="rc-info">
+                          <p class="rc-name">Ubuntu Server</p>
+                          <p class="rc-location">Version: 22.04 LTS</p>
+                        </div>
+                      </div>
+                      <div class="res-card-item">
+                        <div class="rc-info">
+                          <p class="rc-name">Network Drivers Pack</p>
+                          <p class="rc-location">Version: v2.1</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Config Case -->
+                  <div *ngIf="selectedAction.category === 'Configuration' || selectedAction.category === 'Network' || selectedAction.category === 'Security'">
+                    <div class="res-header">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                      <h4>Configuration Settings</h4>
+                    </div>
+                    <div class="res-form-list">
+                      <div class="res-form-field">
+                        <label>IP Address</label>
+                        <input type="text" placeholder="192.168.1.100">
+                      </div>
+                      <div class="res-form-field">
+                        <label>DNS Server</label>
+                        <input type="text" placeholder="8.8.8.8">
+                      </div>
+                      <div class="res-form-field">
+                        <label>VLAN ID</label>
+                        <input type="text" placeholder="100">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Default/Others -->
+                  <div *ngIf="!['Hardware', 'Software', 'Configuration', 'Network', 'Security', 'Firmware', 'Consumables', 'Storage'].includes(selectedAction.category)" class="resource-placeholder">
+                    <p>No specific resources cataloged for {{ selectedAction.category }} actions.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── STEP 4: EXECUTION ── -->
+          <div *ngIf="state.currentStep === 'execution'" class="wb-step-view">
+            <div *ngIf="state.actions.length === 0" class="empty-state">
+              <p>No actions to execute. Please plan actions first.</p>
+            </div>
+
+            <div class="exec-progress-bar-wrap" *ngIf="state.actions.length > 0">
+              <div class="exec-progress-label">
+                <span>Progress</span>
+                <span>{{ executionProgress }}%</span>
+              </div>
+              <div class="exec-progress-track"><div class="exec-progress-fill" [style.width.%]="executionProgress"></div></div>
+            </div>
+
+            <div class="exec-cards-list">
+              <div *ngFor="let action of state.actions; trackBy: trackById" class="exec-action-card" [class.exec-planned]="action.status === 'Planned'" [class.exec-inprogress]="action.status === 'In Progress'" [class.exec-done]="action.status === 'Done'">
+                <div class="exec-card-top">
+                  <div class="exec-cat-icon">{{ getCategoryIcon(action.category) }}</div>
+                  <div class="exec-card-info">
+                    <div class="exec-title-row">
+                      <h4>{{ action.type }} {{ action.target }}</h4>
+                      <select [(ngModel)]="action.status" (ngModelChange)="setActionStatus(action, $event)" class="exec-status-select">
+                        <option value="Planned">Planned</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Done">Done</option>
+                      </select>
+                    </div>
+                    <p class="exec-desc">{{ action.description }}</p>
+                    <button class="exec-toggle-btn" (click)="toggleExecutionExpand(action)">
+                      {{ action.expandedInExecution ? '▲ Hide Instructions' : '▼ Show Step-by-Step Instructions' }}
+                    </button>
+                  </div>
+                </div>
+                <div class="exec-instructions" *ngIf="action.expandedInExecution">
+                  <h5>Step-by-Step Instructions</h5>
+                  <ol>
+                    <li *ngFor="let inst of getInstructions(action); let i = index">
+                      <span class="inst-num">{{ i + 1 }}</span>
+                      <span>{{ inst }}</span>
+                    </li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── STEP 5: VALIDATION ── -->
+          <div *ngIf="state.currentStep === 'validation'" class="wb-step-view">
+            <div class="validation-card">
+              <div class="validation-card-header">
+                
+                <div class="val-progress-info">
+                  <span>{{ validationProgress.checked }} / {{ validationProgress.total }} completed</span>
+                  <span class="all-validated-badge" *ngIf="validationProgress.allDone">✓ All Validated</span>
+                </div>
+              </div>
+              <div class="validation-list">
+                <div class="val-check-row" *ngFor="let item of state.validationChecklist; let i = index">
+                  <button class="val-check-btn" [class.checked]="item.checked" (click)="toggleValidation(item)">
+                    <div class="vcb-circle">
+                      <svg *ngIf="item.checked" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                    <span class="vcb-label">{{ item.label }}</span>
+                  </button>
+                  <button class="val-delete-btn" (click)="removeValidationItem(i)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="val-add-section">
+                <div class="val-input-group">
+                  <input type="text" [(ngModel)]="newCheckLabel" (keyup.enter)="addValidationItem()" placeholder="Describe a new validation check...">
+                  <button class="btn-add-val" (click)="addValidationItem()">Add Check</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="validation-notes-card">
+              <label>Validation Notes</label>
+              <textarea [(ngModel)]="state.validationNotes" placeholder="Add any observations, test results, or concerns..."></textarea>
+            </div>
+
+            <div class="val-warning" *ngIf="!validationProgress.allDone">
+              ⚠️ All validation checks must be completed before proceeding to summary.
+            </div>
+          </div>
+
+          <!-- ── STEP 6: SUMMARY ── -->
+          <div *ngIf="state.currentStep === 'summary'" class="wb-step-view">
+            <div class="summary-card">
+              <div class="summary-section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                
+              </div>
+
+              <div class="summary-device-grid">
+                <div class="summary-info-box">
+                  <p class="sib-label">Device Name</p>
+                  <p class="sib-value">{{ getEquipmentName() }}</p>
+                </div>
+                <div class="summary-info-box">
+                  <p class="sib-label">Brand / Model</p>
+                  <p class="sib-value">{{ equipment.brand || '–' }} {{ equipment.model || '' }}</p>
+                </div>
+                <div class="summary-info-box">
+                  <p class="sib-label">Serial Number</p>
+                  <p class="sib-value">{{ equipment.serialNumber || 'N/A' }}</p>
+                </div>
+                <div class="summary-info-box">
+                  <p class="sib-label">Categories</p>
+                  <p class="sib-value">{{ state.diagnosisCategories.join(', ') || '–' }}</p>
+                </div>
+              </div>
+
+              <div class="summary-subsection">
+                <h4>Problem & Diagnosis</h4>
+                <div class="summary-box red">
+                  <p class="sb-label">Original Problem</p>
+                  <p>{{ ticket.description }}</p>
+                </div>
+                <div class="summary-box blue">
+                  <p class="sb-label">Diagnosis Result</p>
+                  <p>{{ state.diagnosisResult }}</p>
+                </div>
+              </div>
+
+              <div class="summary-subsection" *ngIf="completedActions.length > 0">
+                <h4>Actions Performed</h4>
+                <div class="summary-action-item" *ngFor="let action of completedActions">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <div>
+                    <p class="sa-title">{{ action.type }} {{ action.target }}</p>
+                    <p class="sa-desc">{{ action.description }}</p>
+                  </div>
+                </div>
+                <p *ngIf="completedActions.length === 0" class="empty-text">No actions were completed.</p>
+              </div>
+
+              <div class="summary-subsection">
+                <h4>Before vs After</h4>
+                <div class="before-after-row">
+                  <div class="ba-box red">
+                    <p class="ba-label">Before</p>
+                    <p>Device experiencing reported issues</p>
+                  </div>
+                  <span class="ba-arrow">→</span>
+                  <div class="ba-box green">
+                    <p class="ba-label">After</p>
+                    <p>{{ completedActions.length > 0 ? 'Repaired with ' + completedActions.length + ' action(s)' : 'No changes made' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="final-report-card">
+              <label>Final Technician Report</label>
+              <textarea [(ngModel)]="state.summaryNote" placeholder="Provide a comprehensive final report..."></textarea>
+            </div>
+
+            <div class="ready-banner">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <div>
+                <h5>Ready to Complete</h5>
+                <p>All workflow steps completed. Review the summary and click "Finish & Close" when ready.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <footer class="wb-footer" *ngIf="!isLoading">
+          <button class="btn-secondary" (click)="prevStep()" [disabled]="stepIndex === 0">Previous</button>
+          <button class="btn-primary" *ngIf="stepIndex < steps.length - 1" (click)="nextStep()">Continue →</button>
+          <button class="btn-complete" *ngIf="state.currentStep === 'summary'" (click)="showCompleteDialog = true">Finish & Close</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="wb-column-sidebar">
+      <div class="wb-card wb-combined-sidebar">
+        <div class="sidebar-section">
+          <div class="side-title-group">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <h3 class="side-title">Notes</h3>
+          </div>
+          <div class="notes-input-wrapper">
+            <textarea [(ngModel)]="state.globalNotes" placeholder="Add notes about this maintenance ticket..."></textarea>
+          </div>
+          <div class="notes-autosave-label">Auto-saved</div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="sidebar-section">
+          <div class="side-title-group">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <h3 class="side-title">Timeline</h3>
+          </div>
+          <div class="timeline-container">
+            <div class="timeline-scroll-area">
+              <div class="timeline-item" *ngFor="let item of state.timeline">
+              <div class="timeline-icon-wrap">
+                <!-- Ticket Created -->
+                <svg *ngIf="item.icon === 'edit'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <!-- Assigned -->
+                <svg *ngIf="item.icon === 'user'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <!-- Diagnosis / Search -->
+                <svg *ngIf="item.icon === 'search'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <!-- Check -->
+                <svg *ngIf="item.icon === 'check-circle'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <!-- Info -->
+                <svg *ngIf="item.icon === 'info'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-title">{{ item.title }}</div>
+                <div class="timeline-time">{{ item.time }}</div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANCEL DIALOG -->
+  <div class="wb-modal-overlay" *ngIf="showCancelDialog" (click)="showCancelDialog = false">
+    <div class="wb-modal" (click)="$event.stopPropagation()">
+      <h3>Discard Changes?</h3>
+      <p>Are you sure you want to cancel? All unsaved progress will be permanently lost.</p>
+      <div class="modal-btns">
+        <button class="btn-text" (click)="showCancelDialog = false">Keep Working</button>
+        <button class="btn-danger" (click)="confirmCancel()">Discard Progress</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLETE DIALOG -->
+  <div class="wb-modal-overlay" *ngIf="showCompleteDialog" (click)="showCompleteDialog = false">
+    <div class="wb-modal" (click)="$event.stopPropagation()">
+      <h3>Complete Maintenance?</h3>
+      <p>This will finalize the workbench and mark the ticket as resolved.</p>
+      <div class="modal-btns">
+        <button class="btn-text" (click)="showCompleteDialog = false">Cancel</button>
+        <button class="btn-complete" (click)="confirmComplete()">Confirm & Complete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM ALERT DIALOG -->
+  <div class="wb-modal-overlay" *ngIf="customAlert" (click)="closeAlert()">
+    <div class="wb-modal alert-modal" (click)="$event.stopPropagation()">
+      <div class="alert-icon-wrap">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      </div>
+      <h3>{{ customAlert.title }}</h3>
+      <p>{{ customAlert.message }}</p>
+      <div class="modal-btns">
+        <button class="btn-primary" (click)="closeAlert()">Understood</button>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -20,12 +20,7 @@ export interface UnitRow {
   name: string;
   brand: string;
   model: string;
-  cpu: string;
-  ram: string;
-  storage: string;
-  graphicsCard: string;
-  operatingSystem: string;
-  networkInterface: string;
+  specifications: { [key: string]: string };
   serialNumber: string;
   purchaseDate: string;
   supplierId: string;
@@ -44,7 +39,7 @@ export interface UnitRow {
   selectedForGeneralSync?: boolean;
   selectedForSpecSync?: boolean;
   selectedForSN?: boolean;
-  specification?: string;
+
 }
 
 // ─── Component ────────────────────────────────────────────────────────────
@@ -92,13 +87,8 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
 
   // ── Step 2: Specifications ────────────────────────────────────────────
   specMode: 'same' | 'different' = 'same';
-  sharedCpu: string = '';
-  sharedRam: string = '';
-  sharedStorage: string = '';
-  sharedGpu: string = '';
-  sharedOs: string = '';
-  sharedNetInterface: string = '';
-  sharedSpecification: string = '';
+  sharedSpecifications: { [key: string]: string } = {};
+  specKeys: string[] = [];
   sharedSerial: string = '';
 
   // ── Step 4: Purchase Info ─────────────────────────────────────────────
@@ -156,7 +146,12 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.supplierService.getAllSuppliers().subscribe({ next: d => this.suppliers = d });
-    this.categoryService.getAllCategories().subscribe({ next: d => this.categories = d });
+    this.categoryService.getAllCategories().subscribe({ next: d => {
+      this.categories = d;
+      if (this.prefillData) {
+        this.populateFromPrefill(this.prefillData);
+      }
+    }});
     this.sharedPurchaseDate = new Date().toISOString().split('T')[0];
 
     // ─── SN Uniqueness Validation Pipeline (Robust) ────────────────────────
@@ -221,12 +216,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.sharedModel = data.model || '';
     this.sharedNotes = data.note || '';
     // Specs
-    this.sharedCpu = data.cpu || '';
-    this.sharedRam = data.ram || '';
-    this.sharedStorage = data.storage || '';
-    this.sharedGpu = data.graphicsCard || '';
-    this.sharedOs = data.operatingSystem || '';
-    this.sharedSpecification = data.specification || '';
+    this.sharedSpecifications = data.specifications ? { ...data.specifications } : {};
     // Purchase
     this.sharedPurchaseDate = data.purchaseDate ? data.purchaseDate.toString().split('T')[0] : '';
     this.sharedSupplierId = data.supplierId || '';
@@ -259,6 +249,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.purchaseMode = 'same';
     this.warrantyMode = 'shared';
     this.currentStep = 0;
+    this.updateSpecKeys();
     this.validateStockCapacity();
   }
 
@@ -326,6 +317,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     if (this.type && !this.availableTypes.map(t => t.name.toLowerCase()).includes(this.type.toLowerCase())) {
       this.type = '';
     }
+    this.updateSpecKeys();
     this.validateStockCapacity();
   }
 
@@ -338,7 +330,33 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     } else {
       this.category = 'Asset';
     }
+    this.updateSpecKeys();
     this.validateStockCapacity();
+  }
+
+  private updateSpecKeys(): void {
+    if (this.type && this.availableTypes) {
+      const selectedTypeObj = this.availableTypes.find(t => t.name === this.type);
+      this.specKeys = selectedTypeObj?.specificationFields || [];
+    } else {
+      this.specKeys = [];
+    }
+    
+    // Initialize keys in sharedSpecifications if missing
+    this.specKeys.forEach(k => {
+      if (this.sharedSpecifications[k] === undefined) {
+        this.sharedSpecifications[k] = '';
+      }
+    });
+    
+    // Initialize in all units
+    this.units.forEach(u => {
+      this.specKeys.forEach(k => {
+        if (u.specifications[k] === undefined) {
+          u.specifications[k] = '';
+        }
+      });
+    });
   }
 
   onQuantityChange(): void {
@@ -385,7 +403,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   private emptyUnit(): UnitRow {
     return {
       name: '', brand: '', model: '',
-      cpu: '', ram: '', storage: '', graphicsCard: '', operatingSystem: '', networkInterface: '',
+      specifications: {},
       serialNumber: '',
       purchaseDate: this.sharedPurchaseDate, supplierId: '', supplier: '', purchasePrice: 0, invoiceRef: '',
       warrantyEnd: '',
@@ -595,10 +613,10 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         ? !!this.sharedName && !!this.sharedBrand
         : this.units.every(u => !!u.name && !!u.brand);
       case 2:
-        if (this.specMode === 'same' || this.quantity === 1) return !!this.sharedSpecification;
+        if (this.specMode === 'same' || this.quantity === 1) return true;
         return this.units.every(u => {
           const sn = u.serialNumber;
-          return !!u.specification && !!sn && this.isValidSerialNumber(sn) && this.isSNUnique(sn) && !this.isSNChecking(sn);
+          return !!sn && this.isValidSerialNumber(sn) && this.isSNUnique(sn) && !this.isSNChecking(sn);
         });
       case 3:
         if (this.quantity === 1) return this.isValidSerialNumber(this.sharedSerial) && this.isSNUnique(this.sharedSerial) && !this.isSNChecking(this.sharedSerial);
@@ -790,12 +808,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         warrantyFileName: this.warrantyMode === 'shared' ? this.sharedWarrantyFileName : u.warrantyFileName,
         warrantyFileData: this.warrantyMode === 'shared' ? this.sharedWarrantyFileData : u.warrantyFileData,
         // Specs use specMode, independently of configMode
-        cpu: specSame ? this.sharedCpu : u.cpu,
-        ram: specSame ? this.sharedRam : u.ram,
-        storage: specSame ? this.sharedStorage : u.storage,
-        graphicsCard: specSame ? this.sharedGpu : u.graphicsCard,
-        operatingSystem: specSame ? this.sharedOs : u.operatingSystem,
-        specification: specSame ? this.sharedSpecification : u.specification,
+        specifications: specSame ? { ...this.sharedSpecifications } : { ...u.specifications },
         department: 'stock',
         status: 'Available',
         shelfId: '' // assigned below
@@ -821,11 +834,27 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.saveError = '';
     const payloads = this.buildPayloads();
 
+    const doBulkSave = (finalPayloads: Equipment[]) => {
+      this.equipmentService.createBulkEquipment(finalPayloads).subscribe({
+        next: () => {
+          this.isSaving = false;
+          this.closeEvent.emit(true);
+          this.reset();
+        },
+        error: err => {
+          this.isSaving = false;
+          this.saveError = 'Failed to save equipment batch. Please try again.';
+          console.error(err);
+        }
+      });
+    };
+
     if (this.typeRequiresQr) {
       // Generate QR codes for all payloads before saving
       const qrPromises = payloads.map((p, i) => {
-        // Use a placeholder id for QR content (will be replaced by backend id)
-        const tempId = `QR-${Date.now()}-${i}`;
+        // Use a placeholder id for QR content (will be replaced by backend id if needed, 
+        // but frontend usually generates based on name/serial)
+        const tempId = `NEW-${Date.now()}-${i}`;
         return this.generateQRCodeDataUrl(p, tempId).then(url => {
           p.qrCode = url;
           return p;
@@ -833,20 +862,12 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
       });
 
       Promise.all(qrPromises).then(updatedPayloads => {
-        const requests: Observable<Equipment>[] = updatedPayloads.map(p => this.equipmentService.createEquipment(p));
-        forkJoin(requests).subscribe({
-          next: () => { this.isSaving = false; this.closeEvent.emit(true); this.reset(); },
-          error: err => { this.isSaving = false; this.saveError = 'Failed to save some equipment. Please try again.'; console.error(err); }
-        });
+        doBulkSave(updatedPayloads);
       });
     } else {
-      // No QR codes — explicit override to do not generate
+      // No QR codes — explicit override
       payloads.forEach(p => { p.qrCode = 'NONE'; });
-      const requests: Observable<Equipment>[] = payloads.map(p => this.equipmentService.createEquipment(p));
-      forkJoin(requests).subscribe({
-        next: () => { this.isSaving = false; this.closeEvent.emit(true); this.reset(); },
-        error: err => { this.isSaving = false; this.saveError = 'Failed to save some equipment. Please try again.'; console.error(err); }
-      });
+      doBulkSave(payloads);
     }
   }
 
@@ -854,9 +875,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.currentStep = 0; this.quantity = 1; this.category = 'Asset';
     this.type = ''; this.configMode = 'same'; this.specMode = 'same';
     this.sharedName = ''; this.sharedBrand = ''; this.sharedModel = ''; this.sharedNotes = '';
-    this.sharedCpu = ''; this.sharedRam = ''; this.sharedStorage = '';
-    this.sharedGpu = ''; this.sharedOs = ''; this.sharedNetInterface = '';
-    this.sharedSpecification = '';
+    this.sharedSpecifications = {}; this.specKeys = [];
     this.sharedSerial = '';
     this.purchaseMode = 'same';
     this.sharedPurchaseDate = new Date().toISOString().split('T')[0];
@@ -899,7 +918,9 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         serial: serial,
         brand: this.configMode === 'same' ? (this.sharedBrand || '-') : (u?.brand || '-'),
         model: this.configMode === 'same' ? (this.sharedModel || '-') : (u?.model || '-'),
-        specs: this.specMode === 'same' ? (this.sharedSpecification || '-') : (u?.specification || '-')
+        specs: this.specMode === 'same' 
+          ? (Object.values(this.sharedSpecifications).filter(v => !!v).join(', ') || '-') 
+          : (Object.values(u?.specifications || {}).filter(v => !!v).join(', ') || '-')
       };
     });
   }
@@ -1104,13 +1125,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         const sourceIndex = this.units.findIndex((u, i) => i !== index && u.selectedForSpecSync);
         if (sourceIndex > -1) {
           const src = this.units[sourceIndex];
-          unit.cpu = src.cpu;
-          unit.ram = src.ram;
-          unit.storage = src.storage;
-          unit.graphicsCard = src.graphicsCard;
-          unit.operatingSystem = src.operatingSystem;
-          unit.networkInterface = src.networkInterface;
-          unit.specification = src.specification;
+          unit.specifications = { ...src.specifications };
         }
       }
     } else if (type === 'purchase') {
@@ -1149,9 +1164,8 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
           break;
         case 'specs':
           if (u.selectedForSpecSync) {
-            u.cpu = ''; u.ram = ''; u.storage = '';
-            u.graphicsCard = ''; u.operatingSystem = ''; u.networkInterface = '';
-            u.specification = '';
+            u.specifications = {};
+            this.specKeys.forEach(k => u.specifications[k] = '');
             u.serialNumber = '';
           }
           break;

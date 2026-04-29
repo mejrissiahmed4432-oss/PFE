@@ -16,9 +16,14 @@
 
   <!-- List -->
   <div class="content" *ngIf="mode === 'list'">
-    <app-equipment-list [refreshTrigger]="refreshFlag" (editEvent)="openEdit($event)" (viewEvent)="openView($event)"
-      (addSimilarEvent)="openAddSimilar($event)">
-    </app-equipment-list>
+      <app-equipment-list 
+        *ngIf="mode === 'list'" 
+        [refreshTrigger]="refreshFlag" 
+        [natureFilter]="natureFilter"
+        (editEvent)="openEdit($event)" 
+        (viewEvent)="openView($event)"
+        (addSimilarEvent)="openAddSimilar($event)">
+      </app-equipment-list>
   </div>
 
   <!-- Form (Edit / View only — Add now uses wizard) -->

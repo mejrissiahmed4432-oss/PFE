@@ -1,6 +1,6 @@
 .equipment-container {
   padding: 32px;
-  background-color: #f8fafc;
+  background-color: transparent;
   min-height: calc(100vh - 80px);
   animation: fadeIn 0.4s ease-out;
   font-family: 'Inter', sans-serif;
