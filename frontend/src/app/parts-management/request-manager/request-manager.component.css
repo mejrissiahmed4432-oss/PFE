@@ -5,7 +5,7 @@
 .manager-container {
   padding: 28px 32px;
   min-height: 100vh;
-  background: linear-gradient(160deg, #f0f4ff 0%, #f8fafc 40%, #f0fdf4 100%);
+  background: transparent;
   font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 

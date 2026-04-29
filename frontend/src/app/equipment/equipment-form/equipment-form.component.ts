@@ -110,6 +110,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
                 const exactTypeMatch = this.availableTypes.find(t => t.name.toLowerCase().trim() === currentType);
                 if (exactTypeMatch) {
                   this.formData.type = exactTypeMatch.name;
+                  this.syncSpecificationsWithSchema();
                 }
               } else {
                 // Fallback for types not in any functional category
@@ -177,6 +178,25 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     }
 
     this.loadAvailableShelves();
+  }
+
+  syncSpecificationsWithSchema(): void {
+    if (!this.formData.type) return;
+
+    const typeObj = this.availableTypes.find(t => t.name === this.formData.type);
+    if (typeObj && typeObj.specificationFields) {
+      const currentSpecs = { ...(this.formData.specifications || {}) };
+      const newSpecs: Record<string, string> = { ...currentSpecs };
+      
+      // Ensure all fields from the current schema exist in the specifications object
+      typeObj.specificationFields.forEach(field => {
+        if (!(field in newSpecs)) {
+          newSpecs[field] = '';
+        }
+      });
+      
+      this.formData.specifications = newSpecs;
+    }
   }
 
   onCategoryChange(): void {
@@ -688,5 +708,9 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   isLegacyType(): boolean {
     if (!this.formData.type || !this.availableTypes) return false;
     return !this.availableTypes.some(t => t.name === this.formData.type);
+  }
+
+  trackByKey(index: number, item: any): string {
+    return item.key;
   }
 }

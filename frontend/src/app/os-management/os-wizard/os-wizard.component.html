@@ -1,0 +1,138 @@
+<div class="wizard-overlay" *ngIf="visible" (click)="close()">
+  <div class="wizard-panel" (click)="$event.stopPropagation()">
+    
+    <!-- Header -->
+    <div class="wizard-header" style="flex-direction: column; align-items: flex-start; gap: 16px;">
+      <div style="display: flex; justify-content: space-between; width: 100%;">
+        <div class="wizard-header-left">
+          <div class="wizard-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          </div>
+          <div>
+            <h2 class="wizard-title">{{ selectedOS ? 'Edit Operating System' : 'Add Operating System' }}</h2>
+            <p class="wizard-subtitle">Enter the OS details below</p>
+          </div>
+        </div>
+        <button class="wizard-close" (click)="close()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Step Dots -->
+      <div class="wizard-step-dots" style="width: 100%; border-bottom: none; padding: 0 0 16px 0;">
+        <div class="step-dot" [class.current]="currentStep === 1" [class.done]="currentStep > 1" (click)="currentStep = 1" style="cursor: pointer;">
+          <div class="dot-num">1</div>
+          <span class="dot-label">Main Info</span>
+        </div>
+        <div class="step-dot" [class.current]="currentStep === 2" [class.done]="currentStep > 2" (click)="currentStep === 1 && nextStep()" [style.cursor]="currentStep === 1 ? 'pointer' : 'default'">
+          <div class="dot-num">2</div>
+          <span class="dot-label">License</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="wizard-body">
+      <!-- Step 1 -->
+      <div class="step-content animate-in" *ngIf="currentStep === 1">
+        <div class="step-hero" style="margin-bottom: 24px; padding: 12px; background: #f8fafc; border-radius: 8px;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.1rem; color: #0f172a;">Main Information</h3>
+            <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--c-text-mute);">Basic details and technical requirements</p>
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-bottom: 24px;">
+          <div class="field-group">
+            <label class="field-label">Name <span class="req">*</span></label>
+            <input type="text" class="field-input" placeholder="e.g. Windows 11 Pro" [(ngModel)]="osData.name">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Version <span class="req">*</span></label>
+            <input type="text" class="field-input" placeholder="e.g. 23H2" [(ngModel)]="osData.version">
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-bottom: 24px;">
+          <div class="field-group">
+            <label class="field-label">Edition <span class="req">*</span></label>
+            <input type="text" class="field-input" placeholder="e.g. Professional" [(ngModel)]="osData.edition">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Architecture</label>
+            <select class="field-select" [(ngModel)]="osData.architecture">
+              <option value="x64">x64 (64-bit)</option>
+              <option value="x86">x86 (32-bit)</option>
+              <option value="ARM64">ARM64</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-bottom: 24px;">
+          <div class="field-group">
+            <label class="field-label">Size (GB)</label>
+            <input type="text" class="field-input" placeholder="e.g. 5.2" [(ngModel)]="osData.size">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Required RAM (GB)</label>
+            <input type="number" class="field-input" min="1" [(ngModel)]="osData.requiredRam">
+          </div>
+        </div>
+
+        <div class="field-group" style="margin-bottom: 24px;">
+          <label class="field-label">Required Storage (GB)</label>
+          <input type="number" class="field-input" min="1" [(ngModel)]="osData.requiredStorage">
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-content animate-in" *ngIf="currentStep === 2">
+        <div class="step-hero" style="margin-bottom: 24px; padding: 12px; background: #f8fafc; border-radius: 8px;">
+          <div>
+            <h3 style="margin: 0; font-size: 1.1rem; color: #0f172a;">License Information</h3>
+            <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--c-text-mute);">Manage activation keys and limits</p>
+          </div>
+        </div>
+
+        <div class="two-col" style="margin-bottom: 24px;">
+          <div class="field-group">
+            <label class="field-label">License Type</label>
+            <select class="field-select" [(ngModel)]="osData.licenseType">
+              <option value="OEM">OEM</option>
+              <option value="Retail">Retail</option>
+              <option value="Volume">Volume Licensing</option>
+              <option value="Free">Free / Open Source</option>
+            </select>
+          </div>
+          <div class="field-group" *ngIf="osData.licenseType !== 'Free'">
+            <label class="field-label">Total Licenses</label>
+            <input type="number" class="field-input" min="1" [(ngModel)]="osData.totalLicenses">
+          </div>
+        </div>
+
+        <div class="field-group" style="margin-bottom: 24px;" *ngIf="osData.licenseType !== 'Free'">
+          <label class="field-label">License Key</label>
+          <input type="text" class="field-input" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX" [(ngModel)]="osData.licenseKey">
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="wizard-footer">
+      <div class="footer-left">
+        <button class="btn-secondary" *ngIf="currentStep === 1" (click)="close()">Cancel</button>
+        <button class="btn-secondary" *ngIf="currentStep > 1" (click)="prevStep()">Back</button>
+      </div>
+      <div class="footer-right">
+        <button class="btn-primary" *ngIf="currentStep === 1" (click)="nextStep()">Next Step</button>
+        <button class="btn-primary confirm" *ngIf="currentStep === 2" (click)="submitOS()" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">Save Operating System</span>
+          <span *ngIf="isSubmitting">Saving...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

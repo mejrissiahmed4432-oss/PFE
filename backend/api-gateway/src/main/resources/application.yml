@@ -61,10 +61,25 @@ spring:
           predicates:
             - Path=/ws/**
 
+        - id: application-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/applications/**, /api/applications
+
+        - id: os-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/os/**, /api/os
+
         - id: technician-route
           uri: lb://technician-microservice
           predicates:
-            - Path=/api/part-requests/**, /api/part-requests
+            - Path=/api/part-requests/**, /api/part-requests, /api/capabilities/**, /api/capabilities
+
+        - id: ai-service-route
+          uri: lb://ai-service
+          predicates:
+            - Path=/api/ai/**, /api/ai
 
 eureka:
   client:

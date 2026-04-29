@@ -15,5 +15,6 @@
 		<module>stock-manager-microservice</module>
 		<module>technician-microservice</module>
 		<module>api-gateway</module>
+		<module>ai-service</module>
 	</modules>
 </project>

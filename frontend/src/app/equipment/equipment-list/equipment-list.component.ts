@@ -82,6 +82,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   filterShelfId: string | null = null;
   filterShelfNb: string | null = null;
   filterSelectedShelf: string = '';
+  @Input() natureFilter: 'Asset' | 'Consumable' | '' = '';
 
   // QR Modal state
   qrModalEquipment: Equipment | null = null;
@@ -123,6 +124,9 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['refreshTrigger'] && !changes['refreshTrigger'].firstChange) {
       this.loadEquipments();
+    }
+    if (changes['natureFilter']) {
+      this.applyFilters();
     }
   }
 
@@ -194,8 +198,9 @@ export class EquipmentListComponent implements OnInit, OnChanges {
       const matchDate = this.filterPurchaseDate ? (eq.purchaseDate && eq.purchaseDate.startsWith(this.filterPurchaseDate)) : true;
       const matchShelf = this.filterShelfId ? eq.shelfId === this.filterShelfId : true;
       const matchSelectedShelf = this.filterSelectedShelf ? eq.shelfId === this.filterSelectedShelf : true;
+      const matchNature = this.natureFilter ? this.getNatureByType(eq.type) === this.natureFilter : true;
       
-      return matchSearch && matchCategory && matchType && matchSupplier && matchDate && matchShelf && matchSelectedShelf;
+      return matchSearch && matchCategory && matchType && matchSupplier && matchDate && matchShelf && matchSelectedShelf && matchNature;
     });
 
     // 2. Group the filtered results
@@ -585,5 +590,27 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     }
 
     return eq.category || 'Asset';
+  }
+
+  getNatureByType(typeName: string | undefined): string {
+    if (!typeName) return 'Asset';
+    const typeLower = typeName.toLowerCase();
+    
+    for (const cat of this.categoriesList) {
+      const foundType = cat.types?.find(t => t.name.toLowerCase() === typeLower);
+      if (foundType && foundType.nature) {
+        return foundType.nature;
+      }
+    }
+    
+    // Fallback logic for common types if nature is not set yet
+    if (['laptop', 'computer', 'server', 'router', 'printer', 'monitor', 'ups'].some(t => typeLower.includes(t))) {
+      return 'Asset';
+    }
+    if (['ram', 'hdd', 'ssd', 'cable', 'battery', 'mouse', 'keyboard'].some(t => typeLower.includes(t))) {
+      return 'Consumable';
+    }
+    
+    return 'Asset';
   }
 }

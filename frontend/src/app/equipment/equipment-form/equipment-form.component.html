@@ -942,18 +942,16 @@
         </div>
 
         <!-- Device Specifications -->
-        <div class="form-section">
-          <h4 *ngIf="isComputerCategory()">Device Specifications</h4>
-          <h4 *ngIf="!isComputerCategory()">Specifications</h4>
+        <div class="form-section" *ngIf="formData.specifications && (formData.specifications | keyvalue).length > 0">
+          <h4>{{ isComputerCategory() ? 'Device Specifications' : 'Specifications' }}</h4>
 
-          <div class="input-grid" *ngIf="isComputerCategory()" style="margin-bottom: 20px;">
-            <div class="input-group" *ngFor="let spec of formData.specifications | keyvalue">
+          <div class="input-grid" style="margin-bottom: 20px;">
+            <div class="input-group" *ngFor="let spec of formData.specifications | keyvalue; trackBy: trackByKey">
               <label>{{ spec.key }}</label>
               <input type="text" [(ngModel)]="formData.specifications![spec.key]" [placeholder]="'Enter ' + spec.key + '...'">
             </div>
           </div>
-
-          </div>
+        </div>
 
         <!-- Additional Information -->
         <div class="form-section">

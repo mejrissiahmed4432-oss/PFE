@@ -38,7 +38,7 @@ export class CategoryManagerComponent implements OnInit {
   showTypeModal = false;
   typeModalMode: 'add' | 'edit' = 'add';
   typeModalCategoryId: string | null = null;
-  typeModalForm: CategoryType = { name: '', requiresQrCode: false, specificationFields: [] };
+  typeModalForm: CategoryType = { name: '', requiresQrCode: false, nature: 'Asset', specificationFields: [] };
   typeModalOriginalName = '';          // used when editing
   typeModalNameError: string | null = null;
   typeModalQrError: string | null = null;
@@ -213,7 +213,7 @@ export class CategoryManagerComponent implements OnInit {
     if (!categoryId) return;
     this.typeModalMode = 'add';
     this.typeModalCategoryId = categoryId;
-    this.typeModalForm = { name: '', requiresQrCode: false, specificationFields: [] };
+    this.typeModalForm = { name: '', requiresQrCode: false, nature: 'Asset', specificationFields: [] };
     this.newSpecField = '';
     this.typeModalOriginalName = '';
     this.typeModalNameError = null;
@@ -229,7 +229,12 @@ export class CategoryManagerComponent implements OnInit {
     if (!categoryId) return;
     this.typeModalMode = 'edit';
     this.typeModalCategoryId = categoryId;
-    this.typeModalForm = { name: type.name, requiresQrCode: type.requiresQrCode, specificationFields: type.specificationFields ? [...type.specificationFields] : [] };
+    this.typeModalForm = { 
+      name: type.name, 
+      requiresQrCode: type.requiresQrCode, 
+      nature: type.nature || 'Asset',
+      specificationFields: type.specificationFields ? [...type.specificationFields] : [] 
+    };
     this.newSpecField = '';
     this.typeModalOriginalName = type.name;
     this.typeModalNameError = null;
@@ -260,6 +265,7 @@ export class CategoryManagerComponent implements OnInit {
     const payload: CategoryType = {
       name: this.typeModalForm.name.trim(),
       requiresQrCode: this.typeModalForm.requiresQrCode,
+      nature: this.typeModalForm.nature,
       specificationFields: this.typeModalForm.specificationFields
     };
 

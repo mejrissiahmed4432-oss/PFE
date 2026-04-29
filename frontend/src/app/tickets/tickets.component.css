@@ -1,19 +1,19 @@
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    TICKETS PAGE - PREMIUM REDESIGN
    Modern, Responsive, Premium UX
-══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 .tickets-container {
   padding: 28px 32px;
   animation: fadeIn 0.4s ease-out;
-  background: linear-gradient(160deg, #f0f4ff 0%, #f8fafc 40%, #f0fdf4 100%);
+  background: transparent;
   min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
   font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
-/* ── Page Header ── */
+/* â”€â”€ Page Header â”€â”€ */
 .page-header {
   display: flex;
   align-items: center;
@@ -42,6 +42,8 @@
   box-shadow: 0 12px 32px rgba(99, 102, 241, 0.45);
 }
 
+
+
 .header-text h1 {
   margin: 0;
   font-size: 1.9rem;
@@ -50,6 +52,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+
   letter-spacing: -0.03em;
 }
 
@@ -60,7 +63,7 @@
   font-weight: 400;
 }
 
-/* ── Stats Row ── */
+/* â”€â”€ Stats Row â”€â”€ */
 .stats-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -155,7 +158,7 @@
   color: #10b981;
 }
 
-/* ── Search & Filter Header ── */
+/* â”€â”€ Search & Filter Header â”€â”€ */
 .master-header {
   margin-bottom: 20px;
 }
@@ -227,7 +230,7 @@
   border-color: #cbd5e1;
 }
 
-/* ── View Toggles ── */
+/* â”€â”€ View Toggles â”€â”€ */
 .view-toggles {
   display: flex;
   justify-content: space-between;
@@ -300,7 +303,7 @@
   color: #1e293b;
 }
 
-/* ── Tickets List View ── */
+/* â”€â”€ Tickets List View â”€â”€ */
 .tickets-list-clean {
   background: white;
   border: 1px solid #f1f5f9;
@@ -575,7 +578,7 @@
   color: #ef4444;
 }
 
-/* ── Detail Pane (Right Side) ── */
+/* â”€â”€ Detail Pane (Right Side) â”€â”€ */
 .detail-pane {
   flex: 4;
   background: white;
@@ -1037,7 +1040,7 @@
   border-color: #cbd5e1;
 }
 
-/* ── Full History View ── */
+/* â”€â”€ Full History View â”€â”€ */
 .full-history-pane {
   display: flex;
   flex-direction: column;
@@ -1249,7 +1252,7 @@
   margin-top: 4px;
 }
 
-/* ── Modal (Create Ticket) ── */
+/* â”€â”€ Modal (Create Ticket) â”€â”€ */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -1275,7 +1278,7 @@
   overflow: hidden;
 }
 
-/* ── Modal Header ── */
+/* â”€â”€ Modal Header â”€â”€ */
 .modal-header {
   display: flex;
   align-items: center;
@@ -1335,14 +1338,14 @@
   color: #020c18;
 }
 
-/* ── Modal Body ── */
+/* â”€â”€ Modal Body â”€â”€ */
 .modal-body {
   padding: 24px 28px;
   overflow-y: auto;
   flex: 1;
 }
 
-/* ── Form Elements ── */
+/* â”€â”€ Form Elements â”€â”€ */
 .form-group {
   margin-bottom: 20px;
 }
@@ -1402,7 +1405,7 @@
   flex: 1;
 }
 
-/* ── Priority Buttons ── */
+/* â”€â”€ Priority Buttons â”€â”€ */
 .priority-selector {
   display: flex;
   gap: 10px;
@@ -1467,7 +1470,7 @@
   background: #fee2e2;
 }
 
-/* ── Attachment Dropzone ── */
+/* â”€â”€ Attachment Dropzone â”€â”€ */
 .attachment-dropzone {
   border: 2px dashed #cbd5e1;
   border-radius: 10px;
@@ -1499,7 +1502,7 @@
   color: #b0bec6 !important;
 }
 
-/* ── Attachment List ── */
+/* â”€â”€ Attachment List â”€â”€ */
 .attachment-list {
   margin-top: 10px;
   display: flex;
@@ -1552,7 +1555,7 @@
   color: #ef4444;
 }
 
-/* ── Required / Optional Labels ── */
+/* â”€â”€ Required / Optional Labels â”€â”€ */
 .required {
   color: #ef4444;
   margin-left: 2px;
@@ -1566,7 +1569,7 @@
   letter-spacing: 0;
 }
 
-/* ── Modal Footer ── */
+/* â”€â”€ Modal Footer â”€â”€ */
 .modal-footer {
   display: flex;
   justify-content: flex-end;
@@ -1643,9 +1646,9 @@
   }
 }
 
-/* ══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    LIVE WORKBENCH
-══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 /* Start Working button */
 .start-work-section {
@@ -1857,6 +1860,7 @@
 /* Active ticket info grid: horizontal layout on wide screens */
 .wb-active-ticket-row .info-grid {
   grid-template-columns: repeat(4, 1fr);
+  align-items: start;
 }
 
 .wb-active-ticket-row .info-summary-card {
@@ -2399,9 +2403,9 @@
   }
 }
 
-/* ══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    KANBAN TASK BOARD (Repair Tasks)
-══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 .wb-kanban-card {
   padding: 22px;
@@ -2645,9 +2649,9 @@
   background: rgba(255, 255, 255, 0.4);
 }
 
-/* ──────────────────────────────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    CDK DRAG & DROP REFINEMENTS
-   ────────────────────────────────────────── */
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 /* The card being dragged */
 .cdk-drag-preview {
@@ -2676,9 +2680,9 @@
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-/* ──────────────────────────────────────────
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    INVENTORY & STOCK INDICATORS
-   ────────────────────────────────────────── */
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .inventory-badge {
   background: #f0fdf4;
@@ -2808,7 +2812,7 @@
   opacity: 0.8;
 }
 
-/* ─── Custom Alert (Cancellation) ────────────────────────────────────────── */
+/* â”€â”€â”€ Custom Alert (Cancellation) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .custom-alert-overlay {
   position: fixed;
   inset: 0;
@@ -2956,7 +2960,7 @@
   text-decoration: underline;
 }
 
-/* ─── Inventory Browser Styles ─────────────────────────────────────────── */
+/* â”€â”€â”€ Inventory Browser Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .inventory-filters {
   padding: 16px;
   background: #f8fafc;
@@ -3158,7 +3162,7 @@
   border: 1px solid #dbeafe;
 }
 
-/* ─── Workbench Summary Redesign ─────────────────────────────────────── */
+/* â”€â”€â”€ Workbench Summary Redesign â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .wb-section-summary {
   margin-bottom: 24px;
 }
@@ -3234,7 +3238,7 @@
   line-height: 1.6;
 }
 
-/* ─── Adjustments for remaining top row ─── */
+/* â”€â”€â”€ Adjustments for remaining top row â”€â”€â”€ */
 .wb-top-row {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -3243,7 +3247,7 @@
   /* Removing top margin since summary section handles it */
 }
 
-/* ─── Workshop UI Toggles ────────────────────────────────────────────── */
+/* â”€â”€â”€ Workshop UI Toggles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .wb-card-toggles {
   display: flex;
   background: #f1f5f9;
@@ -3286,7 +3290,7 @@
   opacity: 1;
 }
 
-/* ─── Selected Parts Summary Section ──────────────────────────────────── */
+/* â”€â”€â”€ Selected Parts Summary Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .selected-parts-summary-section {
   padding: 20px;
   background: #fdfdfd;
@@ -3975,6 +3979,11 @@
     min-height: unset;
   }
 
+  .ticket-meta-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
   .master-pane {
     height: 360px;
     flex: unset;
@@ -4074,7 +4083,7 @@
   }
 
   .ticket-meta-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 1fr);
     gap: 10px;
   }
 
@@ -4147,9 +4156,9 @@
   }
 }
 
-/* ══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    TICKET DETAIL CARD - PREMIUM REDESIGN
-══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 /* Premium detail header card */
 .detail-header-card {
@@ -4281,7 +4290,7 @@
   padding: 0 6px;
 }
 
-/* Scrollable history container — scrollbar on the LEFT */
+/* Scrollable history container â€” scrollbar on the LEFT */
 .timeline-scroll-wrapper {
   max-height: 240px;
   overflow-y: auto;
@@ -4364,9 +4373,9 @@
   color: #64748b;
 }
 
-/* ══════════════════════════════════════════
-   LIVE WORKBENCH — RESPONSIVE REDESIGN
-══════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   LIVE WORKBENCH â€” RESPONSIVE REDESIGN
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 /* Workbench header responsive */
 @media (max-width: 1024px) {
@@ -4394,7 +4403,7 @@
   }
 }
 
-/* Workbench body layout — responsive */
+/* Workbench body layout â€” responsive */
 @media (max-width: 1280px) {
   .wb-body {
     grid-template-columns: 1fr 300px;
@@ -4617,6 +4626,60 @@
   color: #64748b;
   margin-top: 2px;
 }
+.main-content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.workbench-full-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-bottom: 40px;
+  background: transparent;
+}
+
+.workbench-nav-bar {
+  padding: 15px 0 20px;
+  display: flex;
+  align-items: center;
+}
+
+.wb-global-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.wb-global-back-btn:hover {
+  background: #f8fafc;
+  color: #3b82f6;
+  border-color: #3b82f6;
+  transform: translateX(-4px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.wb-global-back-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.wb-global-back-btn:hover svg {
+  transform: translateX(-2px);
+}
+
 /* Start Working Button - Blue Theme */
 .btn-start-work {
   flex: 1;
@@ -4640,16 +4703,4 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
   filter: brightness(1.1);
-}
-
-.btn-start-work:active {
-  transform: translateY(0);
-}
-
-.btn-start-work svg {
-  transition: transform 0.3s ease;
-}
-
-.btn-start-work:hover svg {
-  transform: translateX(2px) scale(1.1);
 }
