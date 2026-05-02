@@ -17,6 +17,7 @@ public class Task {
     private String status;
     private String dueDate;
     private String assignedTo;
+    private String userId;
     private String createdAt;
     private String updatedAt;
     private String originalDueDate;
@@ -54,6 +55,8 @@ public class Task {
     public void setDueDate(String dueDate) { this.dueDate = dueDate; }
     public String getAssignedTo() { return assignedTo; }
     public void setAssignedTo(String assignedTo) { this.assignedTo = assignedTo; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
     public String getUpdatedAt() { return updatedAt; }

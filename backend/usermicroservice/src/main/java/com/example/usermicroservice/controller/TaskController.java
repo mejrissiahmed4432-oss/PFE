@@ -23,6 +23,11 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Task>> getTasksByUser(@PathVariable String userId) {
+        return ResponseEntity.ok(taskService.getTasksByUser(userId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable String id) {
         return taskService.getTaskById(id)

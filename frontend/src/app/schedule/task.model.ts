@@ -7,6 +7,7 @@ export interface Task {
   status: 'Pending' | 'In Progress' | 'Completed' | 'History';
   dueDate: string;
   assignedTo: string;
+  userId?: string;
   createdAt: string;
   updatedAt?: string;
   originalDueDate?: string;

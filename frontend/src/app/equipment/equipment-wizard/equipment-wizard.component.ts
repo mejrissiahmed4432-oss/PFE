@@ -144,6 +144,14 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     private categoryService: CategoryService
   ) { }
 
+  private formatLocalDate(dateObjOrString: Date | string): string {
+    const d = typeof dateObjOrString === 'string' ? new Date(dateObjOrString) : dateObjOrString;
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
   ngOnInit(): void {
     this.supplierService.getAllSuppliers().subscribe({ next: d => this.suppliers = d });
     this.categoryService.getAllCategories().subscribe({ next: d => {
@@ -152,7 +160,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         this.populateFromPrefill(this.prefillData);
       }
     }});
-    this.sharedPurchaseDate = new Date().toISOString().split('T')[0];
+    this.sharedPurchaseDate = this.formatLocalDate(new Date());
 
     // ─── SN Uniqueness Validation Pipeline (Robust) ────────────────────────
     // We group by SN to allow multiple concurrent debounced checks.
@@ -217,8 +225,9 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.sharedNotes = data.note || '';
     // Specs
     this.sharedSpecifications = data.specifications ? { ...data.specifications } : {};
+    
     // Purchase
-    this.sharedPurchaseDate = data.purchaseDate ? data.purchaseDate.toString().split('T')[0] : '';
+    this.sharedPurchaseDate = data.purchaseDate ? this.formatLocalDate(data.purchaseDate.toString()) : '';
     this.sharedSupplierId = data.supplierId || '';
     this.sharedSupplier = data.supplier || '';
     this.sharedPrice = data.purchasePrice || 0;
@@ -233,7 +242,8 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         .subscribe((fileData: string) => { this.sharedInvoiceFileData = fileData || ''; });
     }
     // Warranty document — set filename immediately; fetch binary data if missing
-    this.sharedWarrantyEnd = data.warrantyExpiration ? data.warrantyExpiration.toString().split('T')[0] : '';
+    this.sharedWarrantyEnd = data.warrantyExpiration ? this.formatLocalDate(data.warrantyExpiration.toString()) : '';
+
     this.sharedWarrantyFileName = data.warrantyFileName || '';
     this.sharedWarrantyFileData = data.warrantyFileData || '';
     if (data.id && data.warrantyFileName && !data.warrantyFileData) {

@@ -22,6 +22,10 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
+    public List<Task> getTasksByUser(String userId) {
+        return taskRepository.findByUserId(userId);
+    }
+
     public Optional<Task> getTaskById(String id) {
         return taskRepository.findById(id);
     }
@@ -57,6 +61,7 @@ public class TaskService {
                     task.setStatus(updatedTask.getStatus());
                     task.setDueDate(updatedTask.getDueDate());
                     task.setAssignedTo(updatedTask.getAssignedTo());
+                    task.setUserId(updatedTask.getUserId());
                     task.setOriginalDueDate(updatedTask.getOriginalDueDate());
                     task.preUpdate();
                     Task saved = taskRepository.save(task);

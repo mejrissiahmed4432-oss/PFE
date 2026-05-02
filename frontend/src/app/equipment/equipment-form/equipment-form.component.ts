@@ -89,6 +89,12 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
           this.equipmentService.getEquipmentById(this.equipment.id).subscribe({
             next: (fullEq) => {
               this.formData = { ...fullEq };
+              if (this.formData.purchaseDate) {
+                this.formData.purchaseDate = this.formatDate(this.formData.purchaseDate);
+              }
+              if (this.formData.warrantyExpiration) {
+                this.formData.warrantyExpiration = this.formatDate(this.formData.warrantyExpiration);
+              }
               if (this.viewOnly) {
                 this.equipment = { ...fullEq }; // Sync for Details view
               }
@@ -124,6 +130,12 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
             error: (err) => {
               console.error('Error fetching full equipment detail', err);
               this.formData = { ...this.equipment! };
+              if (this.formData.purchaseDate) {
+                this.formData.purchaseDate = this.formatDate(this.formData.purchaseDate);
+              }
+              if (this.formData.warrantyExpiration) {
+                this.formData.warrantyExpiration = this.formatDate(this.formData.warrantyExpiration);
+              }
             }
           });
         }
@@ -525,6 +537,12 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     if (this.viewOnly && this.isEditing) {
       // reset to original data and go back to view-only
       this.formData = { ...this.equipment };
+      if (this.formData.purchaseDate) {
+        this.formData.purchaseDate = this.formatDate(this.formData.purchaseDate);
+      }
+      if (this.formData.warrantyExpiration) {
+        this.formData.warrantyExpiration = this.formatDate(this.formData.warrantyExpiration);
+      }
       if (this.formData.type) {
         this.loadAvailableShelves();
       }
@@ -690,8 +708,12 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     return new Date(this.equipment.warrantyExpiration) < new Date();
   }
 
-  private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
+  private formatDate(dateObjOrString: Date | string): string {
+    const d = typeof dateObjOrString === 'string' ? new Date(dateObjOrString) : dateObjOrString;
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   }
 
   typeRequiresQr(): boolean {

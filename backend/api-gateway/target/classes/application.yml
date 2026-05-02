@@ -81,6 +81,16 @@ spring:
           predicates:
             - Path=/api/ai/**, /api/ai
 
+        - id: employee-route
+          uri: lb://employee-microservice
+          predicates:
+            - Path=/api/employees/**, /api/employees
+
+        - id: hr-route
+          uri: lb://hr-microservice
+          predicates:
+            - Path=/api/hr/**, /api/hr
+
 eureka:
   client:
     service-url:

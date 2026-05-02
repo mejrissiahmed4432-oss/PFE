@@ -67,7 +67,8 @@ export class ScheduleComponent implements OnInit {
       priority: 'Medium',
       status: 'Pending',
       dueDate: '',
-      assignedTo: user ? `${user.firstName} ${user.lastName || ''}`.trim() : ''
+      assignedTo: user ? `${user.firstName} ${user.lastName || ''}`.trim() : '',
+      userId: user ? user.id : ''
     };
   }
 
@@ -77,16 +78,12 @@ export class ScheduleComponent implements OnInit {
   }
 
   loadTasks(): void {
-    this.taskService.getTasks().subscribe({
+    if (!this.currentUser) return;
+
+    this.taskService.getTasks(this.currentUser.id).subscribe({
       next: (data) => { 
         data.forEach(t => this.processTask(t));
-
-        if (this.currentUser) {
-          const userFullName = `${this.currentUser.firstName} ${this.currentUser.lastName || ''}`.trim();
-          this.tasks = data.filter(t => t.assignedTo === userFullName);
-        } else {
-          this.tasks = data; 
-        }
+        this.tasks = data;
       },
       error: (err) => console.error('Failed to load tasks', err)
     });
@@ -293,9 +290,7 @@ export class ScheduleComponent implements OnInit {
     this.taskService.updateTask(this.selectedTask.id, this.selectedTask).subscribe({
       next: (updatedTask) => {
         const index = this.tasks.findIndex(t => t.id === updatedTask.id);
-        const userFullName = this.currentUser ? `${this.currentUser.firstName} ${this.currentUser.lastName || ''}`.trim() : '';
-        
-        if (updatedTask.assignedTo !== userFullName && this.currentUser) {
+        if (updatedTask.userId !== this.currentUser?.id && this.currentUser) {
           if (index !== -1) this.tasks.splice(index, 1);
         } else {
           this.processTask(updatedTask);
@@ -347,8 +342,7 @@ export class ScheduleComponent implements OnInit {
     this.isSubmitting = true;
     this.taskService.createTask(this.newTask).subscribe({
       next: (createdTask) => {
-        const userFullName = this.currentUser ? `${this.currentUser.firstName} ${this.currentUser.lastName || ''}`.trim() : '';
-        if (createdTask.assignedTo === userFullName || !this.currentUser) {
+        if (createdTask.userId === this.currentUser?.id || !this.currentUser) {
           this.tasks.unshift(createdTask);
         }
         this.showAddModal = false;

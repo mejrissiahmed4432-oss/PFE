@@ -41,7 +41,8 @@ export class ReportsComponent implements OnInit {
 
   selectedReports: string[] = ['Equipment Report', 'Locations Report', 'Suppliers Report', 'Requests Report'];
   availableReports = ['Equipment Report', 'Locations Report', 'Suppliers Report', 'Requests Report'];
-  selectedPeriod = '6 months';
+  startDate: string = '';
+  endDate: string = '';
 
   kpis = {
     valeurTotale: 0,
@@ -102,6 +103,13 @@ export class ReportsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const now = new Date();
+    this.endDate = now.toISOString().split('T')[0];
+    
+    const past = new Date();
+    past.setMonth(past.getMonth() - 6);
+    this.startDate = past.toISOString().split('T')[0];
+
     this.loadData();
   }
 
@@ -134,9 +142,23 @@ export class ReportsComponent implements OnInit {
     });
   }
 
-  setPeriod(period: string): void {
-    this.selectedPeriod = period;
-    this.onPeriodChange();
+  onDateRangeChange(): void {
+    if (this.startDate > this.endDate) {
+      const temp = this.startDate;
+      this.startDate = this.endDate;
+      this.endDate = temp;
+    }
+    this.refreshCharts();
+  }
+
+  private refreshCharts(): void {
+    if (this.partRequests.length > 0 || this.equipments.length > 0) {
+      this.buildKPIs();
+      this.buildCategoryChart();
+      this.buildTypeChart();
+      this.buildRequestStatusChart();
+      this.buildTopEquipments();
+    }
   }
 
   private translate(val: string | undefined | null): string {
@@ -171,37 +193,52 @@ export class ReportsComponent implements OnInit {
   }
 
   private getFilteredRequests(): PartRequest[] {
-    const now = new Date();
-    let monthsBack = 6;
-    switch (this.selectedPeriod) {
-      case '1 month': monthsBack = 1; break;
-      case '3 months': monthsBack = 3; break;
-      case '6 months': monthsBack = 6; break;
-      case '1 year': monthsBack = 12; break;
-    }
-    const cutoff = new Date(now.getFullYear(), now.getMonth() - monthsBack, now.getDate());
-    return this.partRequests.filter(r => !r.createdAt || new Date(r.createdAt) >= cutoff);
+    if (!this.startDate || !this.endDate) return this.partRequests;
+    
+    const [sy, sm, sd] = this.startDate.split('-');
+    const start = new Date(Number(sy), Number(sm) - 1, Number(sd), 0, 0, 0, 0);
+    
+    const [ey, em, ed] = this.endDate.split('-');
+    const end = new Date(Number(ey), Number(em) - 1, Number(ed), 23, 59, 59, 999);
+    
+    return this.partRequests.filter(r => {
+      if (!r.createdAt) return false;
+      const d = new Date(r.createdAt); // Converts UTC to local timezone
+      return d >= start && d <= end;
+    });
   }
 
-  onPeriodChange(): void {
-    if (this.partRequests.length > 0) {
-      this.buildKPIs();
-      this.buildRequestStatusChart();
-    }
+  private getFilteredEquipments(): Equipment[] {
+    if (!this.startDate || !this.endDate) return this.equipments;
+    
+    const [sy, sm, sd] = this.startDate.split('-');
+    const start = new Date(Number(sy), Number(sm) - 1, Number(sd), 0, 0, 0, 0);
+    
+    const [ey, em, ed] = this.endDate.split('-');
+    const end = new Date(Number(ey), Number(em) - 1, Number(ed), 23, 59, 59, 999);
+    
+    return this.equipments.filter(e => {
+      // Use strictly purchaseDate as requested
+      const dateString = e.purchaseDate;
+      if (!dateString) return false;
+      const d = new Date(dateString); // Converts UTC to local timezone
+      return d >= start && d <= end;
+    });
   }
 
   buildKPIs(): void {
-    this.kpis.valeurTotale = this.equipments.reduce(
+    const filteredEq = this.getFilteredEquipments();
+    this.kpis.valeurTotale = filteredEq.reduce(
       (sum, e) => sum + ((e.purchasePrice || 0) * (e.qte || 1)), 0
     );
-    this.kpis.totalEquipments = this.equipments.length;
+    this.kpis.totalEquipments = filteredEq.length;
     this.kpis.pendingRequests = this.getFilteredRequests().filter(r => r.status === 'PENDING').length;
     this.kpis.shelfAlerts = this.shelves.filter(s => s.currentQte < s.minQte).length;
   }
 
   buildCategoryChart(): void {
     const catMap = new Map<string, number>();
-    this.equipments.forEach(e => {
+    this.getFilteredEquipments().forEach(e => {
       const cat = this.translate(e.category || 'Uncategorized');
       catMap.set(cat, (catMap.get(cat) || 0) + 1);
     });
@@ -215,7 +252,7 @@ export class ReportsComponent implements OnInit {
 
   buildTypeChart(): void {
     const typeMap = new Map<string, number>();
-    this.equipments.forEach(e => {
+    this.getFilteredEquipments().forEach(e => {
       const t = this.translate(e.type || 'Other');
       typeMap.set(t, (typeMap.get(t) || 0) + 1);
     });
@@ -252,7 +289,7 @@ export class ReportsComponent implements OnInit {
   }
 
   buildTopEquipments(): void {
-    this.topEquipments = [...this.equipments]
+    this.topEquipments = [...this.getFilteredEquipments()]
       .filter(e => (e.purchasePrice || 0) > 0)
       .sort((a, b) => (b.purchasePrice || 0) - (a.purchasePrice || 0))
       .slice(0, 5)
@@ -329,7 +366,7 @@ export class ReportsComponent implements OnInit {
       const date = new Date().toISOString().slice(0, 10);
 
       if (this.isReportSelected('Equipment Report')) {
-        const data = this.equipments.map(e => ({
+        const data = this.getFilteredEquipments().map(e => ({
           'Name': e.equipmentName || e.name || '',
           'Brand': e.brand || '',
           'Category': this.translate(e.category || ''),
@@ -398,7 +435,7 @@ export class ReportsComponent implements OnInit {
         doc.text('IT Inventory Report', 14, 22);
         doc.setFontSize(10);
         doc.setTextColor(100, 116, 139);
-        doc.text(`Generated on ${new Date().toLocaleDateString('en-US')} — Period: ${this.selectedPeriod}`, 14, 30);
+        doc.text(`Generated on ${new Date().toLocaleDateString('en-US')} — Period: ${this.startDate} to ${this.endDate}`, 14, 30);
         doc.text(`Selection: ${this.selectedReports.join(', ') || 'None'}`, 14, 36);
 
         doc.setFontSize(13);
@@ -425,7 +462,7 @@ export class ReportsComponent implements OnInit {
           autoTable(doc, {
             startY: 26,
             head: [['Name', 'Brand', 'Category', 'Type', 'Price (€)', 'Qty', 'Status']],
-            body: this.equipments.slice(0, 100).map(e => [
+            body: this.getFilteredEquipments().slice(0, 100).map(e => [
               e.equipmentName || e.name || '', e.brand || '', this.translate(e.category),
               this.translate(e.type), (e.purchasePrice || 0).toLocaleString('en-US'), e.qte || 1, this.translate(e.status)
             ]),
@@ -452,7 +489,7 @@ export class ReportsComponent implements OnInit {
         if (this.isReportSelected('Requests Report')) {
           doc.addPage();
           doc.setFontSize(14); doc.setTextColor(15, 23, 42);
-          doc.text(`Part Requests — ${this.selectedPeriod}`, 14, 20);
+          doc.text(`Part Requests — ${this.startDate} to ${this.endDate}`, 14, 20);
           autoTable(doc, {
             startY: 26,
             head: [['Requester', 'Status', 'Priority', 'Description', 'Date', 'Items']],
