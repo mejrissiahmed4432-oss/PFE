@@ -91,9 +91,12 @@
               </td>
 
               <td class="actions-cell">
-                <div class="actions-wrap">
-                  <button class="authors-edit-link" (click)="$event.stopPropagation(); startRename(cat)">Rename</button>
-                </div>
+                <button class="action-icon add-similar" (click)="$event.stopPropagation(); openAddTypeModal(cat.id)" title="Add Type">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                </button>
+                <button class="action-icon delete" (click)="deleteCategory(cat.id, $event)" title="Delete Category">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
               </td>
             </tr>
 
