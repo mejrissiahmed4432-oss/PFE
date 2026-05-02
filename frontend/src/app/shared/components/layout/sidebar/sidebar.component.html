@@ -1,0 +1,187 @@
+<aside class="flex flex-col h-full bg-gradient-to-b from-slate-900 to-slate-800 text-gray-300 transition-all duration-300 relative border-r border-slate-700/50 shadow-xl"
+       [ngClass]="{'w-20': isSidebarCollapsed, 'w-64': !isSidebarCollapsed}">
+  
+  <!-- Header / Brand -->
+  <div class="h-16 flex items-center justify-between px-4 border-b border-white/5">
+    <div class="flex items-center gap-3 overflow-hidden">
+      <div class="w-10 h-10 flex-shrink-0 bg-blue-500/10 rounded-xl flex items-center justify-center p-1.5 border border-blue-500/20">
+        <img src="/assets/images/medinaflux-logo.png" alt="MedinaFlux" class="w-full h-full object-contain drop-shadow-md">
+      </div>
+      <h1 *ngIf="!isSidebarCollapsed" class="text-xl font-black text-white whitespace-nowrap tracking-tight">
+        Medina<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">Flux</span>
+      </h1>
+    </div>
+    
+    <button (click)="onToggleSidebar()" 
+            class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 text-gray-400 hover:text-white transition-colors flex-shrink-0"
+            [ngClass]="{'absolute -right-4 top-4 bg-slate-800 border border-slate-700 z-10 rounded-full shadow-md w-8 h-8': isSidebarCollapsed}">
+      <svg *ngIf="!isSidebarCollapsed" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      <svg *ngIf="isSidebarCollapsed" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1 overflow-x-hidden scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+    
+    <!-- Dashboard -->
+    <a href="javascript:void(0)" (click)="onTabChange('dashboard')"
+       class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative"
+       [ngClass]="activeTab === 'dashboard' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white/5 hover:text-white'">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+      </svg>
+      <span *ngIf="!isSidebarCollapsed" class="font-medium text-sm whitespace-nowrap">Dashboard</span>
+      <!-- Tooltip -->
+      <div *ngIf="isSidebarCollapsed" class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">Dashboard</div>
+    </a>
+
+    <!-- Tickets (For Technician) -->
+    <a *ngIf="user?.role === 'TECHNICIAN' || user?.role === 'IT_MANAGER'" href="javascript:void(0)" (click)="onTabChange('tickets')"
+       class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative"
+       [ngClass]="activeTab === 'tickets' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white/5 hover:text-white'">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+      <span *ngIf="!isSidebarCollapsed" class="font-medium text-sm whitespace-nowrap">Tickets</span>
+      <div *ngIf="isSidebarCollapsed" class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">Tickets</div>
+    </a>
+
+    <!-- Inventory Section (Not for Tech/Manager depending on logic) -->
+    <ng-container *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'">
+      <!-- Stock -->
+      <a href="javascript:void(0)" (click)="onTabChange('stock')"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative mt-2"
+         [ngClass]="activeTab === 'stock' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white/5 hover:text-white'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        <span *ngIf="!isSidebarCollapsed" class="font-medium text-sm whitespace-nowrap">Stock (Shelves)</span>
+        <div *ngIf="isSidebarCollapsed" class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">Stock</div>
+      </a>
+
+      <!-- Inventory Parent -->
+      <div class="flex flex-col">
+        <a href="javascript:void(0)" (click)="onTabChange('equipment'); onNatureFilterChange('')"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative"
+           [ngClass]="activeTab === 'equipment' && selectedNatureFilter === '' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white/5 hover:text-white'">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+          <span *ngIf="!isSidebarCollapsed" class="font-medium text-sm whitespace-nowrap">Inventory</span>
+          <div *ngIf="isSidebarCollapsed" class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">Inventory</div>
+        </a>
+        <!-- Inventory Sub-items -->
+        <div *ngIf="activeTab === 'equipment' && !isSidebarCollapsed" class="pl-11 pr-3 flex flex-col gap-1 mt-1 mb-2">
+          <a href="javascript:void(0)" (click)="onNatureFilterChange('Asset')" 
+             class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2"
+             [ngClass]="selectedNatureFilter === 'Asset' ? 'text-white bg-white/10' : 'text-gray-400'">
+            <div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedNatureFilter === 'Asset' ? 'bg-blue-400' : 'bg-gray-500'"></div>
+            Assets
+          </a>
+          <a href="javascript:void(0)" (click)="onNatureFilterChange('Consumable')" 
+             class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2"
+             [ngClass]="selectedNatureFilter === 'Consumable' ? 'text-white bg-white/10' : 'text-gray-400'">
+             <div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedNatureFilter === 'Consumable' ? 'bg-blue-400' : 'bg-gray-500'"></div>
+            Consumables
+          </a>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <a href="javascript:void(0)" (click)="onTabChange('categories')"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative"
+         [ngClass]="activeTab === 'categories' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white/5 hover:text-white'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 9h16"></path><path d="M4 15h16"></path><path d="M10 3L8 21"></path><path d="M16 3l-2 18"></path>
+        </svg>
+        <span *ngIf="!isSidebarCollapsed" class="font-medium text-sm whitespace-nowrap">Categories</span>
+        <div *ngIf="isSidebarCollapsed" class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">Categories</div>
+      </a>
+
+      <!-- Suppliers -->
+      <a href="javascript:void(0)" (click)="onTabChange('suppliers')"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative"
+         [ngClass]="activeTab === 'suppliers' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white/5 hover:text-white'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span *ngIf="!isSidebarCollapsed" class="font-medium text-sm whitespace-nowrap">Suppliers</span>
+        <div *ngIf="isSidebarCollapsed" class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">Suppliers</div>
+      </a>
+      
+      <!-- Alerts -->
+      <a href="javascript:void(0)" (click)="onTabChange('alerts')"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative"
+         [ngClass]="activeTab === 'alerts' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white/5 hover:text-white'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path>
+        </svg>
+        <span *ngIf="!isSidebarCollapsed" class="font-medium text-sm whitespace-nowrap">Alerts</span>
+        <div *ngIf="isSidebarCollapsed" class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">Alerts</div>
+      </a>
+    </ng-container>
+
+    <!-- Schedule -->
+    <a href="javascript:void(0)" (click)="onTabChange('schedule')"
+       class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative mt-2"
+       [ngClass]="activeTab === 'schedule' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white/5 hover:text-white'">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+      <span *ngIf="!isSidebarCollapsed" class="font-medium text-sm whitespace-nowrap">Schedule</span>
+      <div *ngIf="isSidebarCollapsed" class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">Schedule</div>
+    </a>
+
+    <!-- Resources (Parts Management) -->
+    <div class="flex flex-col" *ngIf="user?.role === 'TECHNICIAN' || user?.role === 'IT_MANAGER'">
+      <a href="javascript:void(0)" (click)="onTabChange('parts'); onResourceFilterChange('')"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative"
+         [ngClass]="activeTab === 'parts' && selectedResourceFilter === '' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white/5 hover:text-white'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+        <span *ngIf="!isSidebarCollapsed" class="font-medium text-sm whitespace-nowrap">Resources</span>
+        <div *ngIf="isSidebarCollapsed" class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">Resources</div>
+      </a>
+      <!-- Sub-items -->
+      <div *ngIf="activeTab === 'parts' && !isSidebarCollapsed" class="pl-11 pr-3 flex flex-col gap-1 mt-1 mb-2">
+        <a *ngIf="user?.role !== 'IT_MANAGER'" href="javascript:void(0)" (click)="onResourceFilterChange('Parts')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Parts' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Parts' ? 'bg-blue-400' : 'bg-gray-500'"></div>Parts</a>
+        <a href="javascript:void(0)" (click)="onResourceFilterChange('Operating Systems')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Operating Systems' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Operating Systems' ? 'bg-blue-400' : 'bg-gray-500'"></div>OS</a>
+        <a href="javascript:void(0)" (click)="onResourceFilterChange('Applications')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Applications' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Applications' ? 'bg-blue-400' : 'bg-gray-500'"></div>Applications</a>
+        <a href="javascript:void(0)" (click)="onResourceFilterChange('Drivers')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Drivers' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Drivers' ? 'bg-blue-400' : 'bg-gray-500'"></div>Drivers</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Bottom Section (Settings / Profile) -->
+  <div class="p-3 border-t border-white/5 flex flex-col gap-1">
+    <a href="javascript:void(0)" (click)="onTabChange('settings')"
+       class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative"
+       [ngClass]="activeTab === 'settings' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white/5 hover:text-white'">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+      <span *ngIf="!isSidebarCollapsed" class="font-medium text-sm whitespace-nowrap">Settings</span>
+      <div *ngIf="isSidebarCollapsed" class="absolute left-14 bg-slate-800 text-white text-xs px-2 py-1 rounded shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">Settings</div>
+    </a>
+  </div>
+</aside>
