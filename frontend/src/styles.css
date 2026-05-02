@@ -1,5 +1,42 @@
-/* You can add global styles to this file, and also import other style files */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Light Theme Variables */
+  --bg-app: #f8fafc; /* slate-50 */
+  --bg-card: #ffffff;
+  --bg-sidebar: #0f172a; /* slate-900 */
+  --bg-topbar: rgba(255, 255, 255, 0.8);
+  
+  --text-main: #0f172a; /* slate-900 */
+  --text-sub: #64748b; /* slate-500 */
+  --text-muted: #94a3b8; /* slate-400 */
+  
+  --border-color: #f1f5f9; /* slate-100 */
+  --border-strong: #e2e8f0; /* slate-200 */
+  
+  --accent-primary: #3b82f6; /* blue-600 */
+  --accent-soft: #eff6ff; /* blue-50 */
+}
+
+.dark-mode {
+  /* Dark Theme Variables */
+  --bg-app: #020617; /* slate-950 */
+  --bg-card: #0f172a; /* slate-900 */
+  --bg-sidebar: #020617; 
+  --bg-topbar: rgba(15, 23, 42, 0.8);
+  
+  --text-main: #f8fafc; /* slate-50 */
+  --text-sub: #94a3b8; /* slate-400 */
+  --text-muted: #64748b; /* slate-500 */
+  
+  --border-color: #1e293b; /* slate-800 */
+  --border-strong: #334155; /* slate-700 */
+  
+  --accent-primary: #60a5fa; /* blue-400 */
+  --accent-soft: rgba(59, 130, 246, 0.1);
+}
 
 html,
 body {
@@ -8,6 +45,10 @@ body {
   padding: 0;
   overflow: hidden;
   font-family: 'Inter', sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  @apply antialiased;
 }
 
 * {
@@ -30,13 +71,14 @@ body {
 }
 
 .delete-modal {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   padding: 32px 28px 24px;
   width: 340px;
-  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
   animation: slideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: center;
+  border: 1px solid var(--border-color);
 }
 
 .delete-modal-icon {
@@ -55,13 +97,13 @@ body {
   margin: 0 0 8px;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-main);
 }
 
 .delete-modal-desc {
   margin: 0 0 24px;
   font-size: 0.88rem;
-  color: #64748b;
+  color: var(--text-sub);
   line-height: 1.5;
 }
 
@@ -135,4 +177,86 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+/* ── Global Table Typography ── */
+.table-header-area {
+  @apply mb-6 px-1;
+}
+
+.table-main-title {
+  @apply text-lg font-bold text-[var(--text-main)] tracking-tight;
+}
+
+/* ── Authors Table System ── */
+.authors-avatar-wrap {
+  @apply w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden
+         bg-[var(--bg-app)] text-[var(--text-sub)] border border-[var(--border-strong)] shadow-sm;
+}
+
+.authors-main-text {
+  @apply text-[13px] font-bold text-[var(--text-main)] leading-tight mb-0.5;
+}
+
+.authors-sub-text {
+  @apply text-[11px] font-medium text-[var(--text-muted)];
+}
+
+.authors-status-badge {
+  @apply px-3 py-1 rounded-lg font-bold text-[10px] uppercase tracking-wider;
+}
+
+.authors-status-badge.active,
+.authors-status-badge.avail,
+.authors-status-badge.online {
+  @apply bg-emerald-500 text-white shadow-lg shadow-emerald-500/20;
+}
+
+.authors-status-badge.in-use {
+  @apply bg-blue-500 text-white shadow-lg shadow-blue-500/20;
+}
+
+.authors-status-badge.unassigned,
+.authors-status-badge.offline {
+  @apply bg-slate-400 text-white shadow-lg shadow-slate-400/20;
+}
+
+.authors-status-badge.maintenance {
+  @apply bg-amber-500 text-white shadow-lg shadow-amber-500/20;
+}
+
+.authors-status-badge.expired,
+.authors-status-badge.broken {
+  @apply bg-red-500 text-white shadow-lg shadow-red-500/20;
+}
+
+.authors-status-badge-mini {
+  @apply px-2 py-0.5 rounded-md font-bold text-[9px] uppercase tracking-tight;
+}
+
+.authors-status-badge-mini.active,
+.authors-status-badge-mini.avail {
+  @apply bg-emerald-100 text-emerald-600;
+}
+
+.authors-status-badge-mini.in-use {
+  @apply bg-blue-100 text-blue-600;
+}
+
+.authors-status-badge-mini.unassigned {
+  @apply bg-slate-100 text-slate-500;
+}
+
+.authors-status-badge-mini.maintenance {
+  @apply bg-amber-100 text-amber-600;
+}
+
+.authors-status-badge-mini.expired,
+.authors-status-badge-mini.broken {
+  @apply bg-red-100 text-red-600;
+}
+
+.authors-edit-link {
+  @apply text-[11px] font-bold text-[var(--accent-primary)] uppercase tracking-wider
+         hover:underline cursor-pointer;
 }

@@ -26,6 +26,7 @@ import { TicketsComponent } from '../tickets/tickets.component';
 import { ReportsComponent } from '../reports/reports.component';
 import { OsManagementComponent } from '../os-management/os-management.component';
 import { ApplicationManagementComponent } from '../application-management/application-management.component';
+import { TranslationService } from '../shared/translation.service';
 
 @Component({
   selector: 'app-board',
@@ -45,11 +46,13 @@ export class BoardComponent implements OnInit {
   selectedResourceFilter: string = '';
   unreadAlertsCount: number = 0;
   unreadMessagesCount: number = 0;
+  isDarkMode: boolean = false;
   private userSub: Subscription | undefined;
   private pollSub: Subscription | undefined;
   private socketSub: Subscription | undefined;
 
   isNotificationsOpen: boolean = false;
+  isLanguageOpen: boolean = false;
   notificationsList: any[] = [];
   unreadNotificationsCount: number = 0;
 
@@ -60,18 +63,25 @@ export class BoardComponent implements OnInit {
     private equipmentService: EquipmentService,
     private messagingService: MessagingService,
     private socketService: SocketService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    public ts: TranslationService
   ) { }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    if (!target.closest('.notif-container')) {
+    if (!target.closest('.notif-container') && !target.closest('.notif-dropdown')) {
       this.isNotificationsOpen = false;
+    }
+    if (!target.closest('.lang-switcher-container')) {
+      this.isLanguageOpen = false;
     }
   }
 
   ngOnInit(): void {
+    // Sync language from service
+    this.selectedLanguage = this.ts.getLanguage();
+    
     this.userSub = this.authService.user$.subscribe(user => {
       this.user = user;
       if (!this.user) {
@@ -106,6 +116,13 @@ export class BoardComponent implements OnInit {
         }
       }
     });
+
+    // Theme initialization
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      this.isDarkMode = true;
+      document.body.classList.add('dark-mode');
+    }
   }
 
   ngOnDestroy(): void {
@@ -212,6 +229,18 @@ export class BoardComponent implements OnInit {
 
   selectLanguage(lang: 'en' | 'fr'): void {
     this.selectedLanguage = lang;
+    this.ts.setLanguage(lang);
+    this.isLanguageOpen = false;
+  }
+
+  toggleLanguage(event: Event): void {
+    event.stopPropagation();
+    this.isLanguageOpen = !this.isLanguageOpen;
+    this.isNotificationsOpen = false; // Close other dropdowns
+  }
+
+  t(key: string): string {
+    return this.ts.translate(key);
   }
 
   toggleSidebar(): void {
@@ -225,26 +254,27 @@ export class BoardComponent implements OnInit {
   toggleNotifications(event: Event): void {
     event.stopPropagation();
     this.isNotificationsOpen = !this.isNotificationsOpen;
+    this.isLanguageOpen = false; // Close other dropdowns
   }
 
   getPageTitle(): string {
     switch (this.activeTab) {
-      case 'dashboard': return 'Dashboard';
-      case 'stock': return 'Stock (Shelves)';
-      case 'equipment': return 'Inventory';
-      case 'suppliers': return 'Suppliers';
-      case 'orders': return 'Orders';
+      case 'dashboard': return this.t('Dashboard');
+      case 'stock': return this.t('Stock');
+      case 'equipment': return this.t('Inventory');
+      case 'suppliers': return this.t('Suppliers');
+      case 'orders': return this.t('Orders');
       case 'alerts': return 'Service Reminders';
-      case 'reports': return 'Reports';
-      case 'messages': return 'Messages';
-      case 'schedule': return 'Schedule & Tasks';
-      case 'categories': return 'Equipment Categories';
-      case 'profile': return 'My Profile';
-      case 'settings': return 'Account Settings';
-      case 'parts': return this.selectedResourceFilter ? `Resources - ${this.selectedResourceFilter}` : 'Resources';
+      case 'reports': return this.t('Reports');
+      case 'messages': return this.t('Messages');
+      case 'schedule': return this.t('Schedule');
+      case 'categories': return this.t('Categories');
+      case 'profile': return this.t('Profile');
+      case 'settings': return this.t('Settings');
+      case 'parts': return this.selectedResourceFilter ? `${this.t('Resources')} - ${this.selectedResourceFilter}` : this.t('Resources');
       case 'requests': return 'My Part Requests';
       case 'manager-requests': return 'Incoming Part Requests';
-      case 'tickets': return 'Support Tickets';
+      case 'tickets': return this.t('Tickets');
       default: return 'Medina It Manage';
     }
   }
@@ -275,6 +305,17 @@ export class BoardComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  toggleDarkMode(): void {
+    this.isDarkMode = !this.isDarkMode;
+    if (this.isDarkMode) {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
+    }
   }
 
 }

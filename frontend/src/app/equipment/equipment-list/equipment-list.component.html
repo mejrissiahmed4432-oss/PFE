@@ -1,4 +1,8 @@
 <div class="list-wrapper">
+  <div class="table-header-area">
+    <h2 class="table-main-title">Equipment List</h2>
+  </div>
+
 
   <div class="active-filter-banner" *ngIf="filterShelfId">
     <div class="banner-content">
@@ -107,13 +111,12 @@
         <tr>
           <th class="col-expand"></th>
           <th class="col-icon">Icon</th>
-          <th>Name</th>
-          <th>Brand</th>
-          <th>Category / Type</th>
+          <th>Equipment</th>
+          <th>Category</th>
           <th>Status</th>
           <th>Location</th>
-          <th style="width: 80px;">Qty</th>
-          <th class="actions-cell">Actions</th>
+          <th class="text-center">Quantity</th>
+          <th class="actions-cell"></th>
         </tr>
       </thead>
       <tbody *ngFor="let group of paginatedGroups">
@@ -132,105 +135,45 @@
           </td>
 
           <td class="col-icon">
-            <div class="type-icon-wrap" [ngClass]="'ti-' + getTypeKey(group.type)">
+            <div class="authors-avatar-wrap" [ngClass]="'ti-' + getTypeKey(group.type)">
               <ng-container *ngTemplateOutlet="typeIconTemplate; context: { type: group.type }"></ng-container>
             </div>
           </td>
 
           <td>
-            <div class="font-bold text-dark">{{ group.name }}</div>
-            <div *ngIf="group.totalQuantity > 1" class="text-xs text-slate-400 font-medium mt-1"
-              style="white-space: nowrap; word-break: normal;">(multiple)</div>
+            <div class="authors-main-text">{{ group.name }}</div>
+            <div class="authors-sub-text">{{ group.brand || 'No Brand' }}</div>
           </td>
-          <td>{{ group.brand }}</td>
-          <td>{{ group.category }} / {{ group.type | titlecase }}</td>
+
+          <td>
+            <div class="authors-main-text">{{ group.category }}</div>
+            <div class="authors-sub-text capitalize">{{ group.type }}</div>
+          </td>
 
           <td>
             <div *ngIf="group.totalQuantity <= 1">
-              <span class="status-chip" [ngClass]="getEquipmentStatus(group.items[0]).cls">
+              <span class="authors-status-badge" [ngClass]="getEquipmentStatus(group.items[0]).cls">
                 {{ getEquipmentStatus(group.items[0]).label }}
               </span>
             </div>
             <div *ngIf="group.totalQuantity > 1" class="status-summary-group">
-              <span *ngFor="let s of group.statusSummary" class="summary-chip" [ngClass]="s.cls">
+              <span *ngFor="let s of group.statusSummary" class="authors-status-badge-mini" [ngClass]="s.cls">
                 {{ s.count }} {{ s.label }}
               </span>
             </div>
           </td>
 
-          <td>{{ group.commonLocation }}</td>
-          <td class="font-semibold text-center">{{ group.totalQuantity }}</td>
+          <td>
+            <div class="authors-main-text">{{ group.commonLocation || '—' }}</div>
+          </td>
+
+          <td class="text-center">
+            <span class="authors-main-text">{{ group.totalQuantity }}</span>
+          </td>
 
           <td class="actions-cell">
             <div class="actions-wrap">
-              <!-- Single Unit Actions -->
-              <ng-container *ngIf="group.totalQuantity <= 1">
-                <button class="action-icon view" (click)="viewEvent.emit(group.items[0]); $event.stopPropagation()"
-                  title="View">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                </button>
-                <button class="action-icon edit" (click)="editEvent.emit(group.items[0]); $event.stopPropagation()"
-                  title="Edit">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
-                </button>
-                <button class="action-icon add-similar"
-                  (click)="addSimilarEvent.emit(group.items[0]); $event.stopPropagation()" title="Add Similar Unit">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="16"></line>
-                    <line x1="8" y1="12" x2="16" y2="12"></line>
-                  </svg>
-                </button>
-                <button *ngIf="group.items[0].qrCode" class="action-icon qr"
-                  (click)="openQrModal(group.items[0], $event)" title="QR Code">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="3" width="7" height="7"></rect>
-                    <rect x="14" y="14" width="7" height="7"></rect>
-                    <rect x="3" y="14" width="7" height="7"></rect>
-                    <line x1="7" y1="7" x2="7" y2="7"></line>
-                    <line x1="17" y1="7" x2="17" y2="7"></line>
-                    <line x1="17" y1="17" x2="17" y2="17"></line>
-                    <line x1="7" y1="17" x2="7" y2="17"></line>
-                  </svg>
-                </button>
-                <button class="action-icon delete" (click)="deleteEquipment(group.items[0].id, $event)" title="Delete">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  </svg>
-                </button>
-              </ng-container>
-
-              <!-- Group Actions -->
-              <ng-container *ngIf="group.totalQuantity > 1">
-                <button class="action-icon edit" (click)="openGroupEditModal(group, $event)"
-                  title="Edit Group Basic Info">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
-                </button>
-                <button class="action-icon delete" (click)="deleteGroup(group, $event)" title="Delete Group">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  </svg>
-                </button>
-              </ng-container>
+              <button class="authors-edit-link" (click)="editEvent.emit(group.items[0]); $event.stopPropagation()">Edit</button>
             </div>
           </td>
         </tr>
@@ -256,59 +199,30 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let item of group.items">
-                    <td>{{ item.equipmentName || '—' }}</td>
-                    <td class="mono font-semibold">{{ item.serialNumber || '—' }}</td>
                     <td>
-                      <span class="status-chip-mini" [ngClass]="getEquipmentStatus(item).cls">
+                      <div class="authors-main-text">{{ item.equipmentName || '—' }}</div>
+                      <div class="authors-sub-text">Individual Asset</div>
+                    </td>
+                    <td>
+                      <div class="authors-main-text mono font-semibold">{{ item.serialNumber || '—' }}</div>
+                      <div class="authors-sub-text">S/N Tracking</div>
+                    </td>
+                    <td>
+                      <span class="authors-status-badge" [ngClass]="getEquipmentStatus(item).cls">
                         {{ getEquipmentStatus(item).label }}
                       </span>
                     </td>
-                    <td>{{ getShelfLocation(item.shelfId, item.status) }}</td>
-                    <td>{{ item.supplier || '—' }}</td>
+                    <td>
+                      <div class="authors-main-text">{{ getShelfLocation(item.shelfId, item.status) }}</div>
+                    </td>
+                    <td>
+                      <div class="authors-main-text">{{ item.supplier || '—' }}</div>
+                    </td>
 
                     <td class="actions-cell">
                       <div class="actions-wrap">
-                        <button class="action-icon view sm" (click)="viewEvent.emit(item)" title="View">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                          </svg>
-                        </button>
-                        <button class="action-icon edit sm" (click)="editEvent.emit(item)" title="Edit">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                          </svg>
-                        </button>
-                        <button class="action-icon add-similar sm" (click)="addSimilarEvent.emit(item)"
-                          title="Add Similar">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="16"></line>
-                            <line x1="8" y1="12" x2="16" y2="12"></line>
-                          </svg>
-                        </button>
-                        <button *ngIf="item.qrCode" class="action-icon qr sm" (click)="openQrModal(item, $event)"
-                          title="QR Code">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="14" width="7" height="7"></rect>
-                            <rect x="3" y="14" width="7" height="7"></rect>
-                          </svg>
-                        </button>
-                        <button class="action-icon delete sm" (click)="deleteEquipment(item.id, $event)" title="Delete">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                            </path>
-                          </svg>
-                        </button>
+                        <button class="authors-edit-link" (click)="editEvent.emit(item)">Edit</button>
+                        <button class="authors-edit-link" style="color: #ef4444; margin-left: 10px;" (click)="deleteEquipment(item.id, $event)">Delete</button>
                       </div>
                     </td>
                   </tr>
