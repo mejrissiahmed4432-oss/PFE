@@ -13,6 +13,10 @@
 
   <div class="content">
     <div class="list-wrapper">
+      <div class="table-header-area">
+        <h2 class="table-main-title">Category Management</h2>
+      </div>
+
 
       <!-- Top Controls -->
       <div class="controls-bar">
@@ -34,9 +38,9 @@
             <tr>
               <th class="col-expand"></th>
               <th class="col-icon">Icon</th>
-              <th>Category Name</th>
-              <th>Types Count</th>
-              <th style="text-align:right; padding-right: 20px;">Actions</th>
+              <th>Category</th>
+              <th>Composition</th>
+              <th class="actions-cell"></th>
             </tr>
           </thead>
           <tbody *ngFor="let cat of filteredCategories">
@@ -50,14 +54,16 @@
               </td>
 
               <td class="col-icon">
-                <div class="type-icon-wrap ti-default">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                <div class="authors-avatar-wrap">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
                 </div>
               </td>
 
               <td>
                 <div *ngIf="editingCategoryId !== cat.id" style="display: flex; align-items: center; gap: 8px;">
-                  <div class="font-bold text-dark">{{ cat.name | uppercase }}</div>
+                  <div class="authors-main-text">{{ cat.name }}</div>
+                  <div class="authors-sub-text">Inventory Group</div>
+
                   <button class="action-icon edit sm" (click)="$event.stopPropagation(); startRename(cat)" title="Rename">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                   </button>
@@ -80,18 +86,14 @@
               </td>
 
               <td>
-                <span class="status-chip active">
-                  {{ cat.types?.length || 0 }} Items
-                </span>
+                <div class="authors-main-text">{{ cat.types?.length || 0 }} Sub-types</div>
+                <div class="authors-sub-text">Assigned assets</div>
               </td>
 
               <td class="actions-cell">
-                <button class="action-icon add-similar" (click)="$event.stopPropagation(); openAddTypeModal(cat.id)" title="Add Type">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                </button>
-                <button class="action-icon delete" (click)="deleteCategory(cat.id, $event)" title="Delete Category">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                </button>
+                <div class="actions-wrap">
+                  <button class="authors-edit-link" (click)="$event.stopPropagation(); startRename(cat)">Rename</button>
+                </div>
               </td>
             </tr>
 
