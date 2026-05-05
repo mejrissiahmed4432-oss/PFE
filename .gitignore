@@ -1,6 +1,7 @@
 # Java / Spring Boot
 target/
 *.class
+*.gz
 *.jar
 
 # Logs
@@ -11,3 +12,6 @@ replay_pid*
 # Angular
 node_modules/
 dist/
+# IDE
+.idea/
+.vscode/
