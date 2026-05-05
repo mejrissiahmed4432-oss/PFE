@@ -24,13 +24,15 @@ public class AlertService {
     private static final String USER_SERVICE_SYSTEM_ALERT_URL = "http://user-microservice/api/alerts/system";
     private static final String USER_SERVICE_RESOLVE_ALERT_URL = "http://user-microservice/api/alerts/system/{key}/resolve";
 
-    public void triggerSystemAlert(String key, String type, String priority, String targetType, String targetId, String title, String message) {
+    public void triggerSystemAlert(String key, String type, String priority, String targetType, String targetId,
+            String title, String message) {
         Map<String, String> body = new HashMap<>();
         body.put("key", key);
         body.put("type", type);
         body.put("priority", priority);
         body.put("targetType", targetType);
-        if (targetId != null) body.put("targetId", targetId);
+        if (targetId != null)
+            body.put("targetId", targetId);
         body.put("title", title);
         body.put("message", message);
 
@@ -54,7 +56,7 @@ public class AlertService {
     public void generateWarrantyAlerts() {
         LocalDate today = LocalDate.now();
         LocalDate thirtyDaysFromNow = today.plusDays(30);
-        
+
         List<Equipment> equipmentWithWarranty = equipmentRepository.findAll().stream()
                 .filter(e -> e.getWarrantyExpiration() != null)
                 .toList();
@@ -63,32 +65,31 @@ public class AlertService {
             LocalDate expDate = eq.getWarrantyExpiration();
             String expiredKey = "WARRANTY_EXPIRED_" + eq.getId();
             String expiringKey = "WARRANTY_EXPIRING_" + eq.getId();
-            
+
             if (expDate.isBefore(today)) {
                 // Already expired
                 triggerSystemAlert(
-                    expiredKey,
-                    "WARRANTY_EXPIRED",
-                    "HIGH",
-                    "ROLE",
-                    "STOCK_MANAGER",
-                    "Warranty Expired: " + eq.getEquipmentName(),
-                    "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") expired on " + expDate + "."
-                );
+                        expiredKey,
+                        "WARRANTY_EXPIRED",
+                        "HIGH",
+                        "ROLE",
+                        "STOCK_MANAGER",
+                        "Warranty Expired: " + eq.getEquipmentName(),
+                        "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") expired on "
+                                + expDate + ".");
                 // Resolve expiring alert if it exists
                 resolveSystemAlert(expiringKey);
-            } 
-            else if (expDate.isBefore(thirtyDaysFromNow)) {
+            } else if (expDate.isBefore(thirtyDaysFromNow)) {
                 // Expiring soon
                 triggerSystemAlert(
-                    expiringKey,
-                    "WARRANTY_EXPIRING",
-                    "MEDIUM",
-                    "ROLE",
-                    "STOCK_MANAGER",
-                    "Warranty Expiring: " + eq.getEquipmentName(),
-                    "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber() + ") will expire soon on " + expDate + "."
-                );
+                        expiringKey,
+                        "WARRANTY_EXPIRING",
+                        "MEDIUM",
+                        "ROLE",
+                        "STOCK_MANAGER",
+                        "Warranty Expiring: " + eq.getEquipmentName(),
+                        "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber()
+                                + ") will expire soon on " + expDate + ".");
             } else {
                 // Warranty extended or not close to expiry, resolve any existing alerts
                 resolveSystemAlert(expiredKey);

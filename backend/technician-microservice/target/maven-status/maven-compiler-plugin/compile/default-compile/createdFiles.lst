@@ -2,5 +2,7 @@ com\example\technicianmicroservice\service\PartRequestService.class
 com\example\technicianmicroservice\TechnicianMicroserviceApplication.class
 com\example\technicianmicroservice\config\SecurityConfig.class
 com\example\technicianmicroservice\controller\PartRequestController.class
-com\example\technicianmicroservice\model\PartRequest.class
+
 com\example\technicianmicroservice\repository\PartRequestRepository.class
+com\example\technicianmicroservice\model\PartRequest.class
+

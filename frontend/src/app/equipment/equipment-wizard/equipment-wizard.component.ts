@@ -61,7 +61,11 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   saveError: string = '';
   capacityError: string = '';
   isCheckingCapacity: boolean = false;
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> my-local-work
   // Serial Number Uniqueness State
   snStatusMap: Map<string, { checking: boolean, unique: boolean, error?: string }> = new Map();
   private snSubject = new Subject<{ sn: string, index?: number }>();
@@ -75,7 +79,11 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   selectedCategoryName: string = '';
   type: string = '';
   configMode: 'same' | 'different' = 'same';
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> my-local-work
   categories: EquipmentCategory[] = [];
   availableTypes: CategoryType[] = [];
 
@@ -133,6 +141,13 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     'Storage Assignment', 'Review & Confirm'
   ];
 
+<<<<<<< HEAD
+=======
+  // ── Pagination for Review Step ────────────────────────────────────────
+  reviewCurrentPage: number = 1;
+  reviewPageSize: number = 5;
+
+>>>>>>> my-local-work
   constructor(
     private equipmentService: EquipmentService,
     private supplierService: SupplierService,
@@ -140,6 +155,17 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     private categoryService: CategoryService
   ) { }
 
+<<<<<<< HEAD
+=======
+  private formatLocalDate(dateObjOrString: Date | string): string {
+    const d = typeof dateObjOrString === 'string' ? new Date(dateObjOrString) : dateObjOrString;
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+>>>>>>> my-local-work
   ngOnInit(): void {
     this.supplierService.getAllSuppliers().subscribe({ next: d => this.suppliers = d });
     this.categoryService.getAllCategories().subscribe({ next: d => {
@@ -148,8 +174,13 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         this.populateFromPrefill(this.prefillData);
       }
     }});
+<<<<<<< HEAD
     this.sharedPurchaseDate = new Date().toISOString().split('T')[0];
     
+=======
+    this.sharedPurchaseDate = this.formatLocalDate(new Date());
+
+>>>>>>> my-local-work
     // ─── SN Uniqueness Validation Pipeline (Robust) ────────────────────────
     // We group by SN to allow multiple concurrent debounced checks.
     // We use switchMap inside the group to cancel previous checks if the same SN is typed quickly.
@@ -213,8 +244,14 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.sharedNotes = data.note || '';
     // Specs
     this.sharedSpecifications = data.specifications ? { ...data.specifications } : {};
+<<<<<<< HEAD
     // Purchase
     this.sharedPurchaseDate = data.purchaseDate ? data.purchaseDate.toString().split('T')[0] : '';
+=======
+    
+    // Purchase
+    this.sharedPurchaseDate = data.purchaseDate ? this.formatLocalDate(data.purchaseDate.toString()) : '';
+>>>>>>> my-local-work
     this.sharedSupplierId = data.supplierId || '';
     this.sharedSupplier = data.supplier || '';
     this.sharedPrice = data.purchasePrice || 0;
@@ -229,7 +266,12 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         .subscribe((fileData: string) => { this.sharedInvoiceFileData = fileData || ''; });
     }
     // Warranty document — set filename immediately; fetch binary data if missing
+<<<<<<< HEAD
     this.sharedWarrantyEnd = data.warrantyExpiration ? data.warrantyExpiration.toString().split('T')[0] : '';
+=======
+    this.sharedWarrantyEnd = data.warrantyExpiration ? this.formatLocalDate(data.warrantyExpiration.toString()) : '';
+
+>>>>>>> my-local-work
     this.sharedWarrantyFileName = data.warrantyFileName || '';
     this.sharedWarrantyFileData = data.warrantyFileData || '';
     if (data.id && data.warrantyFileName && !data.warrantyFileData) {
@@ -252,9 +294,15 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   // ── Computed helpers ──────────────────────────────────────────────────
   get isComputerType(): boolean { return this.computerTypes.includes(this.type); }
   get isConsumable(): boolean { return this.consumableTypes.includes(this.type); }
+<<<<<<< HEAD
   get isDeviceCategory(): boolean { 
     const cat = this.selectedCategoryName?.toUpperCase();
     return cat === 'DEVICE' || cat === 'SERVER'; 
+=======
+  get isDeviceCategory(): boolean {
+    const cat = this.selectedCategoryName?.toUpperCase();
+    return cat === 'DEVICE' || cat === 'SERVER';
+>>>>>>> my-local-work
   }
   get totalSteps(): number { return 8; }   // 0‑7
   get progressPct(): number { return Math.round((this.currentStep / (this.totalSteps - 1)) * 100); }
@@ -296,6 +344,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     const selectedCat = this.categories.find(c => c.name === this.selectedCategoryName);
     if (selectedCat) {
       this.availableTypes = selectedCat.types || [];
+<<<<<<< HEAD
       
       // Auto-set internal category tag
       if (this.selectedCategoryName === 'COMPONENT' || 
@@ -304,6 +353,16 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
          // This is a simplified check based on previous logic "ram, hard drive, ssd..."
          // We can refine this if needed, but for now we'll stick to a heuristic
          // or just let it be Asset by default unless specifically known.
+=======
+
+      // Auto-set internal category tag
+      if (this.selectedCategoryName === 'COMPONENT' ||
+        this.selectedCategoryName === 'STORAGE' ||
+        this.selectedCategoryName === 'PERIPHERAL') {
+        // This is a simplified check based on previous logic "ram, hard drive, ssd..."
+        // We can refine this if needed, but for now we'll stick to a heuristic
+        // or just let it be Asset by default unless specifically known.
+>>>>>>> my-local-work
       }
     } else {
       this.availableTypes = [];
@@ -372,7 +431,11 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.shelfService.getShelvesByType(this.type).subscribe({
       next: shelves => {
         const totalSpace = shelves.reduce((sum, s) => sum + (s.maxQte - s.currentQte), 0);
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> my-local-work
         if (shelves.length === 0) {
           this.capacityError = `No shelves found for type "${this.type}". Please create a shelf first.`;
         } else if (totalSpace < this.quantity) {
@@ -440,7 +503,11 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
 
   private revalidateBatchSNs(): void {
     const allSNs = this.quantity === 1 ? [this.sharedSerial] : this.units.map(u => u.serialNumber);
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> my-local-work
     allSNs.forEach((sn, idx) => {
       if (!sn || sn.length === 0) return;
 
@@ -454,8 +521,13 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
           const status = this.snStatusMap.get(sn);
           // Only trigger if we don't already have a valid unique status or if it was an error
           if (!status || status.error || status.checking || !status.unique) {
+<<<<<<< HEAD
              this.snStatusMap.set(sn, { checking: true, unique: true });
              this.snSubject.next({ sn, index: idx });
+=======
+            this.snStatusMap.set(sn, { checking: true, unique: true });
+            this.snSubject.next({ sn, index: idx });
+>>>>>>> my-local-work
           }
         }
       } else {
@@ -490,12 +562,20 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     const digits = '0123456789';
     const all = letters + digits;
     let result = '';
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> my-local-work
     // Exactly 10 random alphanumeric chars
     for (let i = 0; i < 10; i++) {
       result += all.charAt(Math.floor(Math.random() * all.length));
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> my-local-work
     // Ensure at least one letter and one digit
     if (!/\d/.test(result)) {
       result = result.substring(0, 9) + digits.charAt(Math.floor(Math.random() * digits.length));
@@ -503,7 +583,11 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     if (!/[a-zA-Z]/.test(result)) {
       result = result.substring(0, 9) + letters.charAt(Math.floor(Math.random() * letters.length));
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> my-local-work
     return result;
   }
 
@@ -621,7 +705,11 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         ? !!this.sharedSupplierId && !!this.sharedPurchaseDate
         : this.units.every(u => !!u.supplierId && !!u.purchaseDate);
       case 5: return true; // warranty optional
+<<<<<<< HEAD
       case 6: 
+=======
+      case 6:
+>>>>>>> my-local-work
         return this.getTotalAssigned() === (Number(this.quantity) || 1);
       case 7: return true;
       default: return true;
@@ -744,6 +832,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   onAssignCountInput(index: number, event: any): void {
     let val = parseInt(event.target.value, 10);
     if (isNaN(val) || val < 0) val = 0;
+<<<<<<< HEAD
     
     const assignment = this.shelfAssignments[index];
     const available = assignment.shelf.maxQte - assignment.shelf.currentQte;
@@ -755,11 +844,28 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     const remainingToAssignOverall = this.quantity - otherAssignedTotal;
     const maxPossibleOnThisShelf = Math.min(available, remainingToAssignOverall);
     
+=======
+
+    const assignment = this.shelfAssignments[index];
+    const available = assignment.shelf.maxQte - assignment.shelf.currentQte;
+
+    // First, temporarily set it to 0 to calculate the current assigned excluding this shelf
+    const otherAssignedTotal = this.getTotalAssigned() - assignment.assignCount;
+
+    // Max we can assign to this shelf is the minimum of (available on shelf) and (remaining to be assigned)
+    const remainingToAssignOverall = this.quantity - otherAssignedTotal;
+    const maxPossibleOnThisShelf = Math.min(available, remainingToAssignOverall);
+
+>>>>>>> my-local-work
     if (val > maxPossibleOnThisShelf) {
       val = maxPossibleOnThisShelf;
       event.target.value = val;
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> my-local-work
     assignment.assignCount = val;
   }
 
@@ -885,6 +991,10 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     this.availableShelves = []; this.shelfAssignments = [];
     this.units = []; this.isSaving = false; this.saveError = '';
     this.prefillData = null;
+<<<<<<< HEAD
+=======
+    this.reviewCurrentPage = 1;
+>>>>>>> my-local-work
   }
 
   // ── QR Code generation ────────────────────────────────────────────────
@@ -920,12 +1030,90 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     });
   }
 
+<<<<<<< HEAD
+=======
+  get pagedReviewUnits(): { name: string; serial: string; brand: string; model: string; specs: string }[] {
+    const start = (this.reviewCurrentPage - 1) * this.reviewPageSize;
+    return this.reviewUnits.slice(start, start + this.reviewPageSize);
+  }
+
+  get totalReviewPages(): number {
+    return Math.ceil(this.quantity / this.reviewPageSize);
+  }
+
+  get reviewShowingStart(): number {
+    return ((this.reviewCurrentPage - 1) * this.reviewPageSize) + 1;
+  }
+
+  get reviewShowingEnd(): number {
+    const end = this.reviewCurrentPage * this.reviewPageSize;
+    return end > this.quantity ? this.quantity : end;
+  }
+
+  get reviewPages(): (number | string)[] {
+    const total = this.totalReviewPages;
+    const current = this.reviewCurrentPage;
+    const pages: (number | string)[] = [];
+
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    // Always show first two
+    pages.push(1, 2);
+
+    if (current > 4) {
+      pages.push('...');
+    }
+
+    // Show current and neighbors
+    const start = Math.max(3, current - 1);
+    const end = Math.min(total - 2, current + 1);
+
+    for (let i = start; i <= end; i++) {
+      if (!pages.includes(i)) pages.push(i);
+    }
+
+    if (current < total - 3) {
+      pages.push('...');
+    }
+
+    // Always show last two
+    if (!pages.includes(total - 1)) pages.push(total - 1);
+    if (!pages.includes(total)) pages.push(total);
+
+    return pages;
+  }
+
+  changeReviewPage(page: number | string): void {
+    if (typeof page === 'number' && page >= 1 && page <= this.totalReviewPages) {
+      this.reviewCurrentPage = page;
+    }
+  }
+
+  nextReviewPage(): void {
+    if (this.reviewCurrentPage < this.totalReviewPages) {
+      this.reviewCurrentPage++;
+    }
+  }
+
+  prevReviewPage(): void {
+    if (this.reviewCurrentPage > 1) {
+      this.reviewCurrentPage--;
+    }
+  }
+
+>>>>>>> my-local-work
   // ── File Upload Handlers ────────────────────────────────────────────
   onInvoiceFileUpload(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
     const file = input.files[0];
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> my-local-work
     // Set filenames immediately for UI feedback
     if (this.purchaseMode === 'same' || this.quantity === 1) {
       this.sharedInvoiceFile = file;

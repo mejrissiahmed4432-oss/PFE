@@ -16,5 +16,9 @@
 		<module>technician-microservice</module>
 		<module>api-gateway</module>
 		<module>ai-service</module>
+
+		<module>employee-microservice</module>
+		<module>hr-microservice</module>
+
 	</modules>
 </project>

@@ -1,3 +1,4 @@
+
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,6 +7,7 @@ import { ApplicationService } from '../../application-management/application.ser
 import { Application } from '../../application-management/application.model';
 import { OsService } from '../../os-management/os.service';
 import { OperatingSystem } from '../../os-management/os.model';
+
 import { WorkbenchEngineService } from '../workbench-engine.service';
 import { Ticket } from '../ticket.model';
 import { Equipment } from '../../equipment/equipment.model';
@@ -47,8 +49,8 @@ export class LiveWorkbenchComponent implements OnInit {
   CATEGORY_ICONS = CATEGORY_ICONS;
 
   ALL_ACTION_CATEGORIES: ActionCategory[] = [
-    'Hardware', 'Software', 'Configuration', 'Network', 'Maintenance', 
-    'Inspection', 'Power', 'Security', 'Storage', 'Peripheral', 
+    'Hardware', 'Software', 'Configuration', 'Network', 'Maintenance',
+    'Inspection', 'Power', 'Security', 'Storage', 'Peripheral',
     'Performance', 'Thermal', 'Consumables', 'Firmware', 'Cabling'
   ];
 
@@ -84,12 +86,15 @@ export class LiveWorkbenchComponent implements OnInit {
   // Dialogs
   showCancelDialog = false;
   showCompleteDialog = false;
+
   showNoResourcesWarning = false;
+
   customAlert: { title: string; message: string } | null = null;
   newCheckLabel = '';
 
   // Resource Selection
   selectedActionId: string | null = null;
+
 
   // AI Assistant State
   activeAiTab: 'diagnosis' | 'predictive' | null = null;
@@ -121,11 +126,11 @@ export class LiveWorkbenchComponent implements OnInit {
   liveActionTimers: Record<string, string> = {};
 
   constructor(
-    private engine: WorkbenchEngineService, 
-    private aiService: AiService, 
+    private engine: WorkbenchEngineService,
+    private aiService: AiService,
     private appService: ApplicationService,
     private osService: OsService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.state.ticketId = this.ticket.id || '';
@@ -133,15 +138,16 @@ export class LiveWorkbenchComponent implements OnInit {
       this.state.actionStartTimes = {};
     }
     this.loadState();
-    
+
     // Start Live Timer
     this.startLiveTimer();
+
     const eqType = this.equipment?.type || this.equipment?.category || 'unknown';
     this.engine.getCapabilities(eqType).subscribe(cap => {
       this.capabilities = cap;
       this.isLoading = false;
       this.cleanupTimeline();
-      
+
       // Auto-select first action if already on Resources step
       if (this.state.currentStep === 'resources' && this.state.actions.length > 0) {
         this.selectedActionId = this.state.actions[0].id;
@@ -149,6 +155,7 @@ export class LiveWorkbenchComponent implements OnInit {
 
       if (this.state.timeline.length === 0) {
         this.pushTimeline('Maintenance Started', '#6366f1', 'edit');
+
       }
     });
 
@@ -211,6 +218,7 @@ export class LiveWorkbenchComponent implements OnInit {
       if (a.resources) count += a.resources.length;
     });
     return count;
+
   }
 
   // ── Navigation ──────────────────────────────────────────────────────────────
@@ -234,6 +242,7 @@ export class LiveWorkbenchComponent implements OnInit {
       this.buildValidationChecklist();
     }
 
+
     if (this.state.currentStep === 'resources' && !this.showNoResourcesWarning) {
       const anyResources = this.state.actions.some(a => a.resources && a.resources.length > 0);
       if (!anyResources) {
@@ -241,7 +250,7 @@ export class LiveWorkbenchComponent implements OnInit {
         return;
       }
     }
-    
+
     this.actuallyProceedNext();
   }
 
@@ -253,17 +262,20 @@ export class LiveWorkbenchComponent implements OnInit {
   private actuallyProceedNext(): void {
     const idx = this.stepIndex;
     if (idx < this.steps.length - 1) {
+
       this.animDir = 'right';
       this.animating = true;
       setTimeout(() => {
         this.state.currentStep = this.steps[idx + 1].key;
-        
+
         // Auto-select first action if moving to Resources step
         if (this.state.currentStep === 'resources' && this.state.actions.length > 0) {
           this.selectedActionId = this.state.actions[0].id;
+
           this.refreshInventory();
         }
         // Removed noisy timeline step transitions
+
         this.saveState();
         this.animating = false;
       }, 200);
@@ -287,13 +299,15 @@ export class LiveWorkbenchComponent implements OnInit {
       this.animating = true;
       setTimeout(() => {
         this.state.currentStep = this.steps[idx - 1].key;
-        
+
         // Auto-select first action if returning to Resources step
         if (this.state.currentStep === 'resources' && this.state.actions.length > 0) {
           this.selectedActionId = this.state.actions[0].id;
+
           this.refreshInventory();
         }
         // Removed noisy return log
+
         this.animating = false;
       }, 200);
     }
@@ -313,9 +327,11 @@ export class LiveWorkbenchComponent implements OnInit {
       // Auto-select first action if jumping to Resources step
       if (this.state.currentStep === 'resources' && this.state.actions.length > 0) {
         this.selectedActionId = this.state.actions[0].id;
+
         this.refreshInventory();
       }
       // Removed noisy return log
+
     } else {
       // Moving forward: must validate current step first
       const result = this.engine.validateStep(this.state.currentStep, this.state);
@@ -323,7 +339,7 @@ export class LiveWorkbenchComponent implements OnInit {
         this.customAlert = { title: 'Required Information', message: result.error };
         return;
       }
-      
+
       // If moving more than one step forward, we only allow going to the immediate next one
       // or to steps that are already "accessible" (though usually you just go one by one)
       if (targetIdx === currentIdx + 1) {
@@ -369,6 +385,7 @@ export class LiveWorkbenchComponent implements OnInit {
     this.saveState();
   }
 
+
   // ── AI Assistant Methods ───────────────────────────────────────────────────
 
   copyAiToDiagnosis() {
@@ -384,14 +401,14 @@ export class LiveWorkbenchComponent implements OnInit {
     this.activeAiTab = 'diagnosis';
     this.aiLoading = true;
     const prompt = `Analyze this problem description and provide possible causes and suggested checks: ${this.ticket.description}. Format exactly as follows: \nCauses:\n- cause 1\n- cause 2\nChecks:\n- check 1\n- check 2`;
-    
+
     this.aiService.query(prompt).subscribe({
       next: (res) => {
         this.aiLoading = false;
         const text = res.answer || '';
         const causesPart = text.split(/Checks:/i)[0] || '';
         const checksPart = text.split(/Checks:/i)[1] || '';
-        
+
         this.aiDiagnosisCauses = (causesPart.match(/- (.*)/g) || []).map(s => s.substring(2).trim());
         this.aiDiagnosisChecks = (checksPart.match(/- (.*)/g) || []).map(s => s.substring(2).trim());
 
@@ -399,7 +416,7 @@ export class LiveWorkbenchComponent implements OnInit {
           this.aiDiagnosisCauses = [text.substring(0, 100) + '...'];
           this.aiDiagnosisChecks = ["Check system logs", "Perform hardware diagnostic"];
         }
-        
+
         this.pushTimeline('AI Diagnosis Generated', '#0ea5e9', 'search');
       },
       error: () => {
@@ -423,7 +440,7 @@ Similar Case:
       next: (res) => {
         this.aiLoading = false;
         const text = res.answer || '';
-        
+
         this.aiPredictiveMap = [];
         const failuresMatch = text.match(/- Cause:(.*)/g);
         if (failuresMatch) {
@@ -439,10 +456,10 @@ Similar Case:
             }
           });
         } else {
-           this.aiPredictiveMap = [
-             { cause: 'Insufficient RAM capacity', risk: 'MEDIUM', percentage: 62, recommendation: 'Run memory diagnostic test' },
-             { cause: 'Storage drive degradation or failure', risk: 'HIGH', percentage: 28, recommendation: 'Check drive SMART status' }
-           ];
+          this.aiPredictiveMap = [
+            { cause: 'Insufficient RAM capacity', risk: 'MEDIUM', percentage: 62, recommendation: 'Run memory diagnostic test' },
+            { cause: 'Storage drive degradation or failure', risk: 'HIGH', percentage: 28, recommendation: 'Check drive SMART status' }
+          ];
         }
 
         const simCaseMatch = text.match(/Similar Case:[\s\S]*- ID:(.*)\| Match:(.*)\| Problem:(.*)\| Solution:(.*)\| Time:(.*)\| Success:(.*)/i);
@@ -483,11 +500,11 @@ Similar Case:
     this.aiService.query(prompt).subscribe({
       next: (res) => {
         this.aiPlanLoading = false;
-        this.lastGeneratedDiagnosis = this.state.diagnosisResult; 
+        this.lastGeneratedDiagnosis = this.state.diagnosisResult;
 
         const text = res.answer || '';
         const stepsMatch = text.match(/- Action:(.*)/g);
-        
+
         if (stepsMatch) {
           stepsMatch.forEach(step => {
             const parts = step.split('|');
@@ -496,7 +513,7 @@ Similar Case:
               const target = parts[1].replace(/Target:/i, '').trim();
               const desc = parts[2].replace(/Desc:/i, '').trim();
               const catRaw = parts[3].replace(/Category:/i, '').trim();
-              
+
               let category = ['Hardware', 'Software', 'Maintenance', 'Network', 'Configuration', 'Storage', 'Power', 'Firmware', 'Peripheral', 'Performance'].includes(catRaw) ? (catRaw as ActionCategory) : 'Maintenance';
 
               // Ensure 'type' is one of the valid types for the category, otherwise fallback to first valid type
@@ -508,7 +525,7 @@ Similar Case:
 
               // Deduplication
               const exists = this.state.actions.some(a => a.type.toLowerCase() === finalType!.toLowerCase() && a.target.toLowerCase() === target.toLowerCase());
-              
+
               if (!exists && target !== 'None' && target !== '') {
                 const newAction: WorkbenchAction = {
                   id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
@@ -527,22 +544,22 @@ Similar Case:
           });
           this.saveState();
         } else {
-           // Fallback dummy action if format fails
-           const exists = this.state.actions.some(a => a.target === 'System Diagnostics');
-           if(!exists) {
-             this.state.actions.push({
-               id: Date.now().toString(),
-               category: 'Maintenance',
-               type: ACTION_TYPES_BY_CATEGORY['Maintenance'][0] || 'Inspect',
-               target: 'System Diagnostics',
-               description: 'Run standard system diagnostics based on AI recommendation.',
-               status: 'Planned',
-               notes: '',
-               resources: [],
-               expandedInExecution: false
-             });
-             this.saveState();
-           }
+          // Fallback dummy action if format fails
+          const exists = this.state.actions.some(a => a.target === 'System Diagnostics');
+          if (!exists) {
+            this.state.actions.push({
+              id: Date.now().toString(),
+              category: 'Maintenance',
+              type: ACTION_TYPES_BY_CATEGORY['Maintenance'][0] || 'Inspect',
+              target: 'System Diagnostics',
+              description: 'Run standard system diagnostics based on AI recommendation.',
+              status: 'Planned',
+              notes: '',
+              resources: [],
+              expandedInExecution: false
+            });
+            this.saveState();
+          }
         }
       },
       error: () => {
@@ -550,6 +567,7 @@ Similar Case:
       }
     });
   }
+
 
   addAction(): void {
     const defaultCat: ActionCategory = 'Hardware';
@@ -562,6 +580,7 @@ Similar Case:
       status: 'Planned',
       notes: '',
       resources: [],
+
       expandedInExecution: false,
       priority: 'Medium',
       estimatedTime: '30m'
@@ -569,6 +588,7 @@ Similar Case:
     this.state.actions.push(newAction);
     this.aiResourceMatched = false;
     this.pushTimeline(`Action Added: ${newAction.type}`, '#6366f1', 'edit');
+
     this.saveState();
   }
 
@@ -580,14 +600,17 @@ Similar Case:
     if (field === 'category') {
       action.type = ACTION_TYPES_BY_CATEGORY[value as ActionCategory]?.[0] || '';
     }
+
     this.aiResourceMatched = false;
+
     this.saveState();
   }
 
   removeAction(id: string): void {
     this.state.actions = this.state.actions.filter(a => a.id !== id);
+
     // Unblock the AI Generator button if an action is removed
-    this.lastGeneratedDiagnosis = null; 
+    this.lastGeneratedDiagnosis = null;
     // Unblock AI Resource matcher if actions change
     this.aiResourceMatched = false;
     this.saveState();
@@ -637,10 +660,10 @@ Similar Case:
     const action = this.selectedAction;
     if (!action) return;
     if (!action.resources) action.resources = [];
-    
-    const existing = action.resources.find(r => 
-      r.name === name && 
-      r.resourceType === resourceType && 
+
+    const existing = action.resources.find(r =>
+      r.name === name &&
+      r.resourceType === resourceType &&
       r.specification === specification
     );
 
@@ -667,14 +690,14 @@ Similar Case:
 
   matchResources() {
     this.aiResourceLoading = true;
-    
+
     // Use previously fetched apps and os if available
     const availableAppsStr = this.availableApps.map(a => `${a.name} (OS: ${a.supportedOs})`).join(', ');
     const availableOsStr = this.availableOs.map(o => `${o.name} ${o.version}`).join(', ');
     const availableHardwareStr = this.userInventory.map(h => `${h.name} (Stock: ${h.totalQty})`).join(', ');
 
     const actionsStr = this.state.actions.map(a => `ID: ${a.id} | Action: ${a.type} ${a.target} | Desc: ${a.description} | Category: ${a.category}`).join('\n');
-    
+
     const prompt = `Analyze these planned maintenance actions:
 ${actionsStr}
 
@@ -700,20 +723,20 @@ Format:
       next: (res) => {
         this.aiResourceLoading = false;
         this.aiResourceMatched = true;
-        
+
         try {
           // Attempt to parse JSON safely, ignoring markdown backticks if the AI accidentally added them
           let jsonStr = res.answer || '[]';
           jsonStr = jsonStr.replace(/^```json/i, '').replace(/^```/i, '').replace(/```$/i, '').trim();
-          
+
           const parsed = JSON.parse(jsonStr);
-          
+
           if (Array.isArray(parsed)) {
             parsed.forEach((item: any) => {
               const id = item.id;
               const resourceName = item.resource;
               const note = item.note;
-              
+
               const action = this.state.actions.find(a => a.id === id);
               if (action) {
                 action.notes = `AI Note: ${note}`;
@@ -721,11 +744,11 @@ Format:
                   if (!action.resources) action.resources = [];
                   const resExists = action.resources.some(r => r.name === resourceName);
                   if (!resExists) {
-                     action.resources.push({
-                       resourceType: action.category === 'Software' ? 'software' : 'part',
-                       name: resourceName,
-                       quantity: 1
-                     });
+                    action.resources.push({
+                      resourceType: action.category === 'Software' ? 'software' : 'part',
+                      name: resourceName,
+                      quantity: 1
+                    });
                   }
                 }
               }
@@ -741,6 +764,7 @@ Format:
       }
     });
   }
+
 
   getActionTypesForCategory(category: ActionCategory): string[] {
     return ACTION_TYPES_BY_CATEGORY[category] || [];
@@ -763,7 +787,9 @@ Format:
 
   selectActionForResources(id: string): void {
     this.selectedActionId = id;
+
     this.refreshInventory();
+
     this.saveState();
   }
 
@@ -786,6 +812,7 @@ Format:
   get networkActions(): WorkbenchAction[] {
     return this.state.actions.filter(a => a.category === 'Network');
   }
+
 
   getAssignedQuantity(partName: string, specification?: string): number {
     let used = 0;
@@ -862,6 +889,7 @@ Format:
 
   get filteredInventory(): any[] {
     return this.cachedInventory;
+
   }
 
   isPartLinkedToAction(part: any, action: WorkbenchAction): boolean {
@@ -876,7 +904,9 @@ Format:
       action.resources.splice(idx, 1);
     }
     this.saveState();
+
     this.refreshInventory();
+
   }
 
   // ── Execution Step ──────────────────────────────────────────────────────────
@@ -887,6 +917,7 @@ Format:
 
   setActionStatus(action: WorkbenchAction, status: ActionStatus): void {
     action.status = status;
+
     if (status === 'Done') {
       this.stopActionTimer(action);
       this.pushTimeline(`Completed: ${action.type} ${action.target}`, '#10b981', 'check-circle');
@@ -931,15 +962,16 @@ Format:
     return this.formatSeconds(action.timeSpent || 0);
   }
 
+
   getInstructions(action: WorkbenchAction): string[] {
     const defaults: Record<string, string[]> = {
-      'Hardware-Install':     ['Power off device completely', 'Disconnect power cables', 'Open device case/panel', 'Install the component carefully', 'Close case and reconnect power', 'Boot system and verify functionality'],
-      'Hardware-Replace':     ['Backup all data from device', 'Power off device', 'Remove old component', 'Install new component', 'Reconnect all cables', 'Power on and verify'],
-      'Software-Install':     ['Download installer package', 'Verify system requirements', 'Run installer as administrator', 'Follow installation wizard', 'Configure initial settings', 'Restart if required', 'Verify installation success'],
-      'Software-Update':      ['Back up current configuration', 'Download update package', 'Stop affected services', 'Apply update', 'Restart services', 'Verify update applied correctly'],
+      'Hardware-Install': ['Power off device completely', 'Disconnect power cables', 'Open device case/panel', 'Install the component carefully', 'Close case and reconnect power', 'Boot system and verify functionality'],
+      'Hardware-Replace': ['Backup all data from device', 'Power off device', 'Remove old component', 'Install new component', 'Reconnect all cables', 'Power on and verify'],
+      'Software-Install': ['Download installer package', 'Verify system requirements', 'Run installer as administrator', 'Follow installation wizard', 'Configure initial settings', 'Restart if required', 'Verify installation success'],
+      'Software-Update': ['Back up current configuration', 'Download update package', 'Stop affected services', 'Apply update', 'Restart services', 'Verify update applied correctly'],
       'Configuration-Modify': ['Access admin panel', 'Navigate to configuration section', 'Backup current configuration', 'Modify required settings', 'Validate changes', 'Save configuration', 'Restart service if needed'],
-      'Network-Configure':    ['Access router admin panel', 'Navigate to network settings', 'Enter IP configuration', 'Set DNS servers', 'Configure subnet mask', 'Save and apply settings', 'Test connectivity'],
-      'Maintenance-Clean':    ['Power off device', 'Disconnect all cables', 'Use compressed air for dust removal', 'Clean thermal paste if needed', 'Reconnect components', 'Power on and verify temperatures']
+      'Network-Configure': ['Access router admin panel', 'Navigate to network settings', 'Enter IP configuration', 'Set DNS servers', 'Configure subnet mask', 'Save and apply settings', 'Test connectivity'],
+      'Maintenance-Clean': ['Power off device', 'Disconnect all cables', 'Use compressed air for dust removal', 'Clean thermal paste if needed', 'Reconnect components', 'Power on and verify temperatures']
     };
     const key = `${action.category}-${action.type}`;
     return defaults[key] || ['Review action requirements', 'Prepare necessary tools and resources', 'Execute the planned action carefully', 'Verify completion and test results', 'Document any issues encountered'];
@@ -1008,6 +1040,7 @@ Format:
     this.saveState();
   }
 
+
   get validationProgress(): { checked: number; total: number; allDone: boolean; percentage: number } {
     const total = this.state.validationChecklist.length;
     const checked = this.state.validationChecklist.filter(v => v.checked).length;
@@ -1019,6 +1052,7 @@ Format:
     const circumference = 2 * Math.PI * 34; // r=34 from SVG
     const pct = this.validationProgress.percentage;
     return circumference - (pct / 100) * circumference;
+
   }
 
   // ── Summary Step ─────────────────────────────────────────────────────────────
@@ -1040,6 +1074,7 @@ Format:
   }
 
   // ── Complete / Cancel ────────────────────────────────────────────────────────
+
 
   exportReport(): void {
     const lines = [
@@ -1080,6 +1115,7 @@ Format:
     a.click();
     window.URL.revokeObjectURL(url);
   }
+
 
   confirmComplete(): void {
     const parts = this.state.actions
@@ -1135,7 +1171,7 @@ Format:
     // One-time cleanup for existing duplicates in the whole array
     const seen = new Set<string>();
     const unique: WorkbenchTimelineEntry[] = [];
-    
+
     // We iterate backwards to keep the latest instance of each event
     for (let i = this.state.timeline.length - 1; i >= 0; i--) {
       const entry = this.state.timeline[i];
@@ -1163,17 +1199,19 @@ Format:
     if (!this.ticket?.id) return;
     const saved = localStorage.getItem(`wb_v3_${this.ticket.id}`);
     if (saved) {
-      try { 
-        this.state = { ...this.state, ...JSON.parse(saved) }; 
+
+      try {
+        this.state = { ...this.state, ...JSON.parse(saved) };
         // Remove noisy logs from previous sessions
         if (this.state.timeline) {
-          this.state.timeline = this.state.timeline.filter(t => 
-            !t.title.includes('Phase Started') && 
+          this.state.timeline = this.state.timeline.filter(t =>
+            !t.title.includes('Phase Started') &&
             !t.title.includes('Returned to') &&
             (!t.title.includes('Completed') || t.title.includes('Maintenance completed ✓'))
           );
         }
-      } catch {}
+      } catch { }
+
     }
   }
 

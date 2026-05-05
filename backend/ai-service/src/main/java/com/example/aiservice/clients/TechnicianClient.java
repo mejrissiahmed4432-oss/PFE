@@ -71,6 +71,7 @@ public class TechnicianClient {
             return Collections.emptyList();
         }
     }
+<<<<<<< HEAD
     // ── Write Operations (AI Actions) ─────────────────────────────────────────
 
     @SuppressWarnings("unchecked")
@@ -109,4 +110,6 @@ public class TechnicianClient {
             throw new RuntimeException("Could not update request status: " + e.getMessage());
         }
     }
+=======
+>>>>>>> my-local-work
 }

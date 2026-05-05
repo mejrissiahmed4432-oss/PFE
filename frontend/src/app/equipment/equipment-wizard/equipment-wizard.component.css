@@ -290,7 +290,7 @@
   background: white;
   border-radius: 16px;
   border: 1px solid #e8edf5;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 }
 
 .step-hero-icon {
@@ -1122,6 +1122,22 @@
   color: #64748b;
 }
 
+.unit-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: #eff6ff;
+  color: #3b82f6;
+  font-weight: 700;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.05);
+}
+
+
+
 /* ─── Error banner ────────────────────────────────────────── */
 .error-banner {
   display: flex;
@@ -1398,28 +1414,155 @@
   color: white;
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
 }
+
 /* --------------------------------------------
    RESPONSIVE - EQUIPMENT WIZARD
 -------------------------------------------- */
 
 @media (max-width: 1024px) {
-  .wizard-panel { width: 95%; }
-  .two-col, .spec-grid, .shelf-cards-grid { grid-template-columns: 1fr 1fr; }
+  .wizard-panel {
+    width: 95%;
+  }
+
+  .two-col,
+  .spec-grid,
+  .shelf-cards-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 768px) {
-  .wizard-header { padding: 16px 20px; }
-  .wizard-body { padding: 20px; }
-  .two-col, .spec-grid, .shelf-cards-grid { grid-template-columns: 1fr; }
-  .step-hero { flex-direction: column; align-items: flex-start; }
-  .wizard-step-dots { padding: 10px 16px; }
+  .wizard-header {
+    padding: 16px 20px;
+  }
+
+  .wizard-body {
+    padding: 20px;
+  }
+
+  .two-col,
+  .spec-grid,
+  .shelf-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .step-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .wizard-step-dots {
+    padding: 10px 16px;
+  }
 }
 
 @media (max-width: 480px) {
-  .wizard-panel { width: 100%; height: 100vh; max-height: 100vh; border-radius: 0; }
-  .wizard-overlay { padding: 0; }
-  .wizard-title { font-size: 1rem; }
-  .wizard-icon-wrap { width: 36px; height: 36px; }
-  .step-hero { padding: 16px; }
-  .radio-card { padding: 14px; }
+  .wizard-panel {
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .wizard-overlay {
+    padding: 0;
+  }
+
+  .wizard-title {
+    font-size: 1rem;
+  }
+
+  .wizard-icon-wrap {
+    width: 36px;
+    height: 36px;
+  }
+
+  .step-hero {
+    padding: 16px;
+  }
+
+  .radio-card {
+    padding: 14px;
+  }
+}
+
+
+/* ─── REVIEW STEP PAGINATION REFINED ───────────────────────── */
+.review-pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.review-page-info {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.review-page-info span,
+.review-page-info strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.review-pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pag-btn {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  background: white;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pag-btn.num-btn {
+  width: 38px;
+  padding: 0;
+}
+
+.pag-btn.text-btn {
+  padding: 0 16px;
+  color: #64748b;
+}
+
+.pag-btn:hover:not(:disabled) {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #eff6ff;
+}
+
+.pag-btn.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-color: #2563eb;
+  color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.pag-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+.review-page-dots {
+  color: #94a3b8;
+  font-weight: 600;
+  padding: 0 4px;
 }

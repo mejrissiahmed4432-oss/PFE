@@ -23,6 +23,11 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Task>> getTasksByUser(@PathVariable String userId) {
+        return ResponseEntity.ok(taskService.getTasksByUser(userId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable String id) {
         return taskService.getTaskById(id)
@@ -43,7 +48,7 @@ public class TaskController {
             return ResponseEntity.notFound().build();
         }
     }
-    
+
     @PatchMapping("/{id}/status")
     public ResponseEntity<Task> updateTaskStatus(@PathVariable String id, @RequestParam String status) {
         try {

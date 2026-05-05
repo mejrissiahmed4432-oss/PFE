@@ -1,0 +1,170 @@
+<div class="modal-overlay" (click)="onOverlayClick($event)">
+  <div class="modal-panel" id="employee-form-modal">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title">
+          {{ isViewOnly ? 'Employee Profile' : (employee ? 'Edit Employee' : 'Add New Employee') }}
+        </h2>
+        <p class="modal-subtitle">
+          {{ isViewOnly ? 'View detailed information about this employee.' : 'Fill in all required fields marked with *'
+          }}
+        </p>
+      </div>
+      <button class="btn-close" (click)="cancel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Avatar Preview -->
+    <div class="avatar-preview" *ngIf="formData.firstName || formData.lastName">
+      <div class="form-avatar">
+        {{ getPreviewInitials() }}
+      </div>
+      <span class="avatar-name">{{ formData.firstName }} {{ formData.lastName }}</span>
+    </div>
+
+    <!-- Form Body -->
+    <form class="form-body" (ngSubmit)="save()" #empForm="ngForm" novalidate>
+
+      <!-- Row 1: First & Last Name -->
+      <div class="form-row">
+        <div class="form-group" [class.has-error]="firstNameField.invalid && firstNameField.touched">
+          <label>First Name <span class="req">*</span></label>
+          <input type="text" name="firstName" [(ngModel)]="formData.firstName" #firstNameField="ngModel" required
+            minlength="2" [disabled]="isViewOnly" placeholder="e.g. John">
+          <span class="error-msg" *ngIf="firstNameField.invalid && firstNameField.touched">
+            <span *ngIf="firstNameField.errors?.['required']">First name is required.</span>
+            <span *ngIf="firstNameField.errors?.['minlength']">Minimum 2 characters.</span>
+          </span>
+        </div>
+
+        <div class="form-group" [class.has-error]="lastNameField.invalid && lastNameField.touched">
+          <label>Last Name <span class="req">*</span></label>
+          <input type="text" name="lastName" [(ngModel)]="formData.lastName" #lastNameField="ngModel" required
+            minlength="2" [disabled]="isViewOnly" placeholder="e.g. Smith">
+          <span class="error-msg" *ngIf="lastNameField.invalid && lastNameField.touched">
+            <span *ngIf="lastNameField.errors?.['required']">Last name is required.</span>
+            <span *ngIf="lastNameField.errors?.['minlength']">Minimum 2 characters.</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 2: Email & Phone -->
+      <div class="form-row">
+        <div class="form-group" [class.has-error]="emailField.invalid && emailField.touched">
+          <label>Email Address <span class="req">*</span></label>
+          <div class="input-icon-wrapper">
+            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+            <input type="email" name="email" [(ngModel)]="formData.email" #emailField="ngModel" required email
+              [disabled]="isViewOnly" placeholder="name@company.com">
+          </div>
+          <span class="error-msg" *ngIf="emailField.invalid && emailField.touched">
+            <span *ngIf="emailField.errors?.['required']">Email is required.</span>
+            <span *ngIf="emailField.errors?.['email']">Please enter a valid email address.</span>
+          </span>
+        </div>
+
+        <div class="form-group" [class.has-error]="phoneField.invalid && phoneField.touched">
+          <label>Phone Number <span class="req">*</span></label>
+          <div class="input-icon-wrapper">
+            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.11 11.4 19.79 19.79 0 0 1 1.04 2.82 2 2 0 0 1 3 .84h3a2 2 0 0 1 2 1.72c.13.96.33 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.37 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
+            </svg>
+            <input type="tel" name="phone" [(ngModel)]="formData.phone" #phoneField="ngModel" required
+              pattern="^[0-9]{8}$" [disabled]="isViewOnly" placeholder="12345678" maxlength="8"
+              (keypress)="numberOnly($event)">
+          </div>
+          <span class="error-msg" *ngIf="phoneField.invalid && phoneField.touched">
+            <span *ngIf="phoneField.errors?.['required']">Phone is required.</span>
+            <span *ngIf="phoneField.errors?.['pattern']">Phone must be exactly 8 digits.</span>
+          </span>
+
+        </div>
+      </div>
+
+      <!-- Row 3: Job Title & Department -->
+      <div class="form-row">
+        <div class="form-group" [class.has-error]="jobTitleField.invalid && jobTitleField.touched">
+          <label>Job Title <span class="req">*</span></label>
+          <input type="text" name="jobTitle" [(ngModel)]="formData.jobTitle" #jobTitleField="ngModel" required
+            minlength="2" [disabled]="isViewOnly" placeholder="e.g. Software Engineer">
+          <span class="error-msg" *ngIf="jobTitleField.invalid && jobTitleField.touched">
+            <span *ngIf="jobTitleField.errors?.['required']">Job title is required.</span>
+          </span>
+        </div>
+
+        <div class="form-group" [class.has-error]="deptField.invalid && deptField.touched">
+          <label>Department <span class="req">*</span></label>
+          <select name="department" [(ngModel)]="formData.department" #deptField="ngModel" required
+            [disabled]="isViewOnly">
+            <option value="" disabled>Select department</option>
+            <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
+          </select>
+          <span class="error-msg" *ngIf="deptField.invalid && deptField.touched">
+            <span *ngIf="deptField.errors?.['required']">Department is required.</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 4: Hire Date & Status -->
+      <div class="form-row">
+        <div class="form-group" [class.has-error]="hireDateField.invalid && hireDateField.touched">
+          <label>Hire Date <span class="req">*</span></label>
+          <input type="date" name="hireDate" [(ngModel)]="formData.hireDate" #hireDateField="ngModel" required
+            [disabled]="isViewOnly">
+          <span class="error-msg" *ngIf="hireDateField.invalid && hireDateField.touched">
+            <span *ngIf="hireDateField.errors?.['required']">Hire date is required.</span>
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label>Employment Status</label>
+          <select name="employmentStatus" [(ngModel)]="formData.employmentStatus" [disabled]="isViewOnly">
+            <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <ng-container *ngIf="isViewOnly">
+          <button type="button" class="btn-secondary" (click)="cancel()">Close</button>
+          <button type="button" class="btn-primary" (click)="enableEdit()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            Edit
+          </button>
+        </ng-container>
+        <ng-container *ngIf="!isViewOnly">
+          <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="empForm.invalid || isSaving">
+            <span *ngIf="!isSaving">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              {{ employee ? 'Save Changes' : 'Add Employee' }}
+            </span>
+            <span *ngIf="isSaving" class="btn-spinner"></span>
+          </button>
+        </ng-container>
+      </div>
+
+    </form>
+  </div>
+</div>

@@ -107,6 +107,7 @@
             </table>
           </div>
 
+<<<<<<< HEAD
           <!-- Action Confirmation Buttons -->
           <div *ngIf="msg.actionPending" class="action-confirmation-area">
             <button class="action-btn confirm-btn" (click)="confirmAction()" [disabled]="isLoading">
@@ -121,6 +122,10 @@
 
           <!-- Follow-up Suggestions -->
           <div *ngIf="msg.suggestions && msg.suggestions.length > 0 && !msg.actionPending" class="suggested-section">
+=======
+          <!-- Follow-up Suggestions -->
+          <div *ngIf="msg.suggestions && msg.suggestions.length > 0" class="suggested-section">
+>>>>>>> my-local-work
             <div class="prompts-grid list-view">
               <div class="prompt-pill" *ngFor="let sug of msg.suggestions" (click)="sendPrompt(sug)">
                 {{ sug }}

@@ -7,6 +7,10 @@ export interface Task {
   status: 'Pending' | 'In Progress' | 'Completed' | 'History';
   dueDate: string;
   assignedTo: string;
+<<<<<<< HEAD
+=======
+  userId?: string;
+>>>>>>> my-local-work
   createdAt: string;
   updatedAt?: string;
   originalDueDate?: string;

@@ -84,7 +84,7 @@ public class ApplicationService {
     public ApplicationDTO updateApplication(String id, ApplicationDTO dto) {
         Application app = applicationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
-        
+
         app.setVersion(dto.getVersion());
         app.setVendor(dto.getVendor());
         app.setCategory(dto.getCategory());
@@ -98,7 +98,7 @@ public class ApplicationService {
         app.setRequiredStorage(dto.getRequiredStorage());
         app.setSupportedOs(dto.getSupportedOs());
         app.setStatus(dto.getStatus());
-        
+
         app = applicationRepository.save(app);
 
         Resource res = resourceRepository.findById(app.getResourceId()).orElse(null);
@@ -107,18 +107,19 @@ public class ApplicationService {
             res.setUpdatedAt(LocalDateTime.now());
             resourceRepository.save(res);
         }
-        
+
         return mapToDTO(app, res);
     }
 
     public void deleteApplication(String id) {
         Application app = applicationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
-        
+
         // Check if any equipment has it installed
         List<EquipmentApplication> installations = equipmentApplicationRepository.findByApplicationId(id);
         if (!installations.isEmpty()) {
-            throw new RuntimeException("Cannot delete application: It is currently installed on " + installations.size() + " equipment(s)");
+            throw new RuntimeException("Cannot delete application: It is currently installed on " + installations.size()
+                    + " equipment(s)");
         }
 
         applicationRepository.deleteById(id);
@@ -147,7 +148,7 @@ public class ApplicationService {
         ea.setInstalledBy(request.getInstalledBy());
         ea.setInstalledAt(LocalDateTime.now());
         ea.setStatus("installed");
-        
+
         ea = equipmentApplicationRepository.save(ea);
 
         // Increment used licenses
@@ -160,14 +161,13 @@ public class ApplicationService {
                 Resource res = resourceRepository.findById(app.getResourceId()).orElse(null);
                 String appName = res != null ? res.getName() : "Unknown Application";
                 alertService.triggerSystemAlert(
-                    "APP_LICENSE_DEPLETED_" + app.getId(),
-                    "LICENSE_DEPLETED",
-                    "HIGH",
-                    "APPLICATION",
-                    app.getId(),
-                    "Licenses Depleted: " + appName,
-                    "All licenses for " + appName + " (Version: " + app.getVersion() + ") have been used."
-                );
+                        "APP_LICENSE_DEPLETED_" + app.getId(),
+                        "LICENSE_DEPLETED",
+                        "HIGH",
+                        "APPLICATION",
+                        app.getId(),
+                        "Licenses Depleted: " + appName,
+                        "All licenses for " + appName + " (Version: " + app.getVersion() + ") have been used.");
             }
         }
 
@@ -176,17 +176,16 @@ public class ApplicationService {
         if (equipment != null) {
             Resource res = resourceRepository.findById(app.getResourceId()).orElse(null);
             String appName = res != null ? res.getName() : "Unknown Application";
-            
+
             if (equipment.getLifecycle() == null) {
                 equipment.setLifecycle(new ArrayList<>());
             }
-            
+
             LifecycleEntry entry = new LifecycleEntry(
-                "App Installed",
-                LocalDateTime.now(),
-                "Application installed: " + appName + " v" + app.getVersion(),
-                request.getInstalledBy() != null ? request.getInstalledBy() : "System"
-            );
+                    "App Installed",
+                    LocalDateTime.now(),
+                    "Application installed: " + appName + " v" + app.getVersion(),
+                    request.getInstalledBy() != null ? request.getInstalledBy() : "System");
             equipment.getLifecycle().add(entry);
             equipmentRepository.save(equipment);
         }
@@ -210,36 +209,36 @@ public class ApplicationService {
             if (app.getUsedLicenses() > 0) {
                 app.setUsedLicenses(app.getUsedLicenses() - 1);
                 applicationRepository.save(app);
-                
+
                 if (app.getUsedLicenses() < app.getTotalLicenses()) {
                     alertService.resolveSystemAlert("APP_LICENSE_DEPLETED_" + app.getId());
                 }
             }
         }
-        
+
         // Update equipment lifecycle
         Equipment equipment = equipmentRepository.findById(ea.getEquipmentId()).orElse(null);
         if (equipment != null) {
             Resource res = resourceRepository.findById(app.getResourceId()).orElse(null);
             String appName = res != null ? res.getName() : "Unknown Application";
-            
+
             if (equipment.getLifecycle() == null) {
                 equipment.setLifecycle(new ArrayList<>());
             }
-            
+
             LifecycleEntry entry = new LifecycleEntry(
-                "App Uninstalled",
-                LocalDateTime.now(),
-                "Application uninstalled: " + appName,
-                "System"
-            );
+                    "App Uninstalled",
+                    LocalDateTime.now(),
+                    "Application uninstalled: " + appName,
+                    "System");
             equipment.getLifecycle().add(entry);
             equipmentRepository.save(equipment);
         }
     }
 
     private ApplicationDTO mapToDTO(Application app, Resource res) {
-        if (app == null) return null;
+        if (app == null)
+            return null;
         ApplicationDTO dto = new ApplicationDTO();
         dto.setId(app.getId());
         dto.setResourceId(app.getResourceId());

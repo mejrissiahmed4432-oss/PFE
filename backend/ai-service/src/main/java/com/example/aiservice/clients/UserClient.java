@@ -58,6 +58,7 @@ public class UserClient {
             return Collections.emptyList();
         }
     }
+<<<<<<< HEAD
     // ── Write Operations (AI Actions) ─────────────────────────────────────────
 
     @SuppressWarnings("unchecked")
@@ -94,4 +95,6 @@ public class UserClient {
             throw new RuntimeException("Could not update ticket: " + e.getMessage());
         }
     }
+=======
+>>>>>>> my-local-work
 }

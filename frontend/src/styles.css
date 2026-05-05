@@ -4,37 +4,54 @@
 
 :root {
   /* Light Theme Variables */
-  --bg-app: #f8fafc; /* slate-50 */
+  --bg-app: #f8fafc;
+  /* slate-50 */
   --bg-card: #ffffff;
-  --bg-sidebar: #0f172a; /* slate-900 */
+  --bg-sidebar: #0f172a;
+  /* slate-900 */
   --bg-topbar: rgba(255, 255, 255, 0.8);
-  
-  --text-main: #0f172a; /* slate-900 */
-  --text-sub: #64748b; /* slate-500 */
-  --text-muted: #94a3b8; /* slate-400 */
-  
-  --border-color: #f1f5f9; /* slate-100 */
-  --border-strong: #e2e8f0; /* slate-200 */
-  
-  --accent-primary: #3b82f6; /* blue-600 */
-  --accent-soft: #eff6ff; /* blue-50 */
+
+  --text-main: #0f172a;
+  /* slate-900 */
+  --text-sub: #64748b;
+  /* slate-500 */
+  --text-muted: #94a3b8;
+  /* slate-400 */
+
+  --border-color: #f1f5f9;
+  /* slate-100 */
+  --border-strong: #e2e8f0;
+  /* slate-200 */
+
+  --accent-primary: #3b82f6;
+  /* blue-600 */
+  --accent-soft: #eff6ff;
+  /* blue-50 */
 }
 
 .dark-mode {
   /* Dark Theme Variables */
-  --bg-app: #020617; /* slate-950 */
-  --bg-card: #0f172a; /* slate-900 */
-  --bg-sidebar: #020617; 
+  --bg-app: #020617;
+  /* slate-950 */
+  --bg-card: #0f172a;
+  /* slate-900 */
+  --bg-sidebar: #020617;
   --bg-topbar: rgba(15, 23, 42, 0.8);
-  
-  --text-main: #f8fafc; /* slate-50 */
-  --text-sub: #94a3b8; /* slate-400 */
-  --text-muted: #64748b; /* slate-500 */
-  
-  --border-color: #1e293b; /* slate-800 */
-  --border-strong: #334155; /* slate-700 */
-  
-  --accent-primary: #60a5fa; /* blue-400 */
+
+  --text-main: #f8fafc;
+  /* slate-50 */
+  --text-sub: #94a3b8;
+  /* slate-400 */
+  --text-muted: #64748b;
+  /* slate-500 */
+
+  --border-color: #1e293b;
+  /* slate-800 */
+  --border-strong: #334155;
+  /* slate-700 */
+
+  --accent-primary: #60a5fa;
+  /* blue-400 */
   --accent-soft: rgba(59, 130, 246, 0.1);
 }
 
@@ -154,6 +171,7 @@ body {
     opacity: 0;
     transform: translateY(20px) scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -161,8 +179,13 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 
@@ -259,8 +282,8 @@ body {
 }
 
 .authors-edit-link {
-  @apply text-[11px] font-bold text-[var(--accent-primary)] uppercase tracking-wider
-         hover:underline cursor-pointer;
+  @apply text-[11px] font-bold text-[var(--accent-primary)] uppercase tracking-wider hover:underline cursor-pointer;
+
 }
 
 /* ── AI Assistant Floating Action Button ── */
@@ -318,9 +341,20 @@ body {
 }
 
 @keyframes pulseGlow {
-  0% { transform: scale(1); opacity: 0.6; }
-  50% { transform: scale(1.3); opacity: 0.2; }
-  100% { transform: scale(1); opacity: 0.6; }
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.3);
+    opacity: 0.2;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
 }
 
 @media (max-width: 768px) {
@@ -330,4 +364,5 @@ body {
     width: 48px;
     height: 48px;
   }
+
 }

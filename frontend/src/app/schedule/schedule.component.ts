@@ -67,7 +67,12 @@ export class ScheduleComponent implements OnInit {
       priority: 'Medium',
       status: 'Pending',
       dueDate: '',
+<<<<<<< HEAD
       assignedTo: user ? `${user.firstName} ${user.lastName || ''}`.trim() : ''
+=======
+      assignedTo: user ? `${user.firstName} ${user.lastName || ''}`.trim() : '',
+      userId: user ? user.id : ''
+>>>>>>> my-local-work
     };
   }
 
@@ -77,6 +82,7 @@ export class ScheduleComponent implements OnInit {
   }
 
   loadTasks(): void {
+<<<<<<< HEAD
     this.taskService.getTasks().subscribe({
       next: (data) => { 
         data.forEach(t => this.processTask(t));
@@ -87,6 +93,14 @@ export class ScheduleComponent implements OnInit {
         } else {
           this.tasks = data; 
         }
+=======
+    if (!this.currentUser) return;
+
+    this.taskService.getTasks(this.currentUser.id).subscribe({
+      next: (data) => { 
+        data.forEach(t => this.processTask(t));
+        this.tasks = data;
+>>>>>>> my-local-work
       },
       error: (err) => console.error('Failed to load tasks', err)
     });
@@ -293,9 +307,13 @@ export class ScheduleComponent implements OnInit {
     this.taskService.updateTask(this.selectedTask.id, this.selectedTask).subscribe({
       next: (updatedTask) => {
         const index = this.tasks.findIndex(t => t.id === updatedTask.id);
+<<<<<<< HEAD
         const userFullName = this.currentUser ? `${this.currentUser.firstName} ${this.currentUser.lastName || ''}`.trim() : '';
         
         if (updatedTask.assignedTo !== userFullName && this.currentUser) {
+=======
+        if (updatedTask.userId !== this.currentUser?.id && this.currentUser) {
+>>>>>>> my-local-work
           if (index !== -1) this.tasks.splice(index, 1);
         } else {
           this.processTask(updatedTask);
@@ -347,8 +365,12 @@ export class ScheduleComponent implements OnInit {
     this.isSubmitting = true;
     this.taskService.createTask(this.newTask).subscribe({
       next: (createdTask) => {
+<<<<<<< HEAD
         const userFullName = this.currentUser ? `${this.currentUser.firstName} ${this.currentUser.lastName || ''}`.trim() : '';
         if (createdTask.assignedTo === userFullName || !this.currentUser) {
+=======
+        if (createdTask.userId === this.currentUser?.id || !this.currentUser) {
+>>>>>>> my-local-work
           this.tasks.unshift(createdTask);
         }
         this.showAddModal = false;

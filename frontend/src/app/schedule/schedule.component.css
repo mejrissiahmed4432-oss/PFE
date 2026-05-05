@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .dashboard-container {
   padding: 24px;
   animation: fadeIn 0.4s ease-out;
@@ -11,10 +12,99 @@
 
 /* ── HEADER ── */
 .dashboard-header-modern {
+=======
+/* ============================================================
+   SCHEDULE PAGE — Clean Glassmorphism Design
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:host {
+  display: block;
+  font-family: 'Inter', sans-serif;
+}
+
+/* No background — inherits from app shell */
+.schedule-page {
+  padding: 28px 32px;
+  min-height: 100vh;
+  animation: pageFadeIn 0.4s ease-out;
+  background: transparent;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Toast ─────────────────────────────────────────────────── */
+.toast-bar {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 2000;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  animation: toastIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-width: 340px;
+}
+
+.toast-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.toast-info {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+}
+
+.toast-error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Glass Card ────────────────────────────────────────────── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.07), 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.sched-header {
+>>>>>>> my-local-work
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+<<<<<<< HEAD
 }
 
 .main-title {
@@ -48,6 +138,53 @@
 .action-btn-outline:hover {
   background: var(--bg-app, #f8fafc);
   transform: translateY(-1px);
+=======
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.sched-title-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sched-icon-wrap {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+  flex-shrink: 0;
+}
+
+.sched-title-group h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.03em;
+}
+
+.sched-title-group p {
+  margin: 2px 0 0 0;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+>>>>>>> my-local-work
 }
 
 /* ── Filter Chips ─────────────────────────────────────────── */
@@ -55,7 +192,11 @@
   display: flex;
   gap: 6px;
   padding: 4px;
+<<<<<<< HEAD
   background: rgba(255,255,255,0.65);
+=======
+  background: rgba(255, 255, 255, 0.65);
+>>>>>>> my-local-work
   border-radius: 100px;
   border: 1px solid rgba(99, 102, 241, 0.12);
 }
@@ -91,7 +232,11 @@
 }
 
 .chip.active span {
+<<<<<<< HEAD
   background: rgba(255,255,255,0.25);
+=======
+  background: rgba(255, 255, 255, 0.25);
+>>>>>>> my-local-work
   color: white;
 }
 
@@ -117,6 +262,7 @@
   box-shadow: 0 8px 24px rgba(59, 130, 246, 0.45);
 }
 
+<<<<<<< HEAD
 /* ── STAT CARDS ROW ── */
 .stats-row {
   display: grid;
@@ -177,6 +323,63 @@
 .stat-icon-box.amber { background: #f59e0b; box-shadow: 0 4px 10px rgba(245,158,11,0.3); }
 .stat-icon-box.cyan { background: #06b6d4; box-shadow: 0 4px 10px rgba(6,182,212,0.3); }
 
+=======
+/* ── Stats Row ────────────────────────────────────────────── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-float {
+  background: white;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), 0 6px 20px rgba(0, 0, 0, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-top: 3px solid #3b82f6;
+}
+
+.stat-float:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+}
+
+.stat-float.progress {
+  border-top-color: #f59e0b;
+}
+
+.stat-float.pending {
+  border-top-color: #6366f1;
+}
+
+.stat-float.done {
+  border-top-color: #10b981;
+}
+
+.stat-num {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.stat-lbl {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+>>>>>>> my-local-work
 /* ── Main Grid ─────────────────────────────────────────────── */
 .sched-grid {
   display: flex;
@@ -189,10 +392,18 @@
     flex-direction: row;
     align-items: flex-start;
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> my-local-work
   .board-col {
     flex: 1;
     min-width: 0;
   }
+<<<<<<< HEAD
+=======
+
+>>>>>>> my-local-work
   .calendar-panel {
     width: 360px;
     flex-shrink: 0;
@@ -205,6 +416,7 @@
   gap: 20px;
 }
 
+<<<<<<< HEAD
 /* ── CONTENT CARDS ── */
 .content-card {
   background: var(--bg-card, #ffffff);
@@ -216,17 +428,30 @@
 
 .task-panel {
   padding: 24px;
+=======
+/* ── Task Panel ───────────────────────────────────────────── */
+.task-panel {
+  padding: 20px;
+>>>>>>> my-local-work
   display: flex;
   flex-direction: column;
   min-height: 500px;
 }
 
 .history-panel {
+<<<<<<< HEAD
   padding: 24px;
   display: flex;
   flex-direction: column;
   min-height: 300px;
   max-height: 600px;
+=======
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  max-height: 500px;
+>>>>>>> my-local-work
 }
 
 .panel-title {
@@ -261,14 +486,20 @@
 }
 
 .kanban-column {
+<<<<<<< HEAD
   background: var(--bg-app, #f8fafc);
   border: 1px solid var(--border-color, #e2e8f0);
+=======
+  background: #f8faff;
+  border: 1px solid #e8edf5;
+>>>>>>> my-local-work
   border-radius: 16px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   min-width: 280px;
   flex: 1;
+<<<<<<< HEAD
   transition: 0.2s;
 }
 
@@ -276,6 +507,19 @@
 
 @media (max-width: 640px) {
   .kanban-column { min-width: 240px; }
+=======
+  transition: border-color 0.2s;
+}
+
+.kanban-column:hover {
+  border-color: #c7d2fe;
+}
+
+@media (max-width: 640px) {
+  .kanban-column {
+    min-width: 240px;
+  }
+>>>>>>> my-local-work
 }
 
 .kanban-header {
@@ -304,9 +548,24 @@
   height: 10px;
   border-radius: 50%;
 }
+<<<<<<< HEAD
 .dot-todo { background: #94a3b8; }
 .dot-progress { background: #3b82f6; }
 .dot-done { background: #10b981; }
+=======
+
+.dot-todo {
+  background: #94a3b8;
+}
+
+.dot-progress {
+  background: #10b981;
+}
+
+.dot-done {
+  background: #94a3b8;
+}
+>>>>>>> my-local-work
 
 .board-count {
   background: #e2e8f0;
@@ -327,18 +586,28 @@
 }
 
 .cdk-drop-list-dragging .kanban-list {
+<<<<<<< HEAD
   background: rgba(0,0,0,0.02);
+=======
+  background: rgba(0, 0, 0, 0.02);
+>>>>>>> my-local-work
 }
 
 /* ── Task Card ────────────────────────────────────────────── */
 .task-card {
   background: #ffffff;
+<<<<<<< HEAD
   border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 14px;
+=======
+  border: 1px solid #e8edf5;
+  border-radius: 13px;
+>>>>>>> my-local-work
   padding: 16px;
   cursor: grab;
   transition: all 0.2s ease;
   position: relative;
+<<<<<<< HEAD
   box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
 
@@ -348,6 +617,19 @@
   border-color: #3b82f6;
   box-shadow: 0 8px 24px rgba(59,130,246,0.1);
   transform: translateY(-2px);
+=======
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.task-card:hover {
+  border-color: #a5b4fc;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.1);
+  transform: translateY(-3px);
+>>>>>>> my-local-work
 }
 
 .task-card.completed {
@@ -431,6 +713,10 @@
   color: #cbd5e1;
   transition: transform 0.2s;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> my-local-work
 .task-card:hover .arrow-icon {
   transform: translateX(3px);
   color: #94a3b8;
@@ -446,6 +732,7 @@
   letter-spacing: 0.05em;
 }
 
+<<<<<<< HEAD
 .priority-high   { background: #fee2e2; color: #ef4444; }
 .priority-medium { background: #ffedd5; color: #f97316; }
 .priority-low    { background: #dcfce7; color: #10b981; }
@@ -453,6 +740,27 @@
 /* ── CDK Drag & Drop Utilities ────────────────────────────── */
 .custom-drag-preview {
   display: none; /* hidden inside component, shown by cdk */
+=======
+.priority-high {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.priority-medium {
+  background: #ffedd5;
+  color: #f97316;
+}
+
+.priority-low {
+  background: #dcfce7;
+  color: #10b981;
+}
+
+/* ── CDK Drag & Drop Utilities ────────────────────────────── */
+.custom-drag-preview {
+  display: none;
+  /* hidden inside component, shown by cdk */
+>>>>>>> my-local-work
 }
 
 /* The actual element used dynamically by CDK */
@@ -466,6 +774,10 @@
   opacity: 0.95;
   cursor: grabbing;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> my-local-work
 .cdk-drag-preview .task-title {
   font-size: 0.95rem;
   font-weight: 700;
@@ -481,22 +793,35 @@
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
   opacity: 0.5;
 }
+<<<<<<< HEAD
 .cdk-drag-animating {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
+=======
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+>>>>>>> my-local-work
 .kanban-list.cdk-drop-list-dragging .task-card:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 /* ── Calendar Panel ────────────────────────────────────────── */
 .calendar-panel {
+<<<<<<< HEAD
   padding: 24px;
+=======
+  padding: 20px;
+>>>>>>> my-local-work
 }
 
 .cal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+<<<<<<< HEAD
   margin-bottom: 24px;
 }
 
@@ -511,17 +836,42 @@
   height: 36px;
   border-radius: 10px;
   border: 1px solid var(--border-color, #e2e8f0);
+=======
+  margin-bottom: 16px;
+}
+
+.cal-month-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.cal-nav {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+>>>>>>> my-local-work
   background: white;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+<<<<<<< HEAD
   color: var(--text-muted, #64748b);
   transition: 0.2s;
 }
 
 .cal-nav:hover {
   background: var(--bg-app, #f8fafc);
+=======
+  color: #64748b;
+  transition: all 0.2s ease;
+}
+
+.cal-nav:hover {
+  background: #f1f5f9;
+>>>>>>> my-local-work
   border-color: #3b82f6;
   color: #3b82f6;
 }
@@ -529,21 +879,33 @@
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+<<<<<<< HEAD
   gap: 8px;
+=======
+  gap: 4px;
+>>>>>>> my-local-work
 }
 
 .cal-weekday {
   text-align: center;
   font-size: 0.7rem;
+<<<<<<< HEAD
   font-weight: 800;
   color: var(--text-muted, #94a3b8);
   padding: 8px 0;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+=======
+  font-weight: 700;
+  color: #94a3b8;
+  padding: 6px 0;
+  text-transform: uppercase;
+>>>>>>> my-local-work
 }
 
 .cal-day {
   aspect-ratio: 1;
+<<<<<<< HEAD
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -577,6 +939,43 @@
   font-size: 0.9rem;
   font-weight: 700;
   color: var(--text-main, #334155);
+=======
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 4px 2px;
+  position: relative;
+  cursor: default;
+  transition: background 0.15s ease;
+  min-height: 36px;
+}
+
+.cal-day:not(.empty-day):hover {
+  background: #f1f5f9;
+}
+
+.cal-day.today .day-num {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.4);
+}
+
+.day-num {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #334155;
+  line-height: 1;
+  padding: 2px;
+>>>>>>> my-local-work
 }
 
 .day-task-dots {
@@ -594,10 +993,28 @@
   cursor: pointer;
 }
 
+<<<<<<< HEAD
 .dot-tag.type-equipment   { background: #1d4ed8; }
 .dot-tag.type-maintenance { background: #b45309; }
 .dot-tag.type-stock       { background: #065f46; }
 .dot-tag.type-general     { background: #5b21b6; }
+=======
+.dot-tag.type-equipment {
+  background: #1d4ed8;
+}
+
+.dot-tag.type-maintenance {
+  background: #b45309;
+}
+
+.dot-tag.type-stock {
+  background: #065f46;
+}
+
+.dot-tag.type-general {
+  background: #5b21b6;
+}
+>>>>>>> my-local-work
 
 /* Legend */
 .cal-legend {
@@ -644,8 +1061,18 @@
 }
 
 @keyframes overlayIn {
+<<<<<<< HEAD
   from { opacity: 0; }
   to   { opacity: 1; }
+=======
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+>>>>>>> my-local-work
 }
 
 .modal-panel {
@@ -665,8 +1092,20 @@
 }
 
 @keyframes panelIn {
+<<<<<<< HEAD
   from { opacity: 0; transform: translateY(30px) scale(0.95); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
+=======
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+>>>>>>> my-local-work
 }
 
 /* ── Modal Header ─────────────────────────────────────────── */
@@ -696,10 +1135,28 @@
   flex-shrink: 0;
 }
 
+<<<<<<< HEAD
 .modal-icon-wrap.type-equipment   { background: linear-gradient(135deg, #1d4ed8, #3b82f6); }
 .modal-icon-wrap.type-maintenance { background: linear-gradient(135deg, #b45309, #f59e0b); }
 .modal-icon-wrap.type-stock       { background: linear-gradient(135deg, #065f46, #10b981); }
 .modal-icon-wrap.type-general     { background: linear-gradient(135deg, #5b21b6, #8b5cf6); }
+=======
+.modal-icon-wrap.type-equipment {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+}
+
+.modal-icon-wrap.type-maintenance {
+  background: linear-gradient(135deg, #b45309, #f59e0b);
+}
+
+.modal-icon-wrap.type-stock {
+  background: linear-gradient(135deg, #065f46, #10b981);
+}
+
+.modal-icon-wrap.type-general {
+  background: linear-gradient(135deg, #5b21b6, #8b5cf6);
+}
+>>>>>>> my-local-work
 
 .modal-panel-title h2 {
   margin: 0;
@@ -744,7 +1201,13 @@
   overflow-y: auto;
 }
 
+<<<<<<< HEAD
 .field-full { width: 100%; }
+=======
+.field-full {
+  width: 100%;
+}
+>>>>>>> my-local-work
 
 .field-grid-2 {
   display: grid;
@@ -919,6 +1382,7 @@
 
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 1100px) {
+<<<<<<< HEAD
   .sched-grid  { grid-template-columns: 1fr; }
   .stats-row   { grid-template-columns: repeat(2, 1fr); }
 }
@@ -929,6 +1393,39 @@
   .field-grid-3    { grid-template-columns: 1fr; }
   .field-grid-2    { grid-template-columns: 1fr; }
   .timestamps-row  { flex-direction: column; gap: 8px; }
+=======
+  .sched-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .sched-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .field-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .field-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .timestamps-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+>>>>>>> my-local-work
 }
 
 /* ----------------------------------------------------------
@@ -1129,7 +1626,11 @@
   border-radius: 8px;
   padding: 10px 14px;
   color: white;
+<<<<<<< HEAD
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+=======
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+>>>>>>> my-local-work
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   overflow: hidden;
@@ -1142,7 +1643,11 @@
 
 .task-block:hover {
   transform: translateY(-2px);
+<<<<<<< HEAD
   box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+=======
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+>>>>>>> my-local-work
   z-index: 10;
 }
 
@@ -1208,9 +1713,24 @@
   padding-right: 4px;
 }
 
+<<<<<<< HEAD
 .history-content::-webkit-scrollbar { width: 5px; }
 .history-content::-webkit-scrollbar-track { background: transparent; }
 .history-content::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+=======
+.history-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.history-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.history-content::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+>>>>>>> my-local-work
 
 /* ── History Drop Zone ── */
 .history-drop-zone {
@@ -1253,7 +1773,11 @@
 .history-card:hover {
   opacity: 1;
   transform: translateY(-2px);
+<<<<<<< HEAD
   box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+=======
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+>>>>>>> my-local-work
 }
 
 .history-badge {
@@ -1320,7 +1844,11 @@
   border-radius: 20px;
   padding: 32px 24px 24px;
   text-align: center;
+<<<<<<< HEAD
   box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+=======
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+>>>>>>> my-local-work
   animation: panelIn 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
   display: flex;
   flex-direction: column;
@@ -1453,22 +1981,35 @@
 .dot-single-task {
   width: 8px;
   height: 8px;
+<<<<<<< HEAD
   background: var(--c-accent, #3b82f6);
   border-radius: 50%;
   display: inline-block;
   box-shadow: 0 0 6px rgba(59, 130, 246, 0.6);
+=======
+  background: #10b981;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+>>>>>>> my-local-work
   transition: all 0.2s ease;
 }
 
 .dot-single-task.has-history-dot {
+<<<<<<< HEAD
   background: #10b981 !important;
   box-shadow: 0 0 6px rgba(16, 185, 129, 0.6) !important;
+=======
+  background: #94a3b8 !important;
+  box-shadow: 0 0 6px rgba(148, 163, 184, 0.6) !important;
+>>>>>>> my-local-work
 }
 
 /* --------------------------------------------
    RESPONSIVE - SCHEDULE PAGE
 -------------------------------------------- */
 
+<<<<<<< HEAD
 @media (max-width: 1400px) {
   .stats-row { grid-template-columns: repeat(2, 1fr); }
 }
@@ -1492,3 +2033,96 @@
   .action-btn-outline span { display: none; }
   .main-title { font-size: 1.25rem; }
 }
+=======
+@media (max-width: 1280px) {
+  .schedule-page {
+    padding: 20px 24px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sched-grid {
+    flex-direction: column !important;
+  }
+
+  .calendar-panel {
+    width: 100% !important;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .schedule-page {
+    padding: 14px 14px;
+  }
+
+  .sched-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filter-chips {
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .stat-float {
+    padding: 14px 16px;
+  }
+
+  .stat-num {
+    font-size: 1.5rem;
+  }
+
+  .kanban-board {
+    gap: 12px;
+  }
+
+  .task-panel,
+  .history-panel {
+    padding: 14px;
+  }
+
+  .field-grid-2,
+  .field-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-panel {
+    max-width: 98vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .schedule-page {
+    padding: 10px 10px;
+  }
+
+  .add-task-btn span {
+    display: none;
+  }
+
+  .sched-title-group h1 {
+    font-size: 1.35rem;
+  }
+
+  .chip {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+}
+>>>>>>> my-local-work

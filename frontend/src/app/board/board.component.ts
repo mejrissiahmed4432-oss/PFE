@@ -26,13 +26,24 @@ import { TicketsComponent } from '../tickets/tickets.component';
 import { ReportsComponent } from '../reports/reports.component';
 import { OsManagementComponent } from '../os-management/os-management.component';
 import { ApplicationManagementComponent } from '../application-management/application-management.component';
+<<<<<<< HEAD
 import { TranslationService } from '../shared/translation.service';
 import { PartRequestService } from '../parts-management/part-request.service';
+=======
+
+import { TranslationService } from '../shared/translation.service';
+
+import { EmployeeListComponent } from '../employee/employee-list/employee-list.component';
+import { HrDashboardComponent } from '../hr-dashboard/hr-dashboard.component';
+
+>>>>>>> my-local-work
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent],
+
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent],
+
   providers: [MessagingService],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
@@ -56,7 +67,9 @@ export class BoardComponent implements OnInit {
   isLanguageOpen: boolean = false;
   notificationsList: any[] = [];
   unreadNotificationsCount: number = 0;
+
   pendingRequestsCount: number = 0;
+
 
   constructor(
     private authService: AuthService,
@@ -66,8 +79,10 @@ export class BoardComponent implements OnInit {
     private messagingService: MessagingService,
     private socketService: SocketService,
     private notificationService: NotificationService,
+
     public ts: TranslationService,
     private partRequestService: PartRequestService
+
   ) { }
 
   @HostListener('document:click', ['$event'])
@@ -84,7 +99,7 @@ export class BoardComponent implements OnInit {
   ngOnInit(): void {
     // Sync language from service
     this.selectedLanguage = this.ts.getLanguage();
-    
+
     this.userSub = this.authService.user$.subscribe(user => {
       this.user = user;
       if (!this.user) {
@@ -157,12 +172,14 @@ export class BoardComponent implements OnInit {
       this.unreadMessagesCount = res.count || 0;
     });
 
+
     // 4. Load Pending Requests (for managers)
     if (role !== 'TECHNICIAN' && role !== 'IT_MANAGER') {
       this.partRequestService.getAllRequests().subscribe(requests => {
         this.pendingRequestsCount = requests.filter(r => r.status === 'PENDING').length;
       });
     }
+
   }
 
   private mapNotifToNotificationItem(notif: Notification): any {
@@ -284,7 +301,11 @@ export class BoardComponent implements OnInit {
       case 'parts': return this.selectedResourceFilter ? `${this.t('Resources')} - ${this.selectedResourceFilter}` : this.t('Resources');
       case 'requests': return 'My Part Requests';
       case 'manager-requests': return 'Incoming Part Requests';
+
       case 'tickets': return this.t('Tickets');
+
+      case 'employees': return this.t('Employee Directory');
+
       default: return 'Medina It Manage';
     }
   }

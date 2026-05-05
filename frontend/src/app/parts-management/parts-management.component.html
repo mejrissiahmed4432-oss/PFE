@@ -5,16 +5,23 @@
       <h1 class="main-title">Parts Management</h1>
       <p class="subtitle">Search and request inventory consumables from the central stock.</p>
     </div>
-    
+
     <div class="header-actions">
       <button class="btn-add-premium" (click)="openRequestWizard()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
         Request Part
       </button>
     </div>
   </div>
 
+
   <div class="content-card">
+
 
     <div class="tabs-container">
       <button class="tab-btn active">My Inventory</button>
@@ -87,8 +94,9 @@
           </select>
         </div>
       </div>
-      
+
       <!-- Table View -->
+
       <div class="table-modern-wrapper" *ngIf="viewMode === 'table'">
         <table class="modern-table">
           <thead>
@@ -100,6 +108,7 @@
               <th>SPECIFICATION</th>
               <th style="width: 100px; text-align: center;">QTE</th>
               <th style="text-align: center;">ACTIONS</th>
+
             </tr>
           </thead>
           <tbody *ngFor="let group of paginatedGroups">
@@ -117,6 +126,7 @@
               </td>
 
               <td>
+
                 <div class="modern-cell-main">
                   <div class="logo-circle blue">{{ group.name.charAt(0) }}</div>
                   <div class="cell-text-stack">
@@ -135,11 +145,13 @@
                 <span class="progress-val">{{ group.totalQuantity }}</span>
               </td>
               <td>
+
                 <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
                   <button class="btn-request-sm" (click)="openRequestWizard(group); $event.stopPropagation()">
                     Request
                   </button>
-                  <button *ngIf="group.items.length === 1" class="btn-return-sm" (click)="returnPartToStock(group.items[0]); $event.stopPropagation()">
+                  <button *ngIf="group.items.length === 1" class="btn-return-sm"
+                    (click)="returnPartToStock(group.items[0]); $event.stopPropagation()">
                     Return
                   </button>
                 </div>
@@ -262,8 +274,7 @@
 
   <!-- Slide-In Parts Request Wizard -->
   <app-part-request-wizard *ngIf="isWizardOpen" [visible]="isWizardOpen" [user]="user"
-    [initialPartSelection]="preselectedGroup"
-    (closeWizard)="onWizardClose($event)">
+    [initialPartSelection]="preselectedGroup" (closeWizard)="onWizardClose($event)">
   </app-part-request-wizard>
 
   <!-- ─────────────────────────────────────────────
@@ -273,16 +284,27 @@
     <div class="alert-modal" (click)="$event.stopPropagation()">
       <div class="alert-icon-wrap" [ngClass]="alertConfig.type">
         <!-- Warning Icon (Triangle with !) -->
-        <svg *ngIf="alertConfig.type === 'warning' || alertConfig.type === 'error'" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
-        
+        <svg *ngIf="alertConfig.type === 'warning' || alertConfig.type === 'error'" xmlns="http://www.w3.org/2000/svg"
+          width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+
         <!-- Success Icon (Checkmark) - User might want this or the triangle, but let's use check for success -->
-        <svg *ngIf="alertConfig.type === 'success'" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <svg *ngIf="alertConfig.type === 'success'" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
       </div>
 
       <div class="alert-content">
         <h2>{{ alertConfig.title }}</h2>
         <p>{{ alertConfig.message }}</p>
-        
+
         <div *ngIf="alertConfig.isConfirm; else singleBtn" class="alert-actions">
           <button class="btn-cancel-alert" (click)="closeAlert()">
             Cancel
@@ -291,7 +313,7 @@
             Confirm
           </button>
         </div>
-        
+
         <ng-template #singleBtn>
           <button class="alert-btn" [ngClass]="alertConfig.type" (click)="closeAlert()">
             OK

@@ -15,6 +15,10 @@ export class CategoryManagerComponent implements OnInit {
   categories: EquipmentCategory[] = [];
   isLoading = true;
   expandedCategories: { [key: string]: boolean } = {};
+<<<<<<< HEAD
+=======
+  searchQuery: string = '';
+>>>>>>> my-local-work
 
   // Duplicate checks
   isCategoryNameDuplicate = false;
@@ -350,4 +354,24 @@ export class CategoryManagerComponent implements OnInit {
     if (t.includes('cable') || t.includes('wire') || t.includes('cord')) return 'cables';
     return 'default';
   }
+<<<<<<< HEAD
+=======
+
+  get filteredCategories(): EquipmentCategory[] {
+    if (!this.searchQuery.trim()) return this.categories;
+
+    const query = this.searchQuery.toLowerCase().trim();
+    return this.categories.filter(cat => {
+      const catMatch = (cat.name || '').toLowerCase().includes(query);
+      const typeMatch = cat.types?.some(t => (t.name || '').toLowerCase().includes(query));
+
+      // Auto-expand categories that have a match in their types
+      if (typeMatch && cat.id) {
+        this.expandedCategories[cat.id] = true;
+      }
+
+      return catMatch || typeMatch;
+    });
+  }
+>>>>>>> my-local-work
 }

@@ -11,8 +11,13 @@ export class TaskService {
 
   constructor(private http: HttpClient) { }
 
+<<<<<<< HEAD
   getTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(this.apiUrl);
+=======
+  getTasks(userId: string): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.apiUrl}/user/${userId}`);
+>>>>>>> my-local-work
   }
 
   getTask(id: string): Observable<Task> {

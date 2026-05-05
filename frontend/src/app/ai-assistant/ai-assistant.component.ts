@@ -25,7 +25,10 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
 
   conversations: Conversation[] = [];
   activeConversation: Conversation | null = null;
+<<<<<<< HEAD
   pendingAction: { type: string, payload: any } | null = null;
+=======
+>>>>>>> my-local-work
 
   get messages(): ChatMessage[] {
     return this.activeConversation?.messages ?? [];
@@ -162,6 +165,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
           timestamp: new Date(),
           suggestions: response.success ? response.suggestions : undefined,
           data: response.success ? response.data : undefined,
+<<<<<<< HEAD
           isError: !response.success,
           actionPending: response.actionPending,
           actionType: response.actionType,
@@ -172,6 +176,11 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
           this.pendingAction = { type: response.actionType!, payload: response.actionPayload };
         }
 
+=======
+          isError: !response.success
+        };
+
+>>>>>>> my-local-work
         this.activeConversation!.messages.push(aiMsg);
         this.aiService.saveConversation(this.activeConversation!);
         this.conversations = this.aiService.getAllConversations();
@@ -190,6 +199,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
     });
   }
 
+<<<<<<< HEAD
   confirmAction(): void {
     if (!this.pendingAction || !this.activeConversation) return;
 
@@ -246,6 +256,8 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
     this.aiService.saveConversation(this.activeConversation);
   }
 
+=======
+>>>>>>> my-local-work
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   getConversationPreview(conv: Conversation): string {

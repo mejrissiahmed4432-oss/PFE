@@ -59,7 +59,7 @@ export class AiService {
   constructor(
     private http: HttpClient,
     private authService: AuthService
-  ) {}
+  ) { }
 
   private getStorageKey(): string {
     const user = this.authService.getCurrentUser();
@@ -122,14 +122,14 @@ export class AiService {
         all.unshift({ ...conv, updatedAt: new Date().toISOString() });
       }
       localStorage.setItem(key, JSON.stringify(all));
-    } catch {}
+    } catch { }
   }
 
   deleteConversation(id: string): void {
     try {
       const all = this.getAllConversations().filter(c => c.id !== id);
       localStorage.setItem(this.getStorageKey(), JSON.stringify(all));
-    } catch {}
+    } catch { }
   }
 
   createConversation(): Conversation {

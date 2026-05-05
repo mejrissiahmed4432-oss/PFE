@@ -1,16 +1,16 @@
 export type WorkflowStep = 'diagnosis' | 'plan' | 'resources' | 'execution' | 'validation' | 'summary';
-export type ActionCategory = 
-  | 'Hardware' 
-  | 'Software' 
-  | 'Configuration' 
-  | 'Network' 
-  | 'Maintenance' 
-  | 'Inspection' 
-  | 'Power' 
-  | 'Security' 
-  | 'Storage' 
-  | 'Peripheral' 
-  | 'Performance' 
+export type ActionCategory =
+  | 'Hardware'
+  | 'Software'
+  | 'Configuration'
+  | 'Network'
+  | 'Maintenance'
+  | 'Inspection'
+  | 'Power'
+  | 'Security'
+  | 'Storage'
+  | 'Peripheral'
+  | 'Performance'
   | 'Thermal'
   | 'Consumables'
   | 'Firmware'
@@ -19,39 +19,39 @@ export type ActionCategory =
 export type ActionStatus = 'Planned' | 'In Progress' | 'Done';
 
 export const ACTION_TYPES_BY_CATEGORY: Record<ActionCategory, string[]> = {
-  'Hardware':      ['Install', 'Replace', 'Repair', 'Clean', 'Upgrade', 'Remove', 'Test'],
-  'Software':      ['Install', 'Uninstall', 'Update', 'Configure', 'Repair', 'Rollback', 'License'],
+  'Hardware': ['Install', 'Replace', 'Repair', 'Clean', 'Upgrade', 'Remove', 'Test'],
+  'Software': ['Install', 'Uninstall', 'Update', 'Configure', 'Repair', 'Rollback', 'License'],
   'Configuration': ['Modify', 'Reset', 'Backup', 'Restore', 'Optimize', 'Audit'],
-  'Network':       ['Configure', 'Test', 'Troubleshoot', 'Reset', 'Monitor', 'Update Firmware'],
-  'Maintenance':   ['Clean', 'Inspect', 'Lubricate', 'Replace Consumable', 'Calibrate', 'Preventive Check'],
-  'Inspection':    ['Visual Check', 'Performance Test', 'Stress Test', 'Log Review', 'Thermal Check'],
-  'Power':         ['Replace Battery', 'Replace PSU', 'Test Voltage', 'Configure UPS', 'Clean Power Port'],
-  'Security':      ['Virus Scan', 'Firewall Config', 'Update Definitions', 'Audit Access', 'Reset Credentials'],
-  'Storage':       ['Format Drive', 'Partition', 'Data Recovery', 'Wipe Drive', 'Expand Volume'],
-  'Peripheral':    ['Install Driver', 'Replace Cable', 'Calibrate', 'Clean Port', 'Test Connectivity'],
-  'Performance':   ['Optimization', 'Resource Audit', 'Defragment', 'Clean Registry', 'Overclock/Underclock'],
-  'Thermal':       ['Apply Thermal Paste', 'Clean Fan', 'Replace Fan', 'Heatsink Mod', 'Temperature Audit'],
-  'Consumables':   ['Replace Toner', 'Refill Fluid', 'Replace Filter', 'Apply Lubricant', 'Replace Battery'],
-  'Firmware':      ['Update BIOS', 'Flash Firmware', 'Reset NVRAM', 'Verify Checksum', 'Rollback Version'],
-  'Cabling':       ['Reroute Cables', 'Replace Connector', 'Label Cables', 'Test Continuity', 'Organize Rack']
+  'Network': ['Configure', 'Test', 'Troubleshoot', 'Reset', 'Monitor', 'Update Firmware'],
+  'Maintenance': ['Clean', 'Inspect', 'Lubricate', 'Replace Consumable', 'Calibrate', 'Preventive Check'],
+  'Inspection': ['Visual Check', 'Performance Test', 'Stress Test', 'Log Review', 'Thermal Check'],
+  'Power': ['Replace Battery', 'Replace PSU', 'Test Voltage', 'Configure UPS', 'Clean Power Port'],
+  'Security': ['Virus Scan', 'Firewall Config', 'Update Definitions', 'Audit Access', 'Reset Credentials'],
+  'Storage': ['Format Drive', 'Partition', 'Data Recovery', 'Wipe Drive', 'Expand Volume'],
+  'Peripheral': ['Install Driver', 'Replace Cable', 'Calibrate', 'Clean Port', 'Test Connectivity'],
+  'Performance': ['Optimization', 'Resource Audit', 'Defragment', 'Clean Registry', 'Overclock/Underclock'],
+  'Thermal': ['Apply Thermal Paste', 'Clean Fan', 'Replace Fan', 'Heatsink Mod', 'Temperature Audit'],
+  'Consumables': ['Replace Toner', 'Refill Fluid', 'Replace Filter', 'Apply Lubricant', 'Replace Battery'],
+  'Firmware': ['Update BIOS', 'Flash Firmware', 'Reset NVRAM', 'Verify Checksum', 'Rollback Version'],
+  'Cabling': ['Reroute Cables', 'Replace Connector', 'Label Cables', 'Test Continuity', 'Organize Rack']
 };
 
 export const CATEGORY_ICONS: Record<ActionCategory, string> = {
-  'Hardware':      '🔧',
-  'Software':      '💻',
+  'Hardware': '🔧',
+  'Software': '💻',
   'Configuration': '⚙️',
-  'Network':       '🌐',
-  'Maintenance':   '🧹',
-  'Inspection':    '🔍',
-  'Power':         '⚡',
-  'Security':      '🛡️',
-  'Storage':       '💾',
-  'Peripheral':    '🔌',
-  'Performance':   '🚀',
-  'Thermal':       '🌡️',
-  'Consumables':   '📦',
-  'Firmware':      '💾',
-  'Cabling':       '🧵'
+  'Network': '🌐',
+  'Maintenance': '🧹',
+  'Inspection': '🔍',
+  'Power': '⚡',
+  'Security': '🛡️',
+  'Storage': '💾',
+  'Peripheral': '🔌',
+  'Performance': '🚀',
+  'Thermal': '🌡️',
+  'Consumables': '📦',
+  'Firmware': '💾',
+  'Cabling': '🧵'
 };
 
 export interface WorkbenchAction {
@@ -64,9 +64,11 @@ export interface WorkbenchAction {
   notes: string;
   resources: WorkbenchResource[];
   expandedInExecution?: boolean;
+
   priority?: 'High' | 'Medium' | 'Low';
   estimatedTime?: string;
   timeSpent?: number; // seconds
+
 }
 
 export interface WorkbenchResource {
@@ -104,7 +106,9 @@ export interface WorkbenchState {
   globalNotes: string;
   timeline: WorkbenchTimelineEntry[];
   startedAt: string;
+
   actionStartTimes?: Record<string, string>; // actionId -> ISO date string when timer started
+
 }
 
 export interface CapabilityResponse {

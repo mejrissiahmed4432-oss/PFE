@@ -18,10 +18,9 @@
 
 /* ── Sidebar ─────────────────────────────────────────────── */
 .sidebar {
-  @apply relative flex flex-col flex-shrink-0 z-40 transition-all duration-500 ease-in-out
-         m-4 h-[calc(100vh-32px)] rounded-[28px] overflow-hidden;
+  @apply relative flex flex-col flex-shrink-0 z-40 transition-all duration-500 ease-in-out m-4 h-[calc(100vh-32px)] rounded-[28px] overflow-hidden;
   background: #020617;
-  box-shadow: 
+  box-shadow:
     0 40px 80px rgba(0, 0, 0, 0.6),
     inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
@@ -47,8 +46,7 @@
 }
 
 .sidebar-logo-icon {
-  @apply w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden rounded-2xl
-        ;
+  @apply w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden rounded-2xl;
 }
 
 .sidebar-logo-img {
@@ -64,8 +62,7 @@
 }
 
 .sidebar-toggle-btn {
-  @apply flex items-center justify-center w-7 h-7 rounded-lg bg-white/[0.04]
-         text-slate-500 hover:bg-white/10 hover:text-slate-200 transition-all duration-200 flex-shrink-0;
+  @apply flex items-center justify-center w-7 h-7 rounded-lg bg-white/[0.04] text-slate-500 hover:bg-white/10 hover:text-slate-200 transition-all duration-200 flex-shrink-0;
 }
 
 .collapsed-toggle {
@@ -82,8 +79,7 @@
 }
 
 .nav-item {
-  @apply relative flex items-center gap-3 px-4 py-2.5 rounded-xl mx-2
-         transition-all duration-300 cursor-pointer;
+  @apply relative flex items-center gap-3 px-4 py-2.5 rounded-xl mx-2 transition-all duration-300 cursor-pointer;
 }
 
 .nav-item:hover {
@@ -91,7 +87,7 @@
 }
 
 .nav-item-active {
-  @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_10px_25px_rgba(37,99,235,0.3)] ring-1 ring-white/10;
+  @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_10px_25px_rgba(37, 99, 235, 0.3)] ring-1 ring-white/10;
 }
 
 .nav-item-default {
@@ -99,7 +95,7 @@
 }
 
 .nav-item-indicator {
-  @apply absolute left-1 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)];
+  @apply absolute left-1 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded-full shadow-[0_0_10px_rgba(255, 255, 255, 0.8)];
 }
 
 .nav-item-icon {
@@ -160,10 +156,7 @@
 }
 
 .sidebar-settings-btn {
-  @apply flex items-center justify-center rounded-2xl font-bold text-white
-         bg-gradient-to-br from-slate-800 to-slate-900 border border-white/[0.08]
-         hover:from-blue-600 hover:to-blue-700
-         shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5;
+  @apply flex items-center justify-center rounded-2xl font-bold text-white bg-gradient-to-br from-slate-800 to-slate-900 border border-white/[0.08] hover:from-blue-600 hover:to-blue-700 shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5;
 }
 
 /* Square button when collapsed */
@@ -181,15 +174,12 @@
 
 /* ── Main Content Area ───────────────────────────────────── */
 .main-content {
-  @apply flex-1 flex flex-col min-w-0 transition-all duration-300
-         my-4 mr-4 bg-[var(--bg-app)] rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.03)]
-         border border-[var(--border-color)] overflow-hidden relative;
+  @apply flex-1 flex flex-col min-w-0 transition-all duration-300 my-4 mr-4 bg-[var(--bg-app)] rounded-[28px] shadow-[0_8px_32px_rgba(0, 0, 0, 0.03)] border border-[var(--border-color)] overflow-hidden relative;
 }
 
 /* ── Top Bar ─────────────────────────────────────────────── */
 .topbar {
-  @apply sticky top-0 z-30 h-20 px-8 flex items-center justify-between
-         bg-[var(--bg-topbar)] backdrop-blur-md border-b border-[var(--border-color)];
+  @apply sticky top-0 z-30 h-20 px-8 flex items-center justify-between bg-[var(--bg-topbar)] backdrop-blur-md border-b border-[var(--border-color)];
 }
 
 .topbar-page-title {
@@ -205,22 +195,15 @@
 }
 
 .topbar-btn {
-  @apply flex items-center justify-center w-10 h-10 rounded-xl
-         bg-[var(--bg-app)] text-[var(--text-sub)] border border-[var(--border-strong)]
-         transition-all duration-200 hover:bg-[var(--accent-soft)] hover:text-[var(--accent-primary)]
-         hover:scale-105 active:scale-95 relative;
+  @apply flex items-center justify-center w-10 h-10 rounded-xl bg-[var(--bg-app)] text-[var(--text-sub)] border border-[var(--border-strong)] transition-all duration-200 hover:bg-[var(--accent-soft)] hover:text-[var(--accent-primary)] hover:scale-105 active:scale-95 relative;
 }
 
 .topbar-btn-danger {
-  @apply flex items-center justify-center w-9 h-9 rounded-xl
-         bg-gray-100 text-gray-500
-         hover:bg-red-50 hover:text-red-500
-         transition-all duration-200 relative;
+  @apply flex items-center justify-center w-9 h-9 rounded-xl bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-500 transition-all duration-200 relative;
 }
 
 .topbar-badge {
-  @apply absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center
-         text-white text-[9px] font-extrabold rounded-full bg-red-500 ring-2 ring-white;
+  @apply absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center text-white text-[9px] font-extrabold rounded-full bg-red-500 ring-2 ring-white;
 }
 
 .topbar-divider {
@@ -229,15 +212,11 @@
 
 /* ── Profile Area ────────────────────────────────────────── */
 .profile-trigger {
-  @apply flex items-center gap-3 py-1 px-1 pr-4 rounded-full
-         bg-slate-50 border border-slate-100
-         hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer;
+  @apply flex items-center gap-3 py-1 px-1 pr-4 rounded-full bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer;
 }
 
 .profile-avatar {
-  @apply w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs
-         bg-gradient-to-br from-blue-600 to-blue-500
-         shadow-lg shadow-blue-500/30 flex-shrink-0;
+  @apply w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs bg-gradient-to-br from-blue-600 to-blue-500 shadow-lg shadow-blue-500/30 flex-shrink-0;
 }
 
 .profile-name {
@@ -249,9 +228,7 @@
 }
 
 .profile-dropdown {
-  @apply absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100
-         overflow-hidden z-50 transform origin-top-right transition-all duration-200
-         scale-95 opacity-0 pointer-events-none;
+  @apply absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50 transform origin-top-right transition-all duration-200 scale-95 opacity-0 pointer-events-none;
 }
 
 .group:hover .profile-dropdown {
@@ -275,13 +252,11 @@
 }
 
 .dropdown-item {
-  @apply w-full flex items-center gap-2.5 px-3 py-2 rounded-xl
-         text-[13px] text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors;
+  @apply w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors;
 }
 
 .dropdown-item-danger {
-  @apply w-full flex items-center gap-2.5 px-3 py-2 rounded-xl
-         text-[13px] text-red-500 hover:bg-red-50 transition-colors;
+  @apply w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] text-red-500 hover:bg-red-50 transition-colors;
 }
 
 .dropdown-footer {
@@ -290,8 +265,7 @@
 
 /* ── Notifications Dropdown ──────────────────────────────── */
 .notif-dropdown {
-  @apply absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200
-         overflow-hidden z-50 transform origin-top-right transition-all duration-200;
+  @apply absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 transform origin-top-right transition-all duration-200;
 }
 
 /* ── Page Content ────────────────────────────────────────── */
@@ -313,28 +287,51 @@
 }
 
 /* ── Scrollbars ──────────────────────────────────────────── */
-.sidebar-nav::-webkit-scrollbar { width: 4px; }
-.sidebar-nav::-webkit-scrollbar-track { background: transparent; }
-.sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.08);
-  border-radius: 10px;
-}
-.sidebar-nav:hover::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.18);
+.sidebar-nav::-webkit-scrollbar {
+  width: 4px;
 }
 
-.page-content::-webkit-scrollbar { width: 6px; }
-.page-content::-webkit-scrollbar-track { background: transparent; }
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.sidebar-nav:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.page-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.page-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .page-content::-webkit-scrollbar-thumb {
   background: #e2e8f0;
   border-radius: 10px;
 }
-.page-content:hover::-webkit-scrollbar-thumb { background: #cbd5e1; }
+
+.page-content:hover::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
 
 /* ── Animations ──────────────────────────────────────────── */
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-slide-down {
@@ -343,10 +340,9 @@
 
 /* ── AI Assistant FAB Button ──────────────────────────────── */
 .ai-fab-btn {
-  @apply fixed bottom-8 right-8 w-14 h-14 rounded-full flex items-center justify-center
-         text-white transition-all duration-500 z-[9999] overflow-hidden;
+  @apply fixed bottom-8 right-8 w-14 h-14 rounded-full flex items-center justify-center text-white transition-all duration-500 z-[9999] overflow-hidden;
   background: linear-gradient(135deg, #06b6d4, #3b82f6);
-  box-shadow: 
+  box-shadow:
     0 10px 30px rgba(6, 182, 212, 0.4),
     0 4px 10px rgba(59, 130, 246, 0.3);
 }
@@ -368,12 +364,22 @@
 
 .ai-fab-btn svg {
   @apply relative z-10 w-6 h-6;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 @keyframes ai-pulse {
-  0% { transform: scale(0.8); opacity: 0.2; }
-  50% { transform: scale(1.2); opacity: 0.5; }
-  100% { transform: scale(0.8); opacity: 0.2; }
-}
+  0% {
+    transform: scale(0.8);
+    opacity: 0.2;
+  }
 
+  50% {
+    transform: scale(1.2);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(0.8);
+    opacity: 0.2;
+  }
+}

@@ -124,6 +124,7 @@ public class StockClient {
             return Collections.emptyMap();
         }
     }
+<<<<<<< HEAD
     // ── Write Operations (AI Actions) ─────────────────────────────────────────
 
     @SuppressWarnings("unchecked")
@@ -159,4 +160,6 @@ public class StockClient {
             throw new RuntimeException("Could not update equipment: " + e.getMessage());
         }
     }
+=======
+>>>>>>> my-local-work
 }
