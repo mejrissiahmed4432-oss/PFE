@@ -23,14 +23,11 @@ public class AiRequest {
      */
     private List<Map<String, String>> conversationHistory;
 
-<<<<<<< HEAD
     /**
      * Optional base64 encoded image to trigger the vision model.
      */
     private String imageBase64;
 
-=======
->>>>>>> my-local-work
     // ── Constructors ─────────────────────────────────────────────────────────
     public AiRequest() {}
 
@@ -49,10 +46,7 @@ public class AiRequest {
 
     public List<Map<String, String>> getConversationHistory() { return conversationHistory; }
     public void setConversationHistory(List<Map<String, String>> v) { this.conversationHistory = v; }
-<<<<<<< HEAD
 
     public String getImageBase64() { return imageBase64; }
     public void setImageBase64(String v) { this.imageBase64 = v; }
-=======
->>>>>>> my-local-work
 }

@@ -35,11 +35,7 @@ public class VectorStoreService {
     private double similarityThreshold;
 
     public VectorStoreService(VectorDocumentRepository repository,
-<<<<<<< HEAD
                               @org.springframework.beans.factory.annotation.Autowired(required = false) EmbeddingModel embeddingModel) {
-=======
-                              EmbeddingModel embeddingModel) {
->>>>>>> my-local-work
         this.repository = repository;
         this.embeddingModel = embeddingModel;
     }
@@ -51,13 +47,10 @@ public class VectorStoreService {
      */
     public void store(String content, String role, String intentCategory,
                       Map<String, Object> metadata) {
-<<<<<<< HEAD
         if (embeddingModel == null) {
             log.warn("Embedding model is disabled. Skipping document storage.");
             return;
         }
-=======
->>>>>>> my-local-work
         try {
             float[] raw = embeddingModel.embed(content);
             List<Double> embedding = toDoubleList(raw);
@@ -74,13 +67,10 @@ public class VectorStoreService {
      */
     public void storeAll(List<String> texts, String role, String intentCategory,
                          List<Map<String, Object>> metadataList) {
-<<<<<<< HEAD
         if (embeddingModel == null) {
             log.warn("Embedding model is disabled. Skipping batch storage for role '{}'", role);
             return;
         }
-=======
->>>>>>> my-local-work
         log.info("Embedding {} documents for role='{}' intent='{}'", texts.size(), role, intentCategory);
         List<VectorDocument> batch = new ArrayList<>();
 
@@ -111,13 +101,10 @@ public class VectorStoreService {
     }
 
     public List<VectorDocument> findSimilar(String query, String role, int topK) {
-<<<<<<< HEAD
         if (embeddingModel == null) {
             log.warn("Embedding model is disabled. Cannot perform semantic search.");
             return Collections.emptyList();
         }
-=======
->>>>>>> my-local-work
         try {
             float[] queryEmbedding = embeddingModel.embed(query);
 

@@ -24,7 +24,6 @@ public class PromptBuilderService {
         }
 
         String baseGuardrails = """
-<<<<<<< HEAD
                 RULES:
                 - Always think step by step before providing your final answer.
                 - Answer the USER QUESTION accurately. If the DATA CONTEXT contains relevant data, prioritize it.
@@ -34,18 +33,6 @@ public class PromptBuilderService {
                 - If the user asks something unrelated to IT/stock (e.g., jokes, math, general chat), answer it helpfully and briefly.
                 - Format your response professionally using Markdown (tables, bold text, bullet points) where helpful.
                 - Keep answers concise. Limit to 600 words maximum.
-=======
-                CRITICAL RULES (NEVER VIOLATE):
-                - Answer the USER QUESTION accurately using the DATA CONTEXT and the conversation history.
-                - If the question is a follow-up (e.g., "give me his review", "what is his rating"), resolve it
-                  from the previous context in this conversation.
-                - Use ONLY the data provided in the DATA CONTEXT section.
-                - If the DATA CONTEXT includes a 'FILTERED LIST', prioritize that information.
-                - NEVER invent, assume, or hallucinate any information.
-                - If the data is truly insufficient, respond: "No sufficient data available."
-                - Be concise, practical, and professional. Use bullet points for lists.
-                - Limit your answer to 300 words maximum.
->>>>>>> my-local-work
                 """;
 
         return switch (role.toLowerCase()) {
@@ -63,7 +50,6 @@ public class PromptBuilderService {
                 software, and IT infrastructure.
                 
                 YOUR TASK:
-<<<<<<< HEAD
                 - Let's think step by step. Break down the user's requirements logically before giving your final recommendation.
                 - Act as a trusted advisor. Answer the user's question with confidence and expertise.
                 - For comparisons (e.g., "i5 vs i7"), give clear pros/cons for each option and use comparison tables.
@@ -74,17 +60,6 @@ public class PromptBuilderService {
                 - Keep answers under 600 words.
                 
                 IMPORTANT: You may use your general IT knowledge in addition to the DATA CONTEXT. Provide highly intelligent and nuanced insights.
-=======
-                - Act as a trusted advisor. Answer the user's question with confidence and expertise.
-                - For comparisons (e.g., "i5 vs i7"), give clear pros/cons for each option.
-                - For placement advice, consider physical environment, network proximity, and usage.
-                - For equipment recommendations, consider the user's context from the DATA CONTEXT.
-                - Always conclude with a clear, actionable recommendation.
-                - Format responses clearly: use headers, bullet points, and a final "Recommendation:" section.
-                - Keep answers under 400 words.
-                
-                IMPORTANT: You may use your general IT knowledge in addition to the DATA CONTEXT.
->>>>>>> my-local-work
                 """;
     }
 
@@ -127,11 +102,7 @@ public class PromptBuilderService {
                     List all equipment categories and their sub-types.
                     Report counts and icons as defined in the system.
                     """;
-<<<<<<< HEAD
             default -> "If the DATA CONTEXT has relevant information, use it. Otherwise answer from your general IT knowledge and be helpful.";
-=======
-            default -> "Provide a data-driven response based on the context.";
->>>>>>> my-local-work
         };
 
         return roleContext + "\n" + intentGuidance + "\n" + guardrails;
@@ -166,11 +137,7 @@ public class PromptBuilderService {
                     Report supplier details relevant to spare parts procurement.
                     Include ratings and contact information.
                     """;
-<<<<<<< HEAD
             default -> "If the DATA CONTEXT has relevant information, use it. Otherwise, use your technical knowledge to help the technician.";
-=======
-            default -> "Provide technical guidance based on the equipment and maintenance data.";
->>>>>>> my-local-work
         };
 
         return roleContext + "\n" + intentGuidance + "\n" + guardrails;
@@ -180,14 +147,9 @@ public class PromptBuilderService {
 
     private String buildGenericPrompt(String guardrails) {
         return """
-<<<<<<< HEAD
                 You are a helpful AI Assistant for an IT Asset Management platform.
                 Answer questions using the DATA CONTEXT when relevant, or use your general knowledge for other topics.
                 Be friendly, concise and professional.
-=======
-                You are a helpful IT Asset Management AI Assistant.
-                Answer using the DATA CONTEXT provided and conversation history for follow-up resolution.
->>>>>>> my-local-work
                 """ + "\n" + guardrails;
     }
 }

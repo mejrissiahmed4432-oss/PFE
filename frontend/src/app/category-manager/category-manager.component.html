@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <div class="dashboard-container">
 
   <!-- Header -->
@@ -11,46 +10,22 @@
       <button class="btn-primary-gradient" (click)="startAddCategory()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         <span>New Category</span>
-=======
-<div class="equipment-container">
-
-  <!-- List Mode Header -->
-  <div class="header">
-    <div style="flex: 1"></div>
-    <div class="actions">
-      <button class="primary-btn btn-premium" (click)="startAddCategory()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        New Category
->>>>>>> my-local-work
       </button>
     </div>
   </div>
 
   <div class="content">
-<<<<<<< HEAD
     <div class="content-card">
       <div class="card-header-main">
         <h3 class="card-main-title">Inventory Structure</h3>
         <p class="card-main-subtitle">{{ categories.length }} root categories identified</p>
       </div>
 
-=======
-    <div class="list-wrapper">
-      <div class="table-header-area">
-        <h2 class="table-main-title">Category Management</h2>
-      </div>
-
-
->>>>>>> my-local-work
       <!-- Top Controls -->
       <div class="controls-bar">
         <div class="search-box">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-<<<<<<< HEAD
           <input type="text" placeholder="Search categories...">
-=======
-          <input type="text" [(ngModel)]="searchQuery" placeholder="Search categories...">
->>>>>>> my-local-work
         </div>
       </div>
 
@@ -71,11 +46,7 @@
               <th class="actions-cell"></th>
             </tr>
           </thead>
-<<<<<<< HEAD
           <tbody *ngFor="let cat of categories">
-=======
-          <tbody *ngFor="let cat of filteredCategories">
->>>>>>> my-local-work
             <!-- Group Header Row -->
             <tr class="group-header-row table-row-animate has-instances" (click)="toggleCategory(cat.id)">
 
@@ -123,7 +94,6 @@
               </td>
 
               <td class="actions-cell">
-<<<<<<< HEAD
                 <div class="actions-wrapper">
                   <button class="action-icon add-similar" (click)="$event.stopPropagation(); openAddTypeModal(cat.id)" title="Add Type">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
@@ -132,14 +102,6 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                   </button>
                 </div>
-=======
-                <button class="action-icon add-similar" (click)="$event.stopPropagation(); openAddTypeModal(cat.id)" title="Add Type">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                </button>
-                <button class="action-icon delete" (click)="deleteCategory(cat.id, $event)" title="Delete Category">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                </button>
->>>>>>> my-local-work
               </td>
             </tr>
 
@@ -197,13 +159,8 @@
                             {{ t.requiresQrCode ? 'Yes' : 'No' }}
                           </span>
                         </td>
-<<<<<<< HEAD
                         <td class="actions-cell">
                           <div class="actions-wrapper">
-=======
-                        <td style="text-align:right; padding-right:8px;">
-                          <div style="display:flex; justify-content:flex-end; gap:6px;">
->>>>>>> my-local-work
                             <button class="action-icon edit sm" (click)="openEditTypeModal(cat.id, t)" title="Edit Type">
                               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                             </button>

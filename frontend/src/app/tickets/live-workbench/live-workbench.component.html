@@ -8,7 +8,6 @@
       </button>
       <div class="header-title-group">
         <h2 class="title">Live Workbench</h2>
-<<<<<<< HEAD
         <div class="wb-stat-mini-row">
           <span class="stat-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> {{ ticket.id || 'N/A' }}</span>
           <span class="stat-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> {{ ticketPriorityLabel }}</span>
@@ -26,16 +25,6 @@
       <button class="btn-cancel-styled" (click)="showCancelDialog = true">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
         Cancel
-=======
-        <p class="subtitle">{{ getEquipmentName() }} · {{ getEquipmentType() }}</p>
-      </div>
-    </div>
-    <div class="header-right">
-      <span class="status-badge active">Active</span>
-      <button class="btn-cancel-styled" (click)="showCancelDialog = true">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-        Cancel Ticket
->>>>>>> my-local-work
       </button>
     </div>
   </div>
@@ -116,7 +105,6 @@
 
           <!-- ── STEP 1: DIAGNOSIS ── -->
           <div *ngIf="state.currentStep === 'diagnosis'" class="wb-step-view">
-<<<<<<< HEAD
             
             <!-- AI Diagnosis Assistant -->
             <div class="ai-assistant-panel">
@@ -234,12 +222,6 @@
 
             <div class="diagnosis-form-group">
               <label>Diagnosis <span class="required">*</span></label>
-=======
-           
-
-            <div class="diagnosis-form-group">
-              <label>Diagnosis Result <span class="required">*</span></label>
->>>>>>> my-local-work
               <textarea class="diag-textarea" [(ngModel)]="state.diagnosisResult" placeholder="Enter your diagnosis..."></textarea>
             </div>
 
@@ -253,19 +235,11 @@
               </div>
             </div>
 
-<<<<<<< HEAD
             <!-- Removed Additional Notes -->
-=======
-            <div class="diagnosis-form-group">
-              <label>Additional Notes</label>
-              <textarea class="diag-textarea" [(ngModel)]="state.additionalNotes" placeholder="Any additional observations..."></textarea>
-            </div>
->>>>>>> my-local-work
           </div>
 
           <!-- ── STEP 2: PLAN ACTIONS ── -->
           <div *ngIf="state.currentStep === 'plan'" class="wb-step-view">
-<<<<<<< HEAD
             
             <!-- AI Plan Generator -->
             <div class="ai-assistant-panel" style="margin-bottom: 24px;">
@@ -289,85 +263,57 @@
                 </div>
               </div>
             </div>
-
-=======
->>>>>>> my-local-work
-            <div class="plan-header">
-              <button class="btn-add-action" (click)="addAction()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Add Action
-              </button>
+            <div class="action-plan-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main, #0f172a);">Planned Actions</h3>
+              <button class="btn-primary" (click)="addAction()">+ Add Action</button>
             </div>
-
-            <div *ngIf="state.actions.length === 0" class="empty-state">
-              <p>No actions planned yet. Click "Add Action" to begin.</p>
-            </div>
-
-            <div class="action-cards-list">
-              <div class="action-plan-card" *ngFor="let action of state.actions; trackBy: trackById">
+            
+            <div class="action-plan-cards">
+              <div *ngFor="let action of state.actions" class="apc-card">
+                <div class="apc-header">
+                  <span class="apc-badge">{{ action.category }}</span>
+                </div>
                 <div class="apc-body">
-                  <div class="apc-icon">{{ getCategoryIcon(action.category) }}</div>
-                  <div class="apc-fields">
-                    <div class="apc-row-2">
-                      <div class="apc-field">
-                        <label>Category</label>
-                        <select [(ngModel)]="action.category" (ngModelChange)="updateAction(action.id, 'category', $event)">
-                          <option *ngFor="let cat of ALL_ACTION_CATEGORIES" [value]="cat">{{ cat }}</option>
-                        </select>
-                      </div>
-                      <div class="apc-field">
-                        <label>Action Type</label>
-                        <select [(ngModel)]="action.type">
-                          <option *ngFor="let t of getActionTypesForCategory(action.category)" [value]="t">{{ t }}</option>
-                        </select>
-                      </div>
-<<<<<<< HEAD
-                      <div class="apc-field">
-                        <label>Priority</label>
-                        <select [(ngModel)]="action.priority">
-                          <option value="High">High Priority</option>
-                          <option value="Medium">Medium Priority</option>
-                          <option value="Low">Low Priority</option>
-                        </select>
-                      </div>
+                  <div class="apc-row-1">
+                    <div class="apc-field">
+                      <label>Category</label>
+                      <select [(ngModel)]="action.category">
+                        <option *ngFor="let cat of ALL_ACTION_CATEGORIES" [value]="cat">{{ cat }}</option>
+                      </select>
                     </div>
-                    <div class="apc-row-2">
-                      <div class="apc-field">
-                        <label>Target Element</label>
-                        <input type="text" [(ngModel)]="action.target" placeholder="e.g., RAM, OS, Network Config">
-                      </div>
-                      <div class="apc-field">
-                        <label>Estimated Time</label>
-                        <input type="text" [(ngModel)]="action.estimatedTime" placeholder="e.g., 30m, 1h 15m">
-                      </div>
-=======
+                    <div class="apc-field">
+                      <label>Action Type</label>
+                      <select [(ngModel)]="action.type">
+                        <option *ngFor="let type of getActionTypesForCategory(action.category)" [value]="type">{{ type }}</option>
+                      </select>
                     </div>
-                    <div class="apc-row-2">
-                      <div class="apc-field">
-                        <label>Target</label>
-                        <input type="text" [(ngModel)]="action.target" placeholder="e.g., RAM, OS, Network Config">
-                      </div>
->>>>>>> my-local-work
+                    <div class="apc-field">
+                      <label>Target</label>
+                      <input type="text" [(ngModel)]="action.target" placeholder="e.g., RAM, OS, Network Config">
                     </div>
+                  </div>
+                  <div class="apc-row-2">
                     <div class="apc-field full">
                       <label>Description</label>
                       <textarea [(ngModel)]="action.description" placeholder="Describe the action..."></textarea>
                     </div>
-                    <div class="apc-footer">
-                      <span class="action-status-badge" [class]="getStatusClass(action.status)">{{ action.status }}</span>
-                      <button class="btn-delete-action" (click)="removeAction(action.id)">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path></svg>
-                      </button>
-                    </div>
+                  </div>
+                  <div class="apc-footer">
+                    <span class="action-status-badge" [class]="getStatusClass(action.status)">{{ action.status }}</span>
+                    <button class="btn-delete-action" (click)="removeAction(action.id)">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path></svg>
+                    </button>
                   </div>
                 </div>
               </div>
+            </div>
+            <div *ngIf="state.actions.length === 0" class="empty-state">
+              No actions planned yet. Click '+ Add Action' or use the AI Generator.
             </div>
           </div>
 
           <!-- ── STEP 3: RESOURCES ── -->
           <div *ngIf="state.currentStep === 'resources'" class="wb-step-view">
-<<<<<<< HEAD
             
             <!-- AI Resource Matcher -->
             <div class="ai-assistant-panel" style="margin-bottom: 24px;" *ngIf="state.actions.length > 0">
@@ -392,50 +338,32 @@
               </div>
             </div>
 
-=======
->>>>>>> my-local-work
-            <div *ngIf="state.actions.length === 0" class="empty-state">
-              <p>No actions planned. Please complete the previous step first.</p>
-            </div>
-
-            <div *ngIf="state.actions.length > 0" class="resource-split-view">
-              <!-- Left: Actions List -->
-              <div class="resource-sidebar">
-                <h4 class="resource-side-title">Actions</h4>
-                <div class="resource-action-list">
-                  <button *ngFor="let action of state.actions" 
-                          class="res-action-item" 
-                          [class.active]="selectedActionId === action.id"
-                          (click)="selectActionForResources(action.id)">
-                    <div class="ra-main">{{ action.type }} {{ action.target }}</div>
-                    <div class="ra-sub">{{ action.category }}</div>
-                  </button>
+            <div class="resources-layout" *ngIf="state.actions.length > 0">
+              <div class="res-sidebar">
+                <div class="res-action-item" *ngFor="let action of state.actions" [class.active]="selectedActionId === action.id" (click)="selectActionForResources(action.id)">
+                  <div class="res-action-icon">{{ getCategoryIcon(action.category) }}</div>
+                  <div class="res-action-details">
+                    <span class="res-action-type">{{ action.type }}</span>
+                    <span class="res-action-target">{{ action.target }}</span>
+                  </div>
                 </div>
               </div>
+              
+              <div class="res-main" *ngIf="selectedAction">
 
-              <!-- Right: Resource Content -->
-              <div class="resource-main-content">
-                <div *ngIf="!selectedAction" class="resource-placeholder">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-                  <p>Select an action to view required resources</p>
-                </div>
-
-                <div *ngIf="selectedAction">
-<<<<<<< HEAD
-                  <div class="res-search-wrap" *ngIf="['Hardware', 'Software', 'Consumables', 'Storage'].includes(selectedAction.category)">
-                    <input type="text" class="res-search" [(ngModel)]="inventorySearch" (ngModelChange)="onInventorySearchChange()" placeholder="Search inventory or library...">
-                  </div>
-
-=======
->>>>>>> my-local-work
                   <!-- Hardware Case -->
                   <div *ngIf="selectedAction.category === 'Hardware' || selectedAction.category === 'Consumables' || selectedAction.category === 'Storage'">
                     <div class="res-header">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                       <h4>Hardware Parts Inventory</h4>
                     </div>
+                    
+                    <!-- Search Input for Hardware/Consumables -->
+                    <div class="res-search-wrap">
+                      <input type="text" class="res-search" [(ngModel)]="inventorySearch" (ngModelChange)="onInventorySearchChange()" placeholder="Search inventory or library...">
+                    </div>
+
                     <div class="res-items-grid">
-<<<<<<< HEAD
                       <div *ngFor="let part of filteredInventory" class="res-card-item">
                         <div class="rc-info">
                           <p class="rc-name">{{ part.name }}</p>
@@ -464,21 +392,10 @@
                         </div>
                       </div>
                       <div *ngIf="filteredInventory.length === 0" class="res-empty-box">No parts found in inventory for this category.</div>
-=======
-                      <div *ngFor="let part of userInventory" class="res-card-item">
-                        <div class="rc-info">
-                          <p class="rc-name">{{ part.name }}</p>
-                          <p class="rc-location">Location: {{ part.location || 'Section A-1' }}</p>
-                        </div>
-                        <span class="rc-stock">Stock: {{ part.totalQty }}</span>
-                      </div>
-                      <div *ngIf="userInventory.length === 0" class="res-empty-box">No parts found in inventory for this category.</div>
->>>>>>> my-local-work
                     </div>
                   </div>
 
                   <!-- Software Case -->
-<<<<<<< HEAD
                   <div *ngIf="selectedAction.category === 'Software'">
                     <!-- Operating Systems -->
                     <div class="res-header">
@@ -510,59 +427,10 @@
                         <button class="btn-res-add" (click)="addResourceToAction('software', app.name)">+ Add</button>
                       </div>
                       <div *ngIf="availableApps.length === 0" class="res-empty-box">No Applications available.</div>
-=======
-                  <div *ngIf="selectedAction.category === 'Software' || selectedAction.category === 'Firmware'">
-                    <div class="res-header">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-                      <h4>Software & Packages</h4>
-                    </div>
-                    <div class="res-items-grid">
-                      <div class="res-card-item">
-                        <div class="rc-info">
-                          <p class="rc-name">Windows 11 Pro</p>
-                          <p class="rc-location">Version: 23H2</p>
-                        </div>
-                      </div>
-                      <div class="res-card-item">
-                        <div class="rc-info">
-                          <p class="rc-name">Ubuntu Server</p>
-                          <p class="rc-location">Version: 22.04 LTS</p>
-                        </div>
-                      </div>
-                      <div class="res-card-item">
-                        <div class="rc-info">
-                          <p class="rc-name">Network Drivers Pack</p>
-                          <p class="rc-location">Version: v2.1</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Config Case -->
-                  <div *ngIf="selectedAction.category === 'Configuration' || selectedAction.category === 'Network' || selectedAction.category === 'Security'">
-                    <div class="res-header">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                      <h4>Configuration Settings</h4>
-                    </div>
-                    <div class="res-form-list">
-                      <div class="res-form-field">
-                        <label>IP Address</label>
-                        <input type="text" placeholder="192.168.1.100">
-                      </div>
-                      <div class="res-form-field">
-                        <label>DNS Server</label>
-                        <input type="text" placeholder="8.8.8.8">
-                      </div>
-                      <div class="res-form-field">
-                        <label>VLAN ID</label>
-                        <input type="text" placeholder="100">
-                      </div>
->>>>>>> my-local-work
                     </div>
                   </div>
 
                   <!-- Default/Others -->
-<<<<<<< HEAD
                   <div *ngIf="!['Hardware', 'Software', 'Consumables', 'Storage'].includes(selectedAction.category)" class="resource-placeholder">
                     <p>No specific resources cataloged for {{ selectedAction.category }} actions.</p>
                   </div>
@@ -592,13 +460,11 @@
                     <div *ngIf="!selectedAction.resources || selectedAction.resources.length === 0" class="res-empty-box">No resources assigned to this action yet.</div>
                   </div>
                   
-=======
-                  <div *ngIf="!['Hardware', 'Software', 'Configuration', 'Network', 'Security', 'Firmware', 'Consumables', 'Storage'].includes(selectedAction.category)" class="resource-placeholder">
-                    <p>No specific resources cataloged for {{ selectedAction.category }} actions.</p>
-                  </div>
->>>>>>> my-local-work
-                </div>
               </div>
+            </div>
+            
+            <div *ngIf="state.actions.length === 0" class="empty-state">
+              No actions planned. Please go back to the Plan step.
             </div>
           </div>
 
@@ -630,7 +496,6 @@
                       </select>
                     </div>
                     <p class="exec-desc">{{ action.description }}</p>
-<<<<<<< HEAD
                     
                     <div class="exec-timer-row">
                       <button class="timer-btn" [class.start]="!isActionTimerRunning(action.id)" [class.stop]="isActionTimerRunning(action.id)" (click)="toggleActionTimer(action)" *ngIf="action.status !== 'Done'">
@@ -648,11 +513,6 @@
                         {{ action.expandedInExecution ? '▲ Hide Instructions' : '▼ Show Step-by-Step Instructions' }}
                       </button>
                     </div>
-=======
-                    <button class="exec-toggle-btn" (click)="toggleExecutionExpand(action)">
-                      {{ action.expandedInExecution ? '▲ Hide Instructions' : '▼ Show Step-by-Step Instructions' }}
-                    </button>
->>>>>>> my-local-work
                   </div>
                 </div>
                 <div class="exec-instructions" *ngIf="action.expandedInExecution">
@@ -671,7 +531,6 @@
           <!-- ── STEP 5: VALIDATION ── -->
           <div *ngIf="state.currentStep === 'validation'" class="wb-step-view">
             <div class="validation-card">
-<<<<<<< HEAD
               <div class="val-top-section">
                 <div class="val-header-info">
                   <h3 style="margin: 0 0 8px; font-size: 1.25rem; font-weight: 800; color: var(--text-main, #0f172a);">Final Quality Checks</h3>
@@ -690,15 +549,6 @@
                 </div>
               </div>
 
-=======
-              <div class="validation-card-header">
-                
-                <div class="val-progress-info">
-                  <span>{{ validationProgress.checked }} / {{ validationProgress.total }} completed</span>
-                  <span class="all-validated-badge" *ngIf="validationProgress.allDone">✓ All Validated</span>
-                </div>
-              </div>
->>>>>>> my-local-work
               <div class="validation-list">
                 <div class="val-check-row" *ngFor="let item of state.validationChecklist; let i = index">
                   <button class="val-check-btn" [class.checked]="item.checked" (click)="toggleValidation(item)">
@@ -734,7 +584,6 @@
           <!-- ── STEP 6: SUMMARY ── -->
           <div *ngIf="state.currentStep === 'summary'" class="wb-step-view">
             <div class="summary-card">
-<<<<<<< HEAD
               <div class="summary-header-row">
                 <div class="summary-section-title" style="margin: 0;">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
@@ -744,11 +593,6 @@
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                   Export Report
                 </button>
-=======
-              <div class="summary-section-title">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                
->>>>>>> my-local-work
               </div>
 
               <div class="summary-device-grid">
@@ -808,7 +652,6 @@
                   </div>
                 </div>
               </div>
-<<<<<<< HEAD
 
               <div class="summary-subsection" *ngIf="totalResourcesAssigned > 0">
                 <h4>Resources Utilized</h4>
@@ -822,155 +665,4 @@
                   </ul>
                 </div>
               </div>
-=======
->>>>>>> my-local-work
-            </div>
-
-            <div class="final-report-card">
-              <label>Final Technician Report</label>
-              <textarea [(ngModel)]="state.summaryNote" placeholder="Provide a comprehensive final report..."></textarea>
-            </div>
-
-            <div class="ready-banner">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-              <div>
-                <h5>Ready to Complete</h5>
-                <p>All workflow steps completed. Review the summary and click "Finish & Close" when ready.</p>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <footer class="wb-footer" *ngIf="!isLoading">
-          <button class="btn-secondary" (click)="prevStep()" [disabled]="stepIndex === 0">Previous</button>
-          <button class="btn-primary" *ngIf="stepIndex < steps.length - 1" (click)="nextStep()">Continue →</button>
-          <button class="btn-complete" *ngIf="state.currentStep === 'summary'" (click)="showCompleteDialog = true">Finish & Close</button>
-        </footer>
-      </div>
-    </div>
-
-    <!-- SIDEBAR -->
-    <div class="wb-column-sidebar">
-      <div class="wb-card wb-combined-sidebar">
-        <div class="sidebar-section">
-          <div class="side-title-group">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-            <h3 class="side-title">Notes</h3>
-          </div>
-          <div class="notes-input-wrapper">
-            <textarea [(ngModel)]="state.globalNotes" placeholder="Add notes about this maintenance ticket..."></textarea>
-          </div>
-          <div class="notes-autosave-label">Auto-saved</div>
-        </div>
-
-        <div class="sidebar-divider"></div>
-
-        <div class="sidebar-section">
-          <div class="side-title-group">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            <h3 class="side-title">Timeline</h3>
-          </div>
-          <div class="timeline-container">
-            <div class="timeline-scroll-area">
-              <div class="timeline-item" *ngFor="let item of state.timeline">
-              <div class="timeline-icon-wrap">
-                <!-- Ticket Created -->
-                <svg *ngIf="item.icon === 'edit'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                  <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-                <!-- Assigned -->
-                <svg *ngIf="item.icon === 'user'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <!-- Diagnosis / Search -->
-                <svg *ngIf="item.icon === 'search'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <!-- Check -->
-                <svg *ngIf="item.icon === 'check-circle'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <!-- Info -->
-                <svg *ngIf="item.icon === 'info'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="8" x2="12" y2="12"></line>
-                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-              </div>
-              <div class="timeline-content">
-                <div class="timeline-title">{{ item.title }}</div>
-                <div class="timeline-time">{{ item.time }}</div>
-              </div>
-            </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CANCEL DIALOG -->
-  <div class="wb-modal-overlay" *ngIf="showCancelDialog" (click)="showCancelDialog = false">
-    <div class="wb-modal" (click)="$event.stopPropagation()">
-      <h3>Discard Changes?</h3>
-      <p>Are you sure you want to cancel? All unsaved progress will be permanently lost.</p>
-      <div class="modal-btns">
-        <button class="btn-text" (click)="showCancelDialog = false">Keep Working</button>
-        <button class="btn-danger" (click)="confirmCancel()">Discard Progress</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- COMPLETE DIALOG -->
-  <div class="wb-modal-overlay" *ngIf="showCompleteDialog" (click)="showCompleteDialog = false">
-    <div class="wb-modal" (click)="$event.stopPropagation()">
-      <h3>Complete Maintenance?</h3>
-      <p>This will finalize the workbench and mark the ticket as resolved.</p>
-      <div class="modal-btns">
-        <button class="btn-text" (click)="showCompleteDialog = false">Cancel</button>
-        <button class="btn-complete" (click)="confirmComplete()">Confirm & Complete</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- CUSTOM ALERT DIALOG -->
-  <div class="wb-modal-overlay" *ngIf="customAlert" (click)="closeAlert()">
-    <div class="wb-modal alert-modal" (click)="$event.stopPropagation()">
-      <div class="alert-icon-wrap">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-      </div>
-      <h3>{{ customAlert.title }}</h3>
-      <p>{{ customAlert.message }}</p>
-      <div class="modal-btns">
-        <button class="btn-primary" (click)="closeAlert()">Understood</button>
-      </div>
-    </div>
-  </div>
-
-<<<<<<< HEAD
-  <!-- NO RESOURCES WARNING DIALOG -->
-  <div class="wb-modal-overlay" *ngIf="showNoResourcesWarning" (click)="showNoResourcesWarning = false">
-    <div class="wb-modal alert-modal" (click)="$event.stopPropagation()">
-      <div class="alert-icon-wrap" style="background: #fee2e2;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-      </div>
-      <h3>Missing Resources</h3>
-      <p>You haven't assigned any hardware parts or software to your actions. Are you sure you want to proceed to the execution phase anyway?</p>
-      <div class="modal-btns">
-        <button class="btn-secondary" (click)="showNoResourcesWarning = false">Go Back</button>
-        <button class="btn-primary" (click)="confirmProceedWithoutResources()" style="background: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">Proceed Anyway</button>
-      </div>
-    </div>
-  </div>
-
-=======
->>>>>>> my-local-work
 </div>

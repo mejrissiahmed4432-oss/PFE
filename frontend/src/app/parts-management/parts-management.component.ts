@@ -171,9 +171,6 @@ export class PartsManagementComponent implements OnInit {
       
       // Applications
       { equipmentName: 'Adobe Creative Cloud', category: 'Applications', type: 'Software', brand: 'Adobe', qte: 5, status: 'In stock', specification: 'Suite 2024' },
-<<<<<<< HEAD
-      { equipmentName: 'Microsoft Office 365', category: 'Applications', type: 'Software', brand: 'Microsoft', qte: 12, status: 'In stock', specification: 'Business Premium' }
-=======
       { equipmentName: 'Microsoft Office 365', category: 'Applications', type: 'Software', brand: 'Microsoft', qte: 12, status: 'In stock', specification: 'Business Premium' },
       
       // Drivers
@@ -186,7 +183,6 @@ export class PartsManagementComponent implements OnInit {
       
       // Other
       { equipmentName: 'Company Email Signatures', category: 'Other', type: 'Asset', brand: 'Medina', qte: 1, status: 'In stock', specification: 'Standard Template' }
->>>>>>> my-local-work
     ];
 
     // Only add mocks if we don't have real items for these categories

@@ -14,14 +14,11 @@ public class AiResponse {
     private boolean success = true;
     private String errorMessage;
 
-<<<<<<< HEAD
     // ── Action fields ─────────────────────────────────────────────────────────
     private boolean actionPending = false;
     private String actionType;
     private Map<String, Object> actionPayload;
 
-=======
->>>>>>> my-local-work
     // ── Static factory methods ────────────────────────────────────────────────
     public static AiResponse success(String intent, String answer,
                                      List<Map<String, Object>> data,
@@ -65,7 +62,6 @@ public class AiResponse {
 
     public String getErrorMessage()             { return errorMessage; }
     public void setErrorMessage(String v)       { this.errorMessage = v; }
-<<<<<<< HEAD
 
     public boolean isActionPending()            { return actionPending; }
     public void setActionPending(boolean v)     { this.actionPending = v; }
@@ -75,6 +71,4 @@ public class AiResponse {
 
     public Map<String, Object> getActionPayload()            { return actionPayload; }
     public void setActionPayload(Map<String, Object> v)      { this.actionPayload = v; }
-=======
->>>>>>> my-local-work
 }

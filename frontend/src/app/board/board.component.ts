@@ -26,17 +26,10 @@ import { TicketsComponent } from '../tickets/tickets.component';
 import { ReportsComponent } from '../reports/reports.component';
 import { OsManagementComponent } from '../os-management/os-management.component';
 import { ApplicationManagementComponent } from '../application-management/application-management.component';
-<<<<<<< HEAD
 import { TranslationService } from '../shared/translation.service';
 import { PartRequestService } from '../parts-management/part-request.service';
-=======
-
-import { TranslationService } from '../shared/translation.service';
-
 import { EmployeeListComponent } from '../employee/employee-list/employee-list.component';
 import { HrDashboardComponent } from '../hr-dashboard/hr-dashboard.component';
-
->>>>>>> my-local-work
 
 @Component({
   selector: 'app-board',

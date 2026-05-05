@@ -8,11 +8,7 @@ import java.util.Set;
  */
 public enum QueryIntent {
 
-<<<<<<< HEAD
     // ─── Stock Manager Intents ───────────────────────────────────────
-=======
-    // ─── Stock Manager Intents ───────────────────────────────────────────────
->>>>>>> my-local-work
     STOCK_STATUS("stock_manager"),
     LOW_STOCK("stock_manager"),
     RECOMMENDATION("stock_manager"),
@@ -20,7 +16,6 @@ public enum QueryIntent {
     SUPPLIER_INFO("stock_manager"),
     CATEGORY_INFO("stock_manager"),
 
-<<<<<<< HEAD
     // ─── Stock Manager Actions ───────────────────────────────────────
     ADD_EQUIPMENT("stock_manager"),
     UPDATE_EQUIPMENT("stock_manager"),
@@ -28,36 +23,25 @@ public enum QueryIntent {
     REJECT_REQUEST("stock_manager"),
 
     // ─── Technician Intents ────────────────────────────────────────
-=======
-    // ─── Technician Intents ──────────────────────────────────────────────────
->>>>>>> my-local-work
     EQUIPMENT_STATUS("technician"),
     PARTS_AVAILABILITY("technician"),
     MAINTENANCE_HELP("technician"),
     TICKET_STATUS("technician"),
 
-<<<<<<< HEAD
     // ─── Technician Actions ────────────────────────────────────────
     SUBMIT_PART_REQUEST("technician"),
 
     // ─── Shared Intents (all roles) ────────────────────────────────────
-=======
-    // ─── Shared Intents (all roles) ──────────────────────────────────────────
->>>>>>> my-local-work
     REQUEST_STATUS("all"),
     SCHEDULE_INFO("all"),
     TICKET_INFO("all"),
     EQUIPMENT_SUGGESTION("all"),
     HELP("all"),
-<<<<<<< HEAD
     GENERAL_ASSISTANCE("all"),
 
     // ─── Shared Actions (all roles) ───────────────────────────────────
     CREATE_TASK("all"),
     UPDATE_TICKET("all");
-=======
-    GENERAL_ASSISTANCE("all");
->>>>>>> my-local-work
 
     private final String role;
 

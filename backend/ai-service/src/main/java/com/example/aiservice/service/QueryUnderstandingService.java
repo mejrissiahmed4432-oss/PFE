@@ -113,19 +113,11 @@ public class QueryUnderstandingService {
         // 4. Determine execution path
         String executionPath = determineExecutionPath(intent, confidence, questionType, role);
 
-<<<<<<< HEAD
         // 5. If confidence below threshold — escalate to GENERAL_ASSISTANCE
         QueryIntent finalIntent = intent;
         if (confidence < CONFIDENCE_THRESHOLD && executionPath.equals("GENERAL")) {
             finalIntent = QueryIntent.GENERAL_ASSISTANCE;
             log.debug("Low confidence ({}) → escalated to GENERAL_ASSISTANCE", confidence);
-=======
-        // 5. If confidence below threshold — escalate to GENERAL_UNDERSTANDING
-        QueryIntent finalIntent = intent;
-        if (confidence < CONFIDENCE_THRESHOLD && executionPath.equals("GENERAL")) {
-            finalIntent = QueryIntent.GENERAL_UNDERSTANDING;
-            log.debug("Low confidence ({}) → escalated to GENERAL_UNDERSTANDING", confidence);
->>>>>>> my-local-work
         }
 
         return new QueryUnderstanding(
