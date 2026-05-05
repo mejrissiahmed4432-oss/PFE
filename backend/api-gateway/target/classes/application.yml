@@ -1,0 +1,90 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: api-gateway
+  codec:
+    max-in-memory-size: 50MB
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            maxAge: 3600
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      routes:
+        - id: user-microservice
+          uri: lb://user-microservice
+          predicates:
+            - Path=/api/users/**, /api/messages/**, /api/tickets/**, /api/tickets, /api/alerts/**, /api/alerts, /api/notifications/**, /api/notifications
+        - id: equipment-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/equipment/**
+        - id: supplier-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/suppliers/**
+        - id: shelf-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/shelves/**
+        - id: dashboard-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/dashboard/**
+        - id: categories-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/equipment-categories/**
+        - id: user-ws-route
+          uri: lb://user-microservice
+          predicates:
+            - Path=/ws/**
+
+        - id: application-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/applications/**, /api/applications
+
+        - id: os-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/os/**, /api/os
+
+        - id: technician-route
+          uri: lb://technician-microservice
+          predicates:
+            - Path=/api/part-requests/**, /api/part-requests, /api/capabilities/**, /api/capabilities
+
+        - id: ai-service-route
+          uri: lb://ai-service
+          predicates:
+            - Path=/api/ai/**, /api/ai
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true

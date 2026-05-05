@@ -1,0 +1,366 @@
+<div class="dashboard-container">
+
+  <!-- Header -->
+  <div class="dashboard-header-modern">
+    <div class="welcome-text">
+      <h1 class="main-title">Category Management</h1>
+      <p class="subtitle">Configure equipment categories, types, and track your asset inventory structure.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary-gradient" (click)="startAddCategory()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <span>New Category</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="content-card">
+      <div class="card-header-main">
+        <h3 class="card-main-title">Inventory Structure</h3>
+        <p class="card-main-subtitle">{{ categories.length }} root categories identified</p>
+      </div>
+
+      <!-- Top Controls -->
+      <div class="controls-bar">
+        <div class="search-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" placeholder="Search categories...">
+        </div>
+      </div>
+
+      <div class="loading-state" *ngIf="isLoading" style="text-align: center; padding: 40px;">
+        <div class="spinner"></div>
+        <p>Loading categories...</p>
+      </div>
+
+      <!-- Table View -->
+      <div class="table-container" *ngIf="!isLoading && categories.length > 0">
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th class="col-expand"></th>
+              <th class="col-icon">Icon</th>
+              <th>Category</th>
+              <th>Composition</th>
+              <th class="actions-cell"></th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let cat of categories">
+            <!-- Group Header Row -->
+            <tr class="group-header-row table-row-animate has-instances" (click)="toggleCategory(cat.id)">
+
+              <td class="col-expand">
+                <button class="expand-btn" [class.expanded]="cat.id && expandedCategories[cat.id]" (click)="$event.stopPropagation(); toggleCategory(cat.id)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+              </td>
+
+              <td class="col-icon">
+                <div class="authors-avatar-wrap">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                </div>
+              </td>
+
+              <td>
+                <div *ngIf="editingCategoryId !== cat.id" style="display: flex; align-items: center; gap: 8px;">
+                  <div class="authors-main-text">{{ cat.name }}</div>
+                  <div class="authors-sub-text">Inventory Group</div>
+
+                  <button class="action-icon edit sm" (click)="$event.stopPropagation(); startRename(cat)" title="Rename">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                  </button>
+                </div>
+                <!-- Rename Input -->
+                <div *ngIf="editingCategoryId === cat.id" style="display: flex; flex-direction: column; gap: 4px;" (click)="$event.stopPropagation()">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <input type="text" [(ngModel)]="editingCategoryName" (ngModelChange)="checkCategoryDuplicate($event, cat.id)" (keyup.enter)="!isCategoryNameDuplicate && saveRename(cat)" autofocus style="padding: 4px 8px; border: 1px solid #3b82f6; border-radius: 4px; font-size: 0.9rem;">
+                    <button class="action-icon edit sm" [disabled]="isCategoryNameDuplicate" (click)="saveRename(cat)" style="color: #10b981;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </button>
+                    <button class="action-icon delete sm" (click)="cancelRename()">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                  </div>
+                  <div class="error-msg" *ngIf="isCategoryNameDuplicate" style="font-size: 11px;">
+                    This category name already exists
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="authors-main-text">{{ cat.types?.length || 0 }} Sub-types</div>
+                <div class="authors-sub-text">Assigned assets</div>
+              </td>
+
+              <td class="actions-cell">
+                <div class="actions-wrapper">
+                  <button class="action-icon add-similar" (click)="$event.stopPropagation(); openAddTypeModal(cat.id)" title="Add Type">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                  </button>
+                  <button class="action-icon delete" (click)="deleteCategory(cat.id, $event)" title="Delete Category">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Expanded Types Row -->
+            <tr *ngIf="cat.id && expandedCategories[cat.id]" class="expandable-content-row">
+              <td colspan="5" style="padding: 0;">
+                <div class="instances-container">
+                  <div class="instances-header" style="justify-content: space-between;">
+                    <h4>Equipment Types in {{ cat.name }}</h4>
+                    <button class="qr-link-btn" (click)="openAddTypeModal(cat.id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                      Add New Type
+                    </button>
+                  </div>
+                  <table class="instances-table">
+                    <thead>
+                      <tr>
+                        <th style="width: 50%;">Type Name</th>
+                        <th style="text-align:center;">QR Code</th>
+                        <th style="text-align:right; padding-right:16px;">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let t of cat.types">
+                        <td class="font-bold" style="color: #475569; display: flex; align-items: center; gap: 12px; height: 100%;">
+                          <div class="type-icon-wrap" [ngClass]="'ti-' + getTypeKey(t.name)" style="width: 28px; height: 28px; border-radius: 6px;">
+                            <svg *ngIf="getTypeKey(t.name)==='laptop'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><polyline points="8 21 12 17 16 21"></polyline><line x1="2" y1="17" x2="22" y2="17"></line></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='pc'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='monitor'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='server'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"></rect><rect x="2" y="14" width="20" height="8" rx="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='printer'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='scanner'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="8" rx="2" ry="2"/><path d="M8 12h8"/><path d="M5 12h.01"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='projector'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="10" rx="2"/><circle cx="16" cy="13" r="3"/><path d="M6 13h.01"/><path d="M9 13h.01"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='router'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M6 14v-4"/><path d="M12 14v-6"/><path d="M18 14v-4"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='ups'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 10v4"/><path d="M15 10v4"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='tablet'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='phone'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='keyboard'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="10" y1="14" x2="14" y2="14"/><line x1="6" y1="10" x2="6.01" y2="10"/><line x1="10" y1="10" x2="10.01" y2="10"/><line x1="14" y1="10" x2="14.01" y2="10"/><line x1="18" y1="10" x2="18.01" y2="10"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='mouse'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="5"/><line x1="12" y1="7" x2="12" y2="11"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='headset'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='ram'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M5 17v-4"/><path d="M9 17v-4"/><path d="M15 17v-4"/><path d="M19 17v-4"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='hdd'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8"/><path d="M8 10h8"/><circle cx="12" cy="16" r="2"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='cables'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v4"/><path d="M14 3v4"/><rect x="8" y="7" width="8" height="6" rx="2"/><path d="M12 13v8"/></svg>
+                            <svg *ngIf="getTypeKey(t.name)==='default'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                          </div>
+                          {{ t.name }}
+                          <span class="nature-badge" [class.cons]="t.nature === 'Consumable'">
+                            {{ t.nature || 'Asset' }}
+                          </span>
+                        </td>
+                        <td style="text-align:center;">
+                          <span [class]="t.requiresQrCode ? 'qr-badge yes' : 'qr-badge no'">
+                            <svg *ngIf="t.requiresQrCode" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <svg *ngIf="!t.requiresQrCode" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            {{ t.requiresQrCode ? 'Yes' : 'No' }}
+                          </span>
+                        </td>
+                        <td class="actions-cell">
+                          <div class="actions-wrapper">
+                            <button class="action-icon edit sm" (click)="openEditTypeModal(cat.id, t)" title="Edit Type">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="action-icon delete sm" (click)="removeType(cat.id, t, $event)" title="Delete Type">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr *ngIf="!cat.types || cat.types.length === 0">
+                        <td colspan="3" style="text-align: center; color: #94a3b8; padding: 20px;">
+                          No types configured for this category yet.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════ Add Category Modal ════ -->
+<div class="modal-overlay" *ngIf="isAddingCategory" (click)="cancelAddCategory()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Add New Equipment Category</h2>
+      <button class="close-btn" (click)="cancelAddCategory()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Category Name <span class="required-star">*</span></label>
+        <input type="text" [(ngModel)]="newCategoryName" (ngModelChange)="checkCategoryDuplicate($event)" class="form-control" placeholder="e.g. DEVICE, PERIPHERAL..." (keyup.enter)="!isCategoryNameDuplicate && saveNewCategory()" autofocus>
+        <div class="error-msg" *ngIf="isCategoryNameDuplicate">This category name already exists</div>
+      </div>
+      <div class="type-hint" style="margin-top: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        After adding the category, you can define its equipment types in the main list.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="cancelAddCategory()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="saveNewCategory()" [disabled]="!newCategoryName.trim() || isCategoryNameDuplicate">
+        Add Category
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ Type Add / Edit Modal ════ -->
+<div class="modal-overlay" *ngIf="showTypeModal" (click)="closeTypeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="modal-header-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        </div>
+        <h2>{{ typeModalMode === 'add' ? 'Add New Type' : 'Edit Type' }}</h2>
+      </div>
+      <button class="close-btn" (click)="closeTypeModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Type Name -->
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Type Name <span class="required-star">*</span></label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="typeModalForm.name"
+          (ngModelChange)="checkTypeNameInModal()"
+          placeholder="e.g. Laptop, Router, SSD..."
+          autofocus
+          (keyup.enter)="saveTypeModal()">
+        <div class="error-msg" *ngIf="typeModalNameError">{{ typeModalNameError }}</div>
+      </div>
+
+      <!-- Nature (Asset or Consumable) -->
+      <div class="form-group" style="margin-bottom: 24px;">
+        <label>Type Nature <span class="required-star">*</span></label>
+        <div class="nature-selector">
+          <div class="nature-option" [class.active]="typeModalForm.nature === 'Asset'" (click)="typeModalForm.nature = 'Asset'">
+            <div class="nature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            </div>
+            <div class="nature-info">
+              <span class="nature-title">Asset</span>
+              <span class="nature-desc">Main equipment (Laptop, Server, Router...)</span>
+            </div>
+            <div class="nature-check" *ngIf="typeModalForm.nature === 'Asset'">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+          </div>
+          <div class="nature-option" [class.active]="typeModalForm.nature === 'Consumable'" (click)="typeModalForm.nature = 'Consumable'">
+            <div class="nature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"></rect><path d="M5 17v-4"></path><path d="M9 17v-4"></path><path d="M15 17v-4"></path><path d="M19 17v-4"></path></svg>
+            </div>
+            <div class="nature-info">
+              <span class="nature-title">Consumable</span>
+              <span class="nature-desc">Components/Parts (RAM, Disk, Battery...)</span>
+            </div>
+            <div class="nature-check" *ngIf="typeModalForm.nature === 'Consumable'">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QR Code Checkbox -->
+      <div class="form-group qr-checkbox-group">
+        <label class="checkbox-label">
+          <div class="custom-checkbox" [class.checked]="typeModalForm.requiresQrCode" (click)="typeModalForm.requiresQrCode = !typeModalForm.requiresQrCode">
+            <svg *ngIf="typeModalForm.requiresQrCode" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <div class="checkbox-text">
+            <span class="checkbox-title">Requires QR Code</span>
+            <span class="checkbox-desc">Equipment of this type will have a QR code generated for tracking.</span>
+          </div>
+        </label>
+        <div class="error-msg" *ngIf="typeModalQrError" style="margin-top: 8px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          {{ typeModalQrError }}
+        </div>
+      </div>
+      <!-- Specification Fields -->
+      <div class="form-group" style="margin-top: 20px;">
+        <label (click)="showSpecFields = !showSpecFields" style="cursor: pointer; display: flex; align-items: center; user-select: none; transition: color 0.2s;" onmouseover="this.style.color='#3b82f6'" onmouseout="this.style.color=''">
+          Specification Fields <span style="font-size: 0.8rem; font-weight: normal; color: #64748b; margin-left: 8px;">(e.g., RAM, CPU, Storage)</span>
+          <div style="flex: 1"></div>
+          <div style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; background: #f1f5f9; border-radius: 4px; transition: background 0.2s;">
+            <svg *ngIf="!showSpecFields" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <svg *ngIf="showSpecFields" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+          </div>
+        </label>
+        
+        <div *ngIf="showSpecFields" style="margin-top: 12px; animation: fadeIn 0.2s ease-out;">
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <input type="text" class="form-control" [(ngModel)]="newSpecField" placeholder="Add a specification field..." (keyup.enter)="addSpecField()">
+            <button type="button" class="btn btn-secondary" style="padding: 0 16px;" (click)="addSpecField()">Add</button>
+          </div>
+          <div class="spec-chips-container" style="display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; background: #f8fafc; border-radius: 8px; min-height: 48px; border: 1px dashed #cbd5e1;">
+            <div *ngIf="!typeModalForm.specificationFields || typeModalForm.specificationFields.length === 0" style="color: #94a3b8; font-size: 0.85rem; width: 100%; text-align: center; margin-top: 2px;">
+              No specification fields defined yet.
+            </div>
+            <div *ngFor="let field of typeModalForm.specificationFields; let i = index" class="spec-chip" style="display: flex; align-items: center; background: white; border: 1px solid #e2e8f0; padding: 4px 10px; border-radius: 16px; font-size: 0.85rem; color: #334155; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+              {{ field }}
+              <button type="button" (click)="removeSpecField(i)" style="background: none; border: none; padding: 0; margin-left: 6px; cursor: pointer; color: #94a3b8; display: flex; align-items: center; justify-content: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeTypeModal()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="saveTypeModal()" [disabled]="!typeModalForm.name.trim() || !!typeModalNameError">
+        {{ typeModalMode === 'add' ? 'Add Type' : 'Update Type' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Delete Confirmation Modal ═══ -->
+<div class="delete-modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+    <div class="delete-modal" (click)="$event.stopPropagation()">
+        <div class="delete-modal-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                <path d="M10 11v6"></path><path d="M14 11v6"></path>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+            </svg>
+        </div>
+        <h3 class="delete-modal-title">{{ deleteModalTitle }}</h3>
+        <p class="delete-modal-desc">{{ deleteModalMessage }}</p>
+
+        <div class="active-filter-banner" *ngIf="errorMessage" style="background-color: #fee2e2; border-color: #fecaca; color: #b91c1c; margin-bottom: 20px; font-size: 0.85rem; padding: 8px 12px; border-radius: 8px; text-align: left;">
+            <div class="banner-content" style="display: flex; gap: 8px; align-items: flex-start;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span>{{ errorMessage }}</span>
+            </div>
+        </div>
+
+        <div class="delete-modal-actions">
+            <button class="delete-btn-confirm" (click)="confirmDelete()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                Delete
+            </button>
+            <button class="delete-btn-cancel" (click)="closeDeleteModal()">Cancel</button>
+        </div>
+    </div>
+</div>

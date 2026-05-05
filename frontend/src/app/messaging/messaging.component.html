@@ -1,0 +1,268 @@
+<div class="messaging-layout">
+
+  <!-- ══════════════════ LEFT PANEL: Contact List ══════════════════ -->
+  <aside class="conversations-panel">
+    
+    <!-- Header -->
+    <div class="conv-header">
+      <div class="conv-header-top">
+        <h2 class="conv-title">Contacts</h2>
+        <div class="conv-header-right">
+          <button class="icon-btn" title="Refresh contacts" (click)="loadContacts()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-box">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" [(ngModel)]="searchQuery" (input)="loadContacts()" placeholder="Search contacts…" class="search-input">
+      </div>
+    </div>
+
+    <!-- Contact items -->
+    <div class="conv-list">
+      <div *ngFor="let contact of filteredContacts"
+           class="conv-item"
+           [class.active]="selectedUser?.id === contact.id"
+           (click)="selectUser(contact)">
+
+        <div class="conv-avatar-wrap">
+          <div class="conv-avatar">{{ contact.initials }}</div>
+          <span class="online-dot" *ngIf="contact.online"></span>
+        </div>
+
+        <div class="conv-info">
+          <div class="conv-info-top">
+            <div class="conv-info-main">
+              <span class="conv-name" [class.unread]="contact.unreadCount && contact.unreadCount > 0">{{ contact.firstName }} {{ contact.lastName }}</span>
+              <span class="conv-role">{{ contact.role }}</span>
+            </div>
+            <span class="conv-time" *ngIf="contact.lastTime">{{ formatTime(contact.lastTime) }}</span>
+          </div>
+          <div class="conv-info-bottom">
+            <span class="conv-last-msg" [class.unread]="contact.unreadCount && contact.unreadCount > 0">
+              {{ contact.lastMessage }}
+            </span>
+            <div class="conv-unread-wrap" *ngIf="contact.unreadCount && contact.unreadCount > 0">
+              <span class="conv-unread">{{ contact.unreadCount }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-search" *ngIf="filteredContacts.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <p>No contacts found</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════ RIGHT PANEL: Chat Area ══════════════════ -->
+  <div class="chat-panel" *ngIf="selectedUser; else noChatSelected">
+
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <div class="header-avatar-wrap">
+          <div class="header-avatar">{{ selectedUser.initials }}</div>
+          <span class="online-dot" *ngIf="selectedUser.online"></span>
+        </div>
+        <div class="header-info">
+          <span class="header-name">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</span>
+          <span class="header-status">
+            <span class="status-dot" [class.online]="selectedUser.online"></span>
+            {{ selectedUser.online ? 'Online' : 'Offline' }} · {{ selectedUser.role }}
+          </span>
+        </div>
+      </div>
+      <div class="chat-header-actions">
+        <button class="icon-btn" title="Voice call">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+        </button>
+        <button class="icon-btn" title="Video call">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+          </svg>
+        </button>
+        <button class="icon-btn" title="More options">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages Area -->
+    <div class="messages-area" #messagesContainer>
+
+      <ng-container *ngFor="let msg of messages; let i = index">
+
+        <!-- Day divider -->
+        <div class="day-divider" *ngIf="shouldShowDayDivider(messages, i)">
+          <span>{{ getDayLabel(msg.timestamp) }}</span>
+        </div>
+
+        <!-- Message bubble -->
+        <div class="msg-row" [class.own]="msg.isOwn">
+
+          <div class="msg-avatar" *ngIf="!msg.isOwn">{{ selectedUser.initials }}</div>
+          <div class="msg-avatar own" *ngIf="msg.isOwn">{{ currentUserInitials }}</div>
+
+          <div class="msg-bubble-wrap">
+            <div class="msg-bubble" [class.own]="msg.isOwn">
+              
+              <!-- Message Actions -->
+              <div class="msg-actions" *ngIf="(!editingMessageId || editingMessageId !== msg.id) && !isMessageDeleted(msg)">
+                <button class="action-trigger" title="Options">⋯</button>
+                <div class="action-menu">
+                  <button *ngIf="canEdit(msg)" (click)="startEdit(msg)">Edit</button>
+                  <button class="delete-action" (click)="deleteMessage(msg)">Delete</button>
+                </div>
+              </div>
+
+              <!-- Edit Mode -->
+              <div class="edit-mode-container" *ngIf="editingMessageId === msg.id">
+                <input type="text" [(ngModel)]="editContent" (keydown)="onKeyDown($event)" #editInput class="edit-input">
+                <div class="edit-actions">
+                  <button (click)="saveEdit()">Save</button>
+                  <button (click)="cancelEdit()">Cancel</button>
+                </div>
+              </div>
+
+              <!-- Tombstone for deleted messages -->
+              <ng-container *ngIf="isMessageDeleted(msg)">
+                <p class="msg-text" style="font-style: italic; opacity: 0.65; font-size: 0.85rem;">
+                  {{ msg.deletedForEveryone ? 'This message was deleted' : 'This message was deleted for you' }}
+                </p>
+              </ng-container>
+
+              <!-- Content (if not editing and not deleted) -->
+              <ng-container *ngIf="editingMessageId !== msg.id && !isMessageDeleted(msg)">
+                <!-- Text -->
+                <p class="msg-text" *ngIf="msg.content">{{ msg.content }}</p>
+                <span class="edited-label" *ngIf="msg.edited">(edited)</span>
+
+                <!-- File Attachment -->
+                <div class="msg-doc-wrap" *ngIf="msg.attachmentId" (click)="downloadFile(msg)" [class.no-text]="!msg.content">
+                  <div class="msg-doc-icon">
+                    <svg *ngIf="msg.fileType?.includes('image')" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                    <svg *ngIf="!msg.fileType?.includes('image')" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                  </div>
+                  <div class="msg-doc-info">
+                    <span class="doc-name">{{ msg.fileName || 'Attachment' }}</span>
+                  </div>
+                  <div class="doc-dl-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+
+            <!-- Timestamp + status -->
+            <div class="msg-meta" [class.own]="msg.isOwn">
+              <span class="msg-time">{{ formatMsgTime(msg.timestamp) }}</span>
+              <span class="msg-status" *ngIf="msg.isOwn">
+                <svg *ngIf="msg.status === 'SENT'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg *ngIf="msg.status === 'READ'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><polyline points="17 6 9 17 4 12"></polyline><polyline points="22 6 13 17"></polyline></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Compose Bar -->
+    <div class="compose-bar">
+      <input type="file" #fileInput style="display:none" multiple (change)="onFileSelected($event)">
+
+      <div class="compose-inner">
+        <button class="compose-icon-btn" title="Attach file" (click)="triggerFileInput()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+          </svg>
+        </button>
+
+        <div class="compose-input-container">
+          <input
+            type="text"
+            class="compose-input-modern"
+            [(ngModel)]="newMessage"
+            (keydown)="onKeyDown($event)"
+            placeholder="Write a message…"
+            autocomplete="off">
+        </div>
+
+        <button class="compose-send-btn-modern" [class.active]="newMessage.trim().length > 0" (click)="sendMessage()" title="Send">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- No conversation selected -->
+  <ng-template #noChatSelected>
+    <div class="no-chat-placeholder">
+      <div class="placeholder-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </div>
+      <h3>Select a contact</h3>
+      <p>Pick a user from the left panel to start messaging.</p>
+    </div>
+  </ng-template>
+
+  <!-- ══════════════ DELETE CONFIRMATION MODAL ══════════════ -->
+  <div class="delete-modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+    <div class="delete-modal" (click)="$event.stopPropagation()">
+      <div class="delete-modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+          <path d="M10 11v6"></path><path d="M14 11v6"></path>
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+        </svg>
+      </div>
+      <h3 class="delete-modal-title">Delete Message</h3>
+      <p class="delete-modal-desc">
+        <ng-container *ngIf="isOwnMessageModal">
+          Choose how you want to delete this message.
+        </ng-container>
+        <ng-container *ngIf="!isOwnMessageModal">
+          This will remove the message from your view only.<br>The sender will still see it.
+        </ng-container>
+      </p>
+      <div class="delete-modal-actions">
+        <button class="delete-btn-me" (click)="confirmDeleteForMe()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Delete for me only
+        </button>
+        <button class="delete-btn-all" *ngIf="isOwnMessageModal" (click)="confirmDeleteForEveryone()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Delete for everyone
+        </button>
+        <button class="delete-btn-cancel" (click)="closeDeleteModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+</div>

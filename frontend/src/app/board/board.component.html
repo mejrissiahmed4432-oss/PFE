@@ -1,0 +1,455 @@
+<div class="shell">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.w-72]="!isSidebarCollapsed" [class.w-[72px]]="isSidebarCollapsed">
+    
+    <!-- Logo Area -->
+    <div class="sidebar-logo-area" [class.justify-center]="isSidebarCollapsed" [class.px-0]="isSidebarCollapsed">
+      <div class="flex items-center cursor-pointer" [class.gap-3]="!isSidebarCollapsed" (click)="isSidebarCollapsed ? toggleSidebar() : null">
+        <div class="sidebar-logo-icon">
+          <img src="assets/images/medinaflux-logo.png" alt="App Logo" class="sidebar-logo-img">
+        </div>
+        <div *ngIf="!isSidebarCollapsed">
+          <h1 class="sidebar-logo-title">
+            <span class="text-white">Medina</span><span class="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Flux</span>
+          </h1>
+        </div>
+      </div>
+      <button (click)="toggleSidebar()" class="sidebar-toggle-btn" [class.collapsed-toggle]="isSidebarCollapsed">
+        <svg *ngIf="!isSidebarCollapsed" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        <svg *ngIf="isSidebarCollapsed" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- Dashboard -->
+      <a href="javascript:void(0)" class="nav-item" [ngClass]="activeTab === 'dashboard' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'dashboard'" title="Dashboard">
+        <span *ngIf="activeTab === 'dashboard'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">{{ t('Dashboard') }}</span>
+      </a>
+
+      <!-- Section Label -->
+      <p class="nav-section-label" *ngIf="!isSidebarCollapsed && user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'">{{ t('Inventory') }}</p>
+
+      <!-- Stock -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'" [ngClass]="activeTab === 'stock' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'stock'" title="Stock">
+        <span *ngIf="activeTab === 'stock'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+          <path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">{{ t('Stock') }}</span>
+      </a>
+
+      <!-- Inventory with Sub-options -->
+      <div *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'">
+        <a href="javascript:void(0)" class="nav-item" [ngClass]="(activeTab === 'equipment' && selectedNatureFilter === '') ? 'nav-item-active' : 'nav-item-default'" (click)="clearFiltersAndGoToEquipment()" title="Inventory">
+          <span *ngIf="activeTab === 'equipment' && selectedNatureFilter === ''" class="nav-item-indicator"></span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <path d="M8 13h8"/><path d="M8 17h8"/><path d="M10 9H8"/>
+          </svg>
+          <span class="nav-item-label-flex" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">{{ t('Inventory') }}</span>
+          <svg *ngIf="!isSidebarCollapsed" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="nav-chevron" [class.rotate-90]="activeTab === 'equipment'">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </a>
+        <div class="nav-sub-list" *ngIf="activeTab === 'equipment' && !isSidebarCollapsed">
+          <a href="javascript:void(0)" class="nav-sub-item" [ngClass]="selectedNatureFilter === 'Asset' ? 'nav-sub-item-active' : 'nav-sub-item-default'" (click)="clearFiltersAndGoToEquipment('Asset')">
+            <div class="nav-sub-dot" [ngClass]="selectedNatureFilter === 'Asset' ? 'bg-blue-400' : 'bg-slate-600'"></div><span>{{ t('Assets') }}</span>
+          </a>
+          <a href="javascript:void(0)" class="nav-sub-item" [ngClass]="selectedNatureFilter === 'Consumable' ? 'nav-sub-item-active' : 'nav-sub-item-default'" (click)="clearFiltersAndGoToEquipment('Consumable')">
+            <div class="nav-sub-dot" [ngClass]="selectedNatureFilter === 'Consumable' ? 'bg-blue-400' : 'bg-slate-600'"></div><span>{{ t('Consumables') }}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'" [ngClass]="activeTab === 'categories' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'categories'" title="Equipment Category">
+        <span *ngIf="activeTab === 'categories'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 9h16"></path><path d="M4 15h16"></path><path d="M10 3L8 21"></path><path d="M16 3l-2 18"></path>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">{{ t('Categories') }}</span>
+      </a>
+
+      <!-- Suppliers -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'" [ngClass]="activeTab === 'suppliers' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'suppliers'" title="Suppliers">
+        <span *ngIf="activeTab === 'suppliers'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">{{ t('Suppliers') }}</span>
+      </a>
+
+      <!-- Orders -->
+      <a href="#" class="nav-item nav-item-default" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'" title="Orders">
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">{{ t('Orders') }}</span>
+      </a>
+
+      <!-- Section: Management -->
+      <p class="nav-section-label" *ngIf="!isSidebarCollapsed && user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'">{{ t('Management') }}</p>
+
+      <!-- Alerts -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'" [ngClass]="activeTab === 'alerts' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'alerts'" title="Alerts">
+        <span *ngIf="activeTab === 'alerts'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Alerts</span>
+      </a>
+
+      <!-- Schedule -->
+      <a href="javascript:void(0)" class="nav-item" [ngClass]="activeTab === 'schedule' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'schedule'" title="Schedule">
+        <span *ngIf="activeTab === 'schedule'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Schedule</span>
+      </a>
+
+      <!-- Reports -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'" [ngClass]="activeTab === 'reports' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'reports'" title="Reports">
+        <span *ngIf="activeTab === 'reports'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Reports</span>
+      </a>
+
+      <!-- Requests Manager -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'" [ngClass]="activeTab === 'manager-requests' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'manager-requests'" title="Part Requests">
+        <span *ngIf="activeTab === 'manager-requests'" class="nav-item-indicator"></span>
+        <div class="relative">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+          <span *ngIf="isSidebarCollapsed && pendingRequestsCount > 0" class="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-blue-600 ring-2 ring-[var(--bg-sidebar)] text-[7px] font-bold text-white">{{ pendingRequestsCount }}</span>
+        </div>
+        <div class="flex-1 flex items-center justify-between overflow-hidden" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">
+          <span class="nav-item-label !w-auto !opacity-100">Requests</span>
+          <span *ngIf="pendingRequestsCount > 0" class="px-2 py-0.5 bg-blue-600 text-white text-[10px] font-bold rounded-full ml-2 flex-shrink-0">{{ pendingRequestsCount }}</span>
+        </div>
+      </a>
+
+      <!-- Resources with Sub-options -->
+      <div *ngIf="user?.role === 'TECHNICIAN' || user?.role === 'IT_MANAGER'">
+        <a href="javascript:void(0)" class="nav-item" [ngClass]="activeTab === 'parts' ? 'nav-item-active' : 'nav-item-default'" (click)="setResourceFilter('')" title="Resources">
+          <span *ngIf="activeTab === 'parts'" class="nav-item-indicator"></span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          <span class="nav-item-label-flex" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Resources</span>
+          <svg *ngIf="!isSidebarCollapsed" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="nav-chevron" [class.rotate-90]="activeTab === 'parts'">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </a>
+        <div class="nav-sub-list" *ngIf="activeTab === 'parts' && !isSidebarCollapsed">
+          <a href="javascript:void(0)" class="nav-sub-item" [ngClass]="selectedResourceFilter === 'Parts' ? 'nav-sub-item-active' : 'nav-sub-item-default'" (click)="setResourceFilter('Parts')" *ngIf="user?.role !== 'IT_MANAGER'">
+            <div class="nav-sub-dot" [ngClass]="selectedResourceFilter === 'Parts' ? 'bg-blue-400' : 'bg-slate-600'"></div><span>Parts</span>
+          </a>
+          <a href="javascript:void(0)" class="nav-sub-item" [ngClass]="selectedResourceFilter === 'Operating Systems' ? 'nav-sub-item-active' : 'nav-sub-item-default'" (click)="setResourceFilter('Operating Systems')">
+            <div class="nav-sub-dot" [ngClass]="selectedResourceFilter === 'Operating Systems' ? 'bg-blue-400' : 'bg-slate-600'"></div><span>Operating Systems</span>
+          </a>
+          <a href="javascript:void(0)" class="nav-sub-item" [ngClass]="selectedResourceFilter === 'Applications' ? 'nav-sub-item-active' : 'nav-sub-item-default'" (click)="setResourceFilter('Applications')">
+            <div class="nav-sub-dot" [ngClass]="selectedResourceFilter === 'Applications' ? 'bg-blue-400' : 'bg-slate-600'"></div><span>Applications</span>
+          </a>
+        </div>
+      </div>
+
+
+      <!-- My Requests (for technicians) -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'TECHNICIAN'" [ngClass]="activeTab === 'requests' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'requests'" title="My Part Requests">
+        <span *ngIf="activeTab === 'requests'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Requests</span>
+      </a>
+
+      <!-- Support Tickets -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'IT_MANAGER'" [ngClass]="activeTab === 'tickets' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'tickets'" title="Support Tickets">
+        <span *ngIf="activeTab === 'tickets'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path>
+          <line x1="12" y1="9" x2="12" y2="15"></line>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Tickets</span>
+      </a>
+
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer" [class.flex]="isSidebarCollapsed" [class.justify-center]="isSidebarCollapsed" [class.p-2]="isSidebarCollapsed">
+      <button (click)="activeTab = 'settings'" class="sidebar-settings-btn" title="Settings">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+        <span class="nav-item-label" *ngIf="!isSidebarCollapsed">{{ t('Settings') }}</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="flex items-center gap-4">
+        <div>
+          <h2 class="topbar-page-title">{{ getPageTitle() }}</h2>
+          <p class="topbar-page-sub">{{ t('MedinaFlux_Platform') }}</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <!-- Language Switcher -->
+        <div class="relative group lang-switcher-container">
+          <button (click)="toggleLanguage($event)" class="topbar-btn" [title]="t('Switch_Language')">
+            <span class="text-[11px] font-bold">{{ selectedLanguage === 'en' ? 'EN' : 'FR' }}</span>
+          </button>
+          <div class="absolute right-0 top-full mt-2 w-24 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-xl shadow-xl py-1 transition-all duration-200 z-50 origin-top-right"
+               [ngClass]="isLanguageOpen ? 'scale-100 opacity-100 pointer-events-auto' : 'scale-95 opacity-0 pointer-events-none'">
+            <button (click)="selectLanguage('en')" class="w-full px-3 py-2 text-left text-[12px] font-medium hover:bg-[var(--accent-soft)] hover:text-[var(--accent-primary)] flex items-center justify-between">
+              EN <span *ngIf="selectedLanguage === 'en'" class="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]"></span>
+            </button>
+            <button (click)="selectLanguage('fr')" class="w-full px-3 py-2 text-left text-[12px] font-medium hover:bg-[var(--accent-soft)] hover:text-[var(--accent-primary)] flex items-center justify-between">
+              FR <span *ngIf="selectedLanguage === 'fr'" class="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button (click)="toggleDarkMode()" class="topbar-btn" [title]="isDarkMode ? t('Light_Mode') : t('Dark_Mode')">
+          <!-- Moon Icon (show when in light mode to switch to dark) -->
+          <svg *ngIf="!isDarkMode" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+          <!-- Sun Icon (show when in dark mode to switch to light) -->
+          <svg *ngIf="isDarkMode" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+          </svg>
+        </button>
+
+        <!-- AI Assistant -->
+        <button (click)="toggleAssistant()" class="topbar-btn" [title]="t('AI_Insights')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+          </svg>
+        </button>
+        <!-- Messages -->
+        <button (click)="openMessages()" id="top-messages-btn" class="topbar-btn" title="Messages">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span class="topbar-badge bg-blue-600" *ngIf="unreadMessagesCount > 0">{{ unreadMessagesCount }}</span>
+        </button>
+
+        <!-- Notifications -->
+        <div class="relative notif-container">
+          <button (click)="toggleNotifications($event)" class="topbar-btn" title="Notifications">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+            </svg>
+            <span class="topbar-badge bg-blue-600" *ngIf="unreadNotificationsCount > 0">{{ unreadNotificationsCount }}</span>
+          </button>
+
+          <!-- Notifications Dropdown -->
+          <div class="notif-dropdown"
+            [ngClass]="isNotificationsOpen ? 'scale-100 opacity-100 pointer-events-auto' : 'scale-95 opacity-0 pointer-events-none'"
+            (click)="$event.stopPropagation()">
+            
+            <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-slate-900">Notifications</span>
+                <span class="px-2 py-0.5 bg-blue-100 text-blue-600 text-[10px] font-bold rounded-full uppercase" *ngIf="unreadNotificationsCount > 0">{{ unreadNotificationsCount }} NEW</span>
+              </div>
+              <button (click)="markAllNotificationsAsRead($event)" class="text-[11px] font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                Mark all read
+              </button>
+            </div>
+
+            <div class="max-h-96 overflow-y-auto">
+              <div *ngIf="notificationsList.length === 0" class="p-8 text-center text-slate-400 text-sm">
+                No new notifications
+              </div>
+
+              <div *ngFor="let notif of notificationsList" 
+                class="px-5 py-4 border-b border-slate-100 flex gap-4 hover:bg-slate-50 transition-colors relative group/item"
+                [style.backgroundColor]="notif.bgColor">
+                <div class="w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center" [ngClass]="{
+                  'bg-blue-100 text-blue-600': notif.icon === 'link',
+                  'bg-purple-100 text-purple-600': notif.icon === 'shield',
+                  'bg-amber-100 text-amber-600': notif.icon === 'bell',
+                  'bg-emerald-100 text-emerald-600': notif.icon === 'wrench'
+                }">
+                  <svg *ngIf="notif.icon === 'link'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                  <svg *ngIf="notif.icon === 'shield'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  <svg *ngIf="notif.icon === 'bell'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                  <svg *ngIf="notif.icon === 'wrench'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-[13px] font-semibold text-slate-900 leading-tight mb-1 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600 flex-shrink-0" *ngIf="notif.isNew"></span>
+                    {{ notif.title }}
+                  </div>
+                  <div class="text-[11px] text-slate-500 flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    {{ notif.time }}
+                  </div>
+                </div>
+                <button (click)="deleteNotification(notif.id, $event)" class="absolute top-4 right-4 opacity-0 group-hover/item:opacity-100 text-slate-400 hover:text-red-500 transition-all duration-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="p-3 bg-slate-50 border-t border-slate-200">
+              <button (click)="deleteAllNotifications($event)" class="w-full py-2 text-[11px] font-bold text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                Clear All Notifications
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <button (click)="activeTab = 'alerts'" class="topbar-btn-danger" title="Alerts">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path>
+          </svg>
+          <span class="topbar-badge bg-red-500" *ngIf="unreadAlertsCount > 0">{{ unreadAlertsCount }}</span>
+        </button>
+
+        <div class="topbar-divider"></div>
+
+        <!-- User Profile -->
+        <div class="relative group">
+          <div class="profile-trigger">
+            <div class="profile-avatar">
+              {{ ((user?.firstName?.charAt(0) || 'M') + (user?.lastName?.charAt(0) || 'C')) | uppercase }}
+            </div>
+            <div class="hidden sm:flex flex-col">
+              <span class="profile-name">{{ user?.firstName || 'Ahmed' }} {{ user?.lastName || 'Mejrissi' }}</span>
+              <span class="profile-role">{{ user?.role || 'Stock Manager' }}</span>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 hidden sm:block">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </div>
+
+          <!-- Profile Menu Dropdown -->
+          <div class="profile-dropdown">
+            <div class="dropdown-header">
+              <p class="dropdown-label">Signed in as</p>
+              <p class="dropdown-email">{{ user?.email || 'ahmed@medinaflux.com' }}</p>
+            </div>
+            <div class="dropdown-body">
+              <button (click)="activeTab = 'profile'" class="dropdown-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                My Profile
+              </button>
+              <button (click)="activeTab = 'settings'" class="dropdown-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1-1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                Settings
+              </button>
+            </div>
+            <div class="dropdown-footer">
+              <button (click)="logout()" class="dropdown-item-danger">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content Area -->
+    <main class="page-content" [class.p-6]="activeTab !== 'messages'">
+      <div *ngIf="activeTab === 'dashboard'">
+        <!-- Dashboard Greeting -->
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h1 class="greeting-title">Good morning, {{ user?.firstName || 'Michael' }} 👋</h1>
+            <p class="greeting-sub">Here's what's happening with your inventory today.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="role-badge">{{ user?.role || 'User' }}</span>
+          </div>
+        </div>
+        <app-dashboard></app-dashboard>
+      </div>
+
+      <!-- Stock / Shelves Component View -->
+      <app-shelf-list *ngIf="activeTab === 'stock'" (navigate)="activeTab = $event"></app-shelf-list>
+
+      <!-- Equipment Component View -->
+      <app-equipment *ngIf="activeTab === 'equipment'" [natureFilter]="selectedNatureFilter"></app-equipment>
+
+      <!-- Category Component View -->
+      <app-category-manager *ngIf="activeTab === 'categories'"></app-category-manager>
+
+      <!-- Supplier Component View -->
+      <app-supplier *ngIf="activeTab === 'suppliers'"></app-supplier>
+
+      <!-- Profile Component View -->
+      <app-profile *ngIf="activeTab === 'profile'"></app-profile>
+
+      <!-- Settings Component View -->
+      <app-settings *ngIf="activeTab === 'settings'"></app-settings>
+
+      <!-- Alerts Component View -->
+      <app-alerts *ngIf="activeTab === 'alerts'"></app-alerts>
+
+      <!-- Schedule Component View -->
+      <app-schedule *ngIf="activeTab === 'schedule'"></app-schedule>
+
+      <!-- Messaging Component View -->
+      <app-messaging *ngIf="activeTab === 'messages'"></app-messaging>
+
+      <!-- Parts Management View (Technician Workspace) -->
+      <app-parts-management *ngIf="activeTab === 'parts' && selectedResourceFilter !== 'Operating Systems' && selectedResourceFilter !== 'Applications'" [resourceFilter]="selectedResourceFilter"></app-parts-management>
+
+      <!-- Operating Systems Management View -->
+      <app-os-management *ngIf="activeTab === 'parts' && selectedResourceFilter === 'Operating Systems'"></app-os-management>
+
+      <!-- Applications Management View -->
+      <app-application-management *ngIf="activeTab === 'parts' && selectedResourceFilter === 'Applications'"></app-application-management>
+
+      <!-- My Requests Component View -->
+      <app-request-list *ngIf="activeTab === 'requests'"></app-request-list>
+
+      <!-- Manager Requests Component View -->
+      <app-request-manager *ngIf="activeTab === 'manager-requests'"></app-request-manager>
+
+      <!-- Reports Component View -->
+      <app-reports *ngIf="activeTab === 'reports'"></app-reports>
+
+      <!-- Support Tickets Component View -->
+      <app-tickets *ngIf="activeTab === 'tickets'"></app-tickets>
+    </main>
+
+    <!-- Floating AI Assistant Button -->
+    <button class="ai-fab-btn" [class.active]="isAssistantOpen" (click)="toggleAssistant()" title="Open AI Assistant">
+      <div class="ai-fab-glow"></div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+      </svg>
+    </button>
+
+    <!-- AI Assistant Panel Overlay -->
+    <app-ai-assistant [isOpen]="isAssistantOpen" (close)="toggleAssistant()"></app-ai-assistant>
+  </div>
+</div>
+

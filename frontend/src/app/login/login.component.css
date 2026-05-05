@@ -1,0 +1,404 @@
+:host {
+    /* ── Color Palette (MedinaFlux Blue/Slate) ── */
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #06b6d4;
+    --bg-page: #ffffff;
+    --banner-gradient: linear-gradient(135deg, #1e4ed8 0%, #3b82f6 50%, #06b6d4 100%);
+    --text-white: #ffffff;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --input-focus-ring: rgba(37, 99, 235, 0.1);
+    
+    /* ── Typography & Shadows ── */
+    --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.05);
+    --shadow-btn: 0 4px 14px rgba(37, 99, 235, 0.3);
+    
+    display: block;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+}
+
+.login-page {
+    height: 100vh;
+    overflow-y: auto;
+    background-color: var(--bg-page);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Banner Section ── */
+.login-banner {
+    background: var(--banner-gradient);
+    min-height: 360px;
+    position: relative;
+    padding: 32px 5%;
+    color: var(--text-white);
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+    z-index: 1;
+}
+
+.login-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo {
+    height: 48px;
+    width: auto;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+}
+
+.brand-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.welcome-hero {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.welcome-hero h1 {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+}
+
+.welcome-hero p {
+    font-size: 1.125rem;
+    opacity: 0.85;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Wavy SVG decoration */
+.banner-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    line-height: 0;
+    z-index: -1;
+}
+
+.banner-wave svg {
+    display: block;
+    width: 100%;
+    height: 120px;
+}
+
+/* ── Login Content Section ── */
+.login-content {
+    margin-top: -100px;
+    display: flex;
+    justify-content: center;
+    padding: 0 24px 24px;
+    position: relative;
+    z-index: 10;
+}
+
+.login-card {
+    background: var(--card-bg);
+    width: 100%;
+    max-width: 420px;
+    padding: 32px 40px;
+    border-radius: 24px;
+}
+
+.card-header h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 24px;
+    letter-spacing: -0.5px;
+}
+
+.form-logo-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.form-logo {
+    height: 52px;
+    width: auto;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.05));
+}
+
+/* ── Form Styling ── */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-left: 4px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    color: var(--text-dark);
+    box-sizing: border-box;
+    outline: none;
+    border: 1.5px solid transparent;
+}
+
+.input-error {
+    border-color: #ef4444 !important;
+}
+
+.error-msg {
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 6px;
+    font-weight: 600;
+    margin-left: 4px;
+}
+
+.input-container {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1.125rem;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: -8px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+}
+
+.remember-me input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+.forgot-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    background: var(--banner-gradient);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.back-link {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    margin-top: 8px;
+    text-decoration: underline;
+}
+
+.card-footer {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.card-footer a {
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* ── Banners ── */
+.error-banner, .success-banner {
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.error-banner {
+    background: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fee2e2;
+}
+
+.success-banner {
+    background: #f0fdf4;
+    color: #22c55e;
+    border: 1px solid #dcfce7;
+}
+
+.card-copyright {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* ── Footer ── */
+.login-footer {
+    padding: 80px 24px 60px;
+    background: #ffffff;
+    border-top: 1px solid var(--border-color);
+}
+
+.footer-top {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.medina-logo {
+    height: 64px;
+    width: auto;
+    margin-bottom: 16px;
+    opacity: 1;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.05));
+}
+
+.footer-top p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+}
+
+.footer-bottom {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+}
+
+/* ── Animations ── */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar-links, .navbar-actions {
+        display: none;
+    }
+    .welcome-hero h1 {
+        font-size: 2.5rem;
+    }
+    .login-banner {
+        min-height: 400px;
+    }
+    .login-card {
+        padding: 32px 24px;
+    }
+}

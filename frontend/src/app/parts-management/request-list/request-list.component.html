@@ -1,0 +1,144 @@
+<div class="requests-container">
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      </div>
+      <div class="header-text">
+        <h1>My Part Requests</h1>
+        <p>Track the status of your inventory and procurement requests</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="header-stats">
+        <div class="stat-card">
+          <span class="stat-value">{{ requests.length }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-container">
+    <button class="tab-btn" [class.active]="activeTab === 'active'" (click)="setTab('active')">
+      Active Requests
+      <span class="tab-badge" *ngIf="requests.length > 0">{{ getPendingCount() }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="setTab('history')">
+      Request History
+    </button>
+  </div>
+
+  <div class="table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 40px"></th>
+          <th>Request Info</th>
+          <th>Cart / Overview</th>
+          <th>Priority</th>
+          <th>Date Submitted</th>
+          <th>Status</th>
+          <th style="text-align: right;" *ngIf="activeTab === 'active'">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let req of filteredRequests">
+          <!-- Main Row -->
+          <tr class="main-row" [class.expanded]="expandedRequestId === req.id" (click)="toggleExpand(req.id)">
+            <td style="text-align: center; color: #94a3b8;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [style.transform]="expandedRequestId === req.id ? 'rotate(90deg)' : 'rotate(0)'" style="transition: transform 0.2s;">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </td>
+            <td>
+              <div class="font-semibold text-dark">ID: {{ req.id?.substring(0, 8) }}...</div>
+            </td>
+            <td>
+              <div class="font-semibold text-dark">
+                {{ req.items ? req.items.length : 0 }} Items Requested
+              </div>
+              <div class="text-sm text-mute truncate-note" [title]="req.description">{{ req.description || 'No note provided' }}</div>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="priority-dot" [style.background]="getPriorityClass(req.priority) === 'priority-high' ? '#ef4444' : (getPriorityClass(req.priority) === 'priority-medium' ? '#f59e0b' : '#10b981')"></span>
+                <span class="font-medium" [style.color]="getPriorityClass(req.priority) === 'priority-high' ? '#ef4444' : (getPriorityClass(req.priority) === 'priority-medium' ? '#f59e0b' : '#10b981')">{{ req.priority || 'Medium' }}</span>
+              </div>
+            </td>
+            <td class="text-mute">{{ req.createdAt | date:'mediumDate' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(req.status)">
+                {{ req.status || 'PENDING' }}
+              </span>
+            </td>
+            <td style="text-align: right;" *ngIf="activeTab === 'active'">
+              <div class="action-buttons" *ngIf="req.status === 'PENDING'">
+                <button class="btn-action edit-btn" (click)="openEditWizard(req, $event)" title="Edit Request">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                </button>
+                <button class="btn-action x" (click)="cancelRequest(req, $event)" title="Cancel Request">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Expanded Line Items Row -->
+          <tr class="details-row" *ngIf="expandedRequestId === req.id">
+            <td [attr.colspan]="activeTab === 'active' ? 7 : 6" style="padding: 0;">
+              <div class="details-container">
+                <div class="details-header">
+                  <h4 class="details-title">Requested Items Breakdown</h4>
+                </div>
+                <table class="nested-table">
+                  <thead>
+                    <tr>
+                      <th>Item Name</th>
+                      <th>Category & Type</th>
+                      <th>Specification</th>
+                      <th style="text-align: right;">Quantity</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of req.items">
+                      <td>
+                        <div class="item-name">
+                          <!-- If matched by manager, show matched name; else show original typed name -->
+                          {{ item.matchedEquipmentName || item.partName }}
+                          <span class="badge-manual" *ngIf="!item.equipmentId">Pending Match</span>
+                          <span class="badge-matched" *ngIf="item.equipmentId && item.matchedEquipmentName">Matched ✓</span>
+                        </div>
+                        <div class="text-xs text-mute" *ngIf="item.brand">{{ item.brand }}</div>
+                      </td>
+                      <td class="text-mute">{{ item.category }} / {{ item.type }}</td>
+                      <td class="text-mute">{{ item.matchedSpecification || item.specification || '—' }}</td>
+                      <td style="text-align: right; font-weight: 600; color: #0f172a;">{{ item.quantity }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredRequests.length === 0">
+      <div class="empty-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+      </div>
+      <h3 class="empty-title">No requests found</h3>
+      <p class="empty-desc" *ngIf="activeTab === 'active'">You don't have any pending requests at the moment.</p>
+      <p class="empty-desc" *ngIf="activeTab === 'history'">Your request history is empty.</p>
+    </div>
+  </div>
+
+  <!-- Edit Wizard Overlay -->
+  <app-part-request-wizard *ngIf="isWizardOpen" [visible]="isWizardOpen" [user]="user" [editRequest]="requestToEdit"
+    (closeWizard)="onWizardClose($event)">
+  </app-part-request-wizard>
+
+</div>

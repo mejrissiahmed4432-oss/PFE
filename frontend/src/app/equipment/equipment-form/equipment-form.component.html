@@ -1,0 +1,1049 @@
+<!-- ════════════════════════════════════════════════════════
+     VIEW-ONLY  (detail page)  · premium redesign
+     ════════════════════════════════════════════════════════ -->
+<div class="detail-page" *ngIf="viewOnly && !isEditing">
+
+  <!-- ─── Back bar ─── -->
+  <div class="back-bar">
+    <button class="btn-back" (click)="cancel()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      Back to Equipment
+    </button>
+  </div>
+
+  <!-- ─── Hero header ─── -->
+  <div class="detail-hero">
+    <div class="hero-icon-wrap" [ngClass]="'cat-' + (equipment?.type || 'default')">
+      <!-- laptop -->
+      <svg *ngIf="equipment?.type === 'laptop'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+        <polyline points="8 21 12 17 16 21"></polyline>
+        <line x1="2" y1="17" x2="22" y2="17"></line>
+      </svg>
+      <!-- pc / computer -->
+      <svg *ngIf="equipment?.type === 'pc'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+      <!-- monitor -->
+      <svg *ngIf="equipment?.type === 'monitor'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+      <!-- server -->
+      <svg *ngIf="equipment?.type === 'server'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="2" width="20" height="8" rx="2"></rect>
+        <rect x="2" y="14" width="20" height="8" rx="2"></rect>
+        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+      </svg>
+      <!-- printer -->
+      <svg *ngIf="equipment?.type === 'printer'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+        <rect x="6" y="14" width="12" height="8"></rect>
+      </svg>
+      <!-- scanner -->
+      <svg *ngIf="equipment?.type === 'scanner'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+        <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+        <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+        <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+        <line x1="7" y1="12" x2="17" y2="12"></line>
+      </svg>
+      <!-- projector -->
+      <svg *ngIf="equipment?.type === 'projector'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M20.94 12.94A9 9 0 1 1 12 3.06"></path>
+        <line x1="22" y1="2" x2="12" y2="12"></line>
+      </svg>
+      <!-- router / switch / networking -->
+      <svg *ngIf="equipment?.type === 'router' || equipment?.type === 'switch'" xmlns="http://www.w3.org/2000/svg"
+        width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="10" width="20" height="6" rx="2"></rect>
+        <line x1="6" y1="13" x2="6.01" y2="13"></line>
+        <line x1="10" y1="13" x2="10.01" y2="13"></line>
+        <path d="M8 3v3"></path>
+        <path d="M16 3v3"></path>
+        <path d="M8 18v3"></path>
+        <path d="M16 18v3"></path>
+      </svg>
+      <!-- ups -->
+      <svg *ngIf="equipment?.type === 'ups'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="7" width="20" height="16" rx="2"></rect>
+        <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path>
+        <line x1="12" y1="12" x2="12" y2="16"></line>
+        <line x1="10" y1="14" x2="14" y2="14"></line>
+      </svg>
+      <!-- tablet -->
+      <svg *ngIf="equipment?.type === 'tablet'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+      </svg>
+      <!-- phone -->
+      <svg *ngIf="equipment?.type === 'phone'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="5" y="2" width="14" height="20" rx="2"></rect>
+        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+      </svg>
+      <!-- keyboard -->
+      <svg *ngIf="equipment?.type === 'keyboard'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+        <line x1="6" y1="10" x2="6.01" y2="10"></line>
+        <line x1="10" y1="10" x2="10.01" y2="10"></line>
+        <line x1="14" y1="10" x2="14.01" y2="10"></line>
+        <line x1="18" y1="10" x2="18.01" y2="10"></line>
+        <line x1="6" y1="14" x2="18" y2="14"></line>
+      </svg>
+      <!-- mouse -->
+      <svg *ngIf="equipment?.type === 'mouse'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M12 2a7 7 0 0 0-7 7v8a7 7 0 0 0 14 0V9a7 7 0 0 0-7-7z"></path>
+        <line x1="12" y1="9" x2="12" y2="2"></line>
+      </svg>
+      <!-- headset -->
+      <svg *ngIf="equipment?.type === 'headset'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+        <path
+          d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
+        </path>
+      </svg>
+      <!-- ram -->
+      <svg *ngIf="equipment?.type === 'ram'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="8" width="20" height="8" rx="1"></rect>
+        <line x1="6" y1="8" x2="6" y2="6"></line>
+        <line x1="10" y1="8" x2="10" y2="6"></line>
+        <line x1="14" y1="8" x2="14" y2="6"></line>
+        <line x1="18" y1="8" x2="18" y2="6"></line>
+      </svg>
+      <!-- hard drive / ssd / storage -->
+      <svg *ngIf="equipment?.type === 'hard drive' || equipment?.type === 'ssd'" xmlns="http://www.w3.org/2000/svg"
+        width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M2 16a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"></path>
+        <line x1="6" y1="12" x2="6.01" y2="12"></line>
+        <line x1="10" y1="12" x2="10.01" y2="12"></line>
+      </svg>
+      <!-- cables (default for cables) -->
+      <svg *ngIf="equipment?.type === 'cables'" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M4 9h16"></path>
+        <path d="M4 15h16"></path>
+        <path d="M10 3 8 21"></path>
+        <path d="M14 3l-2 18"></path>
+      </svg>
+      <!-- Default fallback -->
+      <svg
+        *ngIf="!equipment?.type || !['laptop','pc','monitor','server','printer','scanner','projector','router','switch','ups','tablet','phone','keyboard','mouse','headset','ram','hard drive','ssd','cables'].includes(equipment?.type || '')"
+        xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.5">
+        <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+    </div>
+
+    <div class="hero-info">
+      <h1 class="hero-name">{{ equipment?.equipmentName }}</h1>
+      <div class="hero-meta">
+        <span class="meta-chip">{{ equipment?.brand }}</span>
+        <span class="meta-dot">·</span>
+        <span class="meta-chip">{{ equipment?.model }}</span>
+        <span class="meta-dot">·</span>
+        <span class="meta-chip serial">S/N: {{ equipment?.serialNumber || 'N/A' }}</span>
+      </div>
+      <div class="hero-tags">
+        <span class="tag tag-type">{{ equipment?.type | titlecase }}</span>
+        <span class="tag tag-cat">{{ equipment?.category }}</span>
+        <span class="tag tag-loc" *ngIf="equipment?.location">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          {{ equipment?.location }}
+        </span>
+        <span class="tag tag-supplier" *ngIf="equipment?.supplier">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+          </svg>
+          {{ equipment?.supplier }}
+        </span>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn-edit" (click)="enableEdit()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        Edit Equipment
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── Tab navigation ─── -->
+  <div class="detail-tabs">
+    <button class="tab-btn" [class.active]="activeTab==='overview'" (click)="activeTab='overview'">Overview</button>
+    <button class="tab-btn" [class.active]="activeTab==='specs'" (click)="activeTab='specs'"
+      *ngIf="isComputerCategory()">Specifications</button>
+    <button class="tab-btn" [class.active]="activeTab==='purchase'" (click)="activeTab='purchase'">Purchase &
+      Warranty</button>
+    <button class="tab-btn" [class.active]="activeTab==='storage'" (click)="activeTab='storage'">Storage</button>
+    <button class="tab-btn" [class.active]="activeTab==='lifecycle'" (click)="activeTab='lifecycle'">Life Cycle</button>
+    <button class="tab-btn" [class.active]="activeTab==='qr'" (click)="activeTab='qr'"
+      *ngIf="equipment?.id && equipment?.qrCode">QR Code</button>
+  </div>
+
+  <!-- ─── Tab panels ─── -->
+  <div class="tab-content">
+
+    <!-- OVERVIEW -->
+    <ng-container *ngIf="activeTab==='overview'">
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-header">
+            <div class="info-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <span>Basic Information</span>
+          </div>
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="info-label">Equipment Name</span>
+              <span class="info-value">{{ equipment?.equipmentName || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Brand</span>
+              <span class="info-value">{{ equipment?.brand || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Model</span>
+              <span class="info-value">{{ equipment?.model || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Status</span>
+              <span class="info-value">
+                <span class="tag" [ngClass]="{
+                  'tag-active': equipment?.status === 'Available',
+                  'tag-expired': equipment?.status === 'Broken',
+                  'tag-maintenance': equipment?.status === 'Maintenance',
+                  'tag-unassigned': equipment?.status === 'Out of Stock' || equipment?.status === 'In Use',
+                  'tag-allocated': equipment?.status === 'Allocated',
+                  'tag-assigned': equipment?.status === 'Assigned' || equipment?.status === 'Installed'
+                }">{{ (equipment?.status === 'Assigned' || equipment?.status === 'Installed') ? 'Installed' : (equipment?.status || 'Available') }}</span>
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Serial Number</span>
+              <span class="info-value mono">{{ equipment?.serialNumber || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Type</span>
+              <span class="info-value"><span class="tag tag-type">{{ equipment?.type | titlecase }}</span></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Category</span>
+              <span class="info-value"><span class="tag tag-cat">{{ equipment?.category }}</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card" *ngIf="equipment?.assignedToEquipmentName || equipment?.allocatedToTechnicianName">
+          <div class="info-card-header">
+            <div class="info-card-icon blue">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              </svg>
+            </div>
+            <span>Lifecycle Tracking</span>
+          </div>
+          <div class="info-rows">
+            <ng-container *ngIf="equipment?.allocatedToTechnicianName">
+              <div class="info-row">
+                <span class="info-label">Assigned to Technician</span>
+                <span class="info-value">
+                  <span class="tag tag-cat" style="background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa;">
+                    {{ equipment?.allocatedToTechnicianName }}
+                  </span>
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Allocation Date</span>
+                <span class="info-value">{{ equipment?.createdAt | date:'mediumDate' }}</span>
+              </div>
+            </ng-container>
+            
+            <ng-container *ngIf="equipment?.assignedToEquipmentName">
+              <div class="info-row">
+                <span class="info-label">Installed In (Equipment)</span>
+                <span class="info-value" style="display: flex; gap: 8px; align-items: center;">
+                  <span class="tag tag-cat" style="background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe;">
+                    {{ equipment?.assignedToEquipmentName }}
+                  </span>
+                  <button *ngIf="equipment?.assignedToEquipmentId" class="btn-redirect" (click)="viewOtherEvent.emit(equipment!.assignedToEquipmentId!)" title="View Equipment">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                  </button>
+                </span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Installation Date</span>
+                <span class="info-value">{{ equipment?.createdAt | date:'mediumDate' }}</span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-header">
+            <div class="info-card-icon green">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <span>System Information</span>
+          </div>
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="info-label">Equipment ID</span>
+              <span class="info-value mono small">{{ equipment?.id || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Created At</span>
+              <span class="info-value">{{ equipment?.createdAt | date:'mediumDate' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Last Updated</span>
+              <span class="info-value">{{ equipment?.updatedAt | date:'mediumDate' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Created By</span>
+              <span class="info-value">{{ equipment?.createdBy || currentUserName || '—' }}</span>
+            </div>
+            <div class="info-row" *ngIf="getDisplayDepartment(equipment) !== '—'">
+              <span class="info-label">Department</span>
+              <span class="info-value">{{ getDisplayDepartment(equipment) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card wide" *ngIf="equipment?.note">
+          <div class="info-card-header">
+            <div class="info-card-icon amber">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+            </div>
+            <span>Notes</span>
+          </div>
+          <p class="note-text">{{ equipment?.note }}</p>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- SPECS (computers/laptops only) -->
+    <ng-container *ngIf="activeTab==='specs'">
+      <div class="info-grid" *ngIf="isComputerCategory()">
+        <div class="info-card wide">
+          <div class="info-card-header">
+            <div class="info-card-icon purple">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                <rect x="9" y="9" width="6" height="6"></rect>
+                <line x1="9" y1="2" x2="9" y2="4"></line>
+                <line x1="15" y1="2" x2="15" y2="4"></line>
+                <line x1="22" y1="9" x2="20" y2="9"></line>
+                <line x1="22" y1="15" x2="20" y2="15"></line>
+                <line x1="2" y1="9" x2="4" y2="9"></line>
+                <line x1="2" y1="15" x2="4" y2="15"></line>
+                <line x1="9" y1="20" x2="9" y2="22"></line>
+                <line x1="15" y1="20" x2="15" y2="22"></line>
+              </svg>
+            </div>
+            <span>Device Specifications</span>
+          </div>
+          <div class="spec-grid">
+            <div class="spec-item" *ngFor="let spec of equipment?.specifications | keyvalue">
+              <div class="spec-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.5">
+                  <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                </svg>
+              </div>
+              <div class="spec-detail">
+                <span class="spec-label">{{ spec.key }}</span>
+                <span class="spec-value">{{ spec.value || '—' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <!-- PURCHASE & WARRANTY -->
+    <ng-container *ngIf="activeTab==='purchase'">
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-header">
+            <div class="info-card-icon blue">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                <line x1="2" y1="10" x2="22" y2="10"></line>
+              </svg>
+            </div>
+            <span>Purchase Details</span>
+          </div>
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="info-label">Purchase Date</span>
+              <span class="info-value">{{ equipment?.purchaseDate | date:'mediumDate' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Purchase Price</span>
+              <span class="info-value price">{{ equipment?.purchasePrice ? (equipment?.purchasePrice | number:'1.2-2') +
+                '
+                TND' : '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Supplier</span>
+              <span class="info-value">{{ equipment?.supplier || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Invoice Ref</span>
+              <span class="info-value">{{ equipment?.invoiceRef || '—' }}</span>
+            </div>
+            <div class="info-row attachment-row">
+              <span class="info-label">Invoice Attachment</span>
+              <div class="info-value">
+                <!-- If document exists -->
+                <div *ngIf="formData.invoiceFileName && formData.invoiceFileName !== 'DELETE'" class="doc-attachment-card" style="cursor: pointer;"
+                     (click)="downloadDocument('invoice', formData.invoiceFileName)">
+                  <div class="doc-icon blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                  </div>
+                  <div class="doc-info">
+                    <span class="doc-name">{{ formData.invoiceFileName }}</span>
+                    <span class="doc-hint">Click to download invoice</span>
+                  </div>
+                </div>
+
+                <!-- If no document exists -->
+                <span *ngIf="!formData.invoiceFileName || formData.invoiceFileName === 'DELETE'" class="info-value" style="color: #94a3b8; font-style: italic;">Not set</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-header">
+            <div class="info-card-icon green">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <polyline points="9 12 11 14 15 10"></polyline>
+              </svg>
+            </div>
+            <span>Warranty</span>
+          </div>
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="info-label">Warranty Expiration</span>
+              <span class="info-value" [ngClass]="isWarrantyExpired() ? 'expired' : 'active'">
+                {{ equipment?.warrantyExpiration ? (equipment?.warrantyExpiration | date:'mediumDate') : '—' }}
+                <span class="warranty-badge" *ngIf="equipment?.warrantyExpiration"
+                  [ngClass]="isWarrantyExpired() ? 'badge-expired' : 'badge-active'">
+                  {{ isWarrantyExpired() ? 'EXPIRED' : 'ACTIVE' }}
+                </span>
+              </span>
+            </div>
+          </div>
+          <!-- Attachment section -->
+          <div class="info-row attachment-row" style="margin-top: 20px; border-top: 1px solid #f1f5f9; padding-top: 20px;">
+            <div class="info-label">Warranty Attachment</div>
+            <div class="info-value">
+              <!-- If document exists -->
+              <div *ngIf="formData.warrantyFileName && formData.warrantyFileName !== 'DELETE'" class="doc-attachment-card" style="cursor: pointer;"
+                   (click)="downloadDocument('warranty', formData.warrantyFileName)">
+                <div class="doc-icon green">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <polyline points="9 12 11 14 15 10"></polyline>
+                  </svg>
+                </div>
+                <div class="doc-info">
+                  <span class="doc-name">{{ formData.warrantyFileName }}</span>
+                  <span class="doc-hint">Click to download warranty</span>
+                </div>
+              </div>
+
+              <!-- If no document exists -->
+              <span *ngIf="!formData.warrantyFileName || formData.warrantyFileName === 'DELETE'" class="info-value" style="color: #94a3b8; font-style: italic;">Not set</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- STORAGE -->
+    <ng-container *ngIf="activeTab==='storage'">
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-header">
+            <div class="info-card-icon amber">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <span>Storage Location</span>
+          </div>
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="info-label">Shelf ID</span>
+              <span class="info-value mono small">{{ equipment?.shelfId || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Location (Shelf)</span>
+              <span class="info-value tag-amber">{{ getShelfLocation(equipment?.shelfId, equipment?.status) }}</span>
+            </div>
+            <div class="info-row" *ngIf="equipment?.locationChangeAt">
+              <span class="info-label">Location Changed</span>
+              <span class="info-value">{{ equipment?.locationChangeAt | date:'mediumDate' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- QR CODE -->
+    <ng-container *ngIf="activeTab==='qr' && equipment?.id && equipment?.qrCode">
+      <div class="info-grid">
+        <div class="info-card qr-detail-card">
+          <div class="info-card-header">
+            <div class="info-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="5" height="5"></rect>
+                <rect x="16" y="3" width="5" height="5"></rect>
+                <rect x="3" y="16" width="5" height="5"></rect>
+                <path d="M21 16h-3a2 2 0 0 0-2 2v3"></path>
+                <path d="M21 21v.01"></path>
+                <path d="M12 7v3a2 2 0 0 1-2 2H7"></path>
+                <path d="M3 12h.01"></path>
+                <path d="M12 3h.01"></path>
+                <path d="M12 16v.01"></path>
+                <path d="M16 12h1"></path>
+                <path d="M21 12v.01"></path>
+                <path d="M12 21v-1"></path>
+              </svg>
+            </div>
+            <span>QR Label</span>
+          </div>
+          <div class="qr-center">
+            <div class="qr-img-wrapper">
+              <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="QR Code" width="180" height="180" />
+              <div *ngIf="!qrDataUrl" class="qr-loading">Generating…</div>
+            </div>
+            <span class="qr-id-label">{{ equipment?.id }}</span>
+            <div class="qr-actions-row">
+              <button class="btn-qr-action" (click)="downloadQR()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download
+              </button>
+              <button class="btn-qr-action" (click)="printQR()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                  <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                Print Label
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- LIFE CYCLE -->
+    <ng-container *ngIf="activeTab==='lifecycle'">
+      <div class="lifecycle-container">
+        <div class="lifecycle-header">
+          <div class="lifecycle-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <div class="lifecycle-title">
+            <h3>Equipment Life Cycle</h3>
+            <p>Historical trail of all major events and status changes</p>
+          </div>
+        </div>
+
+        <div class="timeline" *ngIf="equipment?.lifecycle && equipment!.lifecycle!.length > 0">
+          <div class="timeline-item" *ngFor="let entry of equipment?.lifecycle; let last = last">
+            <div class="timeline-marker">
+              <div class="marker-dot" [ngClass]="'status-' + (entry.status.toLowerCase().split(' ').join('-'))"></div>
+              <div class="marker-line" *ngIf="!last"></div>
+            </div>
+            <div class="timeline-content">
+              <div class="content-header">
+                <span class="entry-status">{{ entry.status }}</span>
+                <span class="entry-date">{{ entry.timestamp | date:'MMM d, y, h:mm a' }}</span>
+              </div>
+              <p class="entry-desc">{{ entry.description }}</p>
+              <div class="entry-footer">
+                <span class="entry-actor">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  Action by: <strong>{{ entry.actor }}</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-lifecycle" *ngIf="!equipment?.lifecycle || equipment!.lifecycle!.length === 0">
+          <div class="empty-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 8v4l3 3"></path>
+              <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+          </div>
+          <h4>No History Recorded</h4>
+          <p>No lifecycle events have been tracked for this item yet.</p>
+        </div>
+      </div>
+    </ng-container>
+
+  </div> <!-- /tab-content -->
+</div> <!-- /detail-page -->
+
+
+<!-- ════════════════════════════════════════════════════════
+     EDIT / ADD  mode  (unchanged structure)
+     ════════════════════════════════════════════════════════ -->
+<ng-container *ngIf="!viewOnly || isEditing">
+  <div class="back-bar">
+    <button class="btn-back" (click)="cancel()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      Back to Equipment
+    </button>
+  </div>
+
+  <div class="form-wrapper">
+    <div class="form-header">
+      <h3>{{ !equipment ? 'Add New Equipment' : 'Edit Equipment' }}</h3>
+      <p class="subtitle">Fill in the equipment details below.</p>
+    </div>
+
+    <div class="form-grid">
+      <!-- Left Column: Form Fields -->
+      <div class="fields-column">
+
+        <!-- Basic Information -->
+        <div class="form-section">
+          <h4>Basic Information</h4>
+          <div class="input-grid">
+            <div class="input-group">
+              <label>Equipment Name <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="formData.equipmentName" placeholder="Enter equipment name">
+              <div *ngIf="!formData.equipmentName" style="font-size: 11px; color: #ef4444; margin-top: 2px;">Name is
+                required.</div>
+            </div>
+            <div class="input-group">
+              <label>Brand <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="formData.brand" placeholder="Enter brand">
+              <div *ngIf="!formData.brand" style="font-size: 11px; color: #ef4444; margin-top: 2px;">Brand is required.
+              </div>
+            </div>
+            <div class="input-group">
+              <label>Model</label>
+              <input type="text" [(ngModel)]="formData.model" placeholder="Enter model number">
+            </div>
+            <div class="input-group">
+              <label>Status <span class="required">*</span></label>
+              <select [(ngModel)]="formData.status" (change)="onStatusChange()" class="field-select">
+                <option *ngFor="let opt of statusOptions" [value]="opt">{{ opt }}</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label>Serial Number <span class="required">*</span></label>
+                <button type="button" class="btn-suggest-sn" (click)="suggestSerialNumber()"
+                  style="font-size: 0.72rem; padding: 2px 8px; background: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                  Suggest SN
+                </button>
+              </div>
+              <input type="text" [maxlength]="10" [(ngModel)]="formData.serialNumber"
+                (ngModelChange)="onSerialNumberChange()" placeholder="Enter serial number (exactly 10 chars)">
+
+              <!-- Error messages stack -->
+              <div *ngIf="isCheckingSN" style="font-size: 11px; color: #3b82f6; margin-top: 2px;">
+                <i class="fas fa-spinner fa-spin"></i> Checking availability...
+              </div>
+
+              <div *ngIf="!formData.serialNumber" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+                Serial Number is required.
+              </div>
+
+              <div *ngIf="isSNInvalidLength" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+                Exactly 10 characters required. (Currently: {{formData.serialNumber?.length}})
+              </div>
+
+              <div *ngIf="isSNInvalidFormat" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+                Only letters and digits are allowed.
+              </div>
+
+              <div *ngIf="isSNMissingChars" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
+                Must contain at least 1 letter and 1 digit.
+              </div>
+
+              <div *ngIf="!isSNAvailable && !isCheckingSN"
+                style="font-size: 11px; color: #ef4444; margin-top: 2px; font-weight: 600;">
+                This Serial Number is already assigned to another equipment.
+              </div>
+            </div>
+            <div class="input-group">
+              <label>Category <span class="required">*</span></label>
+              <select [(ngModel)]="formData.category" (change)="onCategoryChange()" name="eqCategory"
+                [disabled]="viewOnly || (!!equipment && !isAddSimilar)">
+                <option value="" disabled>Select category</option>
+                <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Type <span class="required">*</span></label>
+              <select [(ngModel)]="formData.type" (change)="onTypeChange()" name="eqType"
+                [disabled]="viewOnly || !formData.category || (!!equipment && !isAddSimilar)">
+                <option value="" disabled>{{ formData.category ? 'Select type' : 'Select category first' }}</option>
+                <option *ngFor="let t of availableTypes" [value]="t.name">{{ t.name | titlecase }}</option>
+                <!-- Fallback for legacy data/unmapped types -->
+                <option *ngIf="isLegacyType()" [value]="formData.type">
+                  {{ formData.type | titlecase }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- QR Code Toggle -->
+          <div class="qr-toggle-card" [class.qr-toggle-card--on]="formGenerateQr"
+               (click)="formGenerateQr = !formGenerateQr">
+            <div class="qr-toggle-icon-wrap">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="3" width="5" height="5"></rect>
+                <rect x="16" y="3" width="5" height="5"></rect>
+                <rect x="3" y="16" width="5" height="5"></rect>
+                <path d="M21 16h-3a2 2 0 0 0-2 2v3"></path>
+                <path d="M21 21v.01"></path>
+                <path d="M12 7v3a2 2 0 0 1-2 2H7"></path>
+                <path d="M3 12h.01"></path>
+                <path d="M12 3h.01"></path>
+                <path d="M12 16v.01"></path>
+                <path d="M16 12h1"></path>
+                <path d="M21 12v.01"></path>
+                <path d="M12 21v-1"></path>
+              </svg>
+            </div>
+            <div class="qr-toggle-text">
+              <span class="qr-toggle-title">Generate QR Code</span>
+              <span class="qr-toggle-sub">
+                {{ formGenerateQr
+                  ? 'QR code will be generated (or regenerated) when you save'
+                  : 'No QR code — existing QR code will be removed on save' }}
+              </span>
+            </div>
+            <div class="qr-toggle-checkbox" [class.qr-toggle-checkbox--on]="formGenerateQr">
+              <svg *ngIf="formGenerateQr" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Purchase Information -->
+        <div class="form-section">
+          <h4>Purchase Information</h4>
+          <div class="input-grid">
+            <div class="input-group">
+              <label>Purchase Date <span class="required">*</span></label>
+              <input type="date" [(ngModel)]="formData.purchaseDate">
+            </div>
+            <div class="input-group">
+              <label>Supplier <span class="required">*</span></label>
+              <select [(ngModel)]="formData.supplierId" (change)="onSupplierChange()">
+                <option value="" disabled>Select supplier</option>
+                <option *ngFor="let s of suppliers" [value]="s.id">{{ s.companyName }}</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Warranty Expiration</label>
+              <input type="date" [(ngModel)]="formData.warrantyExpiration">
+            </div>
+            <div class="input-group">
+              <label>Purchase Price</label>
+              <input type="number" [(ngModel)]="formData.purchasePrice" placeholder="0.00">
+            </div>
+            <div class="input-group">
+              <label>Invoice Ref</label>
+              <input type="text" [(ngModel)]="formData.invoiceRef" placeholder="Enter invoice reference">
+            </div>
+            <div class="input-group">
+              <label>Invoice Document <span class="field-optional"
+                  style="color: #94a3b8; font-size: 11px;">(pdf/img)</span></label>
+              <input type="file" #invoiceInput style="display: none" (change)="onInvoiceFileUpload($event)">
+              <button class="btn-outline-secondary"
+                style="width: 100%; justify-content: flex-start; padding-left: 12px; height: 38px;"
+                (click)="invoiceInput.click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">
+                  {{ (formData.invoiceFileName && formData.invoiceFileName !== 'DELETE') ? formData.invoiceFileName : 'Upload Invoice...' }}
+                </span>
+                <span class="remove-file-btn" *ngIf="formData.invoiceFileName && formData.invoiceFileName !== 'DELETE'" (click)="removeInvoiceFile($event)" title="Remove Invoice">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </span>
+              </button>
+            </div>
+            <div class="input-group">
+              <label>Warranty Document <span class="field-optional"
+                  style="color: #94a3b8; font-size: 11px;">(pdf/img)</span></label>
+              <input type="file" #warrantyInput style="display: none" (change)="onWarrantyFileUpload($event)">
+              <button class="btn-outline-secondary"
+                style="width: 100%; justify-content: flex-start; padding-left: 12px; height: 38px;"
+                (click)="warrantyInput.click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">
+                  {{ (formData.warrantyFileName && formData.warrantyFileName !== 'DELETE') ? formData.warrantyFileName : 'Upload Warranty...' }}
+                </span>
+                <span class="remove-file-btn" *ngIf="formData.warrantyFileName && formData.warrantyFileName !== 'DELETE'" (click)="removeWarrantyFile($event)" title="Remove Warranty">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Storage Information -->
+        <div class="form-section">
+          <h4>Storage Information</h4>
+          <div class="input-grid">
+            <div class="input-group full-width" style="grid-column: span 2;">
+              <label>Shelf Assignment <span class="required">*</span></label>
+              <select [(ngModel)]="formData.shelfId"
+                [disabled]="formData.status !== 'Available' && formData.status !== 'In Stock'">
+                <option value="" disabled>Select an available shelf</option>
+                <option *ngIf="formData.status === 'Maintenance'" value="MAINTENANCE_AREA">Maintenance Area</option>
+                <option *ngIf="formData.status === 'Broken'" value="SCRAP_YARD">Scrap Yard</option>
+                <option *ngIf="formData.status === 'Out of Stock'" value="OUT_OF_STOCK">Out of Stock</option>
+                <option *ngFor="let s of availableShelves" [value]="s.id">
+                  Shelf {{ s.nb }}
+                  ({{ (equipment?.id && !isAddSimilar && s.id === equipment?.shelfId) ?
+                  (s.maxQte - s.currentQte + 1) + ' spots (Your current)' :
+                  (s.maxQte - s.currentQte) + ' spots' }})
+                </option>
+              </select>
+              <div class="hint" *ngIf="!formData.type" style="font-size: 12px; color: #64748b; margin-top: 4px;">Select
+                an
+                equipment type first to see available shelves</div>
+              <div class="hint error" *ngIf="formData.type && availableShelves.length === 0"
+                style="font-size: 12px; color: #ef4444; margin-top: 4px;">No available shelves for this type/quantity
+              </div>
+              <div class="hint error"
+                *ngIf="(formData.status === 'Available' || formData.status === 'In Stock') && (!formData.shelfId || formData.shelfId === '')"
+                style="font-size: 12px; color: #ef4444; margin-top: 4px; font-weight: 600;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="3" style="margin-right: 4px; vertical-align: middle;">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                Please select a shelf assignment for available equipment.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Device Specifications -->
+        <div class="form-section" *ngIf="formData.specifications && (formData.specifications | keyvalue).length > 0">
+          <h4>{{ isComputerCategory() ? 'Device Specifications' : 'Specifications' }}</h4>
+
+          <div class="input-grid" style="margin-bottom: 20px;">
+            <div class="input-group" *ngFor="let spec of formData.specifications | keyvalue; trackBy: trackByKey">
+              <label>{{ spec.key }}</label>
+              <input type="text" [(ngModel)]="formData.specifications![spec.key]" [placeholder]="'Enter ' + spec.key + '...'">
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="form-section">
+          <h4>Additional Information</h4>
+          <div class="input-group full-width">
+            <label>Notes</label>
+            <textarea [(ngModel)]="formData.note" rows="4" placeholder="Add any additional notes..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: QR & Info panel -->
+      <div class="side-column">
+        <!-- QR preview panel: only show if formGenerateQr is on AND equipment already has qrCode -->
+        <div class="side-panel qr-panel" *ngIf="equipment?.id && formGenerateQr && equipment?.qrCode">
+          <h4>QR Code</h4>
+          <div class="qr-img-wrapper">
+            <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="Equipment QR Code" width="160" height="160" />
+            <div *ngIf="!qrDataUrl" class="qr-loading">Generating...</div>
+          </div>
+          <div class="eq-id">
+            <span class="label">Equipment ID</span>
+            <span class="value id-truncate" [title]="equipment?.id">{{ equipment?.id }}</span>
+          </div>
+          <div class="qr-actions">
+            <button class="btn-outline-secondary" (click)="downloadQR()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download QR
+            </button>
+            <button class="btn-outline-secondary" (click)="printQR()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              Print Label
+            </button>
+          </div>
+        </div>
+
+        <!-- Notice when QR is toggled ON but not yet saved -->
+        <div class="side-panel qr-panel" *ngIf="equipment?.id && formGenerateQr && !equipment?.qrCode">
+          <h4>QR Code</h4>
+          <div class="qr-pending-notice">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+              stroke="#3b82f6" stroke-width="1.5">
+              <rect x="3" y="3" width="5" height="5"></rect>
+              <rect x="16" y="3" width="5" height="5"></rect>
+              <rect x="3" y="16" width="5" height="5"></rect>
+              <path d="M21 16h-3a2 2 0 0 0-2 2v3"></path>
+              <path d="M21 21v.01"></path>
+              <path d="M12 7v3a2 2 0 0 1-2 2H7"></path>
+              <path d="M3 12h.01"></path>
+              <path d="M12 3h.01"></path>
+              <path d="M12 16v.01"></path>
+              <path d="M16 12h1"></path>
+              <path d="M21 12v.01"></path>
+              <path d="M12 21v-1"></path>
+            </svg>
+            <p>QR code will be generated automatically when you save this equipment.</p>
+          </div>
+        </div>
+
+        <div class="side-panel system-panel" *ngIf="equipment?.id">
+          <h4>System Information</h4>
+          <div class="sys-info-block">
+            <span class="label">Created At</span>
+            <span class="value">{{ equipment?.createdAt | date:'mediumDate' }}</span>
+          </div>
+          <div class="sys-info-block">
+            <span class="label">Updated At</span>
+            <span class="value">{{ equipment?.updatedAt | date:'mediumDate' }}</span>
+          </div>
+          <div class="sys-info-block">
+            <span class="label">Created By</span>
+            <span class="value">{{ equipment?.createdBy || currentUserName || '—' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="form-footer">
+      <button class="btn-cancel" (click)="cancel()">Cancel</button>
+      <button class="btn-primary" [disabled]="isSaving || isFormInvalid" (click)="saveEquipment()">
+        {{ isSaving ? 'Saving...' : (equipment ? 'Update Equipment' : 'Save Equipment') }}
+      </button>
+    </div>
+  </div>

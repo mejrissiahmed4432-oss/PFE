@@ -1,0 +1,730 @@
+<div class="tk-page max-w-[1400px] mx-auto p-4 sm:p-6 lg:p-8 font-sans bg-gray-50 min-h-screen">
+
+  <!-- ══ LIVE WORKBENCH (FULL VIEW) ══ -->
+  <div class="workbench-full-view" *ngIf="showWorkbench && workbenchTicket">
+    <app-live-workbench
+      [ticket]="workbenchTicket!"
+      [equipment]="workbenchEquipment!"
+      [userInventory]="userInventory"
+      (complete)="onWorkbenchComplete($event)"
+      (cancel)="onWorkbenchCancel()"
+      (suspendWorkbench)="showWorkbench = false">
+    </app-live-workbench>
+  </div>
+
+  <ng-container *ngIf="!showWorkbench">
+    <!-- Page Header & Top Navigation -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-12">
+      <div>
+        <div class="flex items-center gap-4 mb-3">
+          <div class="p-3 bg-indigo-600 rounded-2xl text-white shadow-xl shadow-indigo-100 transform -rotate-3 hover:rotate-0 transition-transform duration-500">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z">
+              </path>
+              <line x1="12" y1="9" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-4xl font-black text-gray-900 tracking-tight leading-none mb-1">Service Desk</h1>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+              <p class="text-sm text-gray-500 font-bold uppercase tracking-widest">Equipment & Ticket Management</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick View Toggles -->
+      <div class="tk-toggle-bar flex flex-wrap items-center gap-4 bg-white p-2.5 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-white">
+        <div class="tk-toggle-pill flex items-center gap-1 bg-gray-100/80 p-1 rounded-2xl">
+          <button (click)="switchView('equipment')" [ngClass]="viewMode === 'equipment' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'" class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all">Equipment Browser</button>
+          <button (click)="switchView('tickets')" [ngClass]="viewMode === 'tickets' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'" class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all">My Tickets</button>
+        </div>
+        
+        <div class="h-8 w-[1px] bg-gray-100" *ngIf="viewMode === 'equipment'"></div>
+        
+        <button *ngIf="viewMode === 'equipment'" (click)="showFilters = !showFilters" [ngClass]="showFilters ? 'bg-indigo-50 text-indigo-600 shadow-inner' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'" class="px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+          Filters
+        </button>
+      </div>
+    </div>
+    
+    <!-- Dashboard Overview Grid (Stats) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <!-- Open Tickets -->
+      <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-indigo-200 transform hover:scale-[1.02] transition-all duration-500 relative overflow-hidden group">
+        <div class="absolute -right-4 -bottom-4 opacity-10 transform group-hover:scale-150 transition-transform duration-700">
+          <svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="10"></circle>
+          </svg>
+        </div>
+        <p class="text-sm font-bold uppercase tracking-widest opacity-80 mb-2">Open</p>
+        <h3 class="text-6xl font-black mb-1 leading-none">{{ stats.open }}</h3>
+        <p class="text-xs font-bold bg-white/20 inline-block px-3 py-1 rounded-full backdrop-blur-md mt-2">Awaiting Action</p>
+      </div>
+
+      <!-- In Progress -->
+      <div class="tk-stat-card bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200 border border-gray-100 hover:shadow-2xl transition-all duration-500 group">
+        <div class="flex justify-between items-start mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest">In Progress</p>
+            <h3 class="text-4xl font-black text-gray-900">{{ stats.inProgress }}</h3>
+          </div>
+        </div>
+        <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full bg-amber-500 rounded-full" [style.width]="(stats.inProgress / (ticketsList.length || 1) * 100) + '%'"></div>
+        </div>
+      </div>
+
+      <!-- Waiting -->
+      <div class="tk-stat-card bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200 border border-gray-100 hover:shadow-2xl transition-all duration-500 group">
+        <div class="flex justify-between items-start mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-500 group-hover:bg-purple-500 group-hover:text-white transition-all duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] font-black text-purple-500 uppercase tracking-widest">Waiting</p>
+            <h3 class="text-4xl font-black text-gray-900">{{ stats.waiting }}</h3>
+          </div>
+        </div>
+        <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full bg-purple-500 rounded-full" [style.width]="(stats.waiting / (ticketsList.length || 1) * 100) + '%'"></div>
+        </div>
+      </div>
+
+      <!-- Testing -->
+      <div class="tk-stat-card bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200 border border-gray-100 hover:shadow-2xl transition-all duration-500 group">
+        <div class="flex justify-between items-start mb-6">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"></path><path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"></path></svg>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Testing</p>
+            <h3 class="text-4xl font-black text-gray-900">{{ stats.testing }}</h3>
+          </div>
+        </div>
+        <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full bg-emerald-500 rounded-full" [style.width]="(stats.testing / (ticketsList.length || 1) * 100) + '%'"></div>
+        </div>
+      </div>
+    </div>
+  <!-- Search and Filter Header (Only for Equipment) -->
+  <div *ngIf="viewMode === 'equipment' && showFilters" class="mb-8 animate-in slide-in-from-top-4 duration-300">
+    <div class="tk-filter-card bg-white p-6 rounded-[2rem] shadow-xl shadow-gray-200/50 border border-white/10 flex flex-wrap gap-6 items-end">
+      
+      <!-- Search Input -->
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Search Details</label>
+        <div class="relative group">
+          <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Name, Brand, Model, Spec..." 
+                 class="tk-filter-input pl-11 pr-4 py-3 bg-gray-50 border-none rounded-2xl text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none w-full transition-all placeholder:text-gray-400 font-medium">
+          <svg class="absolute left-4 top-3.5 text-gray-400 group-focus-within:text-indigo-500 transition-colors" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+      </div>
+
+      <div class="flex-1 min-w-[150px]">
+        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Category</label>
+        <select [(ngModel)]="filterCategory" (change)="onCategoryChange()" class="tk-filter-input w-full px-4 py-3 bg-gray-50 border-none rounded-2xl text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none font-medium appearance-none">
+          <option value="All Categories">All Categories</option>
+          <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+        </select>
+      </div>
+
+      <div class="flex-1 min-w-[150px]">
+        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Type</label>
+        <select [(ngModel)]="filterType" (change)="applyFilters()" [disabled]="filterCategory === 'All Categories'" class="tk-filter-input w-full px-4 py-3 bg-gray-50 border-none rounded-2xl text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none font-medium appearance-none disabled:opacity-50">
+          <option value="All Types">All Types</option>
+          <option *ngFor="let type of availableTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+
+      <div class="flex-1 min-w-[150px]">
+        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Serial Number</label>
+        <input type="text" [(ngModel)]="filterSerial" (input)="applyFilters()" placeholder="e.g. SN-XYZ-123" class="tk-filter-input w-full px-4 py-3 bg-gray-50 border-none rounded-2xl text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none font-medium placeholder:text-gray-400">
+      </div>
+
+      <div>
+        <button (click)="qrInput.click()" class="flex items-center gap-2 px-6 py-3 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white rounded-2xl text-sm font-black uppercase tracking-widest transition-all duration-300 shadow-sm border border-indigo-100">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="7" y="7" width="3" height="3"></rect><rect x="14" y="7" width="3" height="3"></rect><rect x="7" y="14" width="3" height="3"></rect><rect x="14" y="14" width="3" height="3"></rect></svg>
+          Scan QR
+        </button>
+        <input type="file" #qrInput accept="image/*" style="display: none;" (change)="handleQRUpload($event)">
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MAIN CONTENT AREA ══ -->
+  <div class="main-content-area">
+    
+    <!-- Split View (Ticket/Equipment Browser) -->
+    <div class="flex flex-col lg:flex-row gap-8 min-h-[600px] h-[calc(100vh-320px)]" *ngIf="!showWorkbench">
+
+    <!-- LEFT: Main List Pane -->
+    <div class="tk-list-pane flex-[5] bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/50 p-6 flex flex-col relative overflow-hidden">
+      <div class="tk-custom-scroll flex-1 overflow-y-auto scroll-smooth pr-4 relative z-10">
+
+        <!-- Equipment List -->
+      <ng-container *ngIf="viewMode === 'equipment'">
+        <div *ngIf="filteredEquipments.length === 0" class="flex flex-col items-center justify-center py-32 text-gray-300">
+          <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><path d="m9 9 6 6"></path><path d="m15 9-6 6"></path></svg>
+          </div>
+          <p class="text-sm font-black tracking-widest uppercase">No equipment found</p>
+        </div>
+
+        <div class="group relative bg-white rounded-[2rem] p-6 mb-3 border border-transparent hover:border-indigo-100 hover:shadow-[0_10px_40px_rgba(79,70,229,0.08)] transition-all duration-300 cursor-pointer flex items-center gap-6"
+             *ngFor="let eq of filteredEquipments" 
+             [ngClass]="selectedEquipment?.id === eq.id ? 'bg-indigo-50/30 border-indigo-200 shadow-sm' : ''"
+             (click)="selectEquipment(eq)">
+          
+          <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-12 rounded-r-full transition-all duration-300 group-hover:h-16"
+               [ngClass]="selectedEquipment?.id === eq.id ? 'bg-indigo-500' : 'bg-transparent'"></div>
+
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 flex-shrink-0"
+               [ngClass]="selectedEquipment?.id === eq.id ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-200' : 'bg-gray-50 text-gray-400'">
+            <ng-container [ngSwitch]="getIconForEquipment(eq.type)">
+              <svg *ngSwitchCase="'laptop'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg>
+              <svg *ngSwitchCase="'printer'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              <svg *ngSwitchCase="'server'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+              <svg *ngSwitchDefault xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </ng-container>
+          </div>
+          
+          <div class="flex-1 min-w-0">
+            <h4 class="text-lg font-black text-gray-900 truncate group-hover:text-indigo-600 transition-colors">{{ eq.name }}</h4>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">{{ eq.serialNumber }} • {{ eq.type }}</span>
+            <div class="flex items-center gap-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              <span class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> {{ eq.assignedUser }}</span>
+              <span class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Last repair: {{ eq.lastRepair }}</span>
+            </div>
+          </div>
+          
+          <div class="pl-4">
+            <span class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border flex items-center gap-2"
+                  [ngClass]="{
+                    'bg-red-50 text-red-600 border-red-100': eq.status === 'Under Repair',
+                    'bg-green-50 text-green-600 border-green-100': eq.status === 'Available',
+                    'bg-amber-50 text-amber-600 border-amber-100': eq.status === 'In Maintenance' || eq.status === 'In Progress',
+                    'bg-gray-50 text-gray-500 border-gray-200': eq.status !== 'Under Repair' && eq.status !== 'Available' && eq.status !== 'In Maintenance' && eq.status !== 'In Progress'
+                  }">
+              <svg *ngIf="eq.status === 'Under Repair'" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+              {{ eq.status }}
+            </span>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Tickets List -->
+      <ng-container *ngIf="viewMode === 'tickets'">
+        <div *ngIf="activeTickets.length === 0 && completedTickets.length === 0" class="flex flex-col items-center justify-center py-32 text-gray-300">
+          <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6">
+             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          </div>
+          <p class="text-sm font-black tracking-widest uppercase">No tickets found</p>
+        </div>
+
+        <!-- Active Tickets -->
+        <div class="group relative bg-white rounded-[2rem] p-6 mb-3 border border-transparent hover:border-indigo-100 hover:shadow-[0_10px_40px_rgba(79,70,229,0.08)] transition-all duration-300 cursor-pointer flex items-center gap-6"
+             *ngFor="let ticket of activeTickets" 
+             [ngClass]="selectedTicket?.id === ticket.id ? 'bg-indigo-50/30 border-indigo-200 shadow-sm' : ''"
+             (click)="selectTicket(ticket)">
+          
+          <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-12 rounded-r-full transition-all duration-300 group-hover:h-16"
+               [ngClass]="selectedTicket?.id === ticket.id ? 'bg-indigo-500' : 'bg-transparent'"></div>
+
+          <div class="w-16 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-center flex-shrink-0"
+               [ngClass]="{
+                 'bg-red-50 text-red-600': ticket.priority === 'High',
+                 'bg-amber-50 text-amber-600': ticket.priority === 'Medium',
+                 'bg-gray-100 text-gray-500': ticket.priority === 'Low' || !ticket.priority
+               }">
+            {{ ticket.priority || 'Low' }}
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest block mb-1">{{ ticket.equipmentName }}</span>
+            <h4 class="text-lg font-black text-gray-900 truncate group-hover:text-indigo-600 transition-colors mb-2">{{ ticket.title }}</h4>
+            <div class="flex items-center gap-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              <span class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a2 2 0 0 1-2.83-2.83l-3.94 3.94Z"></path></svg> {{ ticket.category }}</span>
+              <span class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> {{ (ticket.createdAt | date:'yyyy-MM-dd') || '2026-04-11' }}</span>
+            </div>
+          </div>
+
+          <div class="pl-4">
+            <span class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border"
+                  [ngClass]="{
+                    'bg-amber-50 text-amber-600 border-amber-100': ticket.status === 'In Progress' || ticket.status === 'Waiting',
+                    'bg-blue-50 text-blue-600 border-blue-100': ticket.status === 'Open',
+                    'bg-emerald-50 text-emerald-600 border-emerald-100': ticket.status === 'Testing',
+                    'bg-gray-50 text-gray-500 border-gray-200': ticket.status !== 'In Progress' && ticket.status !== 'Waiting' && ticket.status !== 'Open' && ticket.status !== 'Testing'
+                  }">
+              {{ ticket.status }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div *ngIf="completedTickets.length > 0" class="flex items-center gap-4 my-6 px-4">
+          <div class="flex-1 h-[1px] bg-gray-100"></div>
+          <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Completed Tickets</span>
+          <div class="flex-1 h-[1px] bg-gray-100"></div>
+        </div>
+
+        <!-- Completed Tickets -->
+        <div class="group relative bg-white rounded-[2rem] p-6 mb-3 border border-transparent hover:border-gray-200 hover:shadow-sm transition-all duration-300 cursor-pointer flex items-center gap-6 opacity-75"
+             *ngFor="let ticket of completedTickets" 
+             [ngClass]="selectedTicket?.id === ticket.id ? 'bg-gray-50 border-gray-200' : ''"
+             (click)="selectTicket(ticket)">
+          
+          <div class="w-16 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-center flex-shrink-0"
+               [ngClass]="{
+                 'bg-red-50 text-red-600': ticket.priority === 'High',
+                 'bg-amber-50 text-amber-600': ticket.priority === 'Medium',
+                 'bg-gray-100 text-gray-500': ticket.priority === 'Low' || !ticket.priority
+               }">
+            {{ ticket.priority || 'Low' }}
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1">{{ ticket.equipmentName }}</span>
+            <h4 class="text-lg font-black text-gray-700 truncate mb-2">{{ ticket.title }}</h4>
+            <div class="flex items-center gap-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              <span class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a2 2 0 0 1-2.83-2.83l-3.94 3.94Z"></path></svg> {{ ticket.category }}</span>
+              <span class="flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> {{ (ticket.createdAt | date:'yyyy-MM-dd') || '2026-04-11' }}</span>
+            </div>
+          </div>
+
+          <div class="pl-4">
+            <span class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border bg-emerald-50 text-emerald-600 border-emerald-100">
+              {{ ticket.status }}
+            </span>
+          </div>
+        </div>
+      </ng-container>
+      </div>
+    </div>    <!-- RIGHT: Equipment/Ticket Details -->
+    <div class="tk-detail-pane flex-[3] bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/50 p-8 flex flex-col relative overflow-hidden" *ngIf="(selectedEquipment || selectedTicket) && !showFullHistory" [ngClass]="!selectedTicket && !selectedEquipment ? 'opacity-50' : ''">
+      
+      <!-- Background pattern -->
+      <div class="absolute top-0 right-0 -mt-16 -mr-16 text-indigo-50/50 transform rotate-12 pointer-events-none">
+        <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"></circle></svg>
+      </div>
+
+      <div class="tk-custom-scroll flex-1 overflow-y-auto scroll-smooth pr-4 relative z-10 space-y-8">
+        
+        <!-- Ticket Specific Information -->
+        <div class="tk-ticket-block bg-indigo-50/50 rounded-[2rem] p-6 border border-indigo-100/50" *ngIf="selectedTicket">
+          <div class="flex justify-between items-start mb-4">
+            <span class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white border border-indigo-100 text-indigo-600 shadow-sm">{{ selectedTicket.category }}</span>
+            <div class="flex items-center gap-2">
+              <button class="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:border-indigo-200 hover:shadow-md transition-all duration-300" title="Edit Ticket" (click)="openEditModal(selectedTicket)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+              <button class="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 hover:shadow-md transition-all duration-300" title="Delete Ticket" (click)="deleteTicket(selectedTicket.id)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
+          </div>
+
+          <h2 class="text-2xl font-black text-gray-900 mb-6 leading-tight">{{ selectedTicket.title }}</h2>
+
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="tk-meta-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+              <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Priority</label>
+              <div class="inline-flex px-3 py-1 rounded-xl text-xs font-black uppercase tracking-widest" [ngClass]="getPriorityClass(selectedTicket.priority)">{{ selectedTicket.priority }}</div>
+            </div>
+            <div class="tk-meta-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+              <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Status</label>
+              <div class="inline-flex px-3 py-1 rounded-xl text-xs font-black uppercase tracking-widest border" [ngClass]="getStatusClass(selectedTicket.status)">{{ selectedTicket.status }}</div>
+            </div>
+            <div class="col-span-2 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" *ngIf="selectedTicket.deadline">
+              <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Deadline</label>
+              <div class="flex items-center gap-2 text-sm font-bold text-gray-700">
+                <svg class="text-indigo-500" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                {{ selectedTicket.deadline | date:'mediumDate' }}
+              </div>
+            </div>
+          </div>
+
+          <div class="tk-meta-card bg-white p-5 rounded-2xl border border-gray-100 shadow-sm mb-6">
+            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Description</label>
+            <p class="text-sm text-gray-600 leading-relaxed font-medium">{{ selectedTicket.description }}</p>
+          </div>
+
+          <!-- Attachments Section -->
+          <div *ngIf="selectedTicket.attachments && selectedTicket.attachments.length > 0">
+            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Attachments ({{ selectedTicket.attachments.length }})</label>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md transition-all cursor-pointer group" *ngFor="let att of selectedTicket.attachments">
+                <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-500 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                </div>
+                <span class="text-xs font-bold text-gray-700 truncate">Attachment</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="selectedEquipment">
+          <!-- Equipment Info Header -->
+          <div class="flex items-center gap-5 p-6 bg-gradient-to-br from-gray-900 to-gray-800 rounded-[2rem] text-white shadow-xl shadow-gray-200">
+            <div class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white border border-white/20">
+              <ng-container [ngSwitch]="getIconForEquipment(selectedEquipment.type)">
+                <svg *ngSwitchCase="'laptop'" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg>
+                <svg *ngSwitchCase="'printer'" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                <svg *ngSwitchCase="'server'" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                <svg *ngSwitchDefault xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              </ng-container>
+            </div>
+            <div>
+              <h2 class="text-2xl font-black mb-1">{{ selectedEquipment.name }}</h2>
+              <span class="inline-block px-3 py-1 bg-white/20 rounded-lg text-[10px] font-black uppercase tracking-widest backdrop-blur-md">{{ selectedEquipment.serialNumber }}</span>
+            </div>
+          </div>
+
+          <!-- Equipment Details Grid -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="tk-eq-cell bg-gray-50 p-4 rounded-2xl border border-gray-100">
+              <span class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Type</span>
+              <span class="text-sm font-bold text-gray-900">{{ selectedEquipment.type }}</span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+              <span class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Status</span>
+              <span class="inline-block px-3 py-1 rounded-xl text-xs font-black uppercase tracking-widest border" [ngClass]="getStatusClass(selectedEquipment.status)">{{ selectedEquipment.status }}</span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+              <span class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Assigned User</span>
+              <span class="text-sm font-bold text-gray-900">{{ selectedEquipment.assignedUser || 'Unassigned' }}</span>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+              <span class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Last Repair</span>
+              <span class="text-sm font-bold text-gray-900">{{ selectedEquipment.lastRepair || 'Never' }}</span>
+            </div>
+          </div>
+
+          <!-- Active Ticket Warning -->
+          <div class="flex items-center gap-3 p-4 bg-amber-50 text-amber-700 rounded-2xl border border-amber-200 shadow-sm" *ngIf="hasActiveTicket(selectedEquipment.name || selectedEquipment.equipmentName)">
+            <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <span class="text-xs font-bold">This equipment has an <strong>active ticket</strong>. Please resolve it before creating a new one.</span>
+          </div>
+
+          <!-- Repair History -->
+          <div class="tk-history-card bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="tk-history-header flex items-center justify-between p-5 border-b border-gray-100 bg-gray-50/50">
+              <h4 class="text-sm font-black text-gray-900 uppercase tracking-widest">Repair History</h4>
+              <span class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px] font-black" *ngIf="selectedEquipment.repairHistory?.length">{{ selectedEquipment.repairHistory?.length }}</span>
+            </div>
+
+            <div class="p-5" *ngIf="selectedEquipment.repairHistory && selectedEquipment.repairHistory.length > 0; else noHistory">
+              <div class="relative border-l-2 border-gray-100 ml-3 space-y-6">
+                <div class="relative pl-6" *ngFor="let rep of (selectedEquipment.repairHistory | slice:0:3)">
+                  <div class="absolute left-[-5px] top-1.5 w-2 h-2 rounded-full bg-indigo-400 ring-4 ring-white"></div>
+                  <div class="text-sm font-bold text-gray-900 mb-1">{{ rep.issue }}</div>
+                  <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ rep.date }} • {{ rep.technician }}</div>
+                </div>
+              </div>
+            </div>
+            <ng-template #noHistory>
+              <div class="p-8 text-center text-sm font-bold text-gray-400 uppercase tracking-widest">No previous repair records found.</div>
+            </ng-template>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Action Buttons Footer -->
+      <div class="tk-action-footer mt-6 pt-6 border-t border-gray-100 flex gap-4 z-10 bg-white flex-shrink-0" *ngIf="selectedEquipment && viewMode === 'equipment'">
+        <ng-container *ngIf="getActiveTicketForEquipment(selectedEquipment.name || selectedEquipment.equipmentName) as activeTicket; else noActiveTicket">
+          <button class="flex-[2] flex items-center justify-center gap-2 px-6 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-sm font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-200" (click)="startWorkbench(activeTicket)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            Start Working
+          </button>
+        </ng-container>
+        
+        <ng-template #noActiveTicket>
+          <button class="flex-[2] px-6 py-4 bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-600 rounded-2xl text-sm font-black uppercase tracking-widest transition-all shadow-sm border border-indigo-100" (click)="openTicketModal()">
+            Create Ticket
+          </button>
+        </ng-template>
+
+        <button class="flex-[1] px-6 py-4 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-2xl text-sm font-black uppercase tracking-widest transition-all border border-gray-200 text-center" (click)="showFullHistory = true">History</button>
+      </div>
+
+      <!-- Ticket Mode Actions -->
+      <div class="tk-action-footer mt-6 pt-6 border-t border-gray-100 z-10 bg-white flex flex-col gap-3 flex-shrink-0" *ngIf="viewMode === 'tickets' && selectedTicket">
+        <button class="w-full flex items-center justify-center gap-2 px-6 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-sm font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-200"
+          *ngIf="selectedTicket.status !== 'Completed' && selectedTicket.status !== 'Cancelled' && selectedTicket.status !== 'Resolved' && selectedTicket.status !== 'Closed'"
+          (click)="startWorkbench(selectedTicket)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          Start Working
+        </button>
+
+        <button class="w-full flex items-center justify-center gap-2 px-6 py-4 bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-600 rounded-2xl text-sm font-black uppercase tracking-widest transition-all shadow-sm border border-blue-100"
+          *ngIf="selectedTicket.status === 'Cancelled'" (click)="reopenTicket(selectedTicket)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path><path d="M3 21v-5h5"></path></svg>
+          Re-open Ticket
+        </button>
+
+        <button class="w-full flex items-center justify-center gap-2 px-6 py-4 bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-600 rounded-2xl text-sm font-black uppercase tracking-widest transition-all shadow-sm border border-indigo-100"
+          *ngIf="selectedTicket.status === 'Completed' || selectedTicket.status === 'Resolved' || selectedTicket.status === 'Closed'"
+          (click)="openTicketModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Create New Ticket
+        </button>
+        
+        <button *ngIf="selectedEquipment" class="w-full px-6 py-4 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-2xl text-sm font-black uppercase tracking-widest transition-all border border-gray-200" (click)="showFullHistory = true">Equipment History</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Full History Pane -->
+    <div class="tk-detail-pane flex-[3] bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/50 p-8 flex flex-col relative overflow-hidden" *ngIf="selectedEquipment && showFullHistory">
+      <div class="flex items-center gap-4 mb-8 pb-6 border-b border-gray-100">
+        <button class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors" (click)="showFullHistory = false">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+        </button>
+        <div>
+          <h3 class="text-xl font-black text-gray-900 leading-none mb-1">Equipment History</h3>
+          <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">{{ selectedEquipment.serialNumber }}</span>
+        </div>
+      </div>
+
+      <div class="tk-custom-scroll flex-1 overflow-y-auto scroll-smooth pr-2"
+        *ngIf="selectedEquipment.extendedHistory && selectedEquipment.extendedHistory.length > 0; else noRichHistory">
+        <div class="relative pl-6 border-l-2 border-gray-100 ml-4 space-y-8">
+          <div class="relative" *ngFor="let item of selectedEquipment.extendedHistory; let isLast = last">
+            
+            <!-- Timeline Icon -->
+            <div class="absolute -left-[35px] top-0 w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-md ring-4 ring-white"
+                 [ngClass]="item.type === 'repair' ? 'bg-indigo-500 shadow-indigo-200' : 'bg-blue-500 shadow-blue-200'">
+              <svg *ngIf="item.type === 'repair'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+              <svg *ngIf="item.type === 'ticket'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+
+            <!-- Card -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 hover:shadow-md transition-shadow">
+              <div class="flex flex-wrap items-center justify-between gap-4 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest"
+                        [ngClass]="item.type === 'repair' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-blue-50 text-blue-600 border border-blue-100'">
+                    {{ item.type }}
+                  </span>
+                  <span *ngIf="item.priority" class="px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border"
+                        [ngClass]="{
+                          'bg-red-50 text-red-600 border-red-100': item.priority === 'High',
+                          'bg-amber-50 text-amber-600 border-amber-100': item.priority === 'Medium',
+                          'bg-gray-50 text-gray-500 border-gray-200': item.priority === 'Low'
+                        }">
+                    {{ item.priority }}
+                  </span>
+                  <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">#{{ item.referenceId }}</span>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs font-bold text-gray-900">{{ item.dateStr }}</div>
+                  <div class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{{ item.timeStr }}</div>
+                </div>
+              </div>
+              
+              <h4 class="text-lg font-black text-gray-900 mb-2">{{ item.title }}</h4>
+              <p class="text-sm font-medium text-gray-600 mb-4">{{ item.description }}</p>
+
+              <div class="flex flex-wrap items-center gap-4 text-xs font-bold text-gray-500 bg-gray-50 p-3 rounded-xl">
+                <span class="flex items-center gap-1.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  {{ item.user }}
+                  <span *ngIf="item.userRole" class="px-2 py-0.5 rounded-md bg-white border border-gray-200 text-[10px] uppercase tracking-widest">{{ item.userRole }}</span>
+                </span>
+                <span *ngIf="item.duration" class="flex items-center gap-1.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  {{ item.duration }}
+                </span>
+                <span *ngIf="item.cost" class="ml-auto font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">Cost: {{ item.cost }}</span>
+              </div>
+
+              <!-- Rich Maintenance Details -->
+              <div *ngIf="item.type === 'repair' && (item.workNote || item.repairTasks?.length || item.partsUsed?.length)" class="mt-4 pt-4 border-t border-gray-100">
+                <div *ngIf="item.workNote" class="mb-4">
+                  <div class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Technician Note</div>
+                  <div class="text-sm font-medium italic text-gray-600 bg-indigo-50/50 p-3 rounded-xl border-l-2 border-indigo-300">"{{ item.workNote }}"</div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div *ngIf="item.repairTasks?.length">
+                    <div class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Tasks Performed</div>
+                    <ul class="space-y-1">
+                      <li *ngFor="let task of item.repairTasks" class="text-xs font-bold text-gray-700 flex items-center gap-2">
+                        <span *ngIf="task.status === 'done'" class="w-4 h-4 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </span>
+                        {{ task.label }}
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div *ngIf="item.partsUsed?.length">
+                    <div class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Parts Used</div>
+                    <ul class="space-y-1">
+                      <li *ngFor="let part of item.partsUsed" class="text-xs font-bold text-gray-700 flex items-center gap-2">
+                        <span class="px-1.5 py-0.5 rounded-md bg-gray-100 text-[10px] font-black text-gray-500">{{ part.qty }}x</span>
+                        {{ part.name }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #noRichHistory>
+        <div class="flex flex-col items-center justify-center py-20 text-gray-400">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-4 opacity-50"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <div class="text-sm font-black uppercase tracking-widest">No detailed history records found.</div>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- When nothing is selected -->
+    <div class="tk-empty-pane flex-[3] bg-white rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/50 p-8 flex flex-col items-center justify-center text-center" *ngIf="!selectedEquipment && !selectedTicket">
+      <div class="tk-empty-icon w-24 h-24 rounded-full bg-gray-50 flex items-center justify-center text-4xl mb-6 shadow-inner">🔌</div>
+      <h3 class="text-xl font-black text-gray-900 mb-2">No Selection Made</h3>
+      <p class="text-sm font-bold text-gray-400 max-w-sm" *ngIf="viewMode === 'equipment'">Select equipment from the list to view details and create a service ticket.</p>
+      <p class="text-sm font-bold text-gray-400 max-w-sm" *ngIf="viewMode === 'tickets'">Select a ticket from the list to view its associated equipment details.</p>
+    </div>
+
+
+    </div> <!-- End Split View -->
+  </div> <!-- End Main Content Area -->
+  </ng-container>
+
+  <!-- New Ticket Modal -->
+  <div class="tk-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm transition-all" *ngIf="showAddModal" (click)="closeModal()">
+    <div class="tk-modal-inner bg-white rounded-[2.5rem] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl shadow-gray-900/20 overflow-hidden transform transition-all" (click)="$event.stopPropagation()">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between px-8 py-6 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 backdrop-blur-sm shadow-inner">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" /><line x1="12" y1="9" x2="12" y2="15" /></svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-black mb-1">{{ isEditMode ? 'Edit Ticket' : 'Create Issue Ticket' }}</h2>
+            <p class="text-xs font-bold text-gray-300 uppercase tracking-widest">{{ isEditMode ? 'ID: ' + newTicket.id : (newTicket.equipmentName || 'New Service Request') }}</p>
+          </div>
+        </div>
+        <button class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white" (click)="closeModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="tk-modal-body tk-custom-scroll flex-1 overflow-y-auto p-8 space-y-6">
+
+        <!-- Title -->
+        <div>
+          <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Title <span class="text-red-500">*</span></label>
+          <input type="text" [(ngModel)]="newTicket.title" placeholder="Briefly describe the issue..." class="tk-modal-input w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all placeholder-gray-400">
+        </div>
+
+        <!-- Type and Deadline row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Type <span class="text-red-500">*</span></label>
+            <select [(ngModel)]="newTicket.category" class="tk-modal-input w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all appearance-none cursor-pointer">
+              <option value="Maintenance">Maintenance</option>
+              <option value="Inspection">Inspection</option>
+              <option value="Incident">Incident</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Deadline <span class="text-gray-300 font-medium normal-case">(optional)</span></label>
+            <input type="date" [(ngModel)]="newTicket.deadline" class="tk-modal-input w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all">
+          </div>
+        </div>
+
+        <!-- Priority -->
+        <div>
+          <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Priority</label>
+          <div class="flex gap-3">
+            <button class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all border"
+              [ngClass]="newTicket.priority === 'Low' ? 'bg-gray-100 border-gray-300 text-gray-900 shadow-sm' : 'bg-gray-50 border-gray-100 text-gray-400 hover:bg-gray-100'"
+              (click)="setPriority('Low')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15" /></svg>
+              Low
+            </button>
+            <button class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all border"
+              [ngClass]="newTicket.priority === 'Medium' ? 'bg-amber-50 border-amber-300 text-amber-700 shadow-sm' : 'bg-gray-50 border-gray-100 text-gray-400 hover:bg-gray-100'"
+              (click)="setPriority('Medium')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+              Medium
+            </button>
+            <button class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all border"
+              [ngClass]="newTicket.priority === 'High' ? 'bg-red-50 border-red-300 text-red-700 shadow-sm' : 'bg-gray-50 border-gray-100 text-gray-400 hover:bg-gray-100'"
+              (click)="setPriority('High')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 9 12 15 6 9" /></svg>
+              High
+            </button>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Description <span class="text-red-500">*</span></label>
+          <textarea [(ngModel)]="newTicket.description" rows="4" placeholder="Provide detailed technical information about the issue..." class="tk-modal-input w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all placeholder-gray-400 resize-y"></textarea>
+        </div>
+
+        <!-- Attachments -->
+        <div>
+          <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Attachments <span class="text-gray-300 font-medium normal-case">(optional)</span></label>
+          <div class="tk-dropzone border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50 hover:bg-indigo-50 hover:border-indigo-300 transition-colors cursor-pointer flex flex-col items-center justify-center py-8 text-gray-500 hover:text-indigo-600" (click)="attachInput.click()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-3"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" /></svg>
+            <span class="text-sm font-black uppercase tracking-widest mb-1">Click to upload files</span>
+            <span class="text-[10px] font-medium text-gray-400">PDF, PNG, JPG, DOCX up to 10MB each</span>
+          </div>
+          <input type="file" #attachInput multiple accept=".pdf,.png,.jpg,.jpeg,.docx" class="hidden" (change)="handleAttachmentUpload($event)">
+
+          <!-- Attachment List -->
+          <div class="mt-4 space-y-2" *ngIf="attachmentFiles.length > 0">
+            <div class="tk-attach-item flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl shadow-sm" *ngFor="let file of attachmentFiles; let i = index">
+              <div class="flex items-center gap-3 overflow-hidden">
+                <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-500 shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+                </div>
+                <div class="truncate">
+                  <div class="text-xs font-bold text-gray-900 truncate">{{ file.name }}</div>
+                  <div class="text-[10px] font-black uppercase tracking-widest text-gray-400">{{ file.size }}</div>
+                </div>
+              </div>
+              <button class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors shrink-0" (click)="removeAttachment(i)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="tk-modal-footer px-8 py-6 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-4 shrink-0">
+        <button class="px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all" (click)="closeModal()">Cancel</button>
+        <button class="flex items-center gap-2 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg shadow-indigo-200"
+          [disabled]="isSubmitting || !newTicket.title || !newTicket.description"
+          (click)="createTicket()">
+          <svg *ngIf="!isSubmitting" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+          <svg *ngIf="isSubmitting" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          {{ isEditMode ? (isSubmitting ? 'Updating...' : 'Update Ticket') : (isSubmitting ? 'Creating...' : 'Create Ticket') }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

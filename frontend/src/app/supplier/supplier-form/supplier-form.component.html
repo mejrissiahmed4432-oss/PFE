@@ -1,0 +1,149 @@
+<div class="wizard-overlay" *ngIf="visible">
+  <div class="wizard-panel" [class.view-mode]="viewOnly && !isEditing" [formGroup]="supplierForm">
+    
+    <!-- Header -->
+    <div class="wizard-header">
+      <div class="wizard-header-left">
+        <div class="wizard-icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <div>
+          <h3 class="wizard-title">{{ !supplier ? 'Add New Supplier' : (viewOnly && !isEditing ? 'Supplier Details' : 'Edit Supplier') }}</h3>
+          <p class="wizard-subtitle">{{ viewOnly && !isEditing ? 'Click "Edit" to modify this supplier.' : 'Fill in the supplier details below.' }}</p>
+        </div>
+      </div>
+      <button class="wizard-close" (click)="cancel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <!-- Form Body -->
+    <div class="wizard-body">
+      <div class="form-compact">
+
+        <!-- Basic Info -->
+        <div class="section-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Basic Information
+        </div>
+        <div class="form-row">
+          <div class="input-group">
+            <label>Company Name <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <input type="text" formControlName="companyName" placeholder="Enter company name">
+            <div class="error-msg" *ngIf="(f['companyName'].dirty || f['companyName'].touched) && f['companyName'].errors">
+              <span *ngIf="f['companyName'].errors?.['required']">Company name is required</span>
+              <span *ngIf="f['companyName'].errors?.['minlength']">Minimum 2 characters</span>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Category <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <select formControlName="category">
+              <option value="" disabled>Select category</option>
+              <option value="Hardware">Hardware</option>
+              <option value="Software">Software</option>
+              <option value="Services">Services</option>
+              <option value="Network">Network</option>
+            </select>
+            <div class="error-msg" *ngIf="(f['category'].dirty || f['category'].touched) && f['category'].errors">Category is required</div>
+          </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="section-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 6.29 6.29l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Contact Information
+        </div>
+        <div class="form-row">
+          <div class="input-group">
+            <label>Contact Person <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <input type="text" formControlName="contactPerson" placeholder="Enter contact person">
+            <div class="error-msg" *ngIf="(f['contactPerson'].dirty || f['contactPerson'].touched) && f['contactPerson'].errors">Contact person is required</div>
+          </div>
+          <div class="input-group">
+            <label>Email <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <input type="email" formControlName="email" placeholder="Enter email">
+            <div class="error-msg" *ngIf="(f['email'].dirty || f['email'].touched) && f['email'].errors">
+              <span *ngIf="f['email'].errors?.['required']">Email is required</span>
+              <span *ngIf="f['email'].errors?.['email']">Invalid email format</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="input-group">
+            <label>Phone Number <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <input type="text" formControlName="phoneNumber" placeholder="Enter phone number">
+            <div class="error-msg" *ngIf="(f['phoneNumber'].dirty || f['phoneNumber'].touched) && f['phoneNumber'].errors">
+              <span *ngIf="f['phoneNumber'].errors?.['required']">Phone is required</span>
+              <span *ngIf="f['phoneNumber'].errors?.['pattern']">Numeric only</span>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Website <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <input type="text" formControlName="website" placeholder="https://example.com">
+            <div class="error-msg" *ngIf="(f['website'].dirty || f['website'].touched) && f['website'].errors">
+              <span *ngIf="f['website'].errors?.['required']">Website is required</span>
+              <span *ngIf="f['website'].errors?.['pattern']">Invalid URL format</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Address + Notes on same row -->
+        <div class="section-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Address &amp; Notes
+        </div>
+        <div class="form-row">
+          <div class="input-group">
+            <label>Address <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <textarea formControlName="address" rows="2" placeholder="Enter full address..."></textarea>
+            <div class="error-msg" *ngIf="(f['address'].dirty || f['address'].touched) && f['address'].errors">Address is required</div>
+          </div>
+          <div class="input-group">
+            <label>Notes</label>
+            <textarea formControlName="note" rows="2" placeholder="Optional notes..."></textarea>
+          </div>
+        </div>
+
+        <!-- Rating (Edit mode only) -->
+        <div class="form-row" *ngIf="supplier">
+          <div class="input-group">
+            <label>Service Rating <span class="required" *ngIf="!viewOnly || isEditing">*</span></label>
+            <div class="star-rating">
+              <span *ngFor="let star of [1,2,3,4,5]"
+                    (click)="setRating(star)"
+                    [class.filled]="star <= supplierForm.get('rating')?.value"
+                    class="star">★</span>
+            </div>
+          </div>
+          <!-- System Info inline -->
+          <div class="input-group" *ngIf="supplier?.id">
+            <label>System Info</label>
+            <div class="sys-info-inline">
+              <span>Created: <strong>{{ supplier.createdAt | date:'mediumDate' }}</strong></span>
+              <span>Updated: <strong>{{ supplier.updatedAt | date:'mediumDate' }}</strong></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="wizard-footer">
+      <ng-container *ngIf="viewOnly && !isEditing">
+        <button class="btn-cancel" (click)="cancel()">← Back</button>
+        <button class="btn-primary" (click)="enableEdit()">Edit Supplier</button>
+      </ng-container>
+
+      <ng-container *ngIf="!viewOnly || isEditing">
+        <button class="btn-cancel" (click)="cancel()">Cancel</button>
+        <button class="btn-primary"
+                [disabled]="isSaving || supplierForm.invalid"
+                [class.btn-disabled]="supplierForm.invalid"
+                (click)="saveSupplier()">
+          {{ isSaving ? 'Saving...' : (supplier ? 'Update Supplier' : 'Save Supplier') }}
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</div>

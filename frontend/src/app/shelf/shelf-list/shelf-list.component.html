@@ -1,0 +1,242 @@
+<div class="shelf-page-container" *ngIf="!showForm">
+  <div class="page-header">
+    <button class="btn-premium" (click)="openAddForm()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      Add Shelf
+    </button>
+  </div>
+
+  <div class="list-wrapper">
+    <div class="table-header-area">
+      <h2 class="table-main-title">Storage Shelves Management</h2>
+    </div>
+
+  <!-- Top Controls -->
+  <div class="controls-bar">
+    <div class="search-box">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search shelves by type or ID...">
+    </div>
+    
+    <div class="actions-group">
+      <button class="icon-toggle-btn" [class.active]="showFilters" (click)="toggleFilters()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+        Filters
+      </button>
+
+      <div class="view-toggles">
+        <button class="view-btn" [class.active]="viewMode === 'table'" (click)="toggleViewMode('table')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        </button>
+        <button class="view-btn" [class.active]="viewMode === 'card'" (click)="toggleViewMode('card')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Filters Panel -->
+  <div class="filters-panel" *ngIf="showFilters">
+    <div class="filter-group">
+      <label>Status</label>
+      <select [(ngModel)]="filterStatus" (change)="applyFilters()">
+        <option value="">All Statuses</option>
+        <option value="NORMAL">Normal</option>
+        <option value="LOW">Low</option>
+        <option value="FULL">Full</option>
+        <option value="EMPTY">Empty</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Category</label>
+      <select [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()">
+        <option value="">All Categories</option>
+        <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+      </select>
+    </div>
+    <div class="filter-group" *ngIf="selectedCategoryId">
+      <label>Equipment Type</label>
+      <select [(ngModel)]="filterType" (change)="applyFilters()">
+        <option value="">All Types</option>
+        <option *ngFor="let t of availableTypes" [value]="t.name">{{ t.name }}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Shelf ID/Nb</label>
+      <input type="text" [(ngModel)]="filterNb" (input)="applyFilters()" placeholder="Filter by ID...">
+    </div>
+  </div>
+
+  <!-- Table View -->
+  <div class="table-container" *ngIf="viewMode === 'table'">
+    <table class="premium-table">
+          <thead>
+            <tr>
+              <th class="col-icon">Icon</th>
+              <th>Shelf Location</th>
+              <th>Capacity Status</th>
+              <th>Utilization Scale</th>
+              <th class="actions-cell"></th>
+            </tr>
+          </thead>
+      <tbody>
+        <tr *ngFor="let s of paginatedShelves" class="table-row-animate">
+          <td class="col-icon">
+            <div class="authors-avatar-wrap">
+              <ng-container *ngTemplateOutlet="typeIconTemplate; context: { type: s.equipmentType }"></ng-container>
+            </div>
+          </td>
+          <td>
+            <div class="authors-main-text">Shelf {{ s.nb }}</div>
+            <div class="authors-sub-text">{{ s.equipmentType }} Storage</div>
+          </td>
+          <td>
+            <div class="authors-status-badge mb-2" [ngClass]="s.status === 'FULL' ? 'broken' : (s.status === 'EMPTY' ? 'unassigned' : 'active')" style="display: inline-block;">
+              {{ s.status }}
+            </div>
+            <div class="authors-sub-text">{{ s.currentQte }} / {{ s.maxQte }} Items</div>
+          </td>
+          <td>
+            <div class="progress-wrapper">
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill" 
+                     [ngClass]="s.status ? s.status.toLowerCase() : 'default'"
+                     [style.width.%]="(s.currentQte / s.maxQte) * 100">
+                </div>
+              </div>
+              <span class="progress-label">{{ ((s.currentQte / s.maxQte) * 100) | number:'1.0-0' }}%</span>
+            </div>
+          </td>
+          <td class="actions-cell">
+            <button class="action-icon view" (click)="viewEquipment(s)" title="View Equipment">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+            <button class="action-icon edit" (click)="openEditForm(s)" title="Edit">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            </button>
+            <button class="action-icon delete" (click)="deleteShelf(s.id)" title="Delete">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="empty-state" *ngIf="filteredShelves.length === 0">
+      <div class="empty-icon-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+      </div>
+      <h3>No Shelves Found</h3>
+      <p>Try adjusting your search filters or add a new shelf.</p>
+    </div>
+  </div>
+
+  <!-- Card View -->
+  <div class="card-grid" *ngIf="viewMode === 'card'">
+    <div class="shelf-card card-animate" *ngFor="let s of paginatedShelves">
+      <div class="card-header">
+        <div class="card-title-group">
+          <h3 class="font-medium text-dark">Shelf {{ s.nb }}</h3>
+          <span class="card-subtitle">{{ s.equipmentType }}</span>
+        </div>
+        <span class="badge" [ngClass]="s.status ? s.status.toLowerCase() : 'default'">{{ s.status }}</span>
+      </div>
+      <div class="card-body">
+        <div class="info-row">
+          <span class="label">Utilization:</span>
+          <span class="value">{{ s.currentQte }} / {{ s.maxQte }} items</span>
+        </div>
+        <div class="shelf-progress-large">
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" 
+                 [ngClass]="s.status ? s.status.toLowerCase() : 'default'"
+                 [style.width.%]="(s.currentQte / s.maxQte) * 100">
+            </div>
+          </div>
+          <span class="progress-percentage">{{ ((s.currentQte / s.maxQte) * 100) | number:'1.0-0' }}% scale</span>
+        </div>
+      </div>
+      <div class="card-footer card-actions-dual">
+        <button class="btn-outline" (click)="viewEquipment(s)">View Items</button>
+        <div class="action-buttons-group">
+          <button class="icon-btn secondary" (click)="openEditForm(s)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+          <button class="icon-btn danger" (click)="deleteShelf(s.id)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-container" *ngIf="totalPages > 0">
+    <div class="page-info">
+      Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ (currentPage * itemsPerPage > filteredShelves.length) ? filteredShelves.length : currentPage * itemsPerPage }} of {{ filteredShelves.length }} results
+    </div>
+    <div class="pagination">
+      <button class="page-btn text-btn" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">Previous</button>
+      <button *ngFor="let p of pages" class="page-btn num-btn" [class.active]="p === currentPage" (click)="changePage(p)">{{ p }}</button>
+      <button class="page-btn text-btn" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">Next</button>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ═══ Custom Delete Confirmation Modal (Messaging Style) ═══ -->
+<div class="delete-modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+    <div class="delete-modal" (click)="$event.stopPropagation()">
+        <div class="delete-modal-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                <path d="M10 11v6"></path><path d="M14 11v6"></path>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+            </svg>
+        </div>
+        <h3 class="delete-modal-title">Delete Shelf</h3>
+        <p class="delete-modal-desc">Are you sure you want to delete this shelf? This action cannot be undone.</p>
+        
+        <div class="active-filter-banner" *ngIf="errorMessage" style="background-color: #fee2e2; border-color: #fecaca; color: #b91c1c; margin-bottom: 20px; font-size: 0.85rem; padding: 8px 12px; border-radius: 8px; text-align: left;">
+            <div class="banner-content" style="display: flex; gap: 8px; align-items: flex-start;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span>{{ errorMessage }}</span>
+            </div>
+        </div>
+
+        <div class="delete-modal-actions">
+            <button class="delete-btn-confirm" (click)="confirmDelete()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                Delete
+            </button>
+            <button class="delete-btn-cancel" (click)="closeDeleteModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<app-shelf-form 
+  *ngIf="showForm" 
+  [shelf]="selectedShelf" 
+  (close)="closeForm()">
+</app-shelf-form>
+
+<!-- SVGs Template for Icons -->
+<ng-template #typeIconTemplate let-type="type">
+  <svg *ngIf="getTypeKey(type)==='laptop'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><polyline points="8 21 12 17 16 21"></polyline><line x1="2" y1="17" x2="22" y2="17"></line></svg>
+  <svg *ngIf="getTypeKey(type)==='pc'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+  <svg *ngIf="getTypeKey(type)==='monitor'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+  <svg *ngIf="getTypeKey(type)==='server'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"></rect><rect x="2" y="14" width="20" height="8" rx="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+  <svg *ngIf="getTypeKey(type)==='printer'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect x="6" y="14" width="12" height="8" /></svg>
+  <svg *ngIf="getTypeKey(type)==='scanner'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="8" rx="2" ry="2" /><path d="M8 12h8" /><path d="M5 12h.01" /></svg>
+  <svg *ngIf="getTypeKey(type)==='projector'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="8" width="20" height="10" rx="2" /><circle cx="16" cy="13" r="3" /><path d="M6 13h.01" /><path d="M9 13h.01" /></svg>
+  <svg *ngIf="getTypeKey(type)==='router'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="14" width="18" height="6" rx="2" /><path d="M6 14v-4" /><path d="M12 14v-6" /><path d="M18 14v-4" /></svg>
+  <svg *ngIf="getTypeKey(type)==='ups'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M9 10v4" /><path d="M15 10v4" /></svg>
+  <svg *ngIf="getTypeKey(type)==='tablet'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg>
+  <svg *ngIf="getTypeKey(type)==='phone'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg>
+  <svg *ngIf="getTypeKey(type)==='keyboard'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2" /><line x1="10" y1="14" x2="14" y2="14" /><line x1="6" y1="10" x2="6.01" y2="10" /><line x1="10" y1="10" x2="10.01" y2="10" /><line x1="14" y1="10" x2="14.01" y2="10" /><line x1="18" y1="10" x2="18.01" y2="10" /></svg>
+  <svg *ngIf="getTypeKey(type)==='mouse'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="5" /><line x1="12" y1="7" x2="12" y2="11" /></svg>
+  <svg *ngIf="getTypeKey(type)==='headset'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /></svg>
+  <svg *ngIf="getTypeKey(type)==='ram'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2" /><path d="M5 17v-4" /><path d="M9 17v-4" /><path d="M15 17v-4" /><path d="M19 17v-4" /></svg>
+  <svg *ngIf="getTypeKey(type)==='hdd'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" /><path d="M8 6h8" /><path d="M8 10h8" /><circle cx="12" cy="16" r="2" /></svg>
+  <svg *ngIf="getTypeKey(type)==='cables'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v4" /><path d="M14 3v4" /><rect x="8" y="7" width="8" height="6" rx="2" /><path d="M12 13v8" /></svg>
+  <svg *ngIf="getTypeKey(type)==='default'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><line x1="9" y1="3" x2="9" y2="21" /></svg>
+</ng-template>
+

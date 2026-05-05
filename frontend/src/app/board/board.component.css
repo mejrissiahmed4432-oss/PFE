@@ -1,0 +1,379 @@
+/* ============================================================
+   DASHBOARD SHELL — Component Styles
+   All layout + design classes live here via @apply.
+   Dynamic state (active/hover) is handled via [ngClass] in HTML.
+   ============================================================ */
+
+:host {
+  --sidebar-bg-from: #1e4ed8;
+  --sidebar-bg-mid: #3b82f6;
+  --sidebar-bg-to: #06b6d4;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Root shell ──────────────────────────────────────────── */
+.shell {
+  @apply flex h-screen w-full overflow-hidden font-sans bg-[#f1f5f9];
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+.sidebar {
+  @apply relative flex flex-col flex-shrink-0 z-40 transition-all duration-500 ease-in-out
+         m-4 h-[calc(100vh-32px)] rounded-[28px] overflow-hidden;
+  background: #020617;
+  box-shadow: 
+    0 40px 80px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.sidebar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: radial-gradient(circle at top center, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.sidebar-logo-area {
+  @apply h-24 px-6 flex items-center justify-between relative border-b border-white/[0.03];
+  transition: padding 0.3s ease;
+}
+
+.sidebar[class*="w-[72px]"] .sidebar-logo-area {
+  @apply px-0 justify-center;
+}
+
+.sidebar-logo-icon {
+  @apply w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden rounded-2xl
+        ;
+}
+
+.sidebar-logo-img {
+  @apply w-12 h-12 object-contain;
+}
+
+.sidebar-logo-title {
+  @apply text-2xl font-bold tracking-tight text-white whitespace-nowrap leading-none;
+}
+
+.sidebar-logo-subtitle {
+  @apply text-[10px] text-slate-500 font-medium tracking-widest uppercase mt-0.5;
+}
+
+.sidebar-toggle-btn {
+  @apply flex items-center justify-center w-7 h-7 rounded-lg bg-white/[0.04]
+         text-slate-500 hover:bg-white/10 hover:text-slate-200 transition-all duration-200 flex-shrink-0;
+}
+
+.collapsed-toggle {
+  @apply absolute -right-4 top-1/2 -translate-y-1/2 z-50 shadow-lg border border-white/10 bg-slate-800 w-8 h-8 rounded-full;
+}
+
+/* ── Navigation ──────────────────────────────────────────── */
+.sidebar-nav {
+  @apply flex-1 px-3 py-4 space-y-0.5 overflow-y-auto;
+}
+
+.nav-section-label {
+  @apply px-4 pt-6 pb-2 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em];
+}
+
+.nav-item {
+  @apply relative flex items-center gap-3 px-4 py-2.5 rounded-xl mx-2
+         transition-all duration-300 cursor-pointer;
+}
+
+.nav-item:hover {
+  @apply bg-white/[0.03] translate-x-1;
+}
+
+.nav-item-active {
+  @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-[0_10px_25px_rgba(37,99,235,0.3)] ring-1 ring-white/10;
+}
+
+.nav-item-default {
+  @apply text-slate-500 hover:text-slate-200;
+}
+
+.nav-item-indicator {
+  @apply absolute left-1 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)];
+}
+
+.nav-item-icon {
+  @apply w-5 h-5 flex-shrink-0;
+}
+
+.nav-item-label {
+  @apply text-[13px] font-medium transition-all duration-300 overflow-hidden;
+}
+
+.nav-item-label-flex {
+  @apply text-[13px] font-medium transition-all duration-300 flex-1 overflow-hidden;
+}
+
+.nav-chevron {
+  @apply transition-transform duration-200;
+}
+
+/* Collapsed Navigation Adjustments */
+.sidebar[class*="w-[72px]"] .nav-item {
+  @apply justify-center px-0 mx-auto w-11 h-11 gap-0;
+}
+
+.sidebar[class*="w-[72px]"] .nav-item-label,
+.sidebar[class*="w-[72px]"] .nav-item-label-flex,
+.sidebar[class*="w-[72px]"] .nav-chevron {
+  display: none !important;
+}
+
+.sidebar[class*="w-[72px]"] .nav-item-indicator {
+  @apply left-0 w-[3px];
+}
+
+/* Sub-navigation items */
+.nav-sub-list {
+  @apply pl-8 space-y-0.5 overflow-hidden transition-all duration-300;
+}
+
+.nav-sub-item {
+  @apply flex items-center gap-2.5 py-1.5 px-2 rounded-lg text-[12px] transition-colors cursor-pointer;
+}
+
+.nav-sub-item-active {
+  @apply text-blue-400 font-semibold bg-blue-400/10;
+}
+
+.nav-sub-item-default {
+  @apply text-slate-500 hover:text-slate-200;
+}
+
+.nav-sub-dot {
+  @apply w-1 h-1 rounded-full flex-shrink-0;
+}
+
+/* ── Sidebar Footer ──────────────────────────────────────── */
+.sidebar-footer {
+  @apply p-5 mt-auto border-t border-white/[0.08] bg-white/[0.02];
+}
+
+.sidebar-settings-btn {
+  @apply flex items-center justify-center rounded-2xl font-bold text-white
+         bg-gradient-to-br from-slate-800 to-slate-900 border border-white/[0.08]
+         hover:from-blue-600 hover:to-blue-700
+         shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5;
+}
+
+/* Square button when collapsed */
+.sidebar[class*="w-[72px]"] .sidebar-settings-btn {
+  @apply w-11 h-11 p-0 mx-auto rounded-xl;
+}
+
+.sidebar:not([class*="w-[72px]"]) .sidebar-settings-btn {
+  @apply w-full py-3 px-3 gap-3;
+}
+
+.sidebar-settings-btn svg {
+  @apply w-6 h-6 flex-shrink-0;
+}
+
+/* ── Main Content Area ───────────────────────────────────── */
+.main-content {
+  @apply flex-1 flex flex-col min-w-0 transition-all duration-300
+         my-4 mr-4 bg-[var(--bg-app)] rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.03)]
+         border border-[var(--border-color)] overflow-hidden relative;
+}
+
+/* ── Top Bar ─────────────────────────────────────────────── */
+.topbar {
+  @apply sticky top-0 z-30 h-20 px-8 flex items-center justify-between
+         bg-[var(--bg-topbar)] backdrop-blur-md border-b border-[var(--border-color)];
+}
+
+.topbar-page-title {
+  @apply text-lg font-bold tracking-tight text-[var(--text-main)] leading-none;
+}
+
+.topbar-page-sub {
+  @apply text-[11px] text-[var(--text-muted)] font-bold uppercase tracking-wider mt-1.5;
+}
+
+.topbar-actions {
+  @apply flex items-center gap-2;
+}
+
+.topbar-btn {
+  @apply flex items-center justify-center w-10 h-10 rounded-xl
+         bg-[var(--bg-app)] text-[var(--text-sub)] border border-[var(--border-strong)]
+         transition-all duration-200 hover:bg-[var(--accent-soft)] hover:text-[var(--accent-primary)]
+         hover:scale-105 active:scale-95 relative;
+}
+
+.topbar-btn-danger {
+  @apply flex items-center justify-center w-9 h-9 rounded-xl
+         bg-gray-100 text-gray-500
+         hover:bg-red-50 hover:text-red-500
+         transition-all duration-200 relative;
+}
+
+.topbar-badge {
+  @apply absolute -top-1 -right-1 w-4 h-4 flex items-center justify-center
+         text-white text-[9px] font-extrabold rounded-full bg-red-500 ring-2 ring-white;
+}
+
+.topbar-divider {
+  @apply h-8 w-px bg-slate-100 mx-2;
+}
+
+/* ── Profile Area ────────────────────────────────────────── */
+.profile-trigger {
+  @apply flex items-center gap-3 py-1 px-1 pr-4 rounded-full
+         bg-slate-50 border border-slate-100
+         hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer;
+}
+
+.profile-avatar {
+  @apply w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs
+         bg-gradient-to-br from-blue-600 to-blue-500
+         shadow-lg shadow-blue-500/30 flex-shrink-0;
+}
+
+.profile-name {
+  @apply text-[13px] font-semibold text-gray-900 leading-none;
+}
+
+.profile-role {
+  @apply text-[10px] font-medium text-gray-400 uppercase tracking-wider mt-0.5;
+}
+
+.profile-dropdown {
+  @apply absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100
+         overflow-hidden z-50 transform origin-top-right transition-all duration-200
+         scale-95 opacity-0 pointer-events-none;
+}
+
+.group:hover .profile-dropdown {
+  @apply scale-100 opacity-100 pointer-events-auto;
+}
+
+.dropdown-header {
+  @apply px-4 py-3 border-b border-gray-100 bg-gray-50;
+}
+
+.dropdown-label {
+  @apply text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5;
+}
+
+.dropdown-email {
+  @apply text-[13px] font-semibold text-gray-900 truncate;
+}
+
+.dropdown-body {
+  @apply p-1.5;
+}
+
+.dropdown-item {
+  @apply w-full flex items-center gap-2.5 px-3 py-2 rounded-xl
+         text-[13px] text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors;
+}
+
+.dropdown-item-danger {
+  @apply w-full flex items-center gap-2.5 px-3 py-2 rounded-xl
+         text-[13px] text-red-500 hover:bg-red-50 transition-colors;
+}
+
+.dropdown-footer {
+  @apply p-1.5 border-t border-gray-100;
+}
+
+/* ── Notifications Dropdown ──────────────────────────────── */
+.notif-dropdown {
+  @apply absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200
+         overflow-hidden z-50 transform origin-top-right transition-all duration-200;
+}
+
+/* ── Page Content ────────────────────────────────────────── */
+.page-content {
+  @apply flex-1 overflow-y-auto;
+}
+
+/* ── Dashboard Greeting ──────────────────────────────────── */
+.greeting-title {
+  @apply text-2xl font-bold text-gray-900 mb-1 tracking-tight;
+}
+
+.greeting-sub {
+  @apply text-sm text-gray-400 font-medium;
+}
+
+.role-badge {
+  @apply px-3 py-1.5 bg-blue-50 text-blue-600 rounded-xl text-xs font-semibold border border-blue-100;
+}
+
+/* ── Scrollbars ──────────────────────────────────────────── */
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+  border-radius: 10px;
+}
+.sidebar-nav:hover::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.18);
+}
+
+.page-content::-webkit-scrollbar { width: 6px; }
+.page-content::-webkit-scrollbar-track { background: transparent; }
+.page-content::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+.page-content:hover::-webkit-scrollbar-thumb { background: #cbd5e1; }
+
+/* ── Animations ──────────────────────────────────────────── */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── AI Assistant FAB Button ──────────────────────────────── */
+.ai-fab-btn {
+  @apply fixed bottom-8 right-8 w-14 h-14 rounded-full flex items-center justify-center
+         text-white transition-all duration-500 z-[9999] overflow-hidden;
+  background: linear-gradient(135deg, #06b6d4, #3b82f6);
+  box-shadow: 
+    0 10px 30px rgba(6, 182, 212, 0.4),
+    0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.ai-fab-btn:hover {
+  @apply scale-110 -translate-y-1 shadow-2xl;
+  box-shadow: 0 15px 40px rgba(6, 182, 212, 0.5);
+}
+
+.ai-fab-btn.active {
+  @apply rotate-90 scale-90 opacity-0 pointer-events-none;
+}
+
+.ai-fab-glow {
+  @apply absolute inset-0 rounded-full;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+  animation: ai-pulse 2s infinite ease-in-out;
+}
+
+.ai-fab-btn svg {
+  @apply relative z-10 w-6 h-6;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+@keyframes ai-pulse {
+  0% { transform: scale(0.8); opacity: 0.2; }
+  50% { transform: scale(1.2); opacity: 0.5; }
+  100% { transform: scale(0.8); opacity: 0.2; }
+}
+

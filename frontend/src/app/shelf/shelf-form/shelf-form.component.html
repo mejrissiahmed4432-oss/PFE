@@ -1,0 +1,98 @@
+<div class="modal-overlay" (click)="closeForm()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ shelf ? 'Edit Shelf' : 'Add New Shelf' }}</h2>
+      <button class="close-btn" (click)="closeForm()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <form [formGroup]="shelfForm" (ngSubmit)="onSubmit()" class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category <span class="required-star">*</span></label>
+          <select formControlName="category" class="form-control">
+            <option value="" disabled selected>Select Category</option>
+            <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+          </select>
+          <div class="error-msg" *ngIf="shelfForm.get('category')?.invalid && (shelfForm.get('category')?.dirty || shelfForm.get('category')?.touched)">
+            Category is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Equipment Type <span class="required-star">*</span></label>
+          <select formControlName="equipmentType" class="form-control">
+            <option value="" disabled selected>Select Type</option>
+            <option *ngFor="let type of availableTypes" [value]="type.name">{{ type.name | titlecase }}</option>
+          </select>
+          <div class="error-msg" *ngIf="shelfForm.get('equipmentType')?.invalid && (shelfForm.get('equipmentType')?.dirty || shelfForm.get('equipmentType')?.touched)">
+            Equipment type is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Shelf NB / Identifier <span class="required-star">*</span></label>
+          <div class="prefix-input-group" [class.disabled]="!shelfForm.get('equipmentType')?.value">
+            <span class="prefix">{{ shelfForm.get('equipmentType')?.value ? (shelfForm.get('equipmentType')?.value | lowercase) + '-' : 'type-' }}</span>
+            <input type="text" formControlName="nbSuffix" class="form-control" 
+                   placeholder="e.g. 1, 4, 755"
+                   [readonly]="!shelfForm.get('equipmentType')?.value">
+          </div>
+          
+          <div class="type-hint" *ngIf="!shelfForm.get('equipmentType')?.value">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            Select a type first to define the ID
+          </div>
+
+          <div class="error-msg" *ngIf="shelfForm.get('equipmentType')?.value && (shelfForm.get('nbSuffix')?.dirty || shelfForm.get('nbSuffix')?.touched)">
+            <span *ngIf="shelfForm.get('nbSuffix')?.errors?.['required']">Identifier number is required</span>
+            
+            <ng-container *ngIf="!shelfForm.get('nbSuffix')?.errors?.['required']">
+              <span *ngIf="shelfForm.get('nbSuffix')?.errors?.['pattern']">
+                Number must contain only digits.
+              </span>
+              <span *ngIf="!shelfForm.get('nbSuffix')?.errors?.['pattern'] && shelfForm.get('nbSuffix')?.errors?.['notUnique']">
+                This Shelf identifier already exists.
+              </span>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Max Quantity (Capacity) <span class="required-star">*</span></label>
+          <input type="number" formControlName="maxQte" class="form-control" min="1">
+          <div class="error-msg" *ngIf="shelfForm.get('maxQte')?.invalid && (shelfForm.get('maxQte')?.dirty || shelfForm.get('maxQte')?.touched) && shelfForm.get('maxQte')?.errors?.['required']">
+            Valid capacity is required
+          </div>
+          <div class="error-msg" *ngIf="shelfForm.errors?.['maxLessThanCurrent']">
+            Max quantity cannot be less than current quantity ({{shelfForm.get('currentQte')?.value}})
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Min Quantity (Alert Threshold) <span class="required-star">*</span></label>
+          <input type="number" formControlName="minQte" class="form-control" min="0">
+          <div class="error-msg" *ngIf="shelfForm.get('minQte')?.invalid && (shelfForm.get('minQte')?.dirty || shelfForm.get('minQte')?.touched) && shelfForm.get('minQte')?.errors?.['required']">
+            Minimum quantity is required
+          </div>
+          <div class="error-msg" *ngIf="shelfForm.errors?.['minGreaterEqualMax']">
+            Min quantity must be strictly less than max quantity
+          </div>
+        </div>
+
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeForm()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || shelfForm.invalid">
+          <span *ngIf="isSubmitting" class="spinner"></span>
+          {{ shelf ? 'Update Shelf' : 'Add Shelf' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

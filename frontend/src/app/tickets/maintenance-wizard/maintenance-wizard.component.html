@@ -1,0 +1,136 @@
+<div class="wizard-overlay" (click)="onClose()">
+  <div class="wizard-modal" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <header class="wizard-header">
+      <div class="header-text">
+        <h2>Create Maintenance Ticket</h2>
+        <p>Select equipment to begin</p>
+      </div>
+      <button class="close-btn" (click)="onClose()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="wizard-tabs">
+      <button class="tab-btn" [class.active]="currentTab === 'scan'" (click)="setTab('scan')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Scan QR
+      </button>
+      <button class="tab-btn" [class.active]="currentTab === 'search'" (click)="setTab('search')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        Search
+      </button>
+      <button class="tab-btn" [class.active]="currentTab === 'browse'" (click)="setTab('browse')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Browse
+      </button>
+    </nav>
+
+    <div class="wizard-content">
+      <!-- ── SCAN TAB ── -->
+      <div *ngIf="currentTab === 'scan'" class="tab-view scan-view animate-in">
+        <div class="scan-area">
+          <div class="scanner-box">
+             <div class="scanner-content">
+               <svg xmlns="http://www.w3.org/2000/svg" class="camera-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+               <h3>Scan QR Code</h3>
+               <p>Position the QR code within the frame</p>
+               
+               <div class="scan-actions">
+                 <button class="btn-black">Scan QR Code</button>
+                 <button class="btn-outline" (click)="triggerUpload()">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                   Upload Image
+                 </button>
+                 <input type="file" id="qr-upload-input" style="display: none;" (change)="onFileSelected($event)" accept="image/*">
+               </div>
+             </div>
+          </div>
+        </div>
+
+        <section class="recent-section">
+          <label>Recent Equipment</label>
+          <div class="recent-list">
+            <div class="equipment-row-item" *ngFor="let item of recentEquipment" (click)="selectEquipment(item)">
+              <div class="item-info">
+                <h4>{{ item.name }}</h4>
+                <span>{{ item.serialNumber }}</span>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ── SEARCH TAB ── -->
+      <div *ngIf="currentTab === 'search'" class="tab-view search-view animate-in">
+        <div class="search-bar-inline">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" [(ngModel)]="searchQuery" placeholder="Search by name, serial number, or model...">
+        </div>
+
+        <div class="equipment-list">
+           <div class="equipment-card-wide" *ngFor="let item of filteredEquipment" (click)="selectEquipment(item)">
+              <div class="card-left">
+                <div class="card-title-row">
+                  <h4>{{ item.name }}</h4>
+                  <span class="badge" [ngClass]="item.status">{{ item.status }}</span>
+                </div>
+                <div class="card-model">{{ item.model }}</div>
+                <div class="card-meta">SN: {{ item.serialNumber }} • {{ item.location }}</div>
+              </div>
+           </div>
+        </div>
+      </div>
+
+      <!-- ── BROWSE TAB ── -->
+      <div *ngIf="currentTab === 'browse'" class="tab-view browse-view animate-in">
+        <div class="filters-row">
+          <div class="filter-box">
+            <label>Category</label>
+            <select [(ngModel)]="filterCategory">
+              <option>All Categories</option>
+              <option>PC</option>
+              <option>Printer</option>
+              <option>Server</option>
+            </select>
+          </div>
+          <div class="filter-box">
+            <label>Type</label>
+            <select [(ngModel)]="filterType">
+              <option>All Types</option>
+              <option>Laptop</option>
+              <option>Laser Printer</option>
+              <option>Rack Server</option>
+            </select>
+          </div>
+          <div class="filter-box">
+            <label>Status</label>
+            <select [(ngModel)]="filterStatus">
+              <option>All Statuses</option>
+              <option>Active</option>
+              <option>Maintenance</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="equipment-grid">
+           <div class="grid-card" *ngFor="let item of filteredEquipment" (click)="selectEquipment(item)">
+             <div class="grid-card-head">
+               <div class="grid-title">
+                 <h4>{{ item.name }}</h4>
+                 <span>{{ item.category }} • {{ item.type }}</span>
+               </div>
+               <span class="badge mini" [ngClass]="item.status">{{ item.status }}</span>
+             </div>
+             <div class="grid-card-meta">
+               SN: {{ item.serialNumber }}<br>
+               {{ item.location }}
+             </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+# Java / Spring Boot
+target/
+*.class
+*.jar
+
+# Logs
+*.log
+hs_err_pid*
+replay_pid*
+
+# Angular
+node_modules/
+dist/

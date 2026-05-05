@@ -1,0 +1,303 @@
+<div class="dashboard-container">
+  <!-- Page Header -->
+  <div class="dashboard-header-modern">
+    <div class="welcome-text">
+      <h1 class="main-title">Parts Management</h1>
+      <p class="subtitle">Search and request inventory consumables from the central stock.</p>
+    </div>
+    
+    <div class="header-actions">
+      <button class="btn-add-premium" (click)="openRequestWizard()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Request Part
+      </button>
+    </div>
+  </div>
+
+  <div class="content-card">
+
+    <div class="tabs-container">
+      <button class="tab-btn active">My Inventory</button>
+    </div>
+
+    <!-- ==========================================
+         INVENTORY TAB
+         ========================================== -->
+    <div>
+      <!-- Top Controls (Same as Equipment) -->
+      <div class="controls-bar">
+        <div class="search-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()"
+            placeholder="Search by name, type, brand...">
+        </div>
+
+        <div class="actions-group">
+          <button class="icon-toggle-btn" [class.active]="showFilters" (click)="toggleFilters()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            Filters
+          </button>
+
+          <div class="view-toggles">
+            <button class="view-btn" [class.active]="viewMode === 'table'" (click)="toggleViewMode('table')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </button>
+            <button class="view-btn" [class.active]="viewMode === 'card'" (click)="toggleViewMode('card')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters Panel -->
+      <div class="filters-panel" *ngIf="showFilters">
+        <div class="filter-group">
+          <label>Category</label>
+          <select [(ngModel)]="filterCategory" (change)="onCategoryFilterChange()">
+            <option value="">All Categories</option>
+            <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+          </select>
+        </div>
+        <div class="filter-group" *ngIf="filterCategory">
+          <label>Equipment Type</label>
+          <select [(ngModel)]="filterType" (change)="applyFilters()">
+            <option value="">All Types</option>
+            <option *ngFor="let type of availableTypes" [value]="type">{{ type | titlecase }}</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Table View -->
+      <div class="table-modern-wrapper" *ngIf="viewMode === 'table'">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th class="col-expand" style="width: 60px;"></th>
+              <th>NAME</th>
+              <th>BRAND</th>
+              <th>CATEGORY & TYPE</th>
+              <th>SPECIFICATION</th>
+              <th style="width: 100px; text-align: center;">QTE</th>
+              <th style="text-align: center;">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let group of paginatedGroups">
+            <tr class="group-header-row table-row-animate" [class.has-instances]="group.totalQuantity > 1"
+              (click)="group.totalQuantity > 1 ? toggleGroup(group) : null">
+
+              <td class="col-expand">
+                <button *ngIf="group.totalQuantity > 1" class="expand-btn" [class.expanded]="group.expanded"
+                  (click)="$event.stopPropagation(); toggleGroup(group)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </td>
+
+              <td>
+                <div class="modern-cell-main">
+                  <div class="logo-circle blue">{{ group.name.charAt(0) }}</div>
+                  <div class="cell-text-stack">
+                    <span class="cell-title">{{ group.name }}</span>
+                    <span class="cell-sub" *ngIf="group.totalQuantity > 1">(multiple instances)</span>
+                  </div>
+                </div>
+              </td>
+              <td>{{ group.brand }}</td>
+              <td>
+                <span class="category-chip">{{ group.category }}</span>
+                <span class="text-xs text-slate-400 ml-2">{{ group.type | titlecase }}</span>
+              </td>
+              <td>{{ group.items[0].specification || '—' }}</td>
+              <td class="font-semibold text-center">
+                <span class="progress-val">{{ group.totalQuantity }}</span>
+              </td>
+              <td>
+                <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                  <button class="btn-request-sm" (click)="openRequestWizard(group); $event.stopPropagation()">
+                    Request
+                  </button>
+                  <button *ngIf="group.items.length === 1" class="btn-return-sm" (click)="returnPartToStock(group.items[0]); $event.stopPropagation()">
+                    Return
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Expanded Asset Instances Row -->
+            <tr *ngIf="group.expanded" class="expandable-content-row">
+              <td colspan="7" class="p-0">
+                <div class="instances-container">
+                  <div class="instances-header">
+                    <h4>Part Instances</h4>
+                  </div>
+                  <table class="instances-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Specification</th>
+                        <th style="width: 100px;" class="text-center">Qte</th>
+                        <th style="width: 80px;" class="text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of group.items">
+                        <td class="font-medium text-dark">{{ item.equipmentName || '—' }}</td>
+                        <td>{{ item.specification || '—' }}</td>
+                        <td class="font-bold text-center" style="color: #3b82f6;">{{ item.qte }}</td>
+                        <td class="text-center">
+                          <button class="btn-return-sm" (click)="returnPartToStock(item); $event.stopPropagation()">
+                            Return
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Card View -->
+      <div class="card-grid" *ngIf="viewMode === 'card'">
+        <div class="equipment-card card-animate" *ngFor="let group of paginatedGroups">
+          <div class="card-header">
+            <div class="card-title-group">
+              <h3 class="font-bold text-dark">{{ group.name }}</h3>
+              <span class="card-subtitle">{{ group.brand }} • {{ group.type }}</span>
+            </div>
+            <div class="card-qte-badge">{{ group.totalQuantity }} units</div>
+          </div>
+          <div class="card-body">
+            <div class="status-summary-grid">
+              <span *ngFor="let s of group.statusSummary" class="summary-chip" [ngClass]="s.cls">
+                {{ s.count }} {{ s.label }}
+              </span>
+            </div>
+            <div class="info-row mt-3">
+              <span class="label">Location:</span>
+              <span class="value">{{ group.commonLocation }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Category:</span>
+              <span class="value">{{ group.category }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Specification:</span>
+              <span class="value truncate" [title]="group.items[0].specification">{{ group.items[0].specification || '—'
+                }}</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-request-full" (click)="openRequestWizard(group)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"></path>
+              </svg>
+              Request This Part
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-container" *ngIf="totalPages > 0">
+        <div class="page-info">
+          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ (currentPage * itemsPerPage > groupedParts.length) ?
+          groupedParts.length : currentPage * itemsPerPage }} of {{ groupedParts.length }} groups
+        </div>
+        <div class="pagination">
+          <button class="page-btn text-btn" [disabled]="currentPage === 1"
+            (click)="changePage(currentPage - 1)">Previous</button>
+          <button *ngFor="let p of pages" class="page-btn num-btn" [class.active]="p === currentPage"
+            (click)="changePage(p)">{{ p }}</button>
+          <button class="page-btn text-btn" [disabled]="currentPage === totalPages"
+            (click)="changePage(currentPage + 1)">Next</button>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state-container" *ngIf="groupedParts.length === 0">
+        <div class="illustration-box">
+          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none"
+            stroke="#e2e8f0" stroke-width="1">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+            </path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </div>
+        <h2>No assets assigned</h2>
+        <p>You currently do not have any assets or parts assigned to your profile. Click 'Request Part' to submit a
+          request.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Slide-In Parts Request Wizard -->
+  <app-part-request-wizard *ngIf="isWizardOpen" [visible]="isWizardOpen" [user]="user"
+    [initialPartSelection]="preselectedGroup"
+    (closeWizard)="onWizardClose($event)">
+  </app-part-request-wizard>
+
+  <!-- ─────────────────────────────────────────────
+       CUSTOM ALERT MODAL (Matches Photo Design)
+       ───────────────────────────────────────────── -->
+  <div class="alert-overlay" *ngIf="alertConfig.show" (click)="closeAlert()">
+    <div class="alert-modal" (click)="$event.stopPropagation()">
+      <div class="alert-icon-wrap" [ngClass]="alertConfig.type">
+        <!-- Warning Icon (Triangle with !) -->
+        <svg *ngIf="alertConfig.type === 'warning' || alertConfig.type === 'error'" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+        
+        <!-- Success Icon (Checkmark) - User might want this or the triangle, but let's use check for success -->
+        <svg *ngIf="alertConfig.type === 'success'" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      </div>
+
+      <div class="alert-content">
+        <h2>{{ alertConfig.title }}</h2>
+        <p>{{ alertConfig.message }}</p>
+        
+        <div *ngIf="alertConfig.isConfirm; else singleBtn" class="alert-actions">
+          <button class="btn-cancel-alert" (click)="closeAlert()">
+            Cancel
+          </button>
+          <button class="alert-btn" [ngClass]="alertConfig.type" (click)="handleConfirm()">
+            Confirm
+          </button>
+        </div>
+        
+        <ng-template #singleBtn>
+          <button class="alert-btn" [ngClass]="alertConfig.type" (click)="closeAlert()">
+            OK
+          </button>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

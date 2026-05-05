@@ -1,0 +1,53 @@
+<div class="equipment-container">
+
+  <!-- List Mode Header -->
+  <div class="header" *ngIf="mode === 'list'">
+    <div class="actions">
+      <button class="primary-btn btn-premium" (click)="openAdd()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        New Equipment
+      </button>
+    </div>
+  </div>
+
+  <!-- List -->
+  <div class="content" *ngIf="mode === 'list'">
+      <app-equipment-list 
+        *ngIf="mode === 'list'" 
+        [refreshTrigger]="refreshFlag" 
+        [natureFilter]="natureFilter"
+        (editEvent)="openEdit($event)" 
+        (viewEvent)="openView($event)"
+        (addSimilarEvent)="openAddSimilar($event)">
+      </app-equipment-list>
+  </div>
+
+  <!-- Form (Edit / View only — Add now uses wizard) -->
+  <div class="content" *ngIf="mode === 'form'">
+    <app-equipment-form [equipment]="equipmentToEdit" [viewOnly]="formViewOnly" [isAddSimilar]="isAddSimilar"
+      (closeEvent)="closeForm($event)"
+      (viewOtherEvent)="viewOtherEquipment($event)">
+    </app-equipment-form>
+  </div>
+
+  <!-- Add Equipment Wizard (slide-in panel) -->
+  <app-equipment-wizard [visible]="showWizard" [prefillData]="wizardPrefillData" (closeEvent)="onWizardClose($event)">
+  </app-equipment-wizard>
+
+  <!-- Loading overlay while fetching invoice/warranty docs for Add Similar -->
+  <div *ngIf="isLoadingAddSimilar"
+    style="position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,0.35);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);">
+    <div style="background:#fff;border-radius:14px;padding:28px 36px;box-shadow:0 8px 32px rgba(0,0,0,0.18);display:flex;align-items:center;gap:16px;">
+      <svg class="spin-loader" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke="#e2e8f0" stroke-width="4"></circle>
+        <path fill="#6366f1" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+      <span style="font-size:0.95rem;font-weight:600;color:#1e293b;">Loading documents…</span>
+    </div>
+  </div>
+
+</div>

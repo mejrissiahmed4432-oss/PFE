@@ -1,0 +1,494 @@
+<div class="parts-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h1>Applications Catalog</h1>
+        <p>Manage software inventory, licenses, and equipment installations</p>
+      </div>
+    </div>
+    <div class="header-right" *ngIf="user?.role === 'IT_MANAGER'">
+      <button class="btn-premium" (click)="openWizard()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Register Application
+      </button>
+    </div>
+  </div>
+
+  <div class="list-wrapper">
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+      <div class="search-box">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search by name or vendor...">
+      </div>
+      
+      <div class="actions-group">
+        <!-- Filters Toggle -->
+        <button class="icon-toggle-btn" [class.active]="showFilters" (click)="showFilters = !showFilters">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          Filters
+        </button>
+
+        <!-- View Toggle -->
+        <div class="view-toggles">
+          <button class="view-btn" [class.active]="viewMode === 'table'" (click)="viewMode = 'table'" title="Table View">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <button class="view-btn" [class.active]="viewMode === 'cards'" (click)="viewMode = 'cards'" title="Card View">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expandable Filters Panel -->
+    <div class="filters-panel" *ngIf="showFilters">
+      <div class="filter-group">
+        <label>Category</label>
+        <select [(ngModel)]="filterCategory" (change)="applyFilters()" class="select-premium">
+          <option value="">All Categories</option>
+          <option *ngFor="let cat of appCategories" [value]="cat">{{cat}}</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Status</label>
+        <select [(ngModel)]="filterStatus" (change)="applyFilters()" class="select-premium">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Deprecated">Deprecated</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>License Type</label>
+        <select [(ngModel)]="filterStatus" (change)="applyFilters()" class="select-premium">
+          <option value="">All Types</option>
+          <option *ngFor="let type of licenseTypes" [value]="type">{{type}}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Table View -->
+    <div class="table-container" *ngIf="viewMode === 'table'">
+      <table class="premium-table">
+        <thead>
+          <tr>
+            <th class="text-left">NAME</th>
+            <th>VERSION</th>
+            <th>VENDOR</th>
+            <th>CATEGORY</th>
+            <th>LICENSE TYPE</th>
+            <th>LICENSE USAGE</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let app of paginatedApps">
+            <td class="text-left app-name-cell">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="app-logo-mini" *ngIf="app.icon">
+                  <img [src]="app.icon" alt="Logo" style="width: 100%; height: 100%; border-radius: 4px; object-fit: contain;">
+                </div>
+                <div class="app-logo-placeholder" *ngIf="!app.icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                </div>
+                {{app.name}}
+              </div>
+            </td>
+            <td>{{app.version}}</td>
+            <td>{{app.vendor || '—'}}</td>
+            <td>{{app.category}}</td>
+            <td>{{app.licenseType}}</td>
+            <td>
+              <div class="usage-wrapper" *ngIf="app.licenseType !== 'Free'">
+                <span class="usage-text">{{app.usedLicenses}} / {{app.totalLicenses}}</span>
+                <div class="usage-bar-bg">
+                  <div class="usage-bar-fill" [style.width.%]="getLicenseUsagePercent(app)" [class]="getLicenseStatusClass(app)"></div>
+                </div>
+              </div>
+              <span *ngIf="app.licenseType === 'Free'" class="text-mute">N/A</span>
+            </td>
+            <td>
+              <span class="status-pill" [class.active]="app.status === 'Active'" [class.deprecated]="app.status === 'Deprecated'">
+                {{app.status}}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="icon-btn view" (click)="openWizard(app)" title="View Details">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+                <button class="icon-btn install" *ngIf="user?.role === 'TECHNICIAN'" (click)="openInstallModal(app)" title="Install Application">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </button>
+                <button class="icon-btn edit" *ngIf="user?.role === 'IT_MANAGER'" (click)="openWizard(app)" title="Edit">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                </button>
+                <button class="icon-btn delete" *ngIf="user?.role === 'IT_MANAGER'" (click)="deleteApplication(app.id!)" title="Delete">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Card View -->
+    <div class="card-grid-container" *ngIf="viewMode === 'cards'">
+      <div class="card-grid">
+        <div class="app-card" *ngFor="let app of paginatedApps">
+          <div class="card-header-premium">
+            <div class="app-logo-box">
+              <img *ngIf="app.icon" [src]="app.icon" alt="Logo">
+              <svg *ngIf="!app.icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </div>
+            <span class="status-pill" [class.active]="app.status === 'Active'" [class.deprecated]="app.status === 'Deprecated'">{{app.status}}</span>
+          </div>
+          <div class="card-body-premium">
+            <h3>{{app.name}}</h3>
+            <p class="app-version">{{app.version}} · {{app.vendor || 'Unknown Vendor'}}</p>
+            <div class="app-meta">
+              <span class="meta-tag">{{app.category}}</span>
+              <span class="meta-tag license">{{app.licenseType}}</span>
+            </div>
+            
+            <div class="card-usage" *ngIf="app.licenseType !== 'Free'">
+              <div class="usage-info">
+                <span>License Usage</span>
+                <span class="usage-count">{{app.usedLicenses}} / {{app.totalLicenses}}</span>
+              </div>
+              <div class="usage-bar-bg">
+                <div class="usage-bar-fill" [style.width.%]="getLicenseUsagePercent(app)" [class]="getLicenseStatusClass(app)"></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer-premium">
+            <div class="action-buttons" style="width: 100%; justify-content: space-around; padding: 10px;">
+              <button class="icon-btn view" (click)="openWizard(app)" title="View Details">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+              <button class="icon-btn install" *ngIf="user?.role === 'TECHNICIAN'" (click)="openInstallModal(app)" title="Install Application">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              </button>
+              <button class="icon-btn edit" *ngIf="user?.role === 'IT_MANAGER'" (click)="openWizard(app)" title="Edit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+              <button class="icon-btn delete" *ngIf="user?.role === 'IT_MANAGER'" (click)="deleteApplication(app.id!)" title="Delete">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination Matching Photo -->
+    <div class="pagination-footer">
+      <div class="pagination-info-left">
+        Showing {{filteredApplications.length > 0 ? (currentPage-1)*itemsPerPage + 1 : 0}} to {{Math.min(currentPage*itemsPerPage, filteredApplications.length)}} of {{filteredApplications.length}} applications
+      </div>
+      <div class="pagination-right">
+        <button class="page-nav-btn" [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">Previous</button>
+        <div class="page-numbers">
+          <button class="page-num" *ngFor="let p of [].constructor(totalPages); let i = index" [class.active]="currentPage === i+1" (click)="currentPage = i+1">{{i+1}}</button>
+        </div>
+        <button class="page-nav-btn" [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Wizard Modal (Premium Stepper Style) -->
+<div class="modal-overlay" *ngIf="showWizard">
+  <div class="modal-container wizard-container-large">
+    <!-- Header -->
+    <div class="wizard-header">
+      <div class="wizard-header-left">
+        <div class="wizard-header-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div class="wizard-header-text">
+          <h2>{{isEditMode ? 'Edit' : 'Add'}} Application</h2>
+          <p>Step {{wizardStep}} of 4 — {{getStepTitle()}}</p>
+        </div>
+      </div>
+      <button class="wizard-close-btn" (click)="closeWizard()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <!-- Progress Bar Tracking -->
+    <div class="wizard-progress-track">
+      <div class="wizard-progress-fill" [style.width.%]="(wizardStep / 4) * 100"></div>
+    </div>
+
+    <!-- Stepper -->
+    <div class="wizard-stepper">
+      <div class="stepper-line"></div>
+      <div class="stepper-steps">
+        <div class="step-item" [class.active]="wizardStep === 1" [class.completed]="wizardStep > 1">
+          <div class="step-circle">1</div>
+          <span class="step-label">Basic Info</span>
+        </div>
+        <div class="step-item" [class.active]="wizardStep === 2" [class.completed]="wizardStep > 2">
+          <div class="step-circle">2</div>
+          <span class="step-label">License</span>
+        </div>
+        <div class="step-item" [class.active]="wizardStep === 3" [class.completed]="wizardStep > 3">
+          <div class="step-circle">3</div>
+          <span class="step-label">Requirements</span>
+        </div>
+        <div class="step-item" [class.active]="wizardStep === 4" [class.completed]="wizardStep > 4">
+          <div class="step-circle">4</div>
+          <span class="step-label">Review</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="wizard-body">
+      <!-- Step Info Card -->
+      <div class="step-info-card">
+        <div class="step-info-icon">
+          <svg *ngIf="wizardStep === 1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <svg *ngIf="wizardStep === 2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <svg *ngIf="wizardStep === 3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <svg *ngIf="wizardStep === 4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          <svg *ngIf="wizardStep === 5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="step-info-text">
+          <h3>{{getStepTitle()}}</h3>
+          <p>{{getStepDescription()}}</p>
+        </div>
+      </div>
+
+      <!-- Step Content Area -->
+      <div class="step-content">
+        <!-- Step 1: Basic Info -->
+        <div *ngIf="wizardStep === 1" class="wizard-form-step">
+          <div class="form-group">
+            <label>Application Name <span class="required">*</span></label>
+            <input type="text" [(ngModel)]="currentApp.name" placeholder="e.g. Adobe Photoshop" class="form-control">
+          </div>
+          
+          <div class="two-col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+              <label>Version <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="currentApp.version" placeholder="e.g. 2024.1" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Vendor</label>
+              <input type="text" [(ngModel)]="currentApp.vendor" placeholder="e.g. Adobe Systems" class="form-control">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Category <span class="required">*</span></label>
+            <select [(ngModel)]="currentApp.category" class="form-control">
+              <option *ngFor="let cat of appCategories" [value]="cat">{{cat}}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 2: License (Was Step 3) -->
+        <div *ngIf="wizardStep === 2" class="wizard-form-step">
+          <div class="form-group">
+            <label>License Type</label>
+            <div class="license-type-grid">
+              <button *ngFor="let type of licenseTypes" 
+                      [class.active]="currentApp.licenseType === type"
+                      (click)="currentApp.licenseType = type" class="type-btn">
+                {{type}}
+              </button>
+            </div>
+          </div>
+          <div class="form-row" *ngIf="currentApp.licenseType !== 'Free'">
+            <div class="form-group flex-2">
+              <label>License Key</label>
+              <input type="text" [(ngModel)]="currentApp.licenseKey" placeholder="XXXX-XXXX-XXXX-XXXX" class="form-control">
+            </div>
+            <div class="form-group flex-1">
+              <label>Total Licenses</label>
+              <input type="number" [(ngModel)]="currentApp.totalLicenses" min="1" class="form-control">
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: System Requirements (Was Step 4) -->
+        <div *ngIf="wizardStep === 3" class="wizard-form-step">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Min RAM (GB)</label>
+              <input type="number" [(ngModel)]="currentApp.requiredRam" placeholder="8" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Min Storage (GB)</label>
+              <input type="number" [(ngModel)]="currentApp.requiredStorage" placeholder="20" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Supported Operating Systems</label>
+            <input type="text" [(ngModel)]="currentApp.supportedOs" placeholder="Windows 10, 11 / macOS 12+" class="form-control">
+          </div>
+        </div>
+
+        <!-- Step 4: Status & Review (Was Step 5) -->
+        <div *ngIf="wizardStep === 4" class="wizard-form-step">
+          <div class="form-group">
+            <label>Initial Status</label>
+            <div class="license-type-grid">
+              <button [class.active]="currentApp.status === 'Active'" (click)="currentApp.status = 'Active'" class="type-btn">Active</button>
+              <button [class.active]="currentApp.status === 'Deprecated'" (click)="currentApp.status = 'Deprecated'" class="type-btn">Deprecated</button>
+            </div>
+          </div>
+          <div class="review-summary">
+            <p>Please review all information before completing the registration.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="wizard-footer-premium">
+      <div class="footer-left-nav">
+        <button class="btn-wizard-prev" (click)="prevStep()" [disabled]="wizardStep === 1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          Previous
+        </button>
+      </div>
+      
+      <div class="wizard-page-indicator">{{wizardStep}} / 4</div>
+      
+      <div class="wizard-footer-right">
+        <button class="btn-wizard-next-step" *ngIf="wizardStep < 4" (click)="nextStep()">
+          Next Step
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+        <button class="btn-wizard-complete" *ngIf="wizardStep === 4" (click)="saveApplication()">
+          {{isEditMode ? 'Update' : 'Complete'}}
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Install Modal -->
+<div class="install-overlay" *ngIf="showInstallModal" (click)="closeInstallModal()">
+  <div class="install-panel" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="install-header">
+      <div class="install-header-left">
+        <div class="install-icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        </div>
+        <div>
+          <h2 class="install-title">Install Application</h2>
+          <p class="install-subtitle">Select a device to install <strong>{{ installingApp?.name }} {{ installingApp?.version }}</strong></p>
+        </div>
+      </div>
+      <button class="install-close-btn" (click)="closeInstallModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <!-- App summary banner -->
+    <div class="install-os-banner">
+      <div class="install-os-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        {{ installingApp?.category }}
+      </div>
+      <div class="install-os-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        {{ installingApp?.licenseType }}
+      </div>
+      <div class="install-os-badge" *ngIf="installingApp?.licenseType !== 'Free'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"></path><path d="M22 7H2v5h20V7z"></path><path d="M12 22V7"></path></svg>
+        {{ (installingApp?.totalLicenses || 0) - (installingApp?.usedLicenses || 0) }} licenses left
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="install-search-bar">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" [(ngModel)]="equipmentSearchQuery" (input)="applyEquipmentFilters()" placeholder="Search by device name, brand, or specs...">
+      <span class="result-count" *ngIf="filteredEquipment.length > 0">{{ filteredEquipment.length }} device{{ filteredEquipment.length !== 1 ? 's' : '' }}</span>
+    </div>
+
+    <!-- Equipment Card Grid -->
+    <div class="install-body">
+      <div class="equipment-grid">
+        <div class="equipment-card"
+             *ngFor="let eq of filteredEquipment"
+             [class.equipment-card--selected]="selectedEquipmentId === eq.id"
+             (click)="selectedEquipmentId = eq.id!">
+
+          <!-- Selection radio -->
+          <div class="eq-radio" [class.eq-radio--checked]="selectedEquipmentId === eq.id">
+            <div class="eq-radio-dot" *ngIf="selectedEquipmentId === eq.id"></div>
+          </div>
+
+          <!-- Device icon -->
+          <div class="eq-device-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+
+          <!-- Device info -->
+          <div class="eq-info">
+            <div class="eq-name">{{ eq.equipmentName }}</div>
+            <div class="eq-brand">{{ eq.brand }} · <span class="eq-serial">{{ eq.serialNumber }}</span></div>
+
+            <!-- Specs chips -->
+            <div class="eq-specs" *ngIf="eq.specifications">
+              <span class="eq-spec-chip" *ngFor="let spec of eq.specifications | keyvalue" [title]="spec.key">
+                <strong>{{ spec.key }}:</strong> {{ spec.value }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Selected checkmark -->
+          <div class="eq-check" *ngIf="selectedEquipmentId === eq.id">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="install-empty" *ngIf="filteredEquipment.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        <h4>No Compatible Devices Found</h4>
+        <p>Try a different search term, or check if there are DEVICE-category equipment in stock.</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="install-footer">
+      <div class="install-selection-info" *ngIf="selectedEquipmentId">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>{{ getSelectedEquipmentName() }} selected</span>
+      </div>
+      <div class="install-selection-info" *ngIf="!selectedEquipmentId" style="color: #94a3b8;">
+        Click a device card above to select it
+      </div>
+      <div class="install-footer-actions">
+        <button class="btn-install-confirm" (click)="installApp()" [disabled]="isInstalling || !selectedEquipmentId">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" *ngIf="!isInstalling"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span *ngIf="isInstalling" class="spinner"></span>
+          {{ isInstalling ? 'Installing...' : 'Execute Installation' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
