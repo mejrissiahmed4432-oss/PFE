@@ -159,4 +159,18 @@ public class StockClient {
             throw new RuntimeException("Could not update equipment: " + e.getMessage());
         }
     }
+
+    public String deleteEquipment(String id) {
+        try {
+            webClient.delete()
+                    .uri("/api/equipment/{id}", id)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+            return "✅ Equipment with ID **" + id + "** has been successfully deleted from inventory.";
+        } catch (Exception e) {
+            log.error("Failed to delete equipment {}: {}", id, e.getMessage());
+            throw new RuntimeException("Could not delete equipment: " + e.getMessage());
+        }
+    }
 }

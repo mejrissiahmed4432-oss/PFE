@@ -118,7 +118,7 @@
 
               <td>
                 <div class="modern-cell-main">
-                  <div class="logo-circle blue">{{ group.name.charAt(0) }}</div>
+                  <div class="logo-circle blue">{{ (group.name || '?').charAt(0) }}</div>
                   <div class="cell-text-stack">
                     <span class="cell-title">{{ group.name }}</span>
                     <span class="cell-sub" *ngIf="group.totalQuantity > 1">(multiple instances)</span>

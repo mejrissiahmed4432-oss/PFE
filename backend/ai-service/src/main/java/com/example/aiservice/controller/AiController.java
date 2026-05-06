@@ -36,8 +36,10 @@ public class AiController {
 
     private static final Logger log = LoggerFactory.getLogger(AiController.class);
 
+    // Supported roles (normalised to lowercase with underscores)
+    // IT_MANAGER maps to "it_manager" and shares stock_manager level access
     private static final Set<String> SUPPORTED_ROLES = Set.of(
-            "stock_manager", "technician", "admin"
+            "stock_manager", "it_manager", "technician", "admin"
     );
 
     private final ChatModel            chatModel;
@@ -73,13 +75,16 @@ public class AiController {
 
     @PostMapping("/query")
     public ResponseEntity<AiResponse> query(@Valid @RequestBody AiRequest request) {
-        String role    = request.getRole().toLowerCase().trim();
+        // Normalise role: "STOCK_MANAGER" → "stock_manager", "IT_MANAGER" → "it_manager"
+        String role    = request.getRole().toLowerCase().trim().replace(" ", "_");
+        // Treat IT_MANAGER as stock_manager for intent/data routing purposes
+        String routingRole = role.equals("it_manager") ? "stock_manager" : role;
         String message = request.getMessage().trim();
         String userId  = request.getUserId();
         List<Map<String, String>> history = request.getConversationHistory();
 
-        log.info("AI query — userId={}, role={}, history={} turns, message='{}'",
-                userId, role, history != null ? history.size() : 0, message);
+        log.info("AI query — userId={}, role={}, routingRole={}, history={} turns, message='{}'",
+                userId, role, routingRole, history != null ? history.size() : 0, message);
 
         if (!SUPPORTED_ROLES.contains(role)) {
             return ResponseEntity.badRequest().body(
@@ -91,29 +96,29 @@ public class AiController {
         try {
             AiResponse response = new AiResponse();
 
-            // 1. Detect if it's an action (Create/Update/Delete)
-            if (actionDetector.detectAndPopulate(message, role, response)) {
+            // 1. Detect if it's an action (Create/Update/Delete) — use original role for permission check
+            if (actionDetector.detectAndPopulate(message, role, userId, response)) {
                 response.setRole(role);
                 return ResponseEntity.ok(response);
             }
 
-            // 2. Detect intent
-            QueryIntent intent = intentService.detect(message, role);
-            log.info("Detected intent: {} for role: {}", intent, role);
+            // 2. Detect intent — use routingRole (IT_MANAGER → stock_manager)
+            QueryIntent intent = intentService.detect(message, routingRole);
+            log.info("Detected intent: {} for routingRole: {}", intent, routingRole);
 
-            if (!intent.isAccessibleBy(role)) {
+            if (!intent.isAccessibleBy(routingRole)) {
                 intent = QueryIntent.GENERAL_ASSISTANCE;
                 log.warn("Intent not accessible by role, falling back to GENERAL_ASSISTANCE");
             }
 
-            // 2. Route to data source
-            String dataContext = queryRouter.route(intent, role, message, userId);
+            // 3. Route to data source
+            String dataContext = queryRouter.route(intent, routingRole, message, userId);
 
-            // 3. Get structured data for response
-            List<Map<String, Object>> structuredData = queryRouter.getStructuredData(intent, role, message, userId);
+            // 4. Get structured data for response
+            List<Map<String, Object>> structuredData = queryRouter.getStructuredData(intent, routingRole, message, userId);
 
-            // 4. Build augmented prompt
-            String fullPrompt = promptBuilder.build(intent, role, dataContext, message);
+            // 5. Build augmented prompt
+            String fullPrompt = promptBuilder.build(intent, routingRole, dataContext, message);
 
             // 5. Call LLM with conversation history for multi-turn memory
             String answer = callLLM(fullPrompt, history, request.getImageBase64());

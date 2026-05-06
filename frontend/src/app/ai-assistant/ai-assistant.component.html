@@ -1,4 +1,4 @@
-<div class="ai-assistant-overlay" [class.open]="isOpen">
+<div class="ai-assistant-overlay" [ngClass]="{'open': isOpen}">
 
   <!-- ── Sidebar: Conversation History ─────────────────────────────────── -->
   <aside class="ai-sidebar" [class.collapsed]="!isSidebarOpen">
@@ -107,16 +107,23 @@
             </table>
           </div>
 
-          <!-- Action Confirmation Buttons -->
+          <!-- Action Confirmation Buttons (Step 1) -->
           <div *ngIf="msg.actionPending" class="action-confirmation-area">
-            <button class="action-btn confirm-btn" (click)="confirmAction()" [disabled]="isLoading">
-              <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>
-              Confirm
-            </button>
-            <button class="action-btn cancel-btn" (click)="cancelAction()" [disabled]="isLoading">
-              <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              Cancel
-            </button>
+            <div class="action-type-badge">
+              <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+              {{ getActionLabel(msg.actionType || '') }}
+            </div>
+            <p class="action-confirm-hint">This action will modify your data. Please review before confirming.</p>
+            <div class="action-buttons-row">
+              <button class="action-btn confirm-btn" (click)="requestConfirmation()" [disabled]="isLoading">
+                <svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>
+                Proceed
+              </button>
+              <button class="action-btn cancel-btn" (click)="cancelAction()" [disabled]="isLoading">
+                <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Cancel
+              </button>
+            </div>
           </div>
 
           <!-- Follow-up Suggestions -->
@@ -135,7 +142,10 @@
             <div class="bubble-meta user-meta">
               <span class="bubble-time">{{ msg.timestamp | date:'HH:mm' }}</span>
             </div>
-            <div class="bubble-content">{{ msg.text }}</div>
+            <div class="bubble-content">
+              <img *ngIf="msg.imageUrl" [src]="msg.imageUrl" class="chat-attached-image" alt="User upload" />
+              <div *ngIf="msg.text">{{ msg.text }}</div>
+            </div>
           </div>
           <!-- Edit button -->
           <button class="edit-btn" (click)="editMessage(msg)" title="Edit and resend">
@@ -159,23 +169,84 @@
 
     <!-- Footer Input -->
     <footer class="ai-footer">
-      <div class="input-wrapper">
-        <input
-          type="text"
-          class="chat-input"
-          [placeholder]="editingMessageId ? 'Editing message…' : 'Ask me anything about your stock…'"
-          [(ngModel)]="newMessage"
-          (keyup.enter)="sendMessage()"
-          [disabled]="isLoading"
-        />
-        <button class="send-btn" (click)="sendMessage()" [disabled]="isLoading || !newMessage.trim()" title="Send">
-          <svg viewBox="0 0 24 24" fill="none">
-            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-          </svg>
-        </button>
+      <div class="input-wrapper" [class.has-image]="selectedImage">
+        
+        <!-- Image Preview Area -->
+        <div class="image-preview-area" *ngIf="selectedImage">
+          <div class="image-preview-card">
+            <img [src]="selectedImage" alt="Preview" />
+            <button class="remove-image-btn" (click)="removeSelectedImage()" title="Remove image">
+              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="input-controls-row">
+          <button class="attach-btn" (click)="triggerFileInput()" title="Attach image" [disabled]="isLoading">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+          
+          <textarea
+            #chatInput
+            class="chat-input"
+            [placeholder]="editingMessageId ? 'Editing message…' : (selectedImage ? 'Add a message about this image…' : 'Ask me anything about your work…')"
+            [(ngModel)]="newMessage"
+            (input)="adjustTextareaHeight($event)"
+            (keydown.enter)="$event.preventDefault(); sendMessage()"
+            [disabled]="isLoading"
+            rows="1"
+          ></textarea>
+
+          <button class="send-btn" (click)="sendMessage()" [disabled]="isLoading || (!newMessage.trim() && !selectedImage)" title="Send">
+            <svg viewBox="0 0 24 24" fill="none">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
       </div>
-      <div class="footer-hint">AI may make mistakes. Always verify critical data.</div>
+      <div class="footer-hint">AI may make mistakes. Always verify critical data before confirming actions.</div>
     </footer>
+
+  </div>
+</div>
+
+<!-- ── Two-Step Confirmation Modal ──────────────────────────────────────── -->
+<div class="confirm-modal-backdrop" *ngIf="showConfirmModal" (click)="cancelConfirmModal()">
+  <div class="confirm-modal-card" (click)="$event.stopPropagation()">
+
+    <!-- Warning Icon -->
+    <div class="confirm-modal-icon">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 9v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- Title -->
+    <h3 class="confirm-modal-title">Confirm Action</h3>
+
+    <!-- Action badge -->
+    <div class="confirm-modal-action-badge" *ngIf="pendingAction">
+      {{ getActionLabel(pendingAction.type) }}
+    </div>
+
+    <!-- Message -->
+    <p class="confirm-modal-message">
+      Are you sure you want to proceed? This action will modify your data and <strong>cannot be undone</strong>.
+    </p>
+
+    <!-- Buttons -->
+    <div class="confirm-modal-actions">
+      <button class="confirm-modal-cancel" (click)="cancelConfirmModal()">
+        <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Cancel
+      </button>
+      <button class="confirm-modal-confirm" (click)="confirmAction()" [disabled]="isLoading">
+        <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Yes, Confirm
+      </button>
+    </div>
 
   </div>
 </div>

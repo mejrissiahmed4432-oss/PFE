@@ -20,15 +20,18 @@ public class ActionExecutorService {
     private static final Logger log = LoggerFactory.getLogger(ActionExecutorService.class);
 
     // ── Role permission matrix ────────────────────────────────────────────────
-    private static final Map<String, Set<String>> ACTION_PERMISSIONS = Map.of(
-        "ADD_EQUIPMENT",       Set.of("stock_manager", "admin"),
-        "UPDATE_EQUIPMENT",    Set.of("stock_manager", "admin"),
-        "APPROVE_REQUEST",     Set.of("stock_manager", "admin"),
-        "REJECT_REQUEST",      Set.of("stock_manager", "admin"),
+    // IT_MANAGER is treated as an alias for stock_manager in terms of permissions
+    private static final Map<String, Set<String>> ACTION_PERMISSIONS = new java.util.HashMap<>(Map.of(
+        "ADD_EQUIPMENT",       Set.of("stock_manager", "it_manager", "admin"),
+        "UPDATE_EQUIPMENT",    Set.of("stock_manager", "it_manager", "admin"),
+        "DELETE_EQUIPMENT",    Set.of("stock_manager", "it_manager", "admin"),
+        "APPROVE_REQUEST",     Set.of("stock_manager", "it_manager", "admin"),
+        "REJECT_REQUEST",      Set.of("stock_manager", "it_manager", "admin"),
         "SUBMIT_PART_REQUEST", Set.of("technician", "admin"),
-        "CREATE_TASK",         Set.of("stock_manager", "technician", "admin"),
-        "UPDATE_TICKET",       Set.of("stock_manager", "technician", "admin")
-    );
+        "CREATE_TASK",         Set.of("stock_manager", "it_manager", "technician", "admin"),
+        "UPDATE_TICKET",       Set.of("stock_manager", "it_manager", "technician", "admin"),
+        "SEND_MESSAGE",        Set.of("stock_manager", "it_manager", "technician", "admin")
+    ));
 
     private final StockClient stockClient;
     private final TechnicianClient technicianClient;
@@ -44,11 +47,13 @@ public class ActionExecutorService {
 
     /**
      * Checks if the given role is permitted to execute the action.
+     * IT_MANAGER is treated as stock_manager for all permission checks.
      */
     public boolean isAllowed(String actionType, String role) {
+        String normalizedRole = normalizeRole(role);
         Set<String> allowedRoles = ACTION_PERMISSIONS.get(actionType.toUpperCase());
         if (allowedRoles == null) return false;
-        return allowedRoles.contains(role.toLowerCase()) || "admin".equalsIgnoreCase(role);
+        return allowedRoles.contains(normalizedRole) || "admin".equals(normalizedRole);
     }
 
     /**
@@ -64,6 +69,8 @@ public class ActionExecutorService {
                 case "ADD_EQUIPMENT"       -> stockClient.createEquipment(payload);
                 case "UPDATE_EQUIPMENT"    -> stockClient.updateEquipment(
                         (String) payload.get("id"), payload);
+                case "DELETE_EQUIPMENT"    -> stockClient.deleteEquipment(
+                        (String) payload.get("id"));
                 case "APPROVE_REQUEST"     -> technicianClient.updateRequestStatus(
                         (String) payload.get("id"), "APPROVED");
                 case "REJECT_REQUEST"      -> technicianClient.updateRequestStatus(
@@ -72,11 +79,27 @@ public class ActionExecutorService {
                 case "CREATE_TASK"         -> userClient.createTask(payload, userId);
                 case "UPDATE_TICKET"       -> userClient.updateTicket(
                         (String) payload.get("id"), payload);
+                case "SEND_MESSAGE"        -> {
+                    if (Boolean.TRUE.equals(payload.get("multiMessage"))) {
+                        java.util.List<Map<String, Object>> messages = (java.util.List<Map<String, Object>>) payload.get("messages");
+                        StringBuilder sb = new StringBuilder();
+                        for (Map<String, Object> msg : messages) {
+                            sb.append(userClient.sendMessage(msg)).append("\n");
+                        }
+                        yield "🚀 Multi-message execution:\n" + sb.toString();
+                    }
+                    yield userClient.sendMessage(payload);
+                }
                 default -> "❌ Unknown action: " + actionType;
             };
         } catch (Exception e) {
             log.error("Action execution failed for {}: {}", actionType, e.getMessage());
             return "❌ Action failed: " + e.getMessage();
         }
+    }
+
+    /** Normalises role strings: STOCK_MANAGER → stock_manager, IT_MANAGER → it_manager, etc. */
+    private String normalizeRole(String role) {
+        return role == null ? "" : role.toLowerCase().replace(" ", "_");
     }
 }

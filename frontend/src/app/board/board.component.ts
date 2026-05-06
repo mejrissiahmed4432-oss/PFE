@@ -258,7 +258,9 @@ export class BoardComponent implements OnInit {
   }
 
   toggleAssistant(): void {
+    console.log('Toggling assistant. Current state:', this.isAssistantOpen);
     this.isAssistantOpen = !this.isAssistantOpen;
+    console.log('New state:', this.isAssistantOpen);
   }
 
   toggleNotifications(event: Event): void {
