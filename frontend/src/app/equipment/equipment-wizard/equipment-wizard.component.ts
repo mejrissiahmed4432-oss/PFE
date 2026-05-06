@@ -1195,10 +1195,30 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     });
   }
 
-  previewFile(file?: File): void {
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    window.open(url, '_blank');
+  previewFile(file?: File, fileData?: string, fileName?: string): void {
+    if (file) {
+      const url = URL.createObjectURL(file);
+      window.open(url, '_blank');
+    } else if (fileData) {
+      try {
+        if (fileData.startsWith('data:')) {
+          const byteString = atob(fileData.split(',')[1]);
+          const mimeString = fileData.split(',')[0].split(':')[1].split(';')[0];
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) {
+              ia[i] = byteString.charCodeAt(i);
+          }
+          const blob = new Blob([ab], {type: mimeString});
+          const url = URL.createObjectURL(blob);
+          window.open(url, '_blank');
+        } else {
+          window.open(fileData, '_blank');
+        }
+      } catch (e) {
+        this.downloadDocument(fileData, fileName);
+      }
+    }
   }
 
   downloadDocument(fileData?: string, fileName?: string): void {

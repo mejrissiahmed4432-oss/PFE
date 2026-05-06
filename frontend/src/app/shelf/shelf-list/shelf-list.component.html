@@ -92,7 +92,7 @@
             <div class="authors-sub-text">{{ s.equipmentType }} Storage</div>
           </td>
           <td>
-            <div class="authors-status-badge mb-2" [ngClass]="s.status === 'FULL' ? 'broken' : (s.status === 'EMPTY' ? 'unassigned' : 'active')" style="display: inline-block;">
+            <div class="authors-status-badge mb-2" [ngClass]="s.status === 'FULL' ? 'broken' : (s.status === 'EMPTY' ? 'unassigned' : (s.status === 'LOW' ? 'low' : 'active'))" style="display: inline-block;">
               {{ s.status }}
             </div>
             <div class="authors-sub-text">{{ s.currentQte }} / {{ s.maxQte }} Items</div>

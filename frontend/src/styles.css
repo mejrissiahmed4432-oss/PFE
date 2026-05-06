@@ -246,7 +246,8 @@ body {
   @apply bg-slate-400 text-white shadow-lg shadow-slate-400/20;
 }
 
-.authors-status-badge.maintenance {
+.authors-status-badge.maintenance,
+.authors-status-badge.low {
   @apply bg-amber-500 text-white shadow-lg shadow-amber-500/20;
 }
 

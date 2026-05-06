@@ -16,6 +16,44 @@ export class CategoryManagerComponent implements OnInit {
   isLoading = true;
   expandedCategories: { [key: string]: boolean } = {};
 
+  searchQuery = '';
+
+  get filteredCategories(): EquipmentCategory[] {
+    if (!this.searchQuery) return this.categories;
+    const query = this.searchQuery.toLowerCase().trim();
+    return this.categories.reduce((acc, cat) => {
+      const matchName = cat.name?.toLowerCase().includes(query);
+      
+      if (matchName) {
+        // Category name matches -> keep category and ALL its types
+        acc.push(cat);
+      } else {
+        // Category name doesn't match -> check if any type matches
+        const matchingTypes = cat.types?.filter(t => t.name?.toLowerCase().includes(query));
+        if (matchingTypes && matchingTypes.length > 0) {
+          // Only types matched -> keep category but ONLY show matching types
+          acc.push({
+            ...cat,
+            types: matchingTypes
+          });
+        }
+      }
+      return acc;
+    }, [] as EquipmentCategory[]);
+  }
+
+  shouldAutoExpand(cat: EquipmentCategory): boolean {
+    if (!this.searchQuery) return false;
+    const query = this.searchQuery.toLowerCase().trim();
+    const matchName = cat.name?.toLowerCase().includes(query);
+    // Auto-expand if the category is visible but its name doesn't match (meaning a type matched)
+    return !matchName;
+  }
+
+  trackByCategoryId(index: number, cat: EquipmentCategory): string | undefined {
+    return cat.id;
+  }
+
   // Duplicate checks
   isCategoryNameDuplicate = false;
   errorMessage: string | null = null;

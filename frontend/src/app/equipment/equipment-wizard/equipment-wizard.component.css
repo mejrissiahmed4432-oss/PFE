@@ -562,9 +562,23 @@
 /* ─── Unit table ──────────────────────────────────────────── */
 .unit-table-wrap {
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 350px;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   background: white;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.unit-table-wrap::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.unit-table-wrap::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
 }
 
 .unit-table {
@@ -574,6 +588,9 @@
 }
 
 .unit-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   padding: 10px 14px;
   background: #f8fafc;
   color: #475569;

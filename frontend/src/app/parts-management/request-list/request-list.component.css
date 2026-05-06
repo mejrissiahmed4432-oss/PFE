@@ -213,11 +213,11 @@
   border-radius: 50%;
 }
 
-.truncate-note {
+.request-note {
   max-width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* Badges */

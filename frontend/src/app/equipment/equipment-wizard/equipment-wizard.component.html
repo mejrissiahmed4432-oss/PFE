@@ -541,8 +541,16 @@
         </ng-container>
 
         <!-- DIFFERENT mode table -->
+        <input type="file" #invoiceInput style="display: none" (change)="onInvoiceFileUpload($event)">
         <ng-container *ngIf="purchaseMode === 'different' && quantity > 1">
-          <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 8px; gap: 8px;">
+            <button
+              style="font-size: 13px; color: #3b82f6; background: #eff6ff; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;"
+              (click)="invoiceInput.click()" [disabled]="!hasSelectedPurchase()"
+              [style.opacity]="hasSelectedPurchase() ? 1 : 0.5" title="Upload invoice for selected rows">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              Upload Document
+            </button>
             <button
               style="font-size: 13px; color: #ef4444; background: #fef2f2; border: 1px solid #fecaca; padding: 4px 10px; border-radius: 4px; cursor: pointer;"
               (click)="clearSelectedRows('purchase')" [disabled]="!hasSelectedPurchase()"
@@ -586,7 +594,7 @@
                   <td><input class="tbl-input" type="text" [(ngModel)]="u.invoiceRef" placeholder="INV-REF"></td>
                   <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                     <div style="display: flex; align-items: center; gap: 4px; min-width: 0;" *ngIf="u.invoiceFileName">
-                      <span (click)="previewFile(u.invoiceFile)"
+                      <span (click)="previewFile(u.invoiceFile, u.invoiceFileData, u.invoiceFileName)"
                         style="cursor: pointer; color: #3b82f6; text-decoration: underline; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;"
                         [title]="u.invoiceFileName">{{ u.invoiceFileName }}</span>
                       <button (click)="removeUnitInvoice(u, $event)" title="Remove"
@@ -609,25 +617,24 @@
         </ng-container>
 
         <!-- Invoice / Facture Document -->
-        <div class="field-group" style="margin-top: 20px;">
-          <label class="field-label">Invoice / Facture Document <span class="field-optional">(optional)</span></label>
-          <input type="file" #invoiceInput style="display: none" (change)="onInvoiceFileUpload($event)">
+        <ng-container *ngIf="purchaseMode === 'same' || quantity === 1">
+          <div class="field-group" style="margin-top: 20px;">
+            <label class="field-label">Invoice / Facture Document <span class="field-optional">(optional)</span></label>
 
-          <div class="upload-zone" (click)="invoiceInput.click()" style="cursor: pointer;"
-            *ngIf="!(purchaseMode === 'same' || quantity === 1) || (!sharedInvoiceFileData && !sharedInvoiceFileName)">
+            <div class="upload-zone" (click)="invoiceInput.click()" style="cursor: pointer;"
+              *ngIf="!sharedInvoiceFileData && !sharedInvoiceFileName">
 
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-              stroke="#94a3b8" stroke-width="1.5">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="17 8 12 3 7 8"></polyline>
-              <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-            <p>Drag & drop or <strong>click to upload</strong></p>
-            <span *ngIf="purchaseMode === 'same' || quantity === 1">PDF, PNG, JPG up to 10MB</span>
-            <span *ngIf="purchaseMode === 'different' && quantity > 1">Upload to selected rows</span>
-          </div>
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                stroke="#94a3b8" stroke-width="1.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <p>Drag & drop or <strong>click to upload</strong></p>
+              <span>PDF, PNG, JPG up to 10MB</span>
+            </div>
 
-          <div *ngIf="(purchaseMode === 'same' || quantity === 1) && (sharedInvoiceFileData || sharedInvoiceFileName)"
+            <div *ngIf="sharedInvoiceFileData || sharedInvoiceFileName"
             style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
             <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -635,7 +642,7 @@
                 <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                 <polyline points="13 2 13 9 20 9"></polyline>
               </svg>
-              <span (click)="previewFile($any(sharedInvoiceFile))"
+              <span (click)="previewFile($any(sharedInvoiceFile), sharedInvoiceFileData, sharedInvoiceFileName)"
                 style="cursor: pointer; color: #3b82f6; text-decoration: underline; font-weight: 500; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; min-width: 0;"
                 [title]="sharedInvoiceFileName">{{ sharedInvoiceFileName }}</span>
             </div>
@@ -648,9 +655,10 @@
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
 
-            </button>
+              </button>
+            </div>
           </div>
-        </div>
+        </ng-container>
       </div>
 
       <!-- ════════ STEP 5: WARRANTY ════════ -->
@@ -688,8 +696,16 @@
         </ng-container>
 
         <!-- INDIVIDUAL warranty table -->
+        <input type="file" #warrantyInput style="display: none" (change)="onWarrantyFileUpload($event)">
         <ng-container *ngIf="warrantyMode === 'individual' && quantity > 1">
-          <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 8px; gap: 8px;">
+            <button
+              style="font-size: 13px; color: #3b82f6; background: #eff6ff; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;"
+              (click)="warrantyInput.click()" [disabled]="!hasSelectedWarranty()"
+              [style.opacity]="hasSelectedWarranty() ? 1 : 0.5" title="Upload warranty for selected rows">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              Upload Document
+            </button>
             <button
               style="font-size: 13px; color: #ef4444; background: #fef2f2; border: 1px solid #fecaca; padding: 4px 10px; border-radius: 4px; cursor: pointer;"
               (click)="clearSelectedRows('warranty')" [disabled]="!hasSelectedWarranty()"
@@ -722,7 +738,7 @@
                   <td><input class="tbl-input" type="date" [(ngModel)]="u.warrantyEnd"></td>
                   <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                     <div style="display: flex; align-items: center; gap: 4px;" *ngIf="u.warrantyFileName">
-                      <span (click)="previewFile(u.warrantyFile)"
+                      <span (click)="previewFile(u.warrantyFile, u.warrantyFileData, u.warrantyFileName)"
                         style="cursor: pointer; color: #3b82f6; text-decoration: underline; flex: 1; overflow: hidden; text-overflow: ellipsis;"
                         [title]="u.warrantyFileName">{{ u.warrantyFileName }}</span>
                       <button (click)="removeUnitWarranty(u, $event)" title="Remove"
@@ -745,26 +761,25 @@
         </ng-container>
 
         <!-- Warranty Document (Applies to all units here) -->
-        <div class="field-group" style="margin-top: 20px;">
-          <label class="field-label">Warranty Document <span class="field-optional">(optional)</span></label>
-          <input type="file" #warrantyInput style="display: none" (change)="onWarrantyFileUpload($event)">
+        <ng-container *ngIf="warrantyMode === 'shared' || quantity === 1">
+          <div class="field-group" style="margin-top: 20px;">
+            <label class="field-label">Warranty Document <span class="field-optional">(optional)</span></label>
 
-          <div class="upload-zone" (click)="warrantyInput.click()" style="cursor: pointer;"
-            *ngIf="!(warrantyMode === 'shared' || quantity === 1) || (!sharedWarrantyFileData && !sharedWarrantyFileName)">
+            <div class="upload-zone" (click)="warrantyInput.click()" style="cursor: pointer;"
+              *ngIf="!sharedWarrantyFileData && !sharedWarrantyFileName">
 
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-              stroke="#94a3b8" stroke-width="1.5">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="17 8 12 3 7 8"></polyline>
-              <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-            <p>Drag & drop or <strong>click to upload</strong></p>
-            <span *ngIf="warrantyMode === 'shared' || quantity === 1">PDF, PNG, JPG up to 10MB</span>
-            <span *ngIf="warrantyMode === 'individual' && quantity > 1">Upload to selected rows</span>
-          </div>
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                stroke="#94a3b8" stroke-width="1.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <p>Drag & drop or <strong>click to upload</strong></p>
+              <span>PDF, PNG, JPG up to 10MB</span>
+            </div>
 
-          <div
-            *ngIf="(warrantyMode === 'shared' || quantity === 1) && (sharedWarrantyFileData || sharedWarrantyFileName)"
+            <div
+              *ngIf="sharedWarrantyFileData || sharedWarrantyFileName"
             style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
             <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -772,7 +787,7 @@
                 <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
                 <polyline points="13 2 13 9 20 9"></polyline>
               </svg>
-              <span (click)="previewFile($any(sharedWarrantyFile))"
+              <span (click)="previewFile($any(sharedWarrantyFile), sharedWarrantyFileData, sharedWarrantyFileName)"
                 style="cursor: pointer; color: #3b82f6; text-decoration: underline; font-weight: 500; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"
                 [title]="sharedWarrantyFileName">{{ sharedWarrantyFileName }}</span>
             </div>
@@ -785,9 +800,10 @@
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
 
-            </button>
+              </button>
+            </div>
           </div>
-        </div>
+        </ng-container>
       </div>
 
 

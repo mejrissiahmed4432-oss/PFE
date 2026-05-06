@@ -59,7 +59,7 @@
               <div class="font-semibold text-dark">
                 {{ req.items ? req.items.length : 0 }} Items Requested
               </div>
-              <div class="text-sm text-mute truncate-note" [title]="req.description">{{ req.description || 'No note provided' }}</div>
+              <div class="text-sm text-mute request-note" [title]="req.description">{{ req.description || 'No note provided' }}</div>
             </td>
             <td>
               <div style="display: flex; align-items: center; gap: 6px;">
