@@ -12,6 +12,7 @@ import { ShelfService } from '../../shelf/shelf.service';
 import { Shelf } from '../../shelf/shelf.model';
 import { CategoryService } from '../../category-manager/category.service';
 import { CategoryType, EquipmentCategory } from '../../category-manager/category.model';
+import { ToastService } from '../../shared/toast.service';
 import * as QRCode from 'qrcode';
 
 @Component({
@@ -60,7 +61,8 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     private authService: AuthService,
     private supplierService: SupplierService,
     private shelfService: ShelfService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -494,12 +496,20 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     const doSave = (finalPayload: Equipment) => {
       if (this.equipment && this.equipment.id) {
         this.equipmentService.updateEquipment(this.equipment.id, finalPayload).subscribe({
-          next: () => { this.isSaving = false; this.closeEvent.emit(true); },
+          next: () => { 
+            this.toastService.success(`${finalPayload.equipmentName} updated successfully.`);
+            this.isSaving = false; 
+            this.closeEvent.emit(true); 
+          },
           error: (err) => { console.error(err); this.isSaving = false; }
         });
       } else {
         this.equipmentService.createEquipment(finalPayload).subscribe({
-          next: () => { this.isSaving = false; this.closeEvent.emit(true); },
+          next: () => { 
+            this.toastService.success(`${finalPayload.equipmentName} added to inventory.`);
+            this.isSaving = false; 
+            this.closeEvent.emit(true); 
+          },
           error: (err) => { console.error(err); this.isSaving = false; }
         });
       }

@@ -13,6 +13,7 @@ export interface AiRequest {
   role: string;
   message: string;
   conversationHistory?: ConversationTurn[];
+  imageBase64?: string;
 }
 
 export interface AiResponse {
@@ -39,6 +40,7 @@ export interface ChatMessage {
   actionPending?: boolean;
   actionType?: string;
   actionPayload?: any;
+  imageUrl?: string;   // base64 data URL for images attached to messages
 }
 
 export interface Conversation {
@@ -67,7 +69,7 @@ export class AiService {
     return `${this.BASE_STORAGE_KEY}_${userId}`;
   }
 
-  query(message: string, history: ConversationTurn[] = []): Observable<AiResponse> {
+  query(message: string, history: ConversationTurn[] = [], imageBase64?: string): Observable<AiResponse> {
     const user = this.authService.getCurrentUser();
     const role = user?.role || 'technician';
     const userId = user?.id || user?._id || 'unknown';
@@ -76,7 +78,8 @@ export class AiService {
       userId,
       role,
       message,
-      conversationHistory: history
+      conversationHistory: history,
+      ...(imageBase64 ? { imageBase64 } : {})
     };
 
     return this.http.post<AiResponse>(`${this.apiUrl}/query`, payload);

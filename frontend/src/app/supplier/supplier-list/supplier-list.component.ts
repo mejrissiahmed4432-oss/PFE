@@ -1,8 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupplierService } from '../supplier.service';
 import { Supplier } from '../supplier.model';
+import { RefreshService } from '../../shared/refresh.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-supplier-list',
@@ -34,11 +36,26 @@ export class SupplierListComponent implements OnInit, OnChanges {
   showDeleteModal: boolean = false;
   supplierToDeleteId: string | null = null;
   errorMessage: string | null = null;
+  private refreshSub?: Subscription;
 
-  constructor(private supplierService: SupplierService) {}
+  constructor(
+    private supplierService: SupplierService,
+    private refreshService: RefreshService
+  ) {}
 
   ngOnInit(): void {
     this.loadSuppliers();
+    
+    // Global refresh subscription (e.g. from AI Assistant)
+    this.refreshSub = this.refreshService.refresh$.subscribe(type => {
+      if (type === 'ADD_SUPPLIER' || type === 'UPDATE_SUPPLIER' || type === 'DELETE_SUPPLIER' || type === 'ALL') {
+        this.loadSuppliers();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.refreshSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

@@ -12,6 +12,8 @@ import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from 
 import { PartRequestService } from '../parts-management/part-request.service';
 import { PartRequest } from '../parts-management/part-request.model';
 import { LiveWorkbenchComponent } from './live-workbench/live-workbench.component';
+import { RefreshService } from '../shared/refresh.service';
+import { Subscription } from 'rxjs';
 
 export interface RepairHistoryEntry {
   issue: string;
@@ -112,25 +114,38 @@ export class TicketsComponent implements OnInit, OnDestroy {
     specification: string;
     brand?: string;
   }[] = [];
+  private refreshSubscription?: Subscription;
 
   constructor(
+    private authService: AuthService,
+    private partRequestService: PartRequestService,
+    private refreshService: RefreshService,
     private ticketService: TicketService,
     private equipmentService: EquipmentService,
-    private categoryService: CategoryService,
-    private authService: AuthService,
-    private partRequestService: PartRequestService
+    private categoryService: CategoryService
   ) { }
 
   ngOnInit(): void {
     this.authService.user$.subscribe(user => {
       this.currentUser = user;
       if (this.currentUser) {
-        this.loadCategories();
-        this.loadEquipments();
-        this.loadTickets();
-        this.loadUserInventory();
+        this.loadAllData();
       }
     });
+
+    // Listen for global refresh events (e.g., from AI Assistant)
+    this.refreshSubscription = this.refreshService.refresh$.subscribe(actionType => {
+      console.log('TicketsComponent: Refreshing all data due to action:', actionType);
+      this.loadAllData();
+    });
+  }
+
+  private loadAllData(): void {
+    if (!this.currentUser) return;
+    this.loadCategories();
+    this.loadEquipments();
+    this.loadTickets();
+    this.loadUserInventory();
   }
 
   switchView(mode: 'equipment' | 'tickets'): void {
@@ -142,22 +157,25 @@ export class TicketsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
   }
 
   loadCategories(): void {
     this.categoryService.getAllCategories().subscribe({
-      next: (data) => {
+      next: (data: EquipmentCategory[]) => {
         this.categories = data;
         this.applyFilters();
       },
-      error: (err) => console.error('Error loading categories', err)
+      error: (err: any) => console.error('Error loading categories', err)
     });
   }
 
   loadUserInventory(): void {
     if (!this.currentUser?.id) return;
     this.partRequestService.getMyRequests(this.currentUser.id).subscribe({
-      next: (requests) => {
+      next: (requests: PartRequest[]) => {
         const approved = requests.filter(r => r.status === 'APPROVED');
         const itemsList: any[] = [];
 
@@ -191,7 +209,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
         this.userInventory = itemsList;
       },
-      error: (err) => console.error('Failed to load user inventory', err)
+      error: (err: any) => console.error('Failed to load user inventory', err)
     });
   }
 
@@ -202,14 +220,14 @@ export class TicketsComponent implements OnInit, OnDestroy {
       : this.ticketService.getTickets();
 
     fetchCall.subscribe({
-      next: (tickets) => {
+      next: (tickets: Ticket[]) => {
         this.ticketsList = tickets;
         this.applyTicketFilters();
         // Update history for all equipments now that we have the tickets
         this.equipments.forEach(eq => this.calculateEquipmentHistory(eq));
         this.applyFilters();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to load real tickets', err);
         this.ticketsList = [];
       }
@@ -218,9 +236,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   loadEquipments(): void {
     this.equipmentService.getAllEquipment().subscribe({
-      next: (data) => {
+      next: (data: Equipment[]) => {
         // Map backend equipment to UI model
-        this.equipments = data.map(eq => ({
+        this.equipments = data.map((eq: Equipment) => ({
           ...eq,
           assignedUser: eq.department || 'Unassigned',
           // History will be calculated dynamically when selected or during filtering
@@ -230,7 +248,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
         }));
         this.applyFilters();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Failed to load real equipments', err);
         this.equipments = [];
         this.applyFilters();
@@ -591,7 +609,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
       : this.ticketService.createTicket(ticketData);
 
     request.subscribe({
-      next: (result) => {
+      next: (result: Ticket) => {
         console.log(this.isEditMode ? "Ticket updated" : "Ticket created", result);
 
         if (this.isEditMode) {
@@ -615,7 +633,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
           if (eqId) {
             this.equipmentService.updateEquipment(eqId, this.selectedEquipment).subscribe({
               next: () => console.log('Equipment status updated to In Maintenance'),
-              error: (err) => console.error('Failed to update equipment status', err)
+              error: (err: any) => console.error('Failed to update equipment status', err)
             });
           }
         } else if (this.isEditMode && result.status && ['Closed', 'Resolved', 'Cancelled', 'Completed'].includes(result.status)) {
@@ -673,7 +691,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
                 console.log('Equipment status reset to Available after ticket deletion');
                 this.calculateEquipmentHistory(eq);
               },
-              error: (err) => console.error('Failed to reset equipment status', err)
+              error: (err: any) => console.error('Failed to reset equipment status', err)
             });
           }
         }
@@ -690,7 +708,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
         console.log('Ticket deleted successfully');
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error deleting ticket', err);
         // Fallback for demo: still remove from list
         this.ticketsList = this.ticketsList.filter(t => t.id !== id);
@@ -738,7 +756,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
     // Update ticket status to In Progress
     const updated: Ticket = { ...ticket, status: 'In Progress' };
     this.ticketService.updateTicket(ticket.id!, updated).subscribe({
-      next: (res) => {
+      next: (res: Ticket) => {
         const idx = this.ticketsList.findIndex(t => t.id === res.id);
         if (idx !== -1) this.ticketsList[idx] = res;
         this.applyTicketFilters();
@@ -775,7 +793,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
     });
   }
 
-  onWorkbenchComplete(event: { workNote: string; repairTasks: any[]; partsUsed: any[] }): void {
+  onWorkbenchComplete(event: { workNote: string; repairTasks: any[]; partsUsed: any[]; isBroken?: boolean }): void {
     if (!this.workbenchTicket?.id) return;
     
     const updated: Ticket = { 
@@ -787,14 +805,14 @@ export class TicketsComponent implements OnInit, OnDestroy {
     };
 
     this.ticketService.updateTicket(this.workbenchTicket.id, updated).subscribe({
-      next: (res) => {
+      next: (res: Ticket) => {
         const idx = this.ticketsList.findIndex(t => t.id === res.id);
         if (idx !== -1) this.ticketsList[idx] = res;
 
         const eqName = res.equipmentName;
         const eq = this.equipments.find(e => e.name === eqName || e.equipmentName === eqName);
         if (eq) {
-          eq.status = 'Available';
+          eq.status = event.isBroken ? 'Broken' : 'Available';
           this.equipmentService.updateEquipment(eq.id!, eq).subscribe({
             next: () => this.calculateEquipmentHistory(eq)
           });
@@ -833,7 +851,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
     
     const updated: Ticket = { ...ticket, status: 'Open' };
     this.ticketService.updateTicket(ticket.id, updated).subscribe({
-      next: (res) => {
+      next: (res: Ticket) => {
         const idx = this.ticketsList.findIndex(t => t.id === res.id);
         if (idx !== -1) this.ticketsList[idx] = res;
         this.selectedTicket = res;
@@ -855,7 +873,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
         this.applyTicketFilters();
         this.calculateStats();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error re-opening ticket', err);
         alert('Failed to re-open ticket. Please try again.');
       }

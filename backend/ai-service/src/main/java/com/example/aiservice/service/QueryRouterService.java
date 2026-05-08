@@ -34,7 +34,9 @@ public class QueryRouterService {
             QueryIntent.SUPPLIER_INFO,
             QueryIntent.CATEGORY_INFO,
             QueryIntent.SCHEDULE_INFO,
-            QueryIntent.TICKET_INFO
+            QueryIntent.TICKET_INFO,
+            QueryIntent.NOTIFICATIONS,
+            QueryIntent.ALERTS
             // EQUIPMENT_SUGGESTION uses RAG + LLM knowledge (not direct query)
     );
 
@@ -88,36 +90,47 @@ public class QueryRouterService {
     public List<Map<String, Object>> getStructuredData(QueryIntent intent, String role, String message, String userId) {
         return switch (intent) {
             case STOCK_STATUS       -> getStockStatusData(message);
-            case LOW_STOCK          -> getLowStockData();
+            case LOW_STOCK          -> getLowStockData(role);
             case REQUEST_STATUS     -> getRequestStatusData(role, userId);
-            case PARTS_AVAILABILITY -> getPartsAvailabilityData();
-            case EQUIPMENT_STATUS   -> getEquipmentStatusData();
-            case SUPPLIER_INFO      -> getSupplierInfoData();
+            case PARTS_AVAILABILITY -> getPartsAvailabilityData(role, userId);
+            case EQUIPMENT_STATUS   -> getEquipmentStatusData(role, userId);
+            case SUPPLIER_INFO      -> getSupplierInfoData(role);
             case CATEGORY_INFO      -> getCategoryInfoData();
-            case SCHEDULE_INFO      -> getScheduleData();
-            case TICKET_INFO        -> getTicketData();
+            case SHELF_INFO         -> getShelfInfoData();
+            case TYPE_INFO          -> getTypeInfoData();
+            case SCHEDULE_INFO      -> getScheduleData(role, userId);
+            case TICKET_INFO        -> getTicketData(role, userId);
+            case NOTIFICATIONS      -> userClient.getNotifications(userId, role);
+            case ALERTS             -> userClient.getAlerts(userId, role);
             default                 -> Collections.emptyList();
         };
     }
 
     private String directQuery(QueryIntent intent, String role, String message, String userId) {
         return switch (intent) {
-            case STOCK_STATUS       -> buildStockStatusContext(message);
-            case LOW_STOCK          -> buildLowStockContext();
+            case STOCK_STATUS       -> buildStockStatusContext(message, role, userId);
+            case LOW_STOCK          -> buildLowStockContext(role);
             case REQUEST_STATUS     -> buildRequestStatusContext(role, userId);
-            case PARTS_AVAILABILITY -> buildPartsAvailabilityContext();
-            case EQUIPMENT_STATUS   -> buildEquipmentStatusContext();
-            case SUPPLIER_INFO      -> buildSupplierInfoContext();
+            case PARTS_AVAILABILITY -> buildPartsAvailabilityContext(role, userId);
+            case EQUIPMENT_STATUS   -> buildEquipmentStatusContext(role, userId);
+            case SUPPLIER_INFO      -> buildSupplierInfoContext(role);
             case CATEGORY_INFO      -> buildCategoryInfoContext();
-            case SCHEDULE_INFO      -> buildScheduleContext();
-            case TICKET_INFO        -> buildTicketContext();
+            case SHELF_INFO         -> buildShelfInfoContext();
+            case TYPE_INFO          -> buildTypeInfoContext();
+            case SCHEDULE_INFO      -> buildScheduleContext(role, userId);
+            case TICKET_INFO        -> buildTicketContext(role, userId);
+            case NOTIFICATIONS      -> buildNotificationsContext(userId, role);
+            case ALERTS             -> buildAlertsContext(userId, role);
             default                 -> "No data context available.";
         };
     }
 
     // ── Supplier Info (RICH CONTEXT) ──────────────────────────────────────────
 
-    private String buildSupplierInfoContext() {
+    private String buildSupplierInfoContext(String role) {
+        if ("technician".equalsIgnoreCase(role)) {
+            return "Access Denied: Technicians do not have access to supplier information.";
+        }
         List<Map<String, Object>> suppliers = stockClient.getAllSuppliers();
         if (suppliers.isEmpty()) return "No suppliers registered.";
 
@@ -135,7 +148,10 @@ public class QueryRouterService {
         return sb.toString();
     }
 
-    private List<Map<String, Object>> getSupplierInfoData() {
+    private List<Map<String, Object>> getSupplierInfoData(String role) {
+        if ("technician".equalsIgnoreCase(role)) {
+            return Collections.emptyList();
+        }
         return stockClient.getAllSuppliers().stream()
                 .map(s -> {
                     Map<String, Object> map = new LinkedHashMap<>();
@@ -178,21 +194,97 @@ public class QueryRouterService {
                 .collect(Collectors.toList());
     }
 
+    // ── Shelf Info (RICH CONTEXT) ──────────────────────────────────────────
+
+    private String buildShelfInfoContext() {
+        List<Map<String, Object>> shelves = stockClient.getAllShelves();
+        if (shelves.isEmpty()) return "No shelves found in the system.";
+
+        StringBuilder sb = new StringBuilder("SHELF INFORMATION:\n\n");
+        for (Map<String, Object> s : shelves) {
+            sb.append("• Shelf #").append(s.getOrDefault("nb", "N/A")).append("\n");
+            sb.append("  Location: ").append(s.getOrDefault("description", "Main Warehouse")).append("\n");
+            sb.append("  Capacity: ").append(s.getOrDefault("maxQte", "N/A")).append("\n");
+            sb.append("  Current Qty: ").append(s.getOrDefault("currentQte", "N/A")).append("\n\n");
+        }
+        return sb.toString();
+    }
+
+    private List<Map<String, Object>> getShelfInfoData() {
+        return stockClient.getAllShelves().stream()
+                .map(s -> {
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put("shelf", s.getOrDefault("nb", "N/A"));
+                    map.put("current", s.getOrDefault("currentQte", 0));
+                    map.put("max", s.getOrDefault("maxQte", 0));
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+
+    // ── Type Info (RICH CONTEXT) ──────────────────────────────────────────
+
+    private String buildTypeInfoContext() {
+        List<Map<String, Object>> equipment = stockClient.getAllEquipment();
+        Map<String, Long> typeCounts = equipment.stream()
+                .collect(Collectors.groupingBy(e -> String.valueOf(e.getOrDefault("type", "Unknown")), Collectors.counting()));
+
+        if (typeCounts.isEmpty()) return "No equipment types found.";
+
+        StringBuilder sb = new StringBuilder("EQUIPMENT TYPE DISTRIBUTION:\n\n");
+        typeCounts.forEach((type, count) -> {
+            sb.append("• ").append(type).append(": ").append(count).append(" items\n");
+        });
+        return sb.toString();
+    }
+
+    private List<Map<String, Object>> getTypeInfoData() {
+        List<Map<String, Object>> equipment = stockClient.getAllEquipment();
+        Map<String, Long> typeCounts = equipment.stream()
+                .collect(Collectors.groupingBy(e -> String.valueOf(e.getOrDefault("type", "Unknown")), Collectors.counting()));
+
+        return typeCounts.entrySet().stream()
+                .map(entry -> Map.<String, Object>of("type", entry.getKey(), "count", entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
     // ── Rest of builders (Updated for better detail) ─────────────────────────
 
-    private String buildStockStatusContext(String message) {
+    private String buildStockStatusContext(String message, String role, String userId) {
         List<Map<String, Object>> all = stockClient.getAllEquipment();
         String filterStatus = detectStatus(message);
         List<Map<String, Object>> list = (filterStatus != null)
                 ? all.stream().filter(e -> filterStatus.equalsIgnoreCase(String.valueOf(e.get("status")))).collect(Collectors.toList())
                 : all;
 
-        StringBuilder sb = new StringBuilder("EQUIPMENT STATUS OVERVIEW:\n\n");
-        list.stream().limit(15).forEach(e -> 
-            sb.append("• ").append(e.getOrDefault("equipmentName", "N/A"))
-              .append(" [SN: ").append(e.getOrDefault("serialNumber", "N/A")).append("]")
-              .append(" - Status: ").append(e.getOrDefault("status", "N/A")).append("\n")
-        );
+        boolean isTech = "technician".equalsIgnoreCase(role);
+        StringBuilder sb = new StringBuilder("EQUIPMENT STOCK OVERVIEW:\n\n");
+        
+        // Technicians see limited results
+        int limit = isTech ? 10 : 20;
+        
+        list.stream().limit(limit).forEach(e -> {
+            sb.append("• ").append(e.getOrDefault("equipmentName", "N/A"));
+            sb.append(" [").append(e.getOrDefault("type", "N/A")).append("]");
+            sb.append(" - Status: ").append(e.getOrDefault("status", "N/A"));
+            
+            // Techs can see OS/Specs
+            if (isTech) {
+                Object specs = e.get("specifications");
+                if (specs instanceof Map) {
+                    sb.append(" | Details: ").append(specs);
+                }
+            } else {
+                // Stock Managers see location
+                sb.append(" | Shelf: ").append(e.getOrDefault("shelfId", "N/A"));
+            }
+            sb.append("\n");
+        });
+        
+        if (list.size() > limit) {
+            sb.append("\n(Total items in stock: ").append(list.size()).append(". Only showing first ").append(limit).append(".)\n");
+        }
+        
         return sb.toString();
     }
 
@@ -201,29 +293,85 @@ public class QueryRouterService {
         String filterStatus = detectStatus(message);
         return all.stream()
                 .filter(e -> filterStatus == null || filterStatus.equalsIgnoreCase(String.valueOf(e.get("status"))))
-                .map(e -> Map.of("name", e.getOrDefault("equipmentName", "N/A"), "status", e.getOrDefault("status", "N/A")))
+                .map(e -> {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("name", e.getOrDefault("equipmentName", "N/A"));
+                    m.put("status", e.getOrDefault("status", "N/A"));
+                    m.put("type", e.getOrDefault("type", "N/A"));
+                    return m;
+                })
                 .collect(Collectors.toList());
     }
 
-    private String buildScheduleContext() {
+    private String buildScheduleContext(String role, String userId) {
         List<Map<String, Object>> tasks = userClient.getAllTasks();
-        return "Schedule Tasks: " + tasks.stream().map(t -> String.valueOf(t.get("title"))).collect(Collectors.joining(", "));
+        if ("technician".equalsIgnoreCase(role) && userId != null) {
+            tasks = tasks.stream()
+                    .filter(t -> {
+                        String assignedId = String.valueOf(t.getOrDefault("assignedTo", t.get("userId")));
+                        return userId.equals(assignedId);
+                    })
+                    .collect(Collectors.toList());
+        }
+        
+        if (tasks.isEmpty()) return "No scheduled tasks found.";
+        
+        StringBuilder sb = new StringBuilder("SCHEDULED TASKS:\n\n");
+        for (Map<String, Object> t : tasks) {
+            sb.append("• ").append(t.getOrDefault("title", "N/A"))
+              .append(" | Priority: ").append(t.getOrDefault("priority", "N/A"))
+              .append(" | Due: ").append(t.getOrDefault("dueDate", "N/A"))
+              .append(" | Status: ").append(t.getOrDefault("status", "N/A"))
+              .append("\n");
+        }
+        return sb.toString();
     }
 
-    private List<Map<String, Object>> getScheduleData() {
-        return userClient.getAllTasks().stream().map(t -> Map.of("task", t.get("title"), "status", t.get("status"))).collect(Collectors.toList());
+    private List<Map<String, Object>> getScheduleData(String role, String userId) {
+        List<Map<String, Object>> tasks = userClient.getAllTasks();
+        if ("technician".equalsIgnoreCase(role) && userId != null) {
+            tasks = tasks.stream()
+                    .filter(t -> {
+                        String assignedId = String.valueOf(t.getOrDefault("assignedTo", t.get("userId")));
+                        return userId.equals(assignedId);
+                    })
+                    .collect(Collectors.toList());
+        }
+        return tasks.stream()
+                .map(t -> Map.of("task", t.get("title"), "status", t.get("status"), "priority", t.getOrDefault("priority", "LOW")))
+                .collect(Collectors.toList());
     }
 
-    private String buildTicketContext() {
+    private String buildTicketContext(String role, String userId) {
         List<Map<String, Object>> tickets = userClient.getAllTickets();
+        if ("technician".equalsIgnoreCase(role) && userId != null && !userId.isBlank()) {
+            tickets = tickets.stream()
+                    .filter(t -> {
+                        String assignedId = String.valueOf(t.getOrDefault("assignedTo", t.get("userId")));
+                        return userId.equals(assignedId);
+                    })
+                    .collect(Collectors.toList());
+        }
         return "Support Tickets: " + tickets.size();
     }
 
-    private List<Map<String, Object>> getTicketData() {
-        return userClient.getAllTickets().stream().map(t -> Map.of("subject", t.get("subject"))).collect(Collectors.toList());
+    private List<Map<String, Object>> getTicketData(String role, String userId) {
+        List<Map<String, Object>> tickets = userClient.getAllTickets();
+        if ("technician".equalsIgnoreCase(role) && userId != null) {
+            tickets = tickets.stream()
+                    .filter(t -> {
+                        String assignedId = String.valueOf(t.getOrDefault("assignedTo", t.get("userId")));
+                        return userId.equals(assignedId);
+                    })
+                    .collect(Collectors.toList());
+        }
+        return tickets.stream().map(t -> Map.of("subject", t.get("subject"), "status", t.get("status"))).collect(Collectors.toList());
     }
 
-    private String buildLowStockContext() {
+    private String buildLowStockContext(String role) {
+        if ("technician".equalsIgnoreCase(role)) {
+            return "Access Denied: Technicians do not have access to stock replenishment levels.";
+        }
         List<Map<String, Object>> low = stockClient.getAllShelves().stream()
                 .filter(s -> {
                     Object c = s.get("currentQte");
@@ -233,32 +381,93 @@ public class QueryRouterService {
         return "Low Stock: " + low.size() + " items.";
     }
 
-    private List<Map<String, Object>> getLowStockData() {
-        return stockClient.getAllShelves().stream().filter(s -> s.get("currentQte") != null).map(s -> Map.of("shelf", s.get("nb"), "qty", s.get("currentQte"))).collect(Collectors.toList());
+    private List<Map<String, Object>> getLowStockData(String role) {
+        if ("technician".equalsIgnoreCase(role)) return Collections.emptyList();
+        return stockClient.getAllShelves().stream()
+                .filter(s -> s.get("currentQte") != null)
+                .map(s -> Map.of("shelf", s.get("nb"), "qty", s.get("currentQte")))
+                .collect(Collectors.toList());
+    }
+
+    private String buildNotificationsContext(String userId, String role) {
+        List<Map<String, Object>> notifs = userClient.getNotifications(userId, role);
+        if (notifs.isEmpty()) return "No notifications.";
+        
+        StringBuilder sb = new StringBuilder("RECENT NOTIFICATIONS:\n\n");
+        notifs.stream().limit(10).forEach(n -> 
+            sb.append("• [").append(n.getOrDefault("type", "INFO")).append("] ")
+              .append(n.getOrDefault("title", "Untitled")).append(": ")
+              .append(n.getOrDefault("message", "")).append("\n")
+        );
+        return sb.toString();
+    }
+
+    private String buildAlertsContext(String userId, String role) {
+        List<Map<String, Object>> alerts = userClient.getAlerts(userId, role);
+        if (alerts.isEmpty()) return "No active alerts.";
+        
+        StringBuilder sb = new StringBuilder("ACTIVE SYSTEM ALERTS:\n\n");
+        alerts.stream().limit(10).forEach(a -> 
+            sb.append("• [").append(a.getOrDefault("priority", "MEDIUM")).append("] ")
+              .append(a.getOrDefault("title", "Alert")).append(": ")
+              .append(a.getOrDefault("message", "")).append("\n")
+        );
+        return sb.toString();
     }
 
     private String buildRequestStatusContext(String role, String userId) {
-        return "Requests: " + technicianClient.getAllPartRequests().size();
+        List<Map<String, Object>> requests;
+        if ("technician".equalsIgnoreCase(role) && userId != null && !userId.isBlank()) {
+            requests = technicianClient.getPartRequestsByRequester(userId);
+        } else {
+            requests = technicianClient.getAllPartRequests();
+        }
+        if (requests.isEmpty()) return "No part requests found.";
+        StringBuilder sb = new StringBuilder("PART REQUESTS:\n\n");
+        for (Map<String, Object> r : requests) {
+            sb.append("• ").append(r.getOrDefault("description", "N/A"))
+              .append(" — Status: ").append(r.getOrDefault("status", "N/A"))
+              .append(" [ID: ").append(r.getOrDefault("id", "N/A")).append("]\n");
+        }
+        return sb.toString();
     }
 
     private List<Map<String, Object>> getRequestStatusData(String role, String userId) {
-        return technicianClient.getAllPartRequests().stream().map(r -> Map.of("status", r.get("status"))).collect(Collectors.toList());
+        List<Map<String, Object>> requests;
+        if ("technician".equalsIgnoreCase(role) && userId != null && !userId.isBlank()) {
+            requests = technicianClient.getPartRequestsByRequester(userId);
+        } else {
+            requests = technicianClient.getAllPartRequests();
+        }
+        return requests.stream()
+                .map(r -> Map.<String, Object>of(
+                        "description", r.getOrDefault("description", "N/A"),
+                        "status",      r.getOrDefault("status", "N/A"),
+                        "id",          r.getOrDefault("id", "N/A")
+                ))
+                .collect(Collectors.toList());
     }
 
-    private String buildPartsAvailabilityContext() {
-        return "Available: " + stockClient.getEquipmentByStatus("Available").size();
+    private String buildPartsAvailabilityContext(String role, String userId) {
+        return "Available Parts: " + stockClient.getEquipmentByStatus("Available").size();
     }
 
-    private List<Map<String, Object>> getPartsAvailabilityData() {
-        return stockClient.getEquipmentByStatus("Available").stream().map(e -> Map.of("name", e.get("equipmentName"))).collect(Collectors.toList());
+    private List<Map<String, Object>> getPartsAvailabilityData(String role, String userId) {
+        return stockClient.getEquipmentByStatus("Available").stream()
+                .map(e -> Map.of("name", e.getOrDefault("equipmentName", "N/A")))
+                .collect(Collectors.toList());
     }
 
-    private String buildEquipmentStatusContext() {
-        return "Broken/Maintenance: " + stockClient.getEquipmentByStatus("Broken").size();
+    private String buildEquipmentStatusContext(String role, String userId) {
+        // Broken equipment is relevant to technicians
+        List<Map<String, Object>> broken = stockClient.getEquipmentByStatus("Broken");
+        return "Broken/Maintenance Inventory: " + broken.size() + " items needing attention.";
     }
 
-    private List<Map<String, Object>> getEquipmentStatusData() {
-        return stockClient.getEquipmentByStatus("Broken").stream().map(e -> Map.of("name", e.get("equipmentName"))).collect(Collectors.toList());
+    private List<Map<String, Object>> getEquipmentStatusData(String role, String userId) {
+        return stockClient.getEquipmentByStatus("Broken").stream()
+                .map(e -> Map.of("name", e.getOrDefault("equipmentName", "N/A"), "status", "Broken"))
+                .collect(Collectors.toList());
     }
 
     private String detectStatus(String message) {

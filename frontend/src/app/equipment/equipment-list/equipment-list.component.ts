@@ -9,6 +9,7 @@ import { ShelfService } from '../../shelf/shelf.service';
 import { Shelf } from '../../shelf/shelf.model';
 import { CategoryService } from '../../category-manager/category.service';
 import { EquipmentCategory } from '../../category-manager/category.model';
+import { ToastService } from '../../shared/toast.service';
 import { forkJoin } from 'rxjs';
 import * as QRCode from 'qrcode';
 
@@ -107,7 +108,8 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     private equipmentService: EquipmentService,
     private supplierService: SupplierService,
     private shelfService: ShelfService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -349,6 +351,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     if (this.isBulkDelete && this.groupToDeleteIds) {
       this.equipmentService.deleteBulkEquipment(this.groupToDeleteIds).subscribe({
         next: () => {
+          this.toastService.success(`Successfully deleted ${this.groupToDeleteIds?.length} items.`);
           this.loadEquipments();
           this.closeDeleteModal();
         },
@@ -360,6 +363,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     } else if (this.itemToDeleteId) {
       this.equipmentService.deleteEquipment(this.itemToDeleteId).subscribe({
         next: () => {
+          this.toastService.success(`Equipment deleted successfully.`);
           this.loadEquipments();
           this.closeDeleteModal();
         },
@@ -407,6 +411,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
       null as any
     ).subscribe({
       next: () => {
+        this.toastService.success(`Group "${newGroupName}" updated successfully.`);
         this.isBulkSaving = false;
         if (this.editingGroup) {
           // Update group display name locally (does NOT cascade to individual equipment names)

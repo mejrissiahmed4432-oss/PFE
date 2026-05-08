@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EquipmentListComponent } from './equipment-list/equipment-list.component';
 import { EquipmentFormComponent } from './equipment-form/equipment-form.component';
@@ -7,6 +7,8 @@ import { Equipment } from './equipment.model';
 import { EquipmentService } from './equipment.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { RefreshService } from '../shared/refresh.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-equipment',
@@ -15,7 +17,7 @@ import { catchError } from 'rxjs/operators';
   templateUrl: './equipment.component.html',
   styleUrl: './equipment.component.css'
 })
-export class EquipmentComponent implements OnInit {
+export class EquipmentComponent implements OnInit, OnDestroy {
   mode: 'list' | 'form' = 'list';
   equipmentToEdit: Equipment | null = null;
   formViewOnly: boolean = false;
@@ -26,9 +28,29 @@ export class EquipmentComponent implements OnInit {
   isAddSimilar: boolean = false;
   /** True while fetching file data for Add Similar — prevents wizard from opening prematurely */
   isLoadingAddSimilar: boolean = false;
+  private refreshSubscription?: Subscription;
 
-  constructor(private equipmentService: EquipmentService) {}
-  ngOnInit(): void {}
+  constructor(
+    private equipmentService: EquipmentService,
+    private refreshService: RefreshService
+  ) {}
+  
+  ngOnInit(): void {
+    // Listen for global refresh events (e.g., from AI Assistant)
+    this.refreshSubscription = this.refreshService.refresh$.subscribe(actionType => {
+      // Only refresh if the action is relevant to equipment or it's a general refresh
+      if (actionType.includes('EQUIPMENT') || actionType === 'GENERAL') {
+        console.log('EquipmentComponent: Refreshing equipment list due to action:', actionType);
+        this.refreshFlag++;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
+  }
 
   openAdd(): void {
     this.showWizard = true;

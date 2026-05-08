@@ -100,9 +100,18 @@ public class MessageController {
     @PostMapping
     public ResponseEntity<?> sendMessage(@RequestBody Message message) {
         User currentUser = getCurrentUser();
-        if (currentUser == null) return ResponseEntity.status(401).body("Unauthorized");
+        
+        // If no user in security context, we check if it's an internal system call (senderId must be provided)
+        if (currentUser == null) {
+            if (message.getSenderId() == null || message.getSenderId().isBlank()) {
+                return ResponseEntity.status(401).body("Unauthorized: No sender context found.");
+            }
+            // Trust the senderId provided in the payload for internal/system calls
+        } else {
+            // Override with authenticated user for standard web requests
+            message.setSenderId(currentUser.getId());
+        }
 
-        message.setSenderId(currentUser.getId());
         message.setTimestamp(LocalDateTime.now());
         if (message.getStatus() == null) {
             message.setStatus("SENT");

@@ -179,7 +179,7 @@
                 <td>
                   <div class="modern-cell-main">
                     <div class="logo-circle" [ngClass]="{'blue': eq.category === 'Laptop', 'emerald': eq.category === 'Desktop', 'amber': eq.category === 'Tablet'}">
-                      {{ eq.equipmentName.charAt(0) }}
+                      {{ (eq.equipmentName || '?').charAt(0) }}
                     </div>
                     <div class="cell-text-stack">
                        <span class="cell-title">{{ eq.equipmentName }}</span>

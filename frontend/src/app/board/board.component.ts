@@ -30,12 +30,13 @@ import { TranslationService } from '../shared/translation.service';
 import { PartRequestService } from '../parts-management/part-request.service';
 import { EmployeeListComponent } from '../employee/employee-list/employee-list.component';
 import { HrDashboardComponent } from '../hr-dashboard/hr-dashboard.component';
+import { ToastComponent } from '../shared/toast/toast.component';
 
 @Component({
   selector: 'app-board',
   standalone: true,
 
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, ToastComponent],
 
   providers: [MessagingService],
   templateUrl: './board.component.html',
@@ -268,7 +269,9 @@ export class BoardComponent implements OnInit {
   }
 
   toggleAssistant(): void {
+    console.log('Toggling assistant. Current state:', this.isAssistantOpen);
     this.isAssistantOpen = !this.isAssistantOpen;
+    console.log('New state:', this.isAssistantOpen);
   }
 
   toggleNotifications(event: Event): void {

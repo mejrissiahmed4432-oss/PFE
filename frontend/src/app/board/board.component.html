@@ -678,6 +678,9 @@
     </button>
 
     <!-- AI Assistant Panel Overlay -->
-    <app-ai-assistant [isOpen]="isAssistantOpen" (close)="toggleAssistant()"></app-ai-assistant>
   </div>
+
 </div>
+<!-- AI Assistant Panel Overlay - Moved to top level for absolute reliability -->
+<app-ai-assistant [isOpen]="isAssistantOpen" (close)="toggleAssistant()"></app-ai-assistant>
+<app-toast></app-toast>

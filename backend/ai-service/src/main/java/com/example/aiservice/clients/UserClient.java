@@ -58,7 +58,72 @@ public class UserClient {
             return Collections.emptyList();
         }
     }
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getNotifications(String userId, String role) {
+        try {
+            return webClient.get()
+                    .uri(uriBuilder -> uriBuilder.path("/api/notifications")
+                            .queryParam("userId", userId)
+                            .queryParam("role", role)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(List.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Failed to fetch notifications: {}", e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getAlerts(String userId, String role) {
+        try {
+            return webClient.get()
+                    .uri(uriBuilder -> uriBuilder.path("/api/alerts")
+                            .queryParam("userId", userId)
+                            .queryParam("role", role)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(List.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Failed to fetch alerts: {}", e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getAllUsers() {
+        try {
+            return webClient.get()
+                    .uri("/api/users")
+                    .retrieve()
+                    .bodyToMono(List.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Failed to fetch all users: {}", e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
     // ── Write Operations (AI Actions) ─────────────────────────────────────────
+
+    @SuppressWarnings("unchecked")
+    public String sendMessage(Map<String, Object> payload) {
+        try {
+            webClient.post()
+                    .uri("/api/messages")
+                    .bodyValue(payload)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+            String recipient = String.valueOf(payload.getOrDefault("receiverId", "Recipient"));
+            return "✅ Message sent to **" + recipient + "**.";
+        } catch (Exception e) {
+            log.error("Failed to send message: {}", e.getMessage());
+            throw new RuntimeException("Could not send message: " + e.getMessage());
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public String createTask(Map<String, Object> payload, String userId) {
