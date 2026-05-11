@@ -19,4 +19,13 @@ public class StockManagerMicroserviceApplication {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
+    @Bean
+    public org.springframework.boot.CommandLineRunner logEndpoints(org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping mapping) {
+        return args -> {
+            System.out.println("--- REGISTERED ENDPOINTS ---");
+            mapping.getHandlerMethods().forEach((key, value) -> System.out.println("Mapped: " + key));
+            System.out.println("----------------------------");
+        };
+    }
 }

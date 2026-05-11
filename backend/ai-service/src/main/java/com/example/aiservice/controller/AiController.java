@@ -3,6 +3,13 @@ package com.example.aiservice.controller;
 import com.example.aiservice.model.AiRequest;
 import com.example.aiservice.model.AiResponse;
 import com.example.aiservice.model.QueryIntent;
+import com.example.aiservice.model.EquipmentParsingRequest;
+import com.example.aiservice.model.EquipmentParsingResponse;
+import com.example.aiservice.model.EquipmentSuggestionRequest;
+import com.example.aiservice.model.ParsedItem;
+import com.example.aiservice.model.AutocompleteRequest;
+import com.example.aiservice.model.QuotationAnalysisRequest;
+import com.example.aiservice.model.QuotationAnalysisResponse;
 import com.example.aiservice.service.*;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -56,6 +63,7 @@ public class AiController {
     private final VectorStoreService vectorStore;
 
     private final ActionDetectorService actionDetector;
+    private final EquipmentParsingService equipmentParsingService;
 
     public AiController(ChatModel chatModel,
             IntentService intentService,
@@ -65,7 +73,8 @@ public class AiController {
             DataIngestionService dataIngestion,
 
             VectorStoreService vectorStore,
-            ActionDetectorService actionDetector) {
+            ActionDetectorService actionDetector,
+            EquipmentParsingService equipmentParsingService) {
 
         this.chatModel = chatModel;
         this.intentService = intentService;
@@ -76,6 +85,7 @@ public class AiController {
         this.vectorStore = vectorStore;
 
         this.actionDetector = actionDetector;
+        this.equipmentParsingService = equipmentParsingService;
 
     }
 
@@ -199,6 +209,65 @@ public class AiController {
         return ResponseEntity.ok(Map.of(
                 "role", role,
                 "intents", intents.stream().map(Enum::name).toList()));
+    }
+
+    @PostMapping("/parse-equipment-request")
+    public ResponseEntity<EquipmentParsingResponse> parseEquipmentRequest(@Valid @RequestBody EquipmentParsingRequest request) {
+        log.info("Parsing equipment request text: '{}'", request.getText());
+        try {
+            List<ParsedItem> items = equipmentParsingService.parseEquipmentRequest(request.getText());
+            return ResponseEntity.ok(new EquipmentParsingResponse(items, true));
+        } catch (Exception e) {
+            log.error("Failed to parse equipment request: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().body(
+                    EquipmentParsingResponse.error("Parsing failed: " + e.getMessage())
+            );
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // POST /ai/suggest-equipment
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @PostMapping("/suggest-equipment")
+    public ResponseEntity<List<String>> suggestEquipment(@RequestBody EquipmentSuggestionRequest request) {
+        log.info("Suggesting equipment for cart with {} items", request.getCartItems() != null ? request.getCartItems().size() : 0);
+        try {
+            if (request.getCartItems() == null || request.getCartItems().isEmpty()) {
+                return ResponseEntity.ok(Collections.emptyList());
+            }
+
+            StringBuilder cartContext = new StringBuilder();
+            for (EquipmentSuggestionRequest.CartItem item : request.getCartItems()) {
+                cartContext.append("- ").append(item.getName());
+                if (item.getSelectedSpecs() != null && !item.getSelectedSpecs().isEmpty()) {
+                    cartContext.append(" (").append(item.getSelectedSpecs().toString()).append(")");
+                }
+                cartContext.append("\n");
+            }
+
+            List<String> suggestions = equipmentParsingService.suggestRelatedEquipment(cartContext.toString());
+            return ResponseEntity.ok(suggestions);
+        } catch (Exception e) {
+            log.error("Failed to suggest equipment: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/autocomplete-specs")
+    public ResponseEntity<List<String>> autocompleteSpecs(@RequestBody AutocompleteRequest request) {
+        if (request.getText() == null || request.getText().trim().isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+        
+        List<String> completions = equipmentParsingService.autocompleteSpecsWithAI(request.getText());
+        return ResponseEntity.ok(completions);
+    }
+
+    @PostMapping("/compare-quotations")
+    public ResponseEntity<QuotationAnalysisResponse> compareQuotations(@RequestBody QuotationAnalysisRequest request) {
+        log.info("Comparing quotations for request: '{}'", request.getRequestNotes());
+        return ResponseEntity.ok(equipmentParsingService.compareQuotations(request));
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────

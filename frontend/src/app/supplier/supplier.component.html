@@ -1,7 +1,7 @@
 <div class="supplier-container">
 
   <!-- List Mode Header -->
-  <div class="header">
+  <div class="header" *ngIf="userRole !== 'STOCK_MANAGER'">
     <div class="actions">
       <button class="primary-btn btn-premium" (click)="openAdd()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -9,11 +9,18 @@
       </button>
     </div>
   </div>
+  
+  <div class="header-read-only" *ngIf="userRole === 'STOCK_MANAGER'">
+    <p class="text-xs font-black text-slate-400 uppercase tracking-widest px-4 py-2 bg-slate-100 rounded-lg border border-slate-200 inline-block">
+      Supplier Database (Read-Only)
+    </p>
+  </div>
 
   <!-- List -->
   <div class="content">
     <app-supplier-list
       [refreshTrigger]="refreshFlag"
+      [userRole]="userRole"
       (editEvent)="openEdit($event)"
       (viewEvent)="openView($event)">
     </app-supplier-list>

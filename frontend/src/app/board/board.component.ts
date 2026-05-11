@@ -31,12 +31,14 @@ import { PartRequestService } from '../parts-management/part-request.service';
 import { EmployeeListComponent } from '../employee/employee-list/employee-list.component';
 import { HrDashboardComponent } from '../hr-dashboard/hr-dashboard.component';
 import { ToastComponent } from '../shared/toast/toast.component';
+import { ProcurementComponent } from '../procurement/procurement.component';
+import { ProcurementService } from '../procurement/procurement.service';
 
 @Component({
   selector: 'app-board',
   standalone: true,
 
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, ToastComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, ToastComponent, ProcurementComponent],
 
   providers: [MessagingService],
   templateUrl: './board.component.html',
@@ -56,6 +58,7 @@ export class BoardComponent implements OnInit {
   private userSub: Subscription | undefined;
   private pollSub: Subscription | undefined;
   private socketSub: Subscription | undefined;
+  private procSub: Subscription | undefined;
 
   isNotificationsOpen: boolean = false;
   isLanguageOpen: boolean = false;
@@ -63,6 +66,7 @@ export class BoardComponent implements OnInit {
   unreadNotificationsCount: number = 0;
 
   pendingRequestsCount: number = 0;
+  pendingProcurementCount: number = 0;
 
 
   constructor(
@@ -75,7 +79,8 @@ export class BoardComponent implements OnInit {
     private notificationService: NotificationService,
 
     public ts: TranslationService,
-    private partRequestService: PartRequestService
+    private partRequestService: PartRequestService,
+    private procurementService: ProcurementService
 
   ) { }
 
@@ -126,6 +131,11 @@ export class BoardComponent implements OnInit {
             this.pollSub = interval(60000).subscribe(() => this.loadUnreadCount());
           });
         }
+        // 3. Procurement Refresh
+        this.procSub?.unsubscribe();
+        this.procSub = this.procurementService.requestCreated$.subscribe(() => {
+          this.loadUnreadCount();
+        });
       }
     });
 
@@ -141,6 +151,7 @@ export class BoardComponent implements OnInit {
     this.userSub?.unsubscribe();
     this.pollSub?.unsubscribe();
     this.socketSub?.unsubscribe();
+    this.procSub?.unsubscribe();
   }
 
   loadUnreadCount(): void {
@@ -168,12 +179,22 @@ export class BoardComponent implements OnInit {
 
 
     // 4. Load Pending Requests (for managers)
-    if (role !== 'TECHNICIAN' && role !== 'IT_MANAGER') {
+    if (role === 'STOCK_MANAGER' || role === 'IT_MANAGER' || role === 'ADMIN') {
+      // Part Requests
       this.partRequestService.getAllRequests().subscribe(requests => {
         this.pendingRequestsCount = requests.filter(r => r.status === 'PENDING').length;
       });
-    }
 
+      // Procurement Requests
+      this.procurementService.getAllRequests().subscribe(requests => {
+        if (role === 'IT_MANAGER') {
+          this.pendingProcurementCount = requests.filter(r => r.status === 'PENDING_IT_APPROVAL' || r.status === 'RESPONDED').length;
+        } else if (role === 'STOCK_MANAGER' || role === 'ADMIN') {
+          // Stock Managers care about approved requests that need RFQs or further action
+          this.pendingProcurementCount = requests.filter(r => r.status === 'APPROVED' || r.status === 'PENDING_IT_APPROVAL' || r.status === 'RESPONDED').length;
+        }
+      });
+    }
   }
 
   private mapNotifToNotificationItem(notif: Notification): any {
@@ -297,6 +318,7 @@ export class BoardComponent implements OnInit {
       case 'parts': return this.selectedResourceFilter ? `${this.t('Resources')} - ${this.selectedResourceFilter}` : this.t('Resources');
       case 'requests': return 'My Part Requests';
       case 'manager-requests': return 'Incoming Part Requests';
+      case 'procurement': return 'Procurement & Orders';
 
       case 'tickets': return this.t('Tickets');
 

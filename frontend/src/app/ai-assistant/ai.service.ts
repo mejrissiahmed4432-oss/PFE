@@ -144,4 +144,8 @@ export class AiService {
       messages: []
     };
   }
+
+  compareQuotations(request: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/compare-quotations`, request);
+  }
 }

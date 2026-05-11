@@ -61,6 +61,11 @@ spring:
           predicates:
             - Path=/ws/**
 
+        - id: procurement-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/procurement/**, /api/procurement/catalog, /api/procurement/requests, /api/public/**
+
         - id: application-route
           uri: lb://stock-manager-microservice
           predicates:

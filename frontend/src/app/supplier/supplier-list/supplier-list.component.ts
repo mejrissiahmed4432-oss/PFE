@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 })
 export class SupplierListComponent implements OnInit, OnChanges {
   @Input() refreshTrigger: number = 0;
+  @Input() userRole: string = '';
   @Output() editEvent = new EventEmitter<Supplier>();
   @Output() viewEvent = new EventEmitter<Supplier>();
 
