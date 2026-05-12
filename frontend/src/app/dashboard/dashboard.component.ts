@@ -1,8 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardService, DashboardStats } from './dashboard.service';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { RefreshService } from '../shared/refresh.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,9 +13,10 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   stats: DashboardStats | null = null;
   isLoading = true;
+  private refreshSubscription?: Subscription;
 
   // Pie Chart (Category) - Modernized
   public pieChartOptions: ChartConfiguration<'doughnut'>['options'] = {
@@ -137,10 +140,25 @@ export class DashboardComponent implements OnInit {
   };
   public miniBarChartType: 'bar' = 'bar';
 
-  constructor(private dashboardService: DashboardService) { }
-
+  constructor(
+    private dashboardService: DashboardService,
+    private refreshService: RefreshService
+  ) { }
+  
   ngOnInit(): void {
     this.loadStats();
+
+    // Listen for global refresh events (e.g., from AI Assistant)
+    this.refreshSubscription = this.refreshService.refresh$.subscribe(actionType => {
+      console.log('DashboardComponent: Refreshing stats due to action:', actionType);
+      this.loadStats();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
   }
 
   loadStats(): void {

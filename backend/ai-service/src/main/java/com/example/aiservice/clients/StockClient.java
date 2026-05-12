@@ -159,4 +159,73 @@ public class StockClient {
             throw new RuntimeException("Could not update equipment: " + e.getMessage());
         }
     }
+
+    public String deleteEquipment(String id) {
+        try {
+            webClient.delete()
+                    .uri("/api/equipment/{id}", id)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+            return "✅ Equipment with ID **" + id + "** has been successfully deleted from inventory.";
+        } catch (Exception e) {
+            log.error("Failed to delete equipment {}: {}", id, e.getMessage());
+            throw new RuntimeException("Could not delete equipment: " + e.getMessage());
+        }
+    }
+
+    // ── Category Operations ───────────────────────────────────────────────────
+
+    @SuppressWarnings("unchecked")
+    public String createCategory(Map<String, Object> payload) {
+        try {
+            Map<String, Object> result = webClient.post()
+                    .uri("/api/equipment-categories")
+                    .bodyValue(payload)
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .block();
+            String name = result != null ? String.valueOf(result.getOrDefault("name", "Unknown")) : "Unknown";
+            return "✅ Category **" + name + "** has been successfully created.";
+        } catch (Exception e) {
+            log.error("Failed to create category: {}", e.getMessage());
+            throw new RuntimeException("Could not create category: " + e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public String addTypeToCategory(String categoryId, Map<String, Object> payload) {
+        try {
+            Map<String, Object> result = webClient.post()
+                    .uri("/api/equipment-categories/{id}/types", categoryId)
+                    .bodyValue(payload)
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .block();
+            String typeName = String.valueOf(payload.getOrDefault("name", "Unknown"));
+            return "✅ Type **" + typeName + "** has been added to the category.";
+        } catch (Exception e) {
+            log.error("Failed to add type to category {}: {}", categoryId, e.getMessage());
+            throw new RuntimeException("Could not add type: " + e.getMessage());
+        }
+    }
+
+    // ── Supplier Operations ──────────────────────────────────────────────────
+
+    @SuppressWarnings("unchecked")
+    public String createSupplier(Map<String, Object> payload) {
+        try {
+            Map<String, Object> result = webClient.post()
+                    .uri("/api/suppliers")
+                    .bodyValue(payload)
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .block();
+            String name = result != null ? String.valueOf(result.getOrDefault("companyName", "Unknown")) : "Unknown";
+            return "✅ Supplier **" + name + "** has been successfully added.";
+        } catch (Exception e) {
+            log.error("Failed to create supplier: {}", e.getMessage());
+            throw new RuntimeException("Could not create supplier: " + e.getMessage());
+        }
+    }
 }

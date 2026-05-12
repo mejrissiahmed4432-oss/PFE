@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth.service';
@@ -6,6 +6,8 @@ import { TaskService } from './task.service';
 import { AlertService } from '../alerts/alert.service';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Task } from './task.model';
+import { RefreshService } from '../shared/refresh.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-schedule',
@@ -14,7 +16,7 @@ import { Task } from './task.model';
   templateUrl: './schedule.component.html',
   styleUrl: './schedule.component.css'
 })
-export class ScheduleComponent implements OnInit {
+export class ScheduleComponent implements OnInit, OnDestroy {
   currentUser: any;
   currentFilter: 'All' | 'Today' | 'Upcoming' | 'Completed' = 'All';
   selectedTask: Task | null = null;
@@ -44,11 +46,13 @@ export class ScheduleComponent implements OnInit {
   };
 
   tasks: Task[] = [];
+  private refreshSubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
     private taskService: TaskService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private refreshService: RefreshService
   ) {}
 
   ngOnInit(): void {
@@ -56,6 +60,18 @@ export class ScheduleComponent implements OnInit {
     this.newTask = this.emptyTask();
     this.buildCalendar();
     this.loadTasks();
+
+    // Listen for global refresh events (e.g., from AI Assistant)
+    this.refreshSubscription = this.refreshService.refresh$.subscribe(actionType => {
+      console.log('ScheduleComponent: Refreshing tasks due to action:', actionType);
+      this.loadTasks();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshSubscription) {
+      this.refreshSubscription.unsubscribe();
+    }
   }
 
   emptyTask(): Partial<Task> {

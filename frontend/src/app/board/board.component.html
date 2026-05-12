@@ -134,7 +134,7 @@
       </a>
 
       <!-- Suppliers -->
-      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'"
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'STOCK_MANAGER' || user?.role === 'IT_MANAGER' || user?.role === 'ADMIN'"
         [ngClass]="activeTab === 'suppliers' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'suppliers'"
         title="Suppliers">
         <span *ngIf="activeTab === 'suppliers'" class="nav-item-indicator"></span>
@@ -149,22 +149,39 @@
           t('Suppliers') }}</span>
       </a>
 
-      <!-- Orders -->
-      <a href="#" class="nav-item nav-item-default" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'"
-        title="Orders">
-        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-          <path d="M3 6h18" />
-          <path d="M16 10a4 4 0 0 1-8 0" />
-        </svg>
-        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">{{
-          t('Orders') }}</span>
+
+
+      <!-- Procurement -->
+      <a href="javascript:void(0)" class="nav-item"
+        *ngIf="user?.role === 'STOCK_MANAGER' || user?.role === 'IT_MANAGER'"
+        [ngClass]="activeTab === 'procurement' ? 'nav-item-active' : 'nav-item-default'"
+        (click)="activeTab = 'procurement'" title="Procurement">
+        <span *ngIf="activeTab === 'procurement'" class="nav-item-indicator"></span>
+        <div class="relative">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+            <path d="M3 6h18"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+            <line x1="12" y1="14" x2="12" y2="18"/>
+            <line x1="10" y1="16" x2="14" y2="16"/>
+          </svg>
+          <span *ngIf="isSidebarCollapsed && pendingProcurementCount > 0"
+            class="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 ring-2 ring-[var(--bg-sidebar)] text-[7px] font-bold text-white">{{
+            pendingProcurementCount }}</span>
+        </div>
+        <div class="flex-1 flex items-center justify-between overflow-hidden"
+          [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">
+          <span class="nav-item-label !w-auto !opacity-100">Procurement</span>
+          <span *ngIf="pendingProcurementCount > 0"
+            class="px-2 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded-full ml-2 flex-shrink-0">{{
+            pendingProcurementCount }}</span>
+        </div>
       </a>
 
       <!-- Section: Management -->
       <p class="nav-section-label"
-        *ngIf="!isSidebarCollapsed && user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'">{{ t('Management') }}
+        *ngIf="!isSidebarCollapsed">{{ t('Management') }}
       </p>
 
       <!-- Alerts -->
@@ -198,7 +215,7 @@
       </a>
 
       <!-- Reports -->
-      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'"
+      <a href="javascript:void(0)" class="nav-item"
         [ngClass]="activeTab === 'reports' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'reports'"
         title="Reports">
         <span *ngIf="activeTab === 'reports'" class="nav-item-indicator"></span>
@@ -635,7 +652,7 @@
       <app-category-manager *ngIf="activeTab === 'categories'"></app-category-manager>
 
       <!-- Supplier Component View -->
-      <app-supplier *ngIf="activeTab === 'suppliers'"></app-supplier>
+      <app-supplier *ngIf="activeTab === 'suppliers'" [userRole]="user?.role"></app-supplier>
 
       <!-- Profile Component View -->
       <app-profile *ngIf="activeTab === 'profile'"></app-profile>
@@ -676,6 +693,14 @@
       <!-- Reports Component View -->
       <app-reports *ngIf="activeTab === 'reports'"></app-reports>
 
+      <!-- Procurement Component View -->
+      <app-procurement
+        *ngIf="activeTab === 'procurement'"
+        [userRole]="user?.role"
+        [userId]="user?.id"
+        [userName]="(user?.firstName || '') + ' ' + (user?.lastName || '')">
+      </app-procurement>
+
       <!-- Support Tickets Component View -->
       <app-tickets *ngIf="activeTab === 'tickets'"></app-tickets>
 
@@ -695,6 +720,9 @@
     </button>
 
     <!-- AI Assistant Panel Overlay -->
-    <app-ai-assistant [isOpen]="isAssistantOpen" (close)="toggleAssistant()"></app-ai-assistant>
   </div>
+
 </div>
+<!-- AI Assistant Panel Overlay - Moved to top level for absolute reliability -->
+<app-ai-assistant [isOpen]="isAssistantOpen" (close)="toggleAssistant()"></app-ai-assistant>
+<app-toast></app-toast>

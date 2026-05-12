@@ -15,6 +15,8 @@ public enum QueryIntent {
     USAGE_ANALYSIS("stock_manager"),
     SUPPLIER_INFO("stock_manager"),
     CATEGORY_INFO("stock_manager"),
+    SHELF_INFO("stock_manager"),
+    TYPE_INFO("stock_manager"),
 
     // ─── Stock Manager Actions ───────────────────────────────────────
     ADD_EQUIPMENT("stock_manager"),
@@ -35,13 +37,16 @@ public enum QueryIntent {
     REQUEST_STATUS("all"),
     SCHEDULE_INFO("all"),
     TICKET_INFO("all"),
+    NOTIFICATIONS("all"),
+    ALERTS("all"),
     EQUIPMENT_SUGGESTION("all"),
     HELP("all"),
     GENERAL_ASSISTANCE("all"),
 
     // ─── Shared Actions (all roles) ───────────────────────────────────
     CREATE_TASK("all"),
-    UPDATE_TICKET("all");
+    UPDATE_TICKET("all"),
+    SEND_MESSAGE("all");
 
     private final String role;
 

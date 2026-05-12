@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SupplierListComponent } from './supplier-list/supplier-list.component';
 import { SupplierFormComponent } from './supplier-form/supplier-form.component';
@@ -12,6 +12,7 @@ import { Supplier } from './supplier.model';
   styleUrl: './supplier.component.css'
 })
 export class SupplierComponent implements OnInit {
+  @Input() userRole: string = '';
   mode: 'list' | 'form' = 'list';
   supplierToEdit: Supplier | null = null;
   formViewOnly: boolean = false;

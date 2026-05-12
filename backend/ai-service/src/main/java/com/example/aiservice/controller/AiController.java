@@ -3,6 +3,13 @@ package com.example.aiservice.controller;
 import com.example.aiservice.model.AiRequest;
 import com.example.aiservice.model.AiResponse;
 import com.example.aiservice.model.QueryIntent;
+import com.example.aiservice.model.EquipmentParsingRequest;
+import com.example.aiservice.model.EquipmentParsingResponse;
+import com.example.aiservice.model.EquipmentSuggestionRequest;
+import com.example.aiservice.model.ParsedItem;
+import com.example.aiservice.model.AutocompleteRequest;
+import com.example.aiservice.model.QuotationAnalysisRequest;
+import com.example.aiservice.model.QuotationAnalysisResponse;
 import com.example.aiservice.service.*;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -39,8 +46,13 @@ public class AiController {
 
     private static final Logger log = LoggerFactory.getLogger(AiController.class);
 
+    // Supported roles (normalised to lowercase with underscores)
+    // IT_MANAGER maps to "it_manager" and shares stock_manager level access
     private static final Set<String> SUPPORTED_ROLES = Set.of(
-            "stock_manager", "technician", "admin");
+
+            "stock_manager", "it_manager", "technician", "admin"
+    );
+
 
     private final ChatModel chatModel;
     private final IntentService intentService;
@@ -51,6 +63,7 @@ public class AiController {
     private final VectorStoreService vectorStore;
 
     private final ActionDetectorService actionDetector;
+    private final EquipmentParsingService equipmentParsingService;
 
     public AiController(ChatModel chatModel,
             IntentService intentService,
@@ -60,7 +73,8 @@ public class AiController {
             DataIngestionService dataIngestion,
 
             VectorStoreService vectorStore,
-            ActionDetectorService actionDetector) {
+            ActionDetectorService actionDetector,
+            EquipmentParsingService equipmentParsingService) {
 
         this.chatModel = chatModel;
         this.intentService = intentService;
@@ -71,6 +85,7 @@ public class AiController {
         this.vectorStore = vectorStore;
 
         this.actionDetector = actionDetector;
+        this.equipmentParsingService = equipmentParsingService;
 
     }
 
@@ -80,13 +95,16 @@ public class AiController {
 
     @PostMapping("/query")
     public ResponseEntity<AiResponse> query(@Valid @RequestBody AiRequest request) {
-        String role = request.getRole().toLowerCase().trim();
+        // Normalise role: "STOCK_MANAGER" → "stock_manager", "IT_MANAGER" → "it_manager"
+        String role    = request.getRole().toLowerCase().trim().replace(" ", "_");
+        // Treat IT_MANAGER as stock_manager for intent/data routing purposes
+        String routingRole = role.equals("it_manager") ? "stock_manager" : role;
         String message = request.getMessage().trim();
         String userId = request.getUserId();
         List<Map<String, String>> history = request.getConversationHistory();
 
-        log.info("AI query — userId={}, role={}, history={} turns, message='{}'",
-                userId, role, history != null ? history.size() : 0, message);
+        log.info("AI query — userId={}, role={}, routingRole={}, history={} turns, message='{}'",
+                userId, role, routingRole, history != null ? history.size() : 0, message);
 
         if (!SUPPORTED_ROLES.contains(role)) {
             return ResponseEntity.badRequest().body(
@@ -98,31 +116,30 @@ public class AiController {
 
             AiResponse response = new AiResponse();
 
-            // 1. Detect if it's an action (Create/Update/Delete)
-            if (actionDetector.detectAndPopulate(message, role, response)) {
+            // 1. Detect if it's an action (Create/Update/Delete) — use original role for permission check
+            if (actionDetector.detectAndPopulate(message, role, userId, response)) {
                 response.setRole(role);
                 return ResponseEntity.ok(response);
             }
 
-            // 2. Detect intent
 
-            //
-            QueryIntent intent = intentService.detect(message, role);
-            log.info("Detected intent: {} for role: {}", intent, role);
+            // 2. Detect intent — use routingRole (IT_MANAGER → stock_manager)
+            QueryIntent intent = intentService.detect(message, routingRole);
+            log.info("Detected intent: {} for routingRole: {}", intent, routingRole);
 
-            if (!intent.isAccessibleBy(role)) {
+            if (!intent.isAccessibleBy(routingRole)) {
                 intent = QueryIntent.GENERAL_ASSISTANCE;
                 log.warn("Intent not accessible by role, falling back to GENERAL_ASSISTANCE");
             }
 
-            // 2. Route to data source
-            String dataContext = queryRouter.route(intent, role, message, userId);
+            // 3. Route to data source
+            String dataContext = queryRouter.route(intent, routingRole, message, userId);
 
-            // 3. Get structured data for response
-            List<Map<String, Object>> structuredData = queryRouter.getStructuredData(intent, role, message, userId);
+            // 4. Get structured data for response
+            List<Map<String, Object>> structuredData = queryRouter.getStructuredData(intent, routingRole, message, userId);
 
-            // 4. Build augmented prompt
-            String fullPrompt = promptBuilder.build(intent, role, dataContext, message);
+            // 5. Build augmented prompt
+            String fullPrompt = promptBuilder.build(intent, routingRole, dataContext, message);
 
             // 5. Call LLM with conversation history for multi-turn memory
 
@@ -192,6 +209,65 @@ public class AiController {
         return ResponseEntity.ok(Map.of(
                 "role", role,
                 "intents", intents.stream().map(Enum::name).toList()));
+    }
+
+    @PostMapping("/parse-equipment-request")
+    public ResponseEntity<EquipmentParsingResponse> parseEquipmentRequest(@Valid @RequestBody EquipmentParsingRequest request) {
+        log.info("Parsing equipment request text: '{}'", request.getText());
+        try {
+            List<ParsedItem> items = equipmentParsingService.parseEquipmentRequest(request.getText());
+            return ResponseEntity.ok(new EquipmentParsingResponse(items, true));
+        } catch (Exception e) {
+            log.error("Failed to parse equipment request: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().body(
+                    EquipmentParsingResponse.error("Parsing failed: " + e.getMessage())
+            );
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // POST /ai/suggest-equipment
+    // ─────────────────────────────────────────────────────────────────────────
+
+    @PostMapping("/suggest-equipment")
+    public ResponseEntity<List<String>> suggestEquipment(@RequestBody EquipmentSuggestionRequest request) {
+        log.info("Suggesting equipment for cart with {} items", request.getCartItems() != null ? request.getCartItems().size() : 0);
+        try {
+            if (request.getCartItems() == null || request.getCartItems().isEmpty()) {
+                return ResponseEntity.ok(Collections.emptyList());
+            }
+
+            StringBuilder cartContext = new StringBuilder();
+            for (EquipmentSuggestionRequest.CartItem item : request.getCartItems()) {
+                cartContext.append("- ").append(item.getName());
+                if (item.getSelectedSpecs() != null && !item.getSelectedSpecs().isEmpty()) {
+                    cartContext.append(" (").append(item.getSelectedSpecs().toString()).append(")");
+                }
+                cartContext.append("\n");
+            }
+
+            List<String> suggestions = equipmentParsingService.suggestRelatedEquipment(cartContext.toString());
+            return ResponseEntity.ok(suggestions);
+        } catch (Exception e) {
+            log.error("Failed to suggest equipment: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/autocomplete-specs")
+    public ResponseEntity<List<String>> autocompleteSpecs(@RequestBody AutocompleteRequest request) {
+        if (request.getText() == null || request.getText().trim().isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+        
+        List<String> completions = equipmentParsingService.autocompleteSpecsWithAI(request.getText());
+        return ResponseEntity.ok(completions);
+    }
+
+    @PostMapping("/compare-quotations")
+    public ResponseEntity<QuotationAnalysisResponse> compareQuotations(@RequestBody QuotationAnalysisRequest request) {
+        log.info("Comparing quotations for request: '{}'", request.getRequestNotes());
+        return ResponseEntity.ok(equipmentParsingService.compareQuotations(request));
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────

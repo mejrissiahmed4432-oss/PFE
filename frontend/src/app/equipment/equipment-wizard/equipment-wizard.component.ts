@@ -13,6 +13,7 @@ import { ShelfService } from '../../shelf/shelf.service';
 import { Shelf } from '../../shelf/shelf.model';
 import { CategoryService } from '../../category-manager/category.service';
 import { CategoryType, EquipmentCategory } from '../../category-manager/category.model';
+import { ToastService } from '../../shared/toast.service';
 import * as QRCode from 'qrcode';
 
 // ─── Interfaces ───────────────────────────────────────────────────────────
@@ -141,7 +142,8 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     private equipmentService: EquipmentService,
     private supplierService: SupplierService,
     private shelfService: ShelfService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private toastService: ToastService
   ) { }
 
   private formatLocalDate(dateObjOrString: Date | string): string {
@@ -847,6 +849,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     const doBulkSave = (finalPayloads: Equipment[]) => {
       this.equipmentService.createBulkEquipment(finalPayloads).subscribe({
         next: () => {
+          this.toastService.success(`Successfully added ${payloads.length} units to inventory.`);
           this.isSaving = false;
           this.closeEvent.emit(true);
           this.reset();

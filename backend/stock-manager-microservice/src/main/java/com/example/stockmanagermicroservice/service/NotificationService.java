@@ -27,8 +27,10 @@ public class NotificationService {
 
         try {
             restTemplate.postForEntity(USER_SERVICE_URL, body, Void.class);
+            System.out.println("[NotificationService] Successfully delivered notification to " + USER_SERVICE_URL + " for role: " + targetRole);
         } catch (Exception e) {
-            System.err.println("Failed to send notification to user-microservice: " + e.getMessage());
+            System.err.println("[NotificationService] CRITICAL: Failed to deliver notification to " + USER_SERVICE_URL + ". Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

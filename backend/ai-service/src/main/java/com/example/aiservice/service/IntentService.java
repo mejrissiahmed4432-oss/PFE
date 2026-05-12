@@ -41,8 +41,13 @@ public class IntentService {
         STOCK_KEYWORDS.put(QueryIntent.STOCK_STATUS, List.of(
                 "stock", "inventory", "status", "situation", "overview", "summary",
                 "total equipment", "how many equipment", "how much equipment", "stock count",
-                "level", "état", "inventaire", "disponible",
-                "shelf", "shelves", "étagère", "rayon"
+                "level", "état", "inventaire", "disponible"
+        ));
+        STOCK_KEYWORDS.put(QueryIntent.SHELF_INFO, List.of(
+                "shelf", "shelves", "étagère", "rayon", "location", "stored", "where is"
+        ));
+        STOCK_KEYWORDS.put(QueryIntent.TYPE_INFO, List.of(
+                "type", "types", "model", "models", "what kind", "what sort"
         ));
         STOCK_KEYWORDS.put(QueryIntent.RECOMMENDATION, List.of(
                 "recommend", "reorder", "order", "buy", "purchase", "should i", "suggest",

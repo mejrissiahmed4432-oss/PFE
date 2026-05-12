@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+:host {
+  display: block;
+}
+
 /* ── Overlay Container ─────────────────────────────────────────────────── */
 .ai-assistant-overlay {
   position: fixed;
@@ -11,7 +15,7 @@
   border: 1px solid var(--border-color);
   border-radius: 24px;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.15);
-  z-index: 10000;
+  z-index: 20000;
   transform: translateY(30px) scale(0.95);
   opacity: 0;
   pointer-events: none;
@@ -638,12 +642,11 @@
 
 .input-wrapper {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
   background: var(--bg-app);
   border: 1.5px solid var(--border-strong);
   border-radius: 16px;
-  padding: 8px 8px 8px 16px;
+  padding: 8px 8px 8px 12px;
   transition: all 0.2s;
 }
 
@@ -651,6 +654,52 @@
   border-color: var(--accent-primary);
   background: var(--bg-card);
   box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.input-wrapper.has-image {
+  padding-top: 12px;
+}
+
+.input-controls-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+
+.attach-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-bottom: 4px;
+}
+
+.attach-btn:hover:not(:disabled) {
+  background: var(--bg-card);
+  color: var(--accent-primary);
+}
+
+.attach-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.attach-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .chat-input {
@@ -662,7 +711,11 @@
   font-family: 'Inter', sans-serif;
   color: var(--text-main);
   outline: none;
-  padding: 6px 0;
+  padding: 8px 0;
+  resize: none;
+  max-height: 150px;
+  overflow-y: auto;
+  line-height: 1.5;
 }
 
 .chat-input::placeholder {
@@ -671,8 +724,8 @@
 }
 
 .send-btn {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 12px;
   background: var(--accent-primary);
   background: linear-gradient(135deg, #06b6d4, #3b82f6);
@@ -709,6 +762,76 @@
   margin-right: 2px;
 }
 
+/* ── Image Upload Preview & Bubbles ─────────────────────────────────────── */
+.image-preview-area {
+  padding: 0 4px 12px;
+  width: 100%;
+}
+
+.image-preview-card {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.image-preview-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transform: scale(0.8);
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.image-preview-card:hover .remove-image-btn {
+  transform: scale(1);
+  opacity: 1;
+  top: 4px;
+  right: 4px;
+}
+
+.remove-image-btn:hover {
+  background: #ef4444;
+}
+
+.remove-image-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.chat-attached-image {
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  object-fit: contain;
+  display: block;
+}
+
 .footer-hint {
   font-size: 0.75rem;
   color: var(--text-muted);
@@ -741,11 +864,12 @@
 .action-confirmation-area {
   margin-top: 16px;
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
   padding: 16px;
-  background: var(--bg-app);
-  border: 1px dashed var(--border-strong);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(239, 68, 68, 0.04));
+  border: 1.5px solid rgba(245, 158, 11, 0.25);
+  border-radius: 14px;
   animation: slideInUp 0.3s ease-out;
 }
 
@@ -761,6 +885,33 @@
   }
 }
 
+.action-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  width: fit-content;
+}
+
+.action-confirm-hint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.action-buttons-row {
+  display: flex;
+  gap: 10px;
+}
+
 .action-btn {
   flex: 1;
   display: flex;
@@ -769,7 +920,7 @@
   gap: 8px;
   padding: 10px 16px;
   border-radius: 10px;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
@@ -784,7 +935,7 @@
 
 .confirm-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
 }
 
 .cancel-btn {
@@ -812,4 +963,172 @@
   stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
+
+}
+
+/* ── Two-Step Confirm Modal ────────────────────────────────────────── */
+.confirm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 30000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: backdropIn 0.2s ease-out;
+}
+
+@keyframes backdropIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.confirm-modal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 36px 32px 28px;
+  width: 380px;
+  max-width: 92vw;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: 'Inter', sans-serif;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(20px) scale(0.96);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.confirm-modal-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1));
+  border: 1.5px solid rgba(245, 158, 11, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  color: #d97706;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
+}
+
+.confirm-modal-icon svg {
+  width: 30px;
+  height: 30px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.confirm-modal-title {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.confirm-modal-action-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--accent-primary);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  letter-spacing: 0.02em;
+}
+
+.confirm-modal-message {
+  font-size: 0.92rem;
+  color: var(--text-sub);
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.confirm-modal-message strong {
+  color: #ef4444;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.confirm-modal-cancel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--bg-app);
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.confirm-modal-cancel:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: #fca5a5;
+}
+
+.confirm-modal-confirm {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border: none;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+  font-family: 'Inter', sans-serif;
+}
+
+.confirm-modal-confirm:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.confirm-modal-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
