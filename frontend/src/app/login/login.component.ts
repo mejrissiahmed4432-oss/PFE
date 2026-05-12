@@ -22,6 +22,7 @@ export class LoginComponent implements OnInit {
     isLoading: boolean = false;
     isForgotPassword: boolean = false;
     isResetPassword: boolean = false;
+    isInvitation: boolean = false;
     resetToken: string | null = null;
     errorMessage: string = '';
     successMessage: string = '';
@@ -39,6 +40,7 @@ export class LoginComponent implements OnInit {
             if (params['token']) {
                 this.resetToken = params['token'];
                 this.isResetPassword = true;
+                this.isInvitation = params['mode'] === 'invitation';
             }
         });
     }
@@ -140,6 +142,8 @@ export class LoginComponent implements OnInit {
                 console.error('Login failed', err);
                 if (err.status === 401) {
                     this.errorMessage = 'Invalid email or password.';
+                } else if (err.status === 403) {
+                    this.errorMessage = err.error?.message || 'Access denied. Please contact the IT Manager.';
                 } else {
                     this.errorMessage = 'A server error occurred. Please try again later.';
                 }

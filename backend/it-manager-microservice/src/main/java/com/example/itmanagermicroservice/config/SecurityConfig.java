@@ -1,4 +1,4 @@
-package com.example.hrmicroservice.config;
+package com.example.itmanagermicroservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

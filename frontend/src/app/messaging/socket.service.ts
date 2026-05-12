@@ -16,7 +16,7 @@ export class SocketService {
   private unreadCountSubject = new Subject<number>();
   private messageUpdateSubject = new Subject<any>();
   private readUpdateSubject = new Subject<string>();
-  private userStatusSubject = new Subject<{userId: string, online: boolean}>();
+  private userStatusSubject = new Subject<any>();
   
   private connectionStatus = new BehaviorSubject<boolean>(false);
 
@@ -54,7 +54,7 @@ export class SocketService {
     
     this.currentUserId = userId;
 
-    this.stompClient = Stomp.over(() => new SockJS('/ws'));
+    this.stompClient = Stomp.over(() => new SockJS('http://localhost:8000/ws'));
 
     this.stompClient.onConnect = (frame: any) => {
       this.connectionStatus.next(true);
@@ -140,7 +140,7 @@ export class SocketService {
     return this.readUpdateSubject.asObservable();
   }
 
-  get onUserStatus(): Observable<{userId: string, online: boolean}> {
+  get onUserStatus(): Observable<any> {
     return this.userStatusSubject.asObservable();
   }
 

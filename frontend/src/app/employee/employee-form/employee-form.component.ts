@@ -24,7 +24,8 @@ export class EmployeeFormComponent implements OnInit {
     jobTitle: '',
     department: '',
     employmentStatus: 'Active',
-    hireDate: ''
+    hireDate: '',
+    cin: ''
   };
 
   isSaving = false;

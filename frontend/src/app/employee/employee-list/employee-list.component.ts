@@ -69,7 +69,7 @@ export class EmployeeListComponent implements OnInit {
       const matchesSearch = !term || [
         e.firstName, e.lastName, e.email,
         e.phone || '', e.jobTitle, e.department,
-        e.employmentStatus, e.hireDate || ''
+        e.employmentStatus, e.hireDate || '', e.cin || ''
       ].some(val => val.toLowerCase().includes(term));
 
       // Status filter

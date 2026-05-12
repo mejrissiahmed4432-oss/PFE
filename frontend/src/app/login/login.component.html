@@ -44,7 +44,7 @@
                 <div class="form-logo-wrap relative inline-block">
                     <img src="assets/images/medina-logo.png" alt="Medina Hotels" class="form-logo relative z-10">
                 </div>
-                <h2 class="tracking-tight">@if(isResetPassword) { Reset Password } @else if (isForgotPassword) { Recovery } @else { Sign In }</h2>
+                <h2 class="tracking-tight">@if(isResetPassword) { {{ isInvitation ? 'Set Password' : 'Reset Password' }} } @else if (isForgotPassword) { Recovery } @else { Sign In }</h2>
                 <!-- Thin gradient line -->
                 <div class="h-[2px] w-full bg-gradient-to-r from-transparent via-blue-400/50 to-transparent mt-4 mb-6"></div>
             </div>
@@ -136,7 +136,7 @@
                     }
                 </div>
                 <button type="submit" class="login-btn relative overflow-hidden transition-all duration-300 hover:-translate-y-[1px] active:translate-y-[1px] shadow-[0_4px_14px_rgba(37,99,235,0.3)] hover:shadow-[0_8px_20px_rgba(37,99,235,0.4)]
-                                             before:absolute before:inset-0 before:bg-white/20 before:opacity-0 hover:before:opacity-100 before:transition-opacity" [disabled]="isLoading">UPDATE PASSWORD</button>
+                                             before:absolute before:inset-0 before:bg-white/20 before:opacity-0 hover:before:opacity-100 before:transition-opacity" [disabled]="isLoading">{{ isInvitation ? 'SET PASSWORD' : 'UPDATE PASSWORD' }}</button>
                 <button type="button" class="back-link" (click)="onBackToLogin()">Back to Login</button>
             </form>
             }

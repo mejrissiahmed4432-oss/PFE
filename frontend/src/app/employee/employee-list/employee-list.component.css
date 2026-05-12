@@ -320,9 +320,14 @@
   color: #1e293b;
 }
 
-.emp-hire {
+.emp-hire, .emp-id-sub {
   font-size: 0.75rem;
   color: #94a3b8;
+}
+
+.emp-id-sub {
+  color: #6366f1;
+  font-weight: 600;
 }
 
 /* ─── Job Title ──────────────────────────────────────────── */

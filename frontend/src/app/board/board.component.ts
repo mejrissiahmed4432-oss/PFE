@@ -30,12 +30,13 @@ import { TranslationService } from '../shared/translation.service';
 import { PartRequestService } from '../parts-management/part-request.service';
 import { EmployeeListComponent } from '../employee/employee-list/employee-list.component';
 import { HrDashboardComponent } from '../hr-dashboard/hr-dashboard.component';
+import { UserManagementComponent } from '../user-management/user-management.component';
 
 @Component({
   selector: 'app-board',
   standalone: true,
 
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, UserManagementComponent],
 
   providers: [MessagingService],
   templateUrl: './board.component.html',
@@ -100,6 +101,8 @@ export class BoardComponent implements OnInit {
       } else {
         if (this.user.role === 'TECHNICIAN') {
           this.activeTab = 'tickets';
+        } else if (this.user.role === 'IT_MANAGER') {
+          this.activeTab = 'user-management';
         }
         this.loadUnreadCount();
 
@@ -107,6 +110,14 @@ export class BoardComponent implements OnInit {
         this.socketSub?.unsubscribe();
         this.socketSub = this.socketService.onUnreadCount.subscribe(count => {
           this.unreadMessagesCount = count;
+        });
+
+        // 1.5 Auto-logout if deactivated or deleted by IT Manager
+        this.socketService.onUserStatus.subscribe((event: any) => {
+          if (event.userId === this.user.id && (event.status === 'INACTIVE' || event.status === 'DELETED')) {
+            console.warn('Account deactivated or deleted by IT Manager. Auto-logging out...');
+            this.logout();
+          }
         });
 
         // Live Alerts Subscription
@@ -294,7 +305,7 @@ export class BoardComponent implements OnInit {
       case 'parts': return this.selectedResourceFilter ? `${this.t('Resources')} - ${this.selectedResourceFilter}` : this.t('Resources');
       case 'requests': return 'My Part Requests';
       case 'manager-requests': return 'Incoming Part Requests';
-
+      case 'user-management': return 'User Access Management';
       case 'tickets': return this.t('Tickets');
 
       case 'employees': return this.t('Employee Directory');

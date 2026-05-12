@@ -317,7 +317,21 @@
         </svg>
         <span class="nav-item-label"
           [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Tickets</span>
+      </a>
 
+      <!-- User Management (IT Manager only) -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'IT_MANAGER'"
+        [ngClass]="activeTab === 'user-management' ? 'nav-item-active' : 'nav-item-default'"
+        (click)="activeTab = 'user-management'" title="User Access Management">
+        <span *ngIf="activeTab === 'user-management'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">User Access</span>
       </a>
 
     </nav>
@@ -664,6 +678,9 @@
 
       <!-- Support Tickets Component View -->
       <app-tickets *ngIf="activeTab === 'tickets'"></app-tickets>
+
+      <!-- User Management Component View (IT Manager) -->
+      <app-user-management *ngIf="activeTab === 'user-management'"></app-user-management>
     </main>
 
 

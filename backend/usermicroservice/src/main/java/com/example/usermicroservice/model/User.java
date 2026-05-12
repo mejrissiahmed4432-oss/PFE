@@ -2,8 +2,6 @@ package com.example.usermicroservice.model;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,19 +12,18 @@ public class User {
     private String firstName;
     private String lastName;
 
+    @org.springframework.data.mongodb.core.index.Indexed(unique = true)
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z]).*$", message = "Password must contain both uppercase and lowercase characters")
     private String password;
 
     private String photo;
     private Role role;
     
     private String phoneNumber;
+    private String employeeId;
     
     private String resetToken;
     private java.time.LocalDateTime resetTokenExpiry;
@@ -35,6 +32,9 @@ public class User {
     private boolean online;
     
     private java.time.LocalDateTime lastActive;
+    private String status = "PENDING";
+    private java.time.LocalDateTime lastLogin;
+    private java.time.LocalDateTime createdAt = java.time.LocalDateTime.now();
 
     public User() {
         // Default photo if none provided
@@ -47,6 +47,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
+        this.status = "PENDING"; // New users start as PENDING
         this.photo = "default-user.png";
     }
 
@@ -75,6 +76,9 @@ public class User {
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
+    public String getEmployeeId() { return employeeId; }
+    public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
+
     public String getResetToken() { return resetToken; }
     public void setResetToken(String resetToken) { this.resetToken = resetToken; }
 
@@ -83,6 +87,26 @@ public class User {
 
     public java.time.LocalDateTime getLastActive() { return lastActive; }
     public void setLastActive(java.time.LocalDateTime lastActive) { this.lastActive = lastActive; }
+
+    public UserStatus getStatus() { 
+        String s = this.status;
+        if (s == null || s.trim().isEmpty()) return UserStatus.ACTIVE;
+        try {
+            return UserStatus.valueOf(s.toUpperCase());
+        } catch (Exception e) {
+            return UserStatus.ACTIVE;
+        }
+    }
+
+    public void setStatus(UserStatus status) { 
+        this.status = status != null ? status.name() : "PENDING"; 
+    }
+
+    public java.time.LocalDateTime getLastLogin() { return lastLogin; }
+    public void setLastLogin(java.time.LocalDateTime lastLogin) { this.lastLogin = lastLogin; }
+
+    public java.time.LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(java.time.LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public boolean isOnline() { return online; }
     public void setOnline(boolean online) { this.online = online; }

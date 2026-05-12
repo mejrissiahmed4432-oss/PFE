@@ -96,7 +96,8 @@
               </div>
               <div class="emp-name-block">
                 <span class="emp-fullname">{{ emp.firstName }} {{ emp.lastName }}</span>
-                <span class="emp-hire">Hired {{ emp.hireDate || '—' }}</span>
+                <span class="emp-id-sub" *ngIf="emp.cin">CIN: {{ emp.cin }}</span>
+                <span class="emp-hire" *ngIf="!emp.cin">Hired {{ emp.hireDate || '—' }}</span>
               </div>
             </div>
           </td>

@@ -25,7 +25,9 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
 
   conversations: Conversation[] = [];
   activeConversation: Conversation | null = null;
+
   pendingAction: { type: string, payload: any } | null = null;
+
 
   get messages(): ChatMessage[] {
     return this.activeConversation?.messages ?? [];
@@ -44,7 +46,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
     ]
   };
 
-  constructor(private aiService: AiService) {}
+  constructor(private aiService: AiService) { }
 
   ngOnInit(): void {
     this.conversations = this.aiService.getAllConversations();
@@ -162,6 +164,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
           timestamp: new Date(),
           suggestions: response.success ? response.suggestions : undefined,
           data: response.success ? response.data : undefined,
+
           isError: !response.success,
           actionPending: response.actionPending,
           actionType: response.actionType,
@@ -171,6 +174,8 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
         if (response.actionPending) {
           this.pendingAction = { type: response.actionType!, payload: response.actionPayload };
         }
+
+
         this.activeConversation!.messages.push(aiMsg);
         this.aiService.saveConversation(this.activeConversation!);
         this.conversations = this.aiService.getAllConversations();
@@ -189,6 +194,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
     });
   }
 
+
   confirmAction(): void {
     if (!this.pendingAction || !this.activeConversation) return;
 
@@ -199,7 +205,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
     this.aiService.executeAction(action.type, action.payload).subscribe({
       next: (response: AiResponse) => {
         this.isLoading = false;
-        
+
         // Remove the 'confirm/cancel' UI from the last message in state
         const lastMsg = this.activeConversation!.messages[this.activeConversation!.messages.length - 1];
         if (lastMsg) lastMsg.actionPending = false;
@@ -231,7 +237,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
   cancelAction(): void {
     if (!this.activeConversation) return;
     this.pendingAction = null;
-    
+
     // Clear pending flag from last message
     const lastMsg = this.activeConversation.messages[this.activeConversation.messages.length - 1];
     if (lastMsg) lastMsg.actionPending = false;
@@ -244,6 +250,8 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
     });
     this.aiService.saveConversation(this.activeConversation);
   }
+
+
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   getConversationPreview(conv: Conversation): string {
@@ -262,6 +270,6 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked {
       if (this.chatBody?.nativeElement) {
         this.chatBody.nativeElement.scrollTop = this.chatBody.nativeElement.scrollHeight;
       }
-    } catch {}
+    } catch { }
   }
 }

@@ -8,5 +8,6 @@ export interface Employee {
   department: string;
   hireDate?: string;
   employmentStatus: string;
+  cin?: string;
   userId?: string;
 }

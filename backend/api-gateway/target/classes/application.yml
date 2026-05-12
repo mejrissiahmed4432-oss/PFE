@@ -15,7 +15,8 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOriginPatterns: "*"
+            allowCredentials: true
             allowedMethods:
               - GET
               - POST
@@ -30,7 +31,7 @@ spring:
           enabled: true
           lower-case-service-id: true
       default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
       routes:
         - id: user-microservice
           uri: lb://user-microservice
@@ -87,10 +88,10 @@ spring:
           predicates:
             - Path=/api/employees/**, /api/employees
 
-        - id: hr-route
-          uri: lb://hr-microservice
+        - id: it-manager-route
+          uri: lb://it-manager-microservice
           predicates:
-            - Path=/api/hr/**, /api/hr
+            - Path=/api/it-manager/**
 
 
 eureka:

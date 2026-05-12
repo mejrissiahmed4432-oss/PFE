@@ -76,7 +76,7 @@ export class PartsManagementComponent implements OnInit {
     message: '',
     type: 'success' as 'success' | 'warning' | 'error',
     isConfirm: false,
-    onConfirm: () => {}
+    onConfirm: () => { }
   };
 
   constructor(
@@ -135,30 +135,30 @@ export class PartsManagementComponent implements OnInit {
         (r.items || [])
           .filter(item => !item.returned)
           .map(item => {
-          const isMatched = !!item.equipmentId && !!item.matchedEquipmentName;
-          return {
-            ...r,
-            requestId: r.id,
-            originalItem: item,
-            equipmentName: isMatched ? item.matchedEquipmentName : item.partName,
-            category: item.category || 'Unknown',
-            type: item.type || 'Unknown',
-            specification: isMatched ? (item.matchedSpecification || item.specification) : item.specification,
-            brand: item.brand || '—',
-            model: '—',
-            qte: item.quantity,
-            status: item.quantity === 0 ? 'Out of stock' : 'In stock',
-            shelfId: item.equipmentId,
-            equipmentId: item.equipmentId,
-            isCustom: !item.equipmentId,
-            isMatched: isMatched
-          };
-        })
+            const isMatched = !!item.equipmentId && !!item.matchedEquipmentName;
+            return {
+              ...r,
+              requestId: r.id,
+              originalItem: item,
+              equipmentName: isMatched ? item.matchedEquipmentName : item.partName,
+              category: item.category || 'Unknown',
+              type: item.type || 'Unknown',
+              specification: isMatched ? (item.matchedSpecification || item.specification) : item.specification,
+              brand: item.brand || '—',
+              model: '—',
+              qte: item.quantity,
+              status: item.quantity === 0 ? 'Out of stock' : 'In stock',
+              shelfId: item.equipmentId,
+              equipmentId: item.equipmentId,
+              isCustom: !item.equipmentId,
+              isMatched: isMatched
+            };
+          })
       );
 
       // Inject Mock Resources if real ones aren't found
       this.injectMockResources();
-      
+
       this.applyFilters();
     });
   }
@@ -168,21 +168,12 @@ export class PartsManagementComponent implements OnInit {
       // Operating Systems
       { equipmentName: 'Windows 11 Pro (23H2)', category: 'Operating Systems', type: 'OS', brand: 'Microsoft', qte: 1, status: 'In stock', specification: 'Retail License' },
       { equipmentName: 'Ubuntu 24.04 LTS', category: 'Operating Systems', type: 'OS', brand: 'Canonical', qte: 1, status: 'In stock', specification: 'Stable Release' },
-      
+
       // Applications
       { equipmentName: 'Adobe Creative Cloud', category: 'Applications', type: 'Software', brand: 'Adobe', qte: 5, status: 'In stock', specification: 'Suite 2024' },
-      { equipmentName: 'Microsoft Office 365', category: 'Applications', type: 'Software', brand: 'Microsoft', qte: 12, status: 'In stock', specification: 'Business Premium' },
-      
-      // Drivers
-      { equipmentName: 'NVIDIA RTX Drivers', category: 'Drivers', type: 'Driver', brand: 'NVIDIA', qte: 1, status: 'In stock', specification: 'Game Ready 555.xx' },
-      { equipmentName: 'Realtek Audio Driver', category: 'Drivers', type: 'Driver', brand: 'Realtek', qte: 1, status: 'In stock', specification: 'High Definition Audio' },
-      
-      // Tools
-      { equipmentName: 'WinDirStat', category: 'Tools', type: 'Utility', brand: 'Open Source', qte: 1, status: 'In stock', specification: 'Disk Usage Stats' },
-      { equipmentName: 'CPU-Z', category: 'Tools', type: 'Utility', brand: 'CPUID', qte: 1, status: 'In stock', specification: 'System Info' },
-      
-      // Other
-      { equipmentName: 'Company Email Signatures', category: 'Other', type: 'Asset', brand: 'Medina', qte: 1, status: 'In stock', specification: 'Standard Template' }
+
+      { equipmentName: 'Microsoft Office 365', category: 'Applications', type: 'Software', brand: 'Microsoft', qte: 12, status: 'In stock', specification: 'Business Premium' }
+
     ];
 
     // Only add mocks if we don't have real items for these categories
@@ -227,14 +218,14 @@ export class PartsManagementComponent implements OnInit {
         // If filter is "Operating Systems", "Applications", etc.
         // We look for categories or types that match
         const filterLower = this.resourceFilter.toLowerCase();
-        matchResource = (part.category?.toLowerCase() === filterLower) || 
-                        (part.type?.toLowerCase() === filterLower) ||
-                        (part.equipmentName?.toLowerCase().includes(filterLower));
+        matchResource = (part.category?.toLowerCase() === filterLower) ||
+          (part.type?.toLowerCase() === filterLower) ||
+          (part.equipmentName?.toLowerCase().includes(filterLower));
       } else if (this.resourceFilter === 'Parts') {
         // "Parts" refers to physical components, excluding Software/OS/Apps
         const softwareTerms = ['os', 'operating system', 'application', 'app', 'driver', 'tool', 'software'];
-        matchResource = !softwareTerms.some(term => 
-          (part.category?.toLowerCase().includes(term)) || 
+        matchResource = !softwareTerms.some(term =>
+          (part.category?.toLowerCase().includes(term)) ||
           (part.type?.toLowerCase().includes(term))
         );
       }
@@ -351,7 +342,7 @@ export class PartsManagementComponent implements OnInit {
       console.warn("Cannot return a part without an equipmentId");
       return;
     }
-    
+
     this.showConfirm(
       'Return to Stock',
       `Are you sure you want to return "${item.equipmentName}" to stock? This will make the part available for other technicians.`,
@@ -371,8 +362,8 @@ export class PartsManagementComponent implements OnInit {
                 const requestToUpdate = requests.find(r => r.id === item.requestId);
                 if (requestToUpdate) {
                   // Find the exact item in the request
-                  const reqItem = requestToUpdate.items.find(i => 
-                    i.partName === item.originalItem.partName && 
+                  const reqItem = requestToUpdate.items.find(i =>
+                    i.partName === item.originalItem.partName &&
                     i.equipmentId === item.originalItem.equipmentId
                   );
                   if (reqItem) {
@@ -399,13 +390,13 @@ export class PartsManagementComponent implements OnInit {
   }
 
   showAlert(title: string, message: string, type: 'success' | 'warning' | 'error' = 'success') {
-    this.alertConfig = { 
-      show: true, 
-      title, 
-      message, 
-      type, 
+    this.alertConfig = {
+      show: true,
+      title,
+      message,
+      type,
       isConfirm: false,
-      onConfirm: () => {} 
+      onConfirm: () => { }
     };
   }
 
