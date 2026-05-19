@@ -46,6 +46,10 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   originalSN: string = '';
   formGenerateQr: boolean = false;  // QR code checkbox for edit form
   installedParts: Equipment[] = [];
+  showInstallModal: boolean = false;
+  availablePartsForInstall: Equipment[] = [];
+  selectedPartToInstall: Equipment | null = null;
+  installSpecKey: string = '';
   private snSubject = new Subject<string>();
 
   equipmentTypes = [
@@ -793,6 +797,93 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
       error: (err: any) => {
         console.error('Error uninstalling part', err);
         this.toastService.error(`Failed to uninstall part: ${err.error?.message || err.message || 'Unknown error'}`);
+      }
+    });
+  }
+
+  openInstallModal(): void {
+    this.equipmentService.getAllEquipment().subscribe({
+      next: (allEq) => {
+        // Filter parts in stock that are not this parent equipment itself
+        this.availablePartsForInstall = allEq.filter(e => 
+          e.status === 'Available' && 
+          e.id !== this.equipment?.id
+        );
+        this.showInstallModal = true;
+        this.selectedPartToInstall = null;
+        this.installSpecKey = '';
+      },
+      error: (err) => {
+        console.error('Error loading available parts', err);
+        this.toastService.error('Failed to load parts from stock.');
+      }
+    });
+  }
+
+  onPartSelected(part: Equipment): void {
+    this.selectedPartToInstall = part;
+    if (part) {
+      this.installSpecKey = part.type ? part.type.toUpperCase() : '';
+    } else {
+      this.installSpecKey = '';
+    }
+  }
+
+  confirmInstallPart(): void {
+    if (!this.selectedPartToInstall || !this.selectedPartToInstall.id || !this.equipment || !this.equipment.id) return;
+    
+    const part = this.selectedPartToInstall;
+    const parent = this.equipment;
+
+    // 1. Update the part status and association
+    part.status = 'Installed';
+    part.assignedToEquipmentId = parent.id;
+    part.assignedToEquipmentName = parent.equipmentName;
+    if (!part.lifecycle) part.lifecycle = [];
+    part.lifecycle.push({
+      status: 'Installed',
+      timestamp: new Date().toISOString(),
+      description: `Installed inside equipment ${parent.equipmentName} (${parent.id})`,
+      actor: this.currentUserName || 'Stock Manager'
+    });
+
+    // 2. Add to parent specifications if a spec key is provided
+    if (this.installSpecKey) {
+      if (!parent.specifications) parent.specifications = {};
+      const specValue = `${part.brand} ${part.model || ''} (S/N: ${part.serialNumber || 'N/A'})`.trim();
+      parent.specifications[this.installSpecKey] = specValue;
+    }
+
+    // 3. Save part and parent
+    this.equipmentService.updateEquipment(part.id!, part).subscribe({
+      next: () => {
+        this.equipmentService.updateEquipment(parent.id!, parent).subscribe({
+          next: (updatedParent) => {
+            this.toastService.success(`Part ${part.equipmentName} successfully installed inside ${parent.equipmentName}.`);
+            this.showInstallModal = false;
+            
+            // Refresh parent data and installed parts list!
+            this.equipment = updatedParent;
+            this.formData = { ...updatedParent };
+            if (this.formData.purchaseDate) {
+              this.formData.purchaseDate = this.formatDate(this.formData.purchaseDate);
+            }
+            if (this.formData.warrantyExpiration) {
+              this.formData.warrantyExpiration = this.formatDate(this.formData.warrantyExpiration);
+            }
+            this.loadInstalledParts();
+          },
+          error: (err) => {
+            console.error('Error updating parent specifications', err);
+            this.toastService.error('Part was assigned, but failed to update parent specifications.');
+            this.showInstallModal = false;
+            this.loadInstalledParts();
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error installing part', err);
+        this.toastService.error(`Failed to install part: ${err.error?.message || err.message}`);
       }
     });
   }
