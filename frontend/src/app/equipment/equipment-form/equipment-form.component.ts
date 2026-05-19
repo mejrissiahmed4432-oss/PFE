@@ -901,14 +901,23 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
           e.id !== this.equipment?.id
         );
 
-        // Deduplicate by ID
+        // Deduplicate by Serial Number (if serialNumber exists, otherwise fallback to ID)
+        const seenSerials = new Set<string>();
         const seenIds = new Set<string>();
         const uniqueParts: Equipment[] = [];
         for (const p of filtered) {
-          if (p.id && !seenIds.has(p.id)) {
-            seenIds.add(p.id);
-            uniqueParts.push(p);
+          if (!p.id || seenIds.has(p.id)) continue;
+          
+          const sn = p.serialNumber ? p.serialNumber.trim().toLowerCase() : '';
+          if (sn && seenSerials.has(sn)) {
+            continue; // Skip duplicates with same serial number
           }
+          
+          seenIds.add(p.id);
+          if (sn) {
+            seenSerials.add(sn);
+          }
+          uniqueParts.push(p);
         }
 
         this.availablePartsForInstall = uniqueParts;
@@ -955,6 +964,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     part.status = 'Installed';
     part.assignedToEquipmentId = parent.id;
     part.assignedToEquipmentName = parent.equipmentName;
+    part.shelfId = '';
     if (!part.lifecycle) part.lifecycle = [];
     part.lifecycle.push({
       status: 'Installed',

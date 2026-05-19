@@ -478,6 +478,21 @@ public class EquipmentService {
 
             handleStockAlerts(updated, oldQte, newQte);
 
+            // Deduplicate stale database duplicates with the same Serial Number when installing/assigning
+            if ("Installed".equals(updated.getStatus()) && updated.getSerialNumber() != null && !updated.getSerialNumber().trim().isEmpty()) {
+                Query dupQuery = new Query(Criteria.where("serialNumber").is(updated.getSerialNumber().trim())
+                    .and("id").ne(id)
+                    .and("status").is("Available"));
+                List<Equipment> dups = mongoTemplate.find(dupQuery, Equipment.class);
+                for (Equipment dup : dups) {
+                    dup.setStatus("Installed");
+                    dup.setAssignedToEquipmentId(updated.getAssignedToEquipmentId());
+                    dup.setAssignedToEquipmentName(updated.getAssignedToEquipmentName());
+                    dup.setShelfId("");
+                    equipmentRepository.save(dup);
+                }
+            }
+
             return updated;
         }).orElseThrow(() -> new RuntimeException("Equipment not found with id " + id));
     }
