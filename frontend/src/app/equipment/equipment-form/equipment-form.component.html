@@ -1158,25 +1158,36 @@
       <div class="modal-body">
         <p class="modal-subtitle">Choose a part from active stock inventory to install inside <strong>{{ equipment?.equipmentName }}</strong>.</p>
         
-        <div class="input-group full-width" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <label style="font-weight: 600; color: #334155; font-size: 0.9rem;">Select Part from Stock <span style="color: #ef4444;">*</span></label>
-          <select [ngModel]="selectedPartId" (ngModelChange)="onPartIdSelected($event)" class="field-select" style="width: 100%; height: 42px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.9rem; color: #334155; background-color: #fff; cursor: pointer; transition: border-color 0.2s;">
-            <option value="" disabled>-- Choose an available part --</option>
-            <option *ngFor="let p of availablePartsForInstall" [value]="p.id">
-              {{ p.equipmentName }} (S/N: {{ p.serialNumber }}) - {{ p.brand }} {{ p.model || '' }} [Type: {{ p.type | titlecase }}]
-            </option>
-          </select>
-          <div *ngIf="availablePartsForInstall.length === 0" style="color: #ef4444; font-size: 0.85rem; font-weight: 600; margin-top: 4px;">
-            No available parts found in stock.
-          </div>
+        <!-- Loading Spinner -->
+        <div *ngIf="isLoadingPartsForInstall" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; gap: 12px;">
+          <svg class="spin-loader" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="#e2e8f0" stroke-width="4"></circle>
+            <path fill="#3b82f6" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <span style="color: #64748b; font-size: 0.9rem; font-weight: 500;">Fetching parts from stock...</span>
         </div>
 
-        <div class="input-group full-width" *ngIf="selectedPartToInstall" style="animation: fadeInModal 0.25s ease-out; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <label style="font-weight: 600; color: #334155; font-size: 0.9rem;">Specification Field Name <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">(e.g., RAM, SSD, STORAGE)</span></label>
-          <input type="text" [(ngModel)]="installSpecKey" placeholder="Enter spec key (leave blank to skip spec update)" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.9rem; color: #334155; transition: border-color 0.2s;" />
-          <div style="color: #64748b; font-size: 0.8rem; line-height: 1.5;">
-            Spec key will auto-fill or update in the parent specifications tab as: <br/>
-            <strong style="color: #3b82f6;">{{ installSpecKey || '(None)' }}</strong> &rarr; <code style="background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace;">{{ selectedPartToInstall.brand }} {{ selectedPartToInstall.model || '' }} (S/N: {{ selectedPartToInstall.serialNumber }})</code>
+        <div *ngIf="!isLoadingPartsForInstall">
+          <div class="input-group full-width" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: #334155; font-size: 0.9rem;">Select Part from Stock <span style="color: #ef4444;">*</span></label>
+            <select [ngModel]="selectedPartId" (ngModelChange)="onPartIdSelected($event)" class="field-select" style="width: 100%; height: 42px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.9rem; color: #334155; background-color: #fff; cursor: pointer; transition: border-color 0.2s;">
+              <option value="" disabled>-- Choose an available part --</option>
+              <option *ngFor="let p of availablePartsForInstall" [value]="p.id">
+                {{ p.equipmentName }} (S/N: {{ p.serialNumber }}) - {{ p.brand }} {{ p.model || '' }} [Type: {{ p.type | titlecase }}]
+              </option>
+            </select>
+            <div *ngIf="availablePartsForInstall.length === 0" style="color: #ef4444; font-size: 0.85rem; font-weight: 600; margin-top: 4px;">
+              No available parts found in stock.
+            </div>
+          </div>
+
+          <div class="input-group full-width" *ngIf="selectedPartToInstall" style="animation: fadeInModal 0.25s ease-out; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: #334155; font-size: 0.9rem;">Specification Field Name <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">(e.g., RAM, SSD, STORAGE)</span></label>
+            <input type="text" [(ngModel)]="installSpecKey" placeholder="Enter spec key (leave blank to skip spec update)" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.9rem; color: #334155; transition: border-color 0.2s;" />
+            <div style="color: #64748b; font-size: 0.8rem; line-height: 1.5;">
+              Spec key will auto-fill or update in the parent specifications tab as: <br/>
+              <strong style="color: #3b82f6;">{{ installSpecKey || '(None)' }}</strong> &rarr; <code style="background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace;">{{ selectedPartToInstall.brand }} {{ selectedPartToInstall.model || '' }} (S/N: {{ selectedPartToInstall.serialNumber }})</code>
+            </div>
           </div>
         </div>
       </div>

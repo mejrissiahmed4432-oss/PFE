@@ -47,6 +47,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   formGenerateQr: boolean = false;  // QR code checkbox for edit form
   installedParts: Equipment[] = [];
   showInstallModal: boolean = false;
+  isLoadingPartsForInstall: boolean = false;
   availablePartsForInstall: Equipment[] = [];
   selectedPartToInstall: Equipment | null = null;
   selectedPartId: string = '';
@@ -803,20 +804,25 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   }
 
   openInstallModal(): void {
+    this.showInstallModal = true;
+    this.isLoadingPartsForInstall = true;
+    this.availablePartsForInstall = [];
+    this.selectedPartToInstall = null;
+    this.selectedPartId = '';
+    this.installSpecKey = '';
+
     this.equipmentService.getAllEquipment().subscribe({
       next: (allEq) => {
+        this.isLoadingPartsForInstall = false;
         // Robust filter: matching any part that is "Available" (case-insensitive) OR has no assigned PC,
         // excluding this equipment itself.
         this.availablePartsForInstall = allEq.filter(e => 
           (e.status?.toLowerCase() === 'available' || !e.assignedToEquipmentId) && 
           e.id !== this.equipment?.id
         );
-        this.showInstallModal = true;
-        this.selectedPartToInstall = null;
-        this.selectedPartId = '';
-        this.installSpecKey = '';
       },
       error: (err) => {
+        this.isLoadingPartsForInstall = false;
         console.error('Error loading available parts', err);
         this.toastService.error('Failed to load parts from stock.');
       }
