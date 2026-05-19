@@ -793,7 +793,15 @@ export class TicketsComponent implements OnInit, OnDestroy {
     });
   }
 
-  onWorkbenchComplete(event: { workNote: string; repairTasks: any[]; partsUsed: any[]; isBroken?: boolean }): void {
+  onWorkbenchComplete(event: { 
+    workNote: string; 
+    repairTasks: any[]; 
+    partsUsed: any[]; 
+    isBroken?: boolean;
+    diagnosisResult?: string;
+    validationSummary?: string;
+    partsInstalled?: any[];
+  }): void {
     if (!this.workbenchTicket?.id) return;
     
     const updated: Ticket = { 
@@ -809,13 +817,100 @@ export class TicketsComponent implements OnInit, OnDestroy {
         const idx = this.ticketsList.findIndex(t => t.id === res.id);
         if (idx !== -1) this.ticketsList[idx] = res;
 
-        const eqName = res.equipmentName;
-        const eq = this.equipments.find(e => e.name === eqName || e.equipmentName === eqName);
-        if (eq) {
-          eq.status = event.isBroken ? 'Broken' : 'Available';
+        const completedEquipmentId: string | undefined = this.workbenchEquipment?.id || res.equipmentId;
+        const completedEquipmentName: string | undefined = res.equipmentName || undefined;
+        const completedTicketId: string | undefined = res.id;
+
+        const processEquipmentUpdate = (eq: any) => {
+          const wasInstalled = eq.assignedToEquipmentId || eq.assignedToEquipmentName;
+          if (wasInstalled) {
+            if (event.isBroken) {
+              eq.status = 'Unrepairable';
+              const oldPcId = eq.assignedToEquipmentId;
+              const oldPcName = eq.assignedToEquipmentName;
+              eq.assignedToEquipmentId = undefined;
+              eq.assignedToEquipmentName = undefined;
+              
+              if (!eq.lifecycle) eq.lifecycle = [];
+              eq.lifecycle.push({
+                status: 'Unrepairable',
+                timestamp: new Date().toISOString(),
+                description: `Maintenance failed: marked as unrepairable. Uninstalled from PC ${oldPcName || ''}. Reason: ${event.workNote}`,
+                actor: this.currentUser?.firstName || 'Technician'
+              });
+
+              // Update the parent PC's specifications to clear this part type
+              if (oldPcId) {
+                this.equipmentService.getEquipmentById(oldPcId).subscribe({
+                  next: (pc) => {
+                    if (pc && pc.specifications) {
+                      const partType = (eq.type || '').toLowerCase().trim();
+                      const specKey = Object.keys(pc.specifications).find(
+                        k => k.toLowerCase().trim() === partType
+                      );
+                      if (specKey) {
+                        delete pc.specifications[specKey];
+                        this.equipmentService.updateEquipment(pc.id!, pc).subscribe({
+                          next: () => {
+                            console.log(`Cleared ${specKey} spec from PC ${pc.equipmentName}`);
+                            this.loadAllData();
+                          }
+                        });
+                      }
+                    }
+                  }
+                });
+              }
+            } else {
+              eq.status = 'Installed';
+              if (!eq.lifecycle) eq.lifecycle = [];
+              eq.lifecycle.push({
+                status: 'Installed',
+                timestamp: new Date().toISOString(),
+                description: `Maintenance Completed: ${res.title}. Status returned to Installed in ${eq.assignedToEquipmentName || ''}.`,
+                actor: this.currentUser?.firstName || 'Technician'
+              });
+            }
+          } else {
+            eq.status = event.isBroken ? 'Unrepairable' : 'Available';
+            
+            // ── AUTOMATED LIFECYCLE UPDATE ──
+            if (!eq.lifecycle) eq.lifecycle = [];
+            eq.lifecycle.push({
+              status: eq.status,
+              timestamp: new Date().toISOString(),
+              description: `Maintenance Completed: ${res.title}. ${event.workNote}`,
+              actor: this.currentUser?.firstName || 'Technician'
+            });
+          }
+
+          // ── AUTOMATED SPECIFICATION SYNC ──
+          if (event.partsInstalled && event.partsInstalled.length > 0) {
+            if (!eq.specifications) eq.specifications = {};
+            event.partsInstalled.forEach((part: any) => {
+              if (part.replacesSpecKey) {
+                const newValue = [part.name, part.specification].filter(Boolean).join(' ').trim();
+                eq.specifications![part.replacesSpecKey] = newValue;
+                console.log(`Spec synced: ${part.replacesSpecKey} -> ${newValue}`);
+              }
+            });
+          }
+
+
           this.equipmentService.updateEquipment(eq.id!, eq).subscribe({
-            next: () => this.calculateEquipmentHistory(eq)
+            next: () => {
+              this.calculateEquipmentHistory(eq);
+              this.loadAllData();
+              this.refreshService.triggerRefresh('TICKET');
+            }
           });
+        };
+
+        const eq = this.equipments.find(e => e.id === completedEquipmentId);
+        if (eq) {
+          processEquipmentUpdate(eq);
+        } else if (completedEquipmentId) {
+          this.equipmentService.getEquipmentById(completedEquipmentId).subscribe(fetchedEq => processEquipmentUpdate(fetchedEq));
         }
 
         this.applyTicketFilters();
@@ -840,6 +935,16 @@ export class TicketsComponent implements OnInit, OnDestroy {
           }
         }
         this.viewMode = 'tickets';
+<<<<<<< Updated upstream
+=======
+        // Note: loadAllData() and triggerRefresh() are called inside processEquipmentUpdate's
+        // subscribe callback to ensure the DB write completes first.
+        // If no equipment was found to update, do a simple refresh.
+        if (!completedEquipmentId && !this.equipments.find(e => e.id === completedEquipmentId)) {
+          this.loadAllData();
+          this.refreshService.triggerRefresh('TICKET');
+        }
+>>>>>>> Stashed changes
       }
     });
   }
