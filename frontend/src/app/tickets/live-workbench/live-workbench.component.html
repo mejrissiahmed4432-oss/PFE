@@ -17,10 +17,6 @@
       </div>
     </div>
     <div class="header-right">
-      <div class="wb-elapsed-timer">
-        <svg class="timer-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        {{ elapsedTimeDisplay }}
-      </div>
       <span class="status-badge active">Active</span>
       <button class="btn-cancel-styled" (click)="showCancelDialog = true">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
@@ -45,8 +41,8 @@
     </nav>
   </div>
 
-  <!-- TWO-COLUMN LAYOUT -->
-  <div class="wb-main-layout">
+  <!-- TWO-COLUMN FLEX LAYOUT -->
+  <div class="wb-workbench-split">
     <div class="wb-column-main">
 
       <!-- Equipment Info Card (Diagnosis only) -->
@@ -166,7 +162,7 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         <span>{{ check }}</span>
                       </div>
-                      <button class="btn-add-note-minimal" (click)="addCheckToNotes(check)" title="Add to Notes">+</button>
+                      <button class="btn-add-note-minimal" (click)="addCheckToDiagnosis(check)" title="Add to Manual Diagnosis">+</button>
                     </div>
                   </div>
 
@@ -249,15 +245,6 @@
               <textarea class="diag-textarea" [(ngModel)]="state.manualDiagnosis" (ngModelChange)="onTestingContextChanged()" placeholder="Enter your manual observations and initial findings..."></textarea>
             </div>
 
-            <div class="diagnosis-form-group">
-              <label>Category</label>
-              <div class="category-grid">
-                <div class="category-chip" *ngFor="let cat of availableCategories" [class.active]="hasCategory(cat.id)" (click)="toggleCategory(cat.id)">
-                  <span class="cat-icon">{{ cat.icon }}</span>
-                  <span class="cat-label">{{ cat.label }}</span>
-                </div>
-              </div>
-            </div>
 
             <div class="diagnosis-form-group">
               <label>Diagnosis Result <span class="required">*</span></label>
@@ -291,24 +278,8 @@
               </div>
 
               <div class="ai-content-wrapper" *ngIf="showAiPlan">
-                <div class="ai-description-box" style="margin-bottom: 20px;">
-                  <p>Choose your repair strategy. Our AI will architect a custom plan based on your diagnosis.</p>
-                </div>
-
-                <!-- Strategy Selector -->
-                <div class="ai-tabs-row" style="margin-bottom: 20px;">
-                  <button class="btn-ai-tab" [class.active]="activeStrategyType === 'quick'" (click)="setStrategyType('quick')" title="Minimal downtime, focus on critical fixes">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    Quick Fix
-                  </button>
-                  <button class="btn-ai-tab" [class.active]="activeStrategyType === 'standard'" (click)="setStrategyType('standard')" title="Industry standard repair workflow">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                    Standard
-                  </button>
-                  <button class="btn-ai-tab" [class.active]="activeStrategyType === 'deep'" (click)="setStrategyType('deep')" title="Comprehensive overhaul and prevention">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-                    Deep Restoration
-                  </button>
+                <div class="ai-description-box" style="margin-bottom: 24px;">
+                  <p>Click below to architect a comprehensive maintenance plan. Our engine will analyze your diagnosis and create a context-aware sequence of technical actions.</p>
                 </div>
 
                 <div class="ai-actions-row" style="margin-bottom: 0;">
@@ -319,7 +290,7 @@
                           [title]="state.aiPlanGenerated ? 'Plan already generated for this diagnosis' : 'Generate Technical Plan'">
                     <svg *ngIf="!aiPlanLoading" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 8px;"><path d="M12 2v20M2 12h20M12 2l4 4-4 4M12 22l-4-4 4-4"/></svg>
                     <span *ngIf="!aiPlanLoading" style="font-size: 0.8rem;">
-                      {{ state.aiPlanGenerated ? 'Plan Generated' : 'Generate ' + (activeStrategyType | titlecase) + ' Plan' }}
+                      {{ state.aiPlanGenerated ? 'Technical Plan Generated' : 'Generate Smart Maintenance Plan' }}
                     </span>
                     <span *ngIf="aiPlanLoading" style="font-size: 0.8rem;">Architecting Strategy...</span>
                   </button>
@@ -365,56 +336,85 @@
 
             <div class="action-cards-list">
               <div class="action-plan-card" *ngFor="let action of state.actions; trackBy: trackById">
-                <div class="apc-body">
-                  <div class="apc-icon">{{ getCategoryIcon(action.category) }}</div>
-                  <div class="apc-fields">
-                    <div class="apc-row-2">
-                      <div class="apc-field">
-                        <label>Category</label>
+                <div class="apc-header-row">
+                  <div class="apc-category-tag" [class]="action.category ? action.category.toLowerCase() : ''">
+                    <span class="apc-tag-icon">{{ getCategoryIcon(action.category) }}</span>
+                    <span class="apc-tag-label">{{ action.category }}</span>
+                  </div>
+                  <div class="apc-header-meta">
+                    <span class="action-status-badge" [class]="getStatusClass(action.status)">{{ action.status }}</span>
+                    <button class="btn-toggle-apc" (click)="action.isCollapsed = !action.isCollapsed" [title]="action.isCollapsed ? 'Show Details' : 'Hide Details'">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" [style.transform]="action.isCollapsed ? 'rotate(180deg)' : 'none'" style="transition: transform 0.3s;">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                      </svg>
+                    </button>
+                    <button class="btn-delete-action-modern" (click)="removeAction(action.id)" title="Delete Action">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="apc-content-body" *ngIf="!action.isCollapsed">
+                  <!-- Row 1: Category, Type & Priority -->
+                  <div class="apc-row-grid-three">
+                    <div class="apc-input-wrapper">
+                      <label>Category</label>
+                      <div class="apc-select-container">
                         <select [(ngModel)]="action.category" (ngModelChange)="updateAction(action.id, 'category', $event)">
                           <option *ngFor="let cat of ALL_ACTION_CATEGORIES" [value]="cat">{{ cat }}</option>
                         </select>
+                        <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                       </div>
-                      <div class="apc-field">
-                        <label>Action Type</label>
+                    </div>
+                    <div class="apc-input-wrapper">
+                      <label>Action Type</label>
+                      <div class="apc-select-container">
                         <select [(ngModel)]="action.type">
                           <option *ngFor="let t of getActionTypesForCategory(action.category)" [value]="t">{{ t }}</option>
                         </select>
+                        <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                       </div>
-                      <div class="apc-field">
-                        <label>Priority</label>
+                    </div>
+                    <div class="apc-input-wrapper">
+                      <label>Priority</label>
+                      <div class="apc-select-container priority-select" [class]="action.priority ? action.priority.toLowerCase() : ''">
                         <select [(ngModel)]="action.priority">
                           <option value="High">High Priority</option>
                           <option value="Medium">Medium Priority</option>
                           <option value="Low">Low Priority</option>
                         </select>
+                        <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                       </div>
-                    </div>
-                    <div class="apc-row-2">
-                      <div class="apc-field">
-                        <label>Target Element</label>
-                        <input type="text" [(ngModel)]="action.target" placeholder="e.g., RAM, OS, Network Config">
-                      </div>
-                      <div class="apc-field">
-                        <label>Estimated Time</label>
-                        <input type="text" [(ngModel)]="action.estimatedTime" placeholder="e.g., 30m, 1h 15m">
-                      </div>
-                    </div>
-                    <div class="apc-field full">
-                      <label>Description</label>
-                      <textarea [(ngModel)]="action.description" placeholder="Describe the action..."></textarea>
-                    </div>
-                    <div class="apc-footer">
-                      <span class="action-status-badge" [class]="getStatusClass(action.status)">{{ action.status }}</span>
-                      <button class="btn-delete-action" (click)="removeAction(action.id)">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path></svg>
-                      </button>
                     </div>
                   </div>
+
+                  <!-- Row 2: Target -->
+                  <div class="apc-input-wrapper">
+                    <label>Target Element</label>
+                    <div class="apc-input-container">
+                      <input type="text" [(ngModel)]="action.target" placeholder="e.g., RAM Module, OS Registry, BIOS Settings">
+                      <svg class="input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                    </div>
+                  </div>
+
+                  <!-- Row 3: Description -->
+                  <div class="apc-input-wrapper">
+                    <label>Technical Description</label>
+                    <textarea [(ngModel)]="action.description" placeholder="Describe the maintenance steps in detail..."></textarea>
+                  </div>
+                </div>
+
+                <!-- Footer Summary (when collapsed) -->
+                <div class="apc-collapsed-summary" *ngIf="action.isCollapsed">
+                  <div class="apc-summary-badges">
+                    <span class="summary-badge type">{{ action.type || 'No Type' }}</span>
+                    <span class="summary-badge target" *ngIf="action.target">Target: {{ action.target }}</span>
+                  </div>
+                  <p class="apc-summary-desc" *ngIf="action.description">{{ action.description | slice:0:100 }}{{ action.description.length > 100 ? '...' : '' }}</p>
                 </div>
               </div>
+              </div>
             </div>
-          </div>
 
           <!-- ── STEP 3: RESOURCES ── -->
           <div *ngIf="state.currentStep === 'resources'" class="wb-step-view">
@@ -522,7 +522,7 @@
                           <div class="rc-info">
                             <p class="rc-name">{{ part.name }}</p>
                             <p class="rc-location" *ngIf="part.specification">{{ part.specification }}</p>
-                            <p class="rc-location">Location: {{ part.location || 'Section A-1' }}</p>
+                            <p class="rc-location">Location: {{ part.location || 'Unassigned' }}</p>
                           </div>
                           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
                             <span class="rc-stock">Stock: {{ part.totalQty }}</span>
@@ -545,7 +545,10 @@
                             <button *ngIf="pendingPartAdd[getPartKey(part)] === undefined" class="btn-res-add" (click)="openPartQtyPicker(part)">+ Add</button>
                           </div>
                         </div>
-                        <div *ngIf="filteredInventory.length === 0" class="res-empty-box">No parts found in inventory for this category.</div>
+                        <div *ngIf="filteredInventory.length === 0" class="res-empty-box" style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px; text-align: center;">
+                          <span>No parts found in inventory for this category.</span>
+                          <button class="btn-res-add" (click)="openRequestWizard()" style="padding: 8px 16px; background: #6366f1; color: white;">Request Part</button>
+                        </div>
                       </div>
                     </div>
 
@@ -805,26 +808,11 @@
                           <button class="btn-val-tiny work" [class.active]="item.status === 'success'" (click)="markTestWork(item)" title="Mark as Working">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                           </button>
-                          <button class="btn-val-tiny fail" [class.active]="item.status === 'failed'" (click)="markTestFail(item)" title="Mark as Failed">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                          </button>
                           <button class="btn-val-tiny delete" (click)="removeValidationItem(i)" title="Delete Item">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                           </button>
                         </div>
                       </div>
-                    </div>
-
-                    <!-- Failure Reason (Refined Dashboard style) -->
-                    <div class="val-fail-dashboard-card animate-fade-in" *ngIf="item.status === 'failed'">
-                      <div class="vfdc-header">
-                        <div class="vfdc-title">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                          Failure Diagnostics
-                        </div>
-                        <button class="btn-goto-plan-tiny" (click)="goToStep('plan')">Back to Plan</button>
-                      </div>
-                      <textarea class="vfdc-textarea" [(ngModel)]="item.failureReason" placeholder="Briefly describe why this check failed..."></textarea>
                     </div>
                   </div>
                 </div>
@@ -904,11 +892,11 @@
                 <div class="ssm-content-box">
                   <div style="margin-bottom: 16px;">
                     <div style="font-size: 0.75rem; font-weight: 800; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">Initial Complaint</div>
-                    <p style="margin: 0; font-size: 0.95rem; color: #475569; line-height: 1.5;">{{ ticket.description }}</p>
+                    <p style="margin: 0; font-size: 0.95rem; color: var(--text-main); opacity: 0.8; line-height: 1.5;">{{ ticket.description }}</p>
                   </div>
                   <div>
                     <div style="font-size: 0.75rem; font-weight: 800; color: #3b82f6; text-transform: uppercase; margin-bottom: 4px;">Technical Diagnosis</div>
-                    <p style="margin: 0; font-size: 0.95rem; color: #475569; line-height: 1.5;">{{ state.diagnosisResult }}</p>
+                    <p style="margin: 0; font-size: 0.95rem; color: var(--text-main); opacity: 0.8; line-height: 1.5;">{{ state.diagnosisResult }}</p>
                   </div>
                 </div>
               </div>
@@ -957,13 +945,25 @@
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                   <h4>Inventory Consumption</h4>
                 </div>
-                <div style="background: #fdfaf2; border: 1px solid #fef3c7; border-radius: 12px; padding: 16px;">
-                  <div *ngFor="let action of state.actions" style="margin-bottom: 8px;">
-                    <div *ngFor="let res of action.resources" style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                      <span style="color: #92400e; font-weight: 600;">{{ res.name }}</span>
-                      <span style="color: #b45309; font-size: 0.8rem; font-weight: 700;">{{ res.resourceType | uppercase }}</span>
+                <div class="summary-inventory-consumption-box">
+                  <ng-container *ngFor="let action of state.actions">
+                  <div *ngIf="action.resources && action.resources.length > 0" style="margin-bottom: 16px; border-bottom: 1px dashed #fef3c7; padding-bottom: 12px;">
+                    <div style="font-size: 10px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 8px; opacity: 0.8; letter-spacing: 0.5px;">
+                      Linked to: {{ action.type }} {{ action.target }}
+                    </div>
+                    <div *ngFor="let res of action.resources" style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; margin-bottom: 8px;">
+                      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="display: flex; flex-direction: column;">
+                          <span style="color: #92400e; font-weight: 700;">{{ res.name }} <small *ngIf="(res.quantity || 0) > 1">(x{{ res.quantity }})</small></span>
+                          <span *ngIf="res.specification" style="font-size: 11px; color: #b45309; opacity: 0.9; font-weight: 500;">{{ res.specification }}</span>
+                        </div>
+                        <span style="color: #b45309; font-size: 0.75rem; font-weight: 800; background: rgba(245, 158, 11, 0.1); padding: 2px 8px; border-radius: 6px;">{{ res.resourceType | uppercase }}</span>
+                      </div>
+                      
+
                     </div>
                   </div>
+                  </ng-container>
                 </div>
               </div>
 
@@ -1004,7 +1004,7 @@
           <button class="btn-complete" *ngIf="state.currentStep === 'summary'" (click)="showCompleteDialog = true">Finish & Close</button>
         </footer>
       </div>
-    </div>
+      </div> <!-- Close wb-column-main -->
 
     <!-- SIDEBAR -->
     <div class="wb-column-sidebar">
@@ -1029,7 +1029,7 @@
           </div>
           <div class="timeline-container">
             <div class="timeline-scroll-area">
-              <div class="timeline-item" *ngFor="let item of state.timeline">
+              <div class="timeline-item" *ngFor="let item of importantTimeline">
               <div class="timeline-icon-wrap">
                 <!-- Ticket Created -->
                 <svg *ngIf="item.icon === 'edit'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
@@ -1070,8 +1070,9 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </div> <!-- Close wb-column-sidebar -->
+  </div> <!-- Close wb-workbench-split -->
+  </div> <!-- Close wb-container -->
 
   <!-- CANCEL DIALOG -->
   <div class="wb-modal-overlay" *ngIf="showCancelDialog" (click)="showCancelDialog = false">
@@ -1127,21 +1128,36 @@
   </div>
 
   <!-- ── BROKEN CONFIRMATION DIALOG ── -->
-  <div class="wb-modal-overlay" *ngIf="showBrokenDialog">
-    <div class="wb-modal-card broken">
-      <div class="modal-icon-header">
-        <div class="mih-inner broken">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-        </div>
+  <div class="wb-modal-overlay" *ngIf="showBrokenDialog" (click)="showBrokenDialog = false">
+    <div class="wb-modal alert-modal" (click)="$event.stopPropagation()">
+      <div class="alert-icon-wrap" style="background: #fee2e2; color: #ef4444; margin-bottom: 20px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
       </div>
-      <h3>Mark as Unrepairable?</h3>
-      <p>This will flag this equipment as <strong>BROKEN</strong> and close the ticket immediately. Use this only if the hardware cannot be fixed.</p>
+      <h3 style="margin: 0 0 8px; font-size: 1.2rem; font-weight: 800; text-align: center;">Mark as Unrepairable?</h3>
+      <p style="margin-bottom: 20px; font-size: 0.9rem; text-align: center; color: var(--text-muted, #64748b);">
+        This will flag this equipment as <strong>BROKEN</strong> and close the ticket immediately. Use this only if the hardware cannot be fixed.
+      </p>
       
-      <div class="modal-actions" style="display: flex; gap: 12px; margin-top: 24px; justify-content: center;">
+      <!-- Reason textarea -->
+      <div style="margin-bottom: 24px; text-align: left; width: 100%;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">
+          Reason for Failure <span class="required" style="color: #ef4444;">*</span>
+        </label>
+        <textarea [(ngModel)]="brokenReason" placeholder="Please specify the reason why the hardware cannot be repaired..." style="width: 100%; min-height: 80px; background: var(--bg-app); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; font-size: 0.85rem; color: var(--text-main); font-family: inherit; resize: vertical; box-sizing: border-box; outline: none; transition: 0.2s;"></textarea>
+      </div>
+
+      <div class="modal-btns">
         <button class="btn-secondary" (click)="showBrokenDialog = false">Cancel</button>
-        <button class="btn-danger" (click)="confirmBrokenDevice()">Yes, it's Broken</button>
+        <button class="btn-danger" [disabled]="!brokenReason || !brokenReason.trim()" (click)="confirmBrokenDevice()">Yes, it's Broken</button>
       </div>
     </div>
   </div>
 
-</div>
+  <!-- ── PART REQUEST WIZARD MODAL ── -->
+  <app-part-request-wizard
+    *ngIf="isRequestWizardOpen"
+    [visible]="isRequestWizardOpen"
+    [user]="currentUser"
+    [initialPartSelection]="wizardInitialSelection"
+    (closeWizard)="onRequestWizardClose($event)">
+  </app-part-request-wizard>

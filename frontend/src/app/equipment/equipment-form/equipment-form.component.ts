@@ -53,7 +53,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     'ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'
   ];
   consumables = ['ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'];
-  statusOptions = ['Available', 'Broken', 'Maintenance', 'Out of Stock'];
+  statusOptions = ['Available', 'Broken', 'Maintenance', 'Out of Stock', 'Installed', 'Unrepairable'];
 
 
   constructor(
@@ -249,12 +249,21 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   onStatusChange(): void {
     const status = this.formData.status;
+    
+    // Clear PC assignment fields if status is no longer 'Installed'
+    if (status !== 'Installed') {
+      this.formData.assignedToEquipmentId = undefined;
+      this.formData.assignedToEquipmentName = undefined;
+    }
+
     if (status === 'Maintenance') {
       this.formData.shelfId = 'MAINTENANCE_AREA';
-    } else if (status === 'Broken') {
+    } else if (status === 'Broken' || status === 'Unrepairable') {
       this.formData.shelfId = 'SCRAP_YARD';
     } else if (status === 'Out of Stock') {
       this.formData.shelfId = 'OUT_OF_STOCK';
+    } else if (status === 'Installed') {
+      this.formData.shelfId = '';
     } else if (status === 'Available' || status === 'In Stock') {
       // If switching back to Available from a virtual area, reset shelf
       if (this.formData.shelfId === 'MAINTENANCE_AREA' ||

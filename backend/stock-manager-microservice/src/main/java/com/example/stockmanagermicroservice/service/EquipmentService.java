@@ -302,7 +302,7 @@ public class EquipmentService {
 
             if ("Maintenance".equals(status)) {
                 newShelfId = "MAINTENANCE_AREA";
-            } else if ("Broken".equals(status)) {
+            } else if ("Broken".equals(status) || "Unrepairable".equals(status)) {
                 newShelfId = "SCRAP_YARD";
             } else if ("Out of Stock".equalsIgnoreCase(status)) {
                 newShelfId = "OUT_OF_STOCK";
@@ -344,6 +344,10 @@ public class EquipmentService {
             equipment.setNote(equipmentDetails.getNote());
             equipment.setDepartment(equipmentDetails.getDepartment());
             equipment.setCreatedBy(equipmentDetails.getCreatedBy());
+
+            // Part installation tracking — persist parent PC assignment
+            equipment.setAssignedToEquipmentId(equipmentDetails.getAssignedToEquipmentId());
+            equipment.setAssignedToEquipmentName(equipmentDetails.getAssignedToEquipmentName());
 
             // File Documents (Conditional update to avoid wiping un-fetched data)
             if (equipmentDetails.getInvoiceFileName() != null) {
@@ -417,8 +421,20 @@ public class EquipmentService {
                 update.set("warrantyFileData", equipmentDetails.getWarrantyFileData());
             }
             
+            // Handle explicit clearing of part PC assignment fields (e.g. Unrepairable or manual status change)
+            boolean clearAssignedToEquipment = (equipment.getAssignedToEquipmentId() != null || equipment.getAssignedToEquipmentName() != null)
+                    && equipmentDetails.getAssignedToEquipmentId() == null
+                    && equipmentDetails.getAssignedToEquipmentName() == null;
+
             mongoTemplate.updateFirst(new org.springframework.data.mongodb.core.query.Query(org.springframework.data.mongodb.core.query.Criteria.where("_id").is(id)), update, Equipment.class);
-             Equipment updated = equipment;
+
+            // Explicitly unset PC assignment if cleared (unassigned or unrepairable part detached from PC)
+            if (clearAssignedToEquipment) {
+                Update clearUpdate = new Update().unset("assignedToEquipmentId").unset("assignedToEquipmentName");
+                mongoTemplate.updateFirst(new org.springframework.data.mongodb.core.query.Query(org.springframework.data.mongodb.core.query.Criteria.where("_id").is(id)), clearUpdate, Equipment.class);
+            }
+
+            Equipment updated = equipment;
 
             // Sync alerts if name changed (Deprecated - historical alerts act as point-in-time snapshot)
 

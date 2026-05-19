@@ -33,12 +33,17 @@ export interface GroupedEquipment {
   commonModel: string;
   statusSummary: { label: string; count: number; cls: string }[];
   allSameAttributes: boolean;
+  isNew?: boolean;
+  isUpdated?: boolean;
 }
+
+import { ConfirmDialogService } from '../../shared/components/confirm-dialog/confirm-dialog.service';
+import { TranslatePipe } from '../../shared/translate.pipe';
 
 @Component({
   selector: 'app-equipment-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './equipment-list.component.html',
   styleUrl: './equipment-list.component.css',
   animations: [
@@ -96,20 +101,18 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   bulkEditForm = { name: '', brand: '' };
   isBulkSaving: boolean = false;
 
-  // Delete Confirmation Modal
-  showDeleteModal: boolean = false;
-  deleteModalTitle: string = '';
-  deleteModalMessage: string = '';
-  itemToDeleteId: string | null = null;
-  groupToDeleteIds: string[] | null = null;
-  isBulkDelete: boolean = false;
+  // Real-time Activity Badges
+  newEquipments = new Set<string>();
+  updatedEquipments = new Set<string>();
+  private previousIds = new Set<string>();
 
   constructor(
     private equipmentService: EquipmentService,
     private supplierService: SupplierService,
     private shelfService: ShelfService,
     private categoryService: CategoryService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private confirmDialogService: ConfirmDialogService
   ) {}
 
   ngOnInit(): void {
@@ -135,6 +138,33 @@ export class EquipmentListComponent implements OnInit, OnChanges {
   loadEquipments(): void {
     this.equipmentService.getAllEquipment().subscribe({
       next: (data) => {
+        const isFirstLoad = this.previousIds.size === 0;
+        const now = new Date().getTime();
+        
+        data.forEach(eq => {
+          if (!eq.id) return;
+          
+          if (eq.createdAt) {
+            const createdTime = new Date(eq.createdAt).getTime();
+            if (now - createdTime < 60000) {
+              this.newEquipments.add(eq.id);
+              setTimeout(() => this.newEquipments.delete(eq.id!), 8000);
+            }
+          }
+          
+          if (eq.updatedAt) {
+            const updatedTime = new Date(eq.updatedAt).getTime();
+            const createdTime = eq.createdAt ? new Date(eq.createdAt).getTime() : 0;
+            // Only consider it 'updated' if it wasn't just created
+            if (now - updatedTime < 60000 && Math.abs(updatedTime - createdTime) > 5000) {
+              this.updatedEquipments.add(eq.id);
+              setTimeout(() => this.updatedEquipments.delete(eq.id!), 8000);
+            }
+          }
+          
+          this.previousIds.add(eq.id);
+        });
+
         this.equipments = data;
         this.applyFilters();
       },
@@ -278,6 +308,10 @@ export class EquipmentListComponent implements OnInit, OnChanges {
         JSON.stringify(item.specifications || {}) === JSON.stringify(first.specifications || {})
       );
 
+      // Feature 1 Extension: Aggregate badges from items
+      group.isNew = group.items.some(item => this.newEquipments.has(item.id || ''));
+      group.isUpdated = group.items.some(item => this.updatedEquipments.has(item.id || ''));
+
       // Status Summary — capture all unique status results
       const statusCounts: Record<string, { label: string; count: number; cls: string }> = {};
       group.items.forEach(item => {
@@ -319,60 +353,48 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     this.applyFilters();
   }
 
-  deleteEquipment(id?: string, event?: Event): void {
+  async deleteEquipment(id?: string, event?: Event): Promise<void> {
     if (event) event.stopPropagation();
     if (!id) return;
-    
-    this.itemToDeleteId = id;
-    this.groupToDeleteIds = null;
-    this.isBulkDelete = false;
-    this.deleteModalTitle = 'Delete Equipment';
-    this.deleteModalMessage = 'Are you sure you want to delete this specific unit? This action cannot be undone.';
-    this.showDeleteModal = true;
+
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Delete Equipment',
+      message: 'Are you sure you want to delete this specific unit? This action cannot be undone.',
+      confirmText: 'Delete',
+      isDanger: true
+    });
+
+    if (!confirmed) return;
+
+    this.equipmentService.deleteEquipment(id).subscribe({
+      next: () => {
+        this.toastService.delete(`Equipment deleted successfully.`);
+        this.loadEquipments();
+      },
+      error: (err: any) => console.error('Error deleting equipment', err)
+    });
   }
 
-  deleteGroup(group: GroupedEquipment, event: Event): void {
-    event.stopPropagation();
-    this.itemToDeleteId = null;
-    this.groupToDeleteIds = group.items.map(item => item.id!);
-    this.isBulkDelete = true;
-    this.deleteModalTitle = 'Delete Group';
-    this.deleteModalMessage = `Are you sure you want to delete all ${group.totalQuantity} items in this group? This action cannot be undone.`;
-    this.showDeleteModal = true;
-  }
+  async deleteGroup(group: GroupedEquipment, event: Event): Promise<void> {
+    if (event) event.stopPropagation();
 
-  closeDeleteModal(): void {
-    this.showDeleteModal = false;
-    this.itemToDeleteId = null;
-    this.groupToDeleteIds = null;
-  }
+    const confirmed = await this.confirmDialogService.confirm({
+      title: 'Delete Group',
+      message: `Are you sure you want to delete all ${group.totalQuantity} items in this group? This action cannot be undone.`,
+      confirmText: 'Delete All',
+      isDanger: true
+    });
 
-  confirmDelete(): void {
-    if (this.isBulkDelete && this.groupToDeleteIds) {
-      this.equipmentService.deleteBulkEquipment(this.groupToDeleteIds).subscribe({
-        next: () => {
-          this.toastService.success(`Successfully deleted ${this.groupToDeleteIds?.length} items.`);
-          this.loadEquipments();
-          this.closeDeleteModal();
-        },
-        error: (err) => {
-          console.error('Error deleting group', err);
-          this.closeDeleteModal();
-        }
-      });
-    } else if (this.itemToDeleteId) {
-      this.equipmentService.deleteEquipment(this.itemToDeleteId).subscribe({
-        next: () => {
-          this.toastService.success(`Equipment deleted successfully.`);
-          this.loadEquipments();
-          this.closeDeleteModal();
-        },
-        error: (err) => {
-          console.error('Error deleting equipment', err);
-          this.closeDeleteModal();
-        }
-      });
-    }
+    if (!confirmed) return;
+
+    const ids = group.items.map(item => item.id!);
+    this.equipmentService.deleteBulkEquipment(ids).subscribe({
+      next: () => {
+        this.toastService.delete(`Successfully deleted ${ids.length} items.`);
+        this.loadEquipments();
+      },
+      error: (err: any) => console.error('Error deleting group', err)
+    });
   }
 
   // ─── Group Edit ───────────────────────────────────
@@ -411,7 +433,7 @@ export class EquipmentListComponent implements OnInit, OnChanges {
       null as any
     ).subscribe({
       next: () => {
-        this.toastService.success(`Group "${newGroupName}" updated successfully.`);
+        this.toastService.update(`Group "${newGroupName}" updated successfully.`);
         this.isBulkSaving = false;
         if (this.editingGroup) {
           // Update group display name locally (does NOT cascade to individual equipment names)
@@ -533,7 +555,8 @@ export class EquipmentListComponent implements OnInit, OnChanges {
     if (eq.status) {
       const s = eq.status.toLowerCase();
       if (s === 'broken') return { label: 'Broken', cls: 'expired' }; 
-      if (s === 'maintenance') return { label: 'Maintenance', cls: 'maintenance' };
+      if (s === 'unrepairable') return { label: 'Unrepairable', cls: 'expired' }; 
+      if (s === 'maintenance' || s === 'in maintenance') return { label: 'Maintenance', cls: 'maintenance' };
       if (s === 'out of stock') return { label: 'Out of Stock', cls: 'unassigned' };
       if (s === 'in use') return { label: 'In Use', cls: 'in-use' };
       if (s === 'available' || s === 'in stock') return { label: 'Available', cls: 'active' };

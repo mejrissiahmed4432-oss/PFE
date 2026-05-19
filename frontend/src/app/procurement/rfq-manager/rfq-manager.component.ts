@@ -12,107 +12,109 @@ import { ToastService } from '../../shared/toast.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="bg-white/70 backdrop-blur-md border border-slate-200 rounded-2xl p-6 shadow-sm">
-      <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
-        <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+    <div class="bg-white dark:bg-slate-900 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-[2.5rem] p-10 shadow-sm dark:shadow-2xl transition-colors duration-300">
+      <div class="flex items-center gap-6 mb-10 pb-8 border-b border-slate-100 dark:border-white/5">
+        <div class="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-500/20 shadow-inner">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
         </div>
         <div>
-          <h2 class="text-lg font-bold text-slate-800 m-0">Direct Email RFQ</h2>
-          <p class="text-sm text-slate-500 mt-1">Suppliers will receive the request via email. No login required for them.</p>
+          <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tighter m-0">Direct Email RFQ</h2>
+          <p class="text-sm text-slate-500 mt-1 font-medium italic">Suppliers will receive the request via email. No login required for them.</p>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <!-- Approved Requests waiting for RFQ -->
-        <div>
-          <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Requests to Process</h3>
-          <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-6">
+          <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-2">Requests Buffer Pool</h3>
+          <div class="flex flex-col gap-4">
             <div *ngFor="let req of approvedRequests" 
-                 class="p-4 border rounded-xl transition-all cursor-pointer"
-                 [ngClass]="selectedRequest?.id === req.id ? 'border-indigo-600 bg-indigo-50/30' : 'border-slate-200 hover:border-indigo-300'"
+                 class="p-6 border rounded-[2rem] transition-all cursor-pointer group relative overflow-hidden"
+                 [ngClass]="selectedRequest?.id === req.id ? 'border-indigo-600 bg-indigo-50/30 dark:bg-indigo-600/5' : 'border-slate-100 dark:border-white/5 bg-slate-50/30 dark:bg-black/20 hover:border-indigo-300 dark:hover:border-indigo-500/30'"
                  (click)="selectRequest(req)">
-              <div class="flex justify-between mb-2">
-                <span class="font-bold text-slate-700 text-sm">{{ req.items.length }} Items</span>
-                <span class="text-xs text-slate-400">{{ formatDate(req.createdAt) }}</span>
+              <div class="flex justify-between items-center mb-4">
+                <span class="px-3 py-1 bg-indigo-100 dark:bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 rounded-lg text-[10px] font-black uppercase tracking-widest">{{ req.items.length }} UNITS</span>
+                <span class="text-[10px] text-slate-400 dark:text-slate-600 font-bold uppercase tracking-tighter">{{ formatDate(req.createdAt) }}</span>
               </div>
-              <div class="text-[10px] text-slate-500 font-medium line-clamp-1 mb-2">
+              <div class="text-sm font-black text-slate-800 dark:text-slate-200 line-clamp-2 mb-4 leading-relaxed group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
                 {{ getItemList(req) }}
               </div>
-              <p class="text-[10px] font-black text-indigo-500 uppercase tracking-tighter">{{ req.createdByName }}</p>
+              <div class="flex items-center gap-2">
+                <div class="w-1 h-1 bg-indigo-500 rounded-full animate-pulse"></div>
+                <p class="text-[9px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-[0.2em]">{{ req.createdByName }}</p>
+              </div>
             </div>
-            <div *ngIf="approvedRequests.length === 0" class="text-center p-8 text-slate-400 text-sm italic">
-              No approved requests waiting for RFQ.
+            <div *ngIf="approvedRequests.length === 0" class="flex flex-col items-center justify-center p-20 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] bg-slate-50/50 dark:bg-black/10">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1" class="mb-4 opacity-20 text-slate-400" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-600 italic">No approved requests waiting for RFQ.</p>
             </div>
           </div>
         </div>
 
         <!-- RFQ Form -->
-        <div *ngIf="selectedRequest" class="flex flex-col gap-6 p-6 bg-slate-50 rounded-2xl border border-slate-200">
+        <div *ngIf="selectedRequest" class="flex flex-col gap-8 p-10 bg-slate-50 dark:bg-black/40 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-inner animate-in slide-in-from-right-6 duration-500">
           <div>
-            <div class="flex justify-between items-center mb-2">
-              <h4 class="font-bold text-slate-800">Selected Request Details</h4>
-              <label class="flex items-center gap-2 text-sm font-semibold text-indigo-600 cursor-pointer hover:text-indigo-800 transition-colors">
-                <input type="checkbox" 
-                       [checked]="selectedItemIndices.length === selectedRequest.items.length && selectedRequest.items.length > 0"
-                       (change)="toggleSelectAllItems()"
-                       class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer">
-                Select All Items
-              </label>
+            <div class="flex justify-between items-center mb-6">
+              <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Payload Optimization</h4>
+              <button (click)="toggleSelectAllItems()"
+                      class="px-4 py-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                {{ selectedItemIndices.length === selectedRequest.items.length ? 'Deselect All' : 'Select All Items' }}
+              </button>
             </div>
-            <ul class="text-sm text-slate-600 list-none p-0 flex flex-col gap-3">
-              <li *ngFor="let item of selectedRequest.items; let i = index" 
-                  class="bg-white border rounded-xl p-3 flex items-start gap-3 transition-colors"
-                  [ngClass]="selectedItemIndices.includes(i) ? 'border-indigo-300 bg-indigo-50/30' : 'border-slate-200'">
+            <div class="flex flex-col gap-4">
+              <div *ngFor="let item of selectedRequest.items; let i = index" 
+                  class="bg-white dark:bg-black/60 border rounded-2xl p-5 flex items-start gap-5 transition-all relative overflow-hidden"
+                  [ngClass]="selectedItemIndices.includes(i) ? 'border-indigo-400 dark:border-indigo-500/30 bg-indigo-50/10' : 'border-slate-100 dark:border-white/5 opacity-50'">
                 
-                <div class="pt-0.5">
+                <div class="pt-1">
                   <input type="checkbox" 
                          [checked]="selectedItemIndices.includes(i)" 
                          (change)="toggleItemSelection(i)"
-                         class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer">
+                         class="w-5 h-5 text-indigo-600 rounded-lg border-slate-300 dark:border-white/10 focus:ring-indigo-500 cursor-pointer bg-slate-50 dark:bg-black/40">
                 </div>
                 
                 <div class="flex-1 cursor-pointer" (click)="toggleItemSelection(i)">
-                  <div class="font-bold text-slate-800 mb-1" [ngClass]="{'opacity-50 line-through': !selectedItemIndices.includes(i)}">
-                    {{ item.name }} x {{ item.quantity }}
+                  <div class="font-black text-slate-900 dark:text-white mb-2 leading-tight">
+                    {{ item.name }} <span class="text-indigo-600 dark:text-indigo-400 ml-2">×{{ item.quantity }}</span>
                   </div>
-                  <div *ngIf="item.selectedSpecs && objectKeys(item.selectedSpecs).length > 0" class="flex flex-wrap gap-1" [ngClass]="{'opacity-50': !selectedItemIndices.includes(i)}">
-                    <span *ngFor="let key of objectKeys(item.selectedSpecs)" class="px-1.5 py-0.5 bg-slate-100 text-slate-600 text-[10px] rounded border border-slate-200">
+                  <div *ngIf="item.selectedSpecs && objectKeys(item.selectedSpecs).length > 0" class="flex flex-wrap gap-2">
+                    <span *ngFor="let key of objectKeys(item.selectedSpecs)" class="px-2 py-1 bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 text-[9px] rounded-md border border-slate-200 dark:border-white/5 font-black uppercase tracking-tighter">
                       {{ key }}: {{ item.selectedSpecs[key] }}
                     </span>
                   </div>
                 </div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
 
-          <div class="flex flex-col gap-3">
-            <h4 class="font-bold text-slate-800">Select Suppliers</h4>
-            <div *ngIf="suppliers.length === 0" class="text-sm text-slate-500 italic p-4 bg-white rounded-xl border border-slate-200 text-center">
+          <div class="flex flex-col gap-4">
+            <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Vendor Distribution</h4>
+            <div *ngIf="suppliers.length === 0" class="text-xs text-slate-500 italic p-8 bg-white dark:bg-black/60 rounded-[2rem] border border-slate-200 dark:border-white/5 text-center shadow-inner">
               No suppliers found. Please add suppliers in the Supplier Management section.
             </div>
-            <div *ngIf="suppliers.length > 0" class="flex flex-col gap-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+            <div *ngIf="suppliers.length > 0" class="flex flex-col gap-3 max-h-72 overflow-y-auto pr-3 custom-scrollbar">
               <label *ngFor="let supplier of suppliers" 
-                     class="flex items-center gap-3 p-3 bg-white border rounded-xl cursor-pointer transition-colors"
-                     [ngClass]="selectedSupplierIds.includes(supplier.id!) ? 'border-indigo-400 bg-indigo-50/50' : 'border-slate-200 hover:border-indigo-300'">
+                     class="flex items-center gap-5 p-5 bg-white dark:bg-black/60 border rounded-2xl cursor-pointer transition-all hover:border-indigo-400 group"
+                     [ngClass]="selectedSupplierIds.includes(supplier.id!) ? 'border-indigo-600 dark:border-indigo-500/50 bg-indigo-50/10' : 'border-slate-100 dark:border-white/5'">
                 <input type="checkbox" 
                        [checked]="selectedSupplierIds.includes(supplier.id!)"
                        (change)="toggleSupplierSelection(supplier.id!)"
-                       class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer">
+                       class="w-5 h-5 text-indigo-600 rounded-lg border-slate-300 dark:border-white/10 focus:ring-indigo-500 cursor-pointer bg-slate-50 dark:bg-black/40">
                 <div class="flex-1">
-                  <div class="font-bold text-slate-800 text-sm">{{ supplier.companyName }}</div>
-                  <div class="text-xs text-slate-500">{{ supplier.email }} | {{ supplier.category }}</div>
+                  <div class="font-black text-slate-900 dark:text-white text-sm tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{{ supplier.companyName }}</div>
+                  <div class="text-[10px] text-slate-500 font-bold mt-1 opacity-70">{{ supplier.email }} | {{ supplier.category }}</div>
                 </div>
               </label>
             </div>
-            <p class="text-[11px] text-slate-400 italic mt-1">Selected suppliers will receive an official PDF request to their saved email address.</p>
+            <p class="text-[10px] text-slate-400 dark:text-slate-600 font-bold italic mt-2 opacity-60">Selected suppliers will receive an official PDF request to their saved email address.</p>
           </div>
 
           <button (click)="sendRFQ()" 
                   [disabled]="selectedSupplierIds.length === 0 || isProcessing || selectedItemIndices.length === 0"
-                  class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center gap-2">
-            <span *ngIf="isProcessing" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-            {{ isProcessing ? 'Sending RFQs...' : 'Generate & Send RFQ PDF' }}
+                  class="w-full py-5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-30 text-white font-black text-[10px] uppercase tracking-[0.3em] rounded-2xl shadow-xl shadow-indigo-600/20 transition-all flex items-center justify-center gap-4 active:scale-95 group">
+            <span *ngIf="isProcessing" class="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></span>
+            <svg *ngIf="!isProcessing" class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+            {{ isProcessing ? 'Sending RFQs...' : 'Commit & Disseminate RFQ' }}
           </button>
         </div>
       </div>

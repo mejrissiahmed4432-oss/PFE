@@ -3,6 +3,8 @@ package com.example.stockmanagermicroservice.service;
 import com.example.stockmanagermicroservice.dto.DashboardStats;
 import com.example.stockmanagermicroservice.model.Equipment;
 import com.example.stockmanagermicroservice.repository.EquipmentRepository;
+import com.example.stockmanagermicroservice.repository.SoftwareRepository;
+import com.example.stockmanagermicroservice.repository.LicensePoolRepository;
 import com.example.stockmanagermicroservice.repository.SupplierRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,12 @@ public class DashboardService {
     private SupplierRepository supplierRepository;
 
     @Autowired
+    private SoftwareRepository softwareRepository;
+
+    @Autowired
+    private LicensePoolRepository licensePoolRepository;
+
+    @Autowired
     private RestTemplate restTemplate;
 
     public DashboardStats getDashboardStats() {
@@ -32,6 +40,8 @@ public class DashboardService {
         
         stats.setTotalEquipment(allEquipment.size());
         stats.setTotalSuppliers(supplierRepository.count());
+        stats.setTotalSoftware(softwareRepository.count());
+        stats.setTotalLicenses(licensePoolRepository.count());
         
         // Warranty alert (within 30 days)
         LocalDate thirtyDaysFromNow = LocalDate.now().plusDays(30);

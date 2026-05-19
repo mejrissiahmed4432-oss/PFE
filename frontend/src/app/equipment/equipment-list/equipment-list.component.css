@@ -1137,3 +1137,45 @@
     padding: 16px;
   }
 }
+
+/* ═══ Activity Badges ═══ */
+.badge-new-modern, .badge-updated-modern {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  animation: badgeFadeIn 0.5s ease-out;
+}
+
+.badge-new-modern {
+  color: #4338ca;
+  background: transparent;
+  box-shadow: none;
+}
+
+.badge-updated-modern {
+  color: #d97706;
+  background: transparent;
+  box-shadow: none;
+}
+
+.badge-new-modern.sm, .badge-updated-modern.sm {
+  font-size: 0.6rem;
+  padding: 1px 6px;
+}
+
+.badge-new-modern.xs, .badge-updated-modern.xs {
+  font-size: 0.55rem;
+  padding: 1px 4px;
+}
+
+@keyframes badgeFadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}

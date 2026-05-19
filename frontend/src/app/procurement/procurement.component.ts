@@ -8,8 +8,10 @@ import { SupplierResponseListComponent } from './supplier-response-list/supplier
 import { PurchaseOrderViewComponent } from './purchase-order-view/purchase-order-view.component';
 import { ProcurementDashboardComponent } from './procurement-dashboard/procurement-dashboard.component';
 import { EquipmentRequest, SupplierResponse } from './procurement.models';
+import { ProcurementService } from './procurement.service';
+import { EquipmentHistoryComponent } from './equipment-history/equipment-history.component';
 
-type ProcTab = 'dashboard' | 'new-request' | 'my-requests' | 'approvals' | 'rfq' | 'responses' | 'orders';
+type ProcTab = 'dashboard' | 'new-request' | 'my-requests' | 'approvals' | 'rfq' | 'responses' | 'orders' | 'history';
 
 @Component({
   selector: 'app-procurement',
@@ -23,6 +25,7 @@ type ProcTab = 'dashboard' | 'new-request' | 'my-requests' | 'approvals' | 'rfq'
     SupplierResponseListComponent,
     PurchaseOrderViewComponent,
     ProcurementDashboardComponent,
+    EquipmentHistoryComponent,
   ],
   templateUrl: './procurement.component.html',
   styleUrls: ['./procurement.component.css']
@@ -35,22 +38,41 @@ export class ProcurementComponent implements OnInit {
   @ViewChild(PurchaseOrderViewComponent) orderView?: PurchaseOrderViewComponent;
 
   activeTab: ProcTab = 'dashboard';
+  pendingApprovalsCount = 0;
+  pendingRfqCount = 0;
+  pendingQuotationsCount = 0;
 
   get isStockManager(): boolean { return this.userRole === 'STOCK_MANAGER'; }
   get isItManager(): boolean    { return this.userRole === 'IT_MANAGER'; }
 
-  get tabs(): { id: ProcTab; label: string; icon: string; roles: string[] }[] {
-    return [
-      { id: 'dashboard' as ProcTab,    label: 'Overview',      icon: '📊', roles: ['STOCK_MANAGER', 'IT_MANAGER'] },
-      { id: 'new-request' as ProcTab,  label: 'New Request',   icon: '➕', roles: ['STOCK_MANAGER', 'IT_MANAGER'] },
-      { id: 'my-requests' as ProcTab,  label: 'My Requests',   icon: '📋', roles: ['STOCK_MANAGER', 'IT_MANAGER'] },
-      { id: 'approvals' as ProcTab,    label: 'Approvals',     icon: '✅', roles: ['IT_MANAGER'] },
-      { id: 'rfq' as ProcTab,          label: 'Send RFQ',      icon: '📤', roles: ['IT_MANAGER'] },
-      { id: 'responses' as ProcTab,    label: 'Quotations',    icon: '📩', roles: ['IT_MANAGER'] },
-    ].filter(t => t.roles.includes(this.userRole));
+  constructor(private procService: ProcurementService) {}
+
+  ngOnInit(): void {
+    this.loadPendingCount();
+    // Refresh count whenever a request is created/updated
+    this.procService.requestCreated$.subscribe(() => this.loadPendingCount());
   }
 
-  ngOnInit(): void {}
+  loadPendingCount(): void {
+    if (this.isItManager) {
+      this.procService.getAllRequests().subscribe(reqs => {
+        this.pendingApprovalsCount = reqs.filter(r => r.status === 'PENDING_IT_APPROVAL').length;
+        this.pendingRfqCount = reqs.filter(r => r.status === 'APPROVED').length;
+        this.pendingQuotationsCount = reqs.filter(r => r.status === 'RESPONDED').length;
+      });
+    }
+  }
+
+  get tabs(): { id: ProcTab; label: string; icon: string; roles: string[]; count?: number }[] {
+    return [
+      { id: 'dashboard' as ProcTab,    label: 'Overview',      icon: 'chart',    roles: ['STOCK_MANAGER', 'IT_MANAGER'] },
+      { id: 'new-request' as ProcTab,  label: 'New Request',   icon: 'plus',     roles: ['STOCK_MANAGER', 'IT_MANAGER'] },
+      { id: 'my-requests' as ProcTab,  label: 'Requests',      icon: 'list',     roles: ['STOCK_MANAGER', 'IT_MANAGER'] },
+      { id: 'approvals' as ProcTab,    label: 'Approvals',     icon: 'check',    roles: ['IT_MANAGER'], count: this.pendingApprovalsCount },
+      { id: 'rfq' as ProcTab,          label: 'Send RFQ',      icon: 'send',     roles: ['IT_MANAGER'], count: this.pendingRfqCount },
+      { id: 'responses' as ProcTab,    label: 'Quotations',    icon: 'mail',     roles: ['IT_MANAGER'], count: this.pendingQuotationsCount },
+    ].filter(t => t.roles.includes(this.userRole));
+  }
 
   onSendToRFQ(req: EquipmentRequest): void {
     this.activeTab = 'rfq';

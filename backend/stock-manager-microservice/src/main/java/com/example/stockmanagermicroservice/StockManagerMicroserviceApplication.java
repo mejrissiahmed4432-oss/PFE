@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableScheduling
+@org.springframework.data.mongodb.config.EnableMongoAuditing
 public class StockManagerMicroserviceApplication {
 
     public static void main(String[] args) {

@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardService, DashboardStats } from './dashboard.service';
+import { SoftwareService } from '../software-management/software.service';
+import { Software } from '../software-management/software.model';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { RefreshService } from '../shared/refresh.service';
@@ -15,6 +17,7 @@ import { Subscription } from 'rxjs';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   stats: DashboardStats | null = null;
+  softwareList: Software[] = [];
   isLoading = true;
   private refreshSubscription?: Subscription;
 
@@ -142,6 +145,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private dashboardService: DashboardService,
+    private softwareService: SoftwareService,
     private refreshService: RefreshService
   ) { }
   
@@ -167,10 +171,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.stats = data;
         this.updateCharts(data);
-        this.isLoading = false;
+        this.loadSoftware(); // Fetch software as well
       },
       error: (err) => {
         console.error('Error loading dashboard stats:', err);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  loadSoftware(): void {
+    this.softwareService.getAllSoftware().subscribe({
+      next: (list) => {
+        this.softwareList = list.slice(0, 5); // Just show top 5
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading software for dashboard:', err);
         this.isLoading = false;
       }
     });

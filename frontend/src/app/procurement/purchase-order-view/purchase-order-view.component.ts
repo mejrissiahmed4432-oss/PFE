@@ -9,92 +9,124 @@ import { ToastService } from '../../shared/toast.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="flex flex-col gap-6">
-      <!-- Order Creation Overlay (if preparing an order) -->
-      <div *ngIf="preparingOrder" class="bg-white border-2 border-indigo-200 rounded-2xl p-8 shadow-xl animate-fade-in-up">
-        <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-          <span class="text-2xl">🛒</span> Confirm Purchase Order
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div class="space-y-2">
-            <p class="text-sm font-bold text-slate-400 uppercase tracking-wider">Supplier</p>
-            <p class="text-lg font-bold text-indigo-600">{{ preparingOrder.supplierName }}</p>
+    <div class="flex flex-col gap-10 animate-in fade-in duration-700 pb-12">
+      <!-- Order Creation Overlay -->
+      <div *ngIf="preparingOrder" class="bg-white dark:bg-slate-900 border-2 border-indigo-200 dark:border-indigo-500/20 rounded-[2.5rem] p-10 shadow-2xl animate-in zoom-in-95 duration-500 relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-600/5 rounded-full blur-3xl"></div>
+        <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-8 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
           </div>
-          <div class="space-y-2">
-            <p class="text-sm font-bold text-slate-400 uppercase tracking-wider">Total Amount</p>
-            <p class="text-lg font-bold text-slate-800">{{ preparingOrder.totalPrice }} {{ preparingOrder.currency || 'TND' }}</p>
+          Confirm Purchase Order
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
+          <div class="p-6 bg-slate-50 dark:bg-black/40 rounded-2xl border border-slate-100 dark:border-white/5 shadow-inner">
+            <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-2">Supplier Entity</p>
+            <p class="text-xl font-black text-indigo-600 dark:text-indigo-400">{{ preparingOrder.supplierName }}</p>
+          </div>
+          <div class="p-6 bg-slate-50 dark:bg-black/40 rounded-2xl border border-slate-100 dark:border-white/5 shadow-inner">
+            <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-2">Total Fiscal Payload</p>
+            <p class="text-xl font-black text-slate-900 dark:text-white">{{ preparingOrder.totalPrice }} <span class="text-sm opacity-50">{{ preparingOrder.currency || 'TND' }}</span></p>
           </div>
         </div>
+        
         <div class="flex gap-4">
-          <button (click)="confirmOrder()" class="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all">
+          <button (click)="confirmOrder()" class="flex-1 px-8 py-4 bg-indigo-600 text-white font-black text-[10px] uppercase tracking-[0.3em] rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 active:scale-95">
             Confirm & Finalize Order
           </button>
-          <button (click)="preparingOrder = null" class="px-6 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-all">
-            Cancel
+          <button (click)="preparingOrder = null" class="px-8 py-4 bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 font-black text-[10px] uppercase tracking-[0.3em] rounded-2xl border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 transition-all active:scale-95">
+            Cancel Protocol
           </button>
         </div>
       </div>
 
       <!-- History of Orders -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-          <h3 class="font-bold text-slate-800 m-0">Purchase Order History</h3>
-          <span class="text-xs text-slate-400">{{ orders.length }} Confirmed Orders</span>
+      <div class="bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-2xl overflow-hidden transition-colors duration-300">
+        <div class="p-10 border-b border-slate-100 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-white/2">
+          <div class="flex items-center gap-5">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 shadow-inner">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight m-0">Purchase Order History</h3>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">{{ orders.length }} Confirmed Orders in Registry</p>
+            </div>
+          </div>
         </div>
+        
         <div class="overflow-x-auto">
-          <table class="w-full text-left">
-            <tbody class="divide-y divide-slate-100">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50/50 dark:bg-black/20 border-b border-slate-100 dark:border-white/5">
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Detail</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Reference</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Supplier</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Value</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Temporal Log</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status / Link</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-white/5">
               <ng-container *ngFor="let order of orders">
-                <tr class="hover:bg-slate-50 transition-colors group">
-                  <td class="px-6 py-4">
-                    <button (click)="toggleExpand(order.id!)" class="p-1 text-slate-400 hover:text-indigo-600 transition-transform" [class.rotate-90]="isExpanded(order.id!)">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+                <tr class="hover:bg-slate-50 dark:hover:bg-white/2 transition-colors group">
+                  <td class="px-8 py-6">
+                    <button (click)="toggleExpand(order.id!)" class="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-white transition-all bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10" [class.rotate-90]="isExpanded(order.id!)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
                     </button>
                   </td>
-                  <td class="px-6 py-4 font-mono text-xs text-slate-500">PO-{{ order.id?.substring(0,8)?.toUpperCase() }}</td>
-                  <td class="px-6 py-4 font-bold text-slate-700 text-sm">{{ order.supplierName }}</td>
-                  <td class="px-6 py-4 text-sm">{{ order.totalPrice }} {{ order.currency }}</td>
-                  <td class="px-6 py-4 text-xs text-slate-500">
-                    <div>Conf: {{ formatDate(order.createdAt) }}</div>
-                    <div class="text-[10px] text-emerald-600 font-bold" *ngIf="order.deliveryDays">Est. Delivery: {{ getDeliveryDate(order.createdAt, order.deliveryDays) }}</div>
+                  <td class="px-8 py-6 font-mono text-[10px] font-black text-slate-500 dark:text-slate-600 uppercase">PO-{{ order.id?.substring(0,8)?.toUpperCase() }}</td>
+                  <td class="px-8 py-6 font-black text-slate-900 dark:text-slate-200 text-sm tracking-tight">{{ order.supplierName }}</td>
+                  <td class="px-8 py-6 text-sm font-black text-indigo-600 dark:text-indigo-400">{{ order.totalPrice }} <span class="text-[10px] uppercase opacity-50">{{ order.currency }}</span></td>
+                  <td class="px-8 py-6">
+                    <div class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase">{{ formatDate(order.createdAt) }}</div>
+                    <div class="text-[9px] text-emerald-600 dark:text-emerald-500 font-black uppercase mt-1" *ngIf="order.deliveryDays">Est. Delivery: {{ getDeliveryDate(order.createdAt, order.deliveryDays) }}</div>
                   </td>
-                  <td class="px-6 py-4">
-                    <div class="flex items-center gap-2">
-                      <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">Confirmed</span>
+                  <td class="px-8 py-6">
+                    <div class="flex items-center gap-3">
+                      <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20 shadow-sm">Confirmed</span>
                       <a *ngIf="order.selectedResponseId" [href]="viewInvoiceUrl(order.selectedResponseId)" target="_blank" 
-                         class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="View Invoice">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                         class="p-2 text-slate-400 hover:text-indigo-600 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 rounded-xl transition-all border border-slate-200 dark:border-white/10 shadow-sm" title="View Invoice">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                       </a>
                     </div>
                   </td>
                 </tr>
                 <!-- Expandable Details Row -->
-                <tr *ngIf="isExpanded(order.id!)" class="bg-slate-50/50">
-                  <td colspan="6" class="px-12 py-6">
-                    <div class="bg-white rounded-xl border border-slate-100 p-4 shadow-sm">
-                      <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Requested Items</p>
-                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div *ngFor="let item of order.items" class="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                <tr *ngIf="isExpanded(order.id!)" class="bg-slate-50/50 dark:bg-black/40 animate-in slide-in-from-top-4 duration-500">
+                  <td colspan="6" class="px-12 py-10">
+                    <div class="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-white/5 p-8 shadow-inner relative overflow-hidden">
+                      <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-indigo-600/5 rounded-full blur-3xl"></div>
+                      <p class="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.3em] mb-6 pb-2 border-b border-slate-100 dark:border-white/5">Requested Hardware Payload</p>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                        <div *ngFor="let item of order.items" class="flex justify-between items-center p-6 bg-slate-50/50 dark:bg-black/40 rounded-2xl border border-slate-100 dark:border-white/5 hover:border-indigo-500/20 transition-all group/item">
                           <div>
-                            <div class="text-sm font-bold text-slate-700">{{ item.name }}</div>
-                            <div class="text-[10px] text-slate-500 mb-1">{{ item.description }}</div>
+                            <div class="text-sm font-black text-slate-900 dark:text-slate-200 group-hover/item:text-indigo-600 dark:group-hover/item:text-white transition-colors">{{ item.name }}</div>
+                            <div class="text-[10px] text-slate-500 font-bold mt-1 italic">{{ item.description }}</div>
                             <!-- Specifications -->
-                            <div *ngIf="item.selectedSpecs && getKeys(item.selectedSpecs).length > 0" class="flex flex-wrap gap-1 mt-1">
-                              <span *ngFor="let key of getKeys(item.selectedSpecs)" class="px-1.5 py-0.5 bg-slate-50 text-slate-500 text-[9px] font-semibold rounded border border-slate-200">
-                                {{ key }}: {{ item.selectedSpecs[key] }}
+                            <div *ngIf="item.selectedSpecs && getKeys(item.selectedSpecs).length > 0" class="flex flex-wrap gap-2 mt-4">
+                              <span *ngFor="let key of getKeys(item.selectedSpecs)" class="px-2 py-1 bg-white dark:bg-white/5 text-slate-500 dark:text-slate-400 text-[9px] font-black uppercase tracking-tighter rounded border border-slate-200 dark:border-white/5 shadow-sm">
+                                {{ key }}: <span class="text-slate-700 dark:text-slate-300">{{ item.selectedSpecs[key] }}</span>
                               </span>
                             </div>
                           </div>
-                          <div class="text-xs font-black text-indigo-600 bg-indigo-50 px-2 py-1 rounded">x{{ item.quantity }}</div>
+                          <div class="text-xs font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-600/10 px-3 py-2 rounded-xl border border-indigo-100 dark:border-indigo-600/20 shadow-inner">×{{ item.quantity }}</div>
                         </div>
                       </div>
-                      <div *ngIf="!order.items || order.items.length === 0" class="text-sm text-slate-400 italic">No item details available for this order.</div>
+                      <div *ngIf="!order.items || order.items.length === 0" class="flex flex-col items-center justify-center py-10 text-slate-400 opacity-50 border border-dashed border-slate-200 dark:border-white/10 rounded-2xl">
+                        <p class="text-[10px] font-black uppercase tracking-widest italic">No item details detected in node manifest.</p>
+                      </div>
                     </div>
                   </td>
                 </tr>
               </ng-container>
               <tr *ngIf="orders.length === 0">
-                <td colspan="6" class="px-6 py-12 text-center text-slate-400 italic">No purchase orders found.</td>
+                <td colspan="6" class="px-8 py-20 text-center bg-slate-50/30 dark:bg-black/10">
+                  <div class="flex flex-col items-center justify-center gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1" class="opacity-20 text-slate-400" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic opacity-50">Purchase Order Registry Clear</p>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>

@@ -1,0 +1,191 @@
+<ng-container *ngIf="currentView === 'list'">
+<div class="dashboard-container">
+  <div class="dashboard-header-modern">
+    <div class="welcome-text">
+      <h1 class="main-title">Software &amp; License Management</h1>
+      <p class="subtitle">Manage enterprise software assets, license pools, and track seat assignments.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-add-premium" (click)="openWizard()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add Software
+      </button>
+    </div>
+  </div>
+
+  <div class="content-card">
+    <div class="table-modern-wrapper">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th style="width: 40px;"></th>
+            <th>SOFTWARE NAME</th>
+            <th>VENDOR</th>
+            <th>TYPE</th>
+            <th>SEATS</th>
+            <th>STATUS</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let sw of softwareList">
+          <!-- Software Row -->
+          <tr class="group-header-row table-row-animate" (click)="toggleSoftwareExpand(sw.id!)">
+            <td class="col-expand">
+              <button class="expand-btn" [class.expanded]="expandedSoftwareId === sw.id">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </td>
+            <td>
+              <div class="modern-cell-main">
+                <div class="logo-circle blue">{{ sw.name.charAt(0) }}</div>
+                <div class="cell-text-stack">
+                  <span class="cell-title">{{ sw.name }}</span>
+                  <span class="cell-sub" *ngIf="sw.version">v{{ sw.version }}</span>
+                </div>
+              </div>
+            </td>
+            <td>{{ sw.vendor }}</td>
+            <td>{{ sw.type }}</td>
+            <td>
+              <div class="flex flex-col">
+                <span class="font-bold" [class.text-red-500]="(sw.availableSeats || 0) <= 0" [class.text-emerald-600]="(sw.availableSeats || 0) > 0">
+                  {{ sw.availableSeats || 0 }} / {{ sw.totalSeats || 0 }}
+                </span>
+                <span class="text-[10px] text-slate-400 uppercase">Available</span>
+              </div>
+            </td>
+            <td>
+              <span class="status-chip" [class.bg-emerald-100]="sw.status === 'Active'" [class.text-emerald-700]="sw.status === 'Active'">
+                {{ sw.status }}
+              </span>
+            </td>
+            <td class="actions-cell" (click)="$event.stopPropagation()">
+              <button class="btn-details" (click)="viewDetail(sw.id!)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                Details
+              </button>
+              <button class="btn-update-sm" (click)="editSoftware(sw, $event)" title="Update">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+              <button class="btn-delete-sm" (click)="deleteSoftware(sw, $event)" title="Delete">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </td>
+          </tr>
+
+          <!-- License Pools Row (Expanded) -->
+          <tr *ngIf="expandedSoftwareId === sw.id" class="expandable-content-row bg-slate-50">
+            <td colspan="6" class="p-6">
+              <div class="flex justify-between items-center mb-4">
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider">License Pools</h4>
+              </div>
+              
+              <div class="grid gap-4" *ngIf="poolsForExpanded.length > 0; else noPools">
+                <div *ngFor="let pool of poolsForExpanded" class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                  <div class="flex justify-between items-center cursor-pointer" (click)="togglePoolExpand(pool.id!)">
+                    <div class="flex gap-6 items-center">
+                      <button class="expand-btn" [class.expanded]="expandedPoolId === pool.id">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </button>
+                      <div>
+                        <div class="font-bold text-slate-800">{{ pool.licenseModel }} <span class="text-xs text-slate-500 font-normal ml-2">({{ pool.activationMethod }})</span></div>
+                        <div class="text-xs text-slate-500 mt-1">Renews: {{ pool.renewalType }} | Expires: {{ pool.expirationDate || 'Never' }}</div>
+                      </div>
+                      
+                      <div class="text-center px-6 border-l border-r border-slate-100">
+                        <div class="text-xs text-slate-500">Seats</div>
+                        <div class="font-bold" [class.text-emerald-600]="pool.availableSeats! > 0" [class.text-red-500]="pool.availableSeats! <= 0">
+                          {{ pool.availableSeats }} / {{ pool.totalSeats }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                      <button *ngIf="pool.activationMethod === 'KEY_BASED'" class="btn-request-sm text-xs px-3 py-1 bg-amber-50 text-amber-600 hover:bg-amber-100" (click)="$event.stopPropagation(); promptRevealKeys(pool.id!)">
+                        Reveal Keys
+                      </button>
+                      <button class="btn-request-sm text-xs px-3 py-1" (click)="$event.stopPropagation(); openAssignmentModal(pool)" [disabled]="pool.availableSeats! <= 0">
+                        Assign Seat
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Assignments (Expanded inside Pool) -->
+                  <div *ngIf="expandedPoolId === pool.id" class="mt-4 pt-4 border-t border-slate-100 pl-10">
+                    <h5 class="text-xs font-bold text-slate-500 uppercase mb-3">Active Assignments</h5>
+                    <table class="w-full text-sm text-left" *ngIf="assignmentsForExpanded.length > 0; else noAssignments">
+                      <thead class="text-xs text-slate-400 bg-slate-50">
+                        <tr>
+                          <th class="py-2 px-3">Assigned To</th>
+                          <th class="py-2 px-3">Type</th>
+                          <th class="py-2 px-3">Status</th>
+                          <th class="py-2 px-3">Assigned Date</th>
+                          <th class="py-2 px-3">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let asm of assignmentsForExpanded" class="border-b border-slate-50">
+                          <td class="py-2 px-3 font-medium">{{ asm.assignedTargetName }}</td>
+                          <td class="py-2 px-3"><span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded">{{ asm.assignedToType }}</span></td>
+                          <td class="py-2 px-3"><span class="bg-emerald-50 text-emerald-600 text-xs px-2 py-1 rounded">{{ asm.status }}</span></td>
+                          <td class="py-2 px-3 text-slate-500">{{ asm.assignedAt | date:'shortDate' }}</td>
+                          <td class="py-2 px-3">
+                            <button class="text-red-500 hover:text-red-700 text-xs font-bold" (click)="revokeAssignment(asm.id!)">Revoke</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <ng-template #noAssignments>
+                      <p class="text-sm text-slate-400">No active assignments for this pool.</p>
+                    </ng-template>
+                  </div>
+
+                </div>
+              </div>
+              <ng-template #noPools>
+                <p class="text-slate-500 italic">No license pools configured for this software.</p>
+              </ng-template>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Password Modal for Key Reveal -->
+<div class="alert-overlay" *ngIf="showPasswordModal">
+  <div class="alert-modal" style="max-width: 500px;">
+    <div class="alert-content text-left w-full">
+      <h2 class="mb-4">IT Manager Authorization Required</h2>
+      <p class="text-sm text-slate-500 mb-4">You are attempting to reveal raw license keys. Please enter the master IT password to proceed.</p>
+      <input type="password" [(ngModel)]="adminPassword" placeholder="Enter password..." class="w-full p-3 border border-slate-300 rounded-lg mb-6 outline-none focus:border-blue-500">
+      <div *ngIf="revealedKeys.length > 0" class="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200 max-h-[200px] overflow-y-auto">
+        <div class="text-xs font-bold text-slate-500 mb-2 uppercase">Decrypted Keys</div>
+        <div *ngFor="let k of revealedKeys" class="font-mono text-sm bg-white border border-slate-200 p-2 rounded mb-2 select-all">{{ k }}</div>
+      </div>
+      <div class="alert-actions">
+        <button class="btn-cancel-alert" (click)="closePasswordModal()">Close</button>
+        <button class="alert-btn info" (click)="submitRevealKeys()" *ngIf="revealedKeys.length === 0">Authorize</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals from subcomponents -->
+<app-software-wizard *ngIf="showWizard" [softwareToEdit]="softwareToEdit" (closeWizard)="onWizardClose($event)"></app-software-wizard>
+<app-license-assignment-modal *ngIf="showAssignmentModal" [pool]="poolToAssign" (closeModal)="onAssignmentClose($event)"></app-license-assignment-modal>
+</ng-container>
+
+<!-- Detail View (replaces list when Details is clicked) -->
+<ng-container *ngIf="currentView === 'detail'">
+  <app-software-detail
+    [softwareId]="selectedSoftwareId"
+    (goBack)="handleGoBack()"
+    (softwareDeleted)="handleDeleted()">
+  </app-software-detail>
+</ng-container>

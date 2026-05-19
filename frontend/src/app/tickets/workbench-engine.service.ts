@@ -107,9 +107,6 @@ export class WorkbenchEngineService {
         if (!state.diagnosisResult || state.diagnosisResult.trim().length < 3) {
           return { valid: false, error: 'Please enter a diagnosis result of at least 3 characters.' };
         }
-        if (!state.diagnosisCategories || state.diagnosisCategories.length === 0) {
-          return { valid: false, error: 'Please select at least one category.' };
-        }
         return { valid: true, error: '' };
 
       case 'plan':

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProcurementService } from '../procurement.service';
@@ -10,114 +10,158 @@ import { EquipmentRequest, STATUS_META, RequestStatus, PurchaseOrder } from '../
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="flex flex-col gap-8 pb-12">
+    <div class="flex flex-col gap-8 pb-12 animate-in fade-in duration-700">
       
-      <!-- PROFESSIONAL GOODS RECEIPT PANEL (Centered Modal) -->
-      <div *ngIf="showReceiptModal" class="fixed inset-0 z-[100] flex justify-center items-start pt-12 overflow-y-auto pb-12">
-        <!-- Transparent Blocking Layer -->
-        <div class="absolute inset-0 bg-transparent" (click)="showReceiptModal = false"></div>
-        
-        <div class="bg-white rounded-[2rem] w-full max-w-4xl shadow-[0_20px_60px_rgba(0,0,0,0.12)] relative z-10 overflow-hidden border border-slate-200/60 flex flex-col max-h-[90vh]">
-          <!-- Header -->
-          <div class="bg-slate-900 p-8 text-white shrink-0">
-            <div class="flex justify-between items-start">
-              <div class="flex items-center gap-5">
-                <div class="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 7h-9m9 4H9m11 4H9m-5-8v12M4 7l3 3m-3 0 3-3"/></svg>
-                </div>
-                <div>
-                  <span class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 mb-1 block">Warehouse Operations</span>
-                  <h3 class="text-2xl font-black tracking-tight">Goods Receipt Note (GRN)</h3>
-                </div>
-              </div>
-              <div class="text-right">
-                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1 block">Order Reference</span>
-                <p class="font-mono text-sm text-indigo-300">#{{ selectedOrderForReceipt?.id?.substring(0,8) }}</p>
-              </div>
+      <!-- EDIT MODAL -->
+      <div *ngIf="showEditModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md" (click)="showEditModal = false"></div>
+        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-2xl shadow-2xl relative z-10 overflow-hidden border border-slate-200 dark:border-white/10 flex flex-col max-h-[90vh]">
+          <div class="p-8 border-b border-slate-100 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-white/2">
+            <div>
+              <h3 class="text-xl font-black text-slate-900 dark:text-white">Modify Deployment Request</h3>
+              <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Resource allocation adjustment</p>
             </div>
-
-            <!-- SUPPLIER INFO & REPUTATION -->
-            <div class="mt-8 flex items-center justify-between bg-white/5 backdrop-blur-md rounded-2xl p-5 border border-white/10">
-              <div class="flex items-center gap-6">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-sm font-black shadow-inner">
-                  {{ selectedOrderForReceipt?.supplierName?.substring(0,2)?.toUpperCase() }}
-                </div>
-                <div class="border-r border-white/10 pr-6">
-                  <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Selected Supplier</p>
-                  <p class="text-base font-bold text-white">{{ selectedOrderForReceipt?.supplierName }}</p>
-                </div>
-                <div class="flex flex-col gap-1">
-                  <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Supplier Reputation</p>
-                  <div class="flex items-center gap-2">
-                    <div class="flex text-amber-400 text-xs">⭐⭐⭐⭐⭐</div>
-                    <span class="text-xs font-black text-emerald-400">4.9/5.0</span>
+            <button (click)="showEditModal = false" class="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl text-slate-400 hover:text-rose-400 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          
+          <div class="p-8 overflow-y-auto custom-scrollbar flex-1 bg-white dark:bg-slate-900/50">
+            <div class="flex flex-col gap-8">
+              <!-- Items List -->
+              <div>
+                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Hardware Payload</label>
+                <div class="flex flex-col gap-4">
+                  <div *ngFor="let item of editingRequest?.items; let i = index" class="p-5 bg-slate-50 dark:bg-white/5 rounded-[1.5rem] border border-slate-100 dark:border-white/5 flex items-center justify-between gap-6 group hover:border-indigo-500/30 transition-all">
+                    <div class="flex-1">
+                      <p class="text-sm font-bold text-slate-900 dark:text-slate-200">{{ item.name }}</p>
+                      <div *ngIf="item.selectedSpecs" class="flex flex-wrap gap-1.5 mt-2">
+                        <span *ngFor="let key of objectKeys(item.selectedSpecs)" class="px-2 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[9px] rounded-md border border-indigo-500/20 font-black uppercase">
+                          {{ key }}: {{ item.selectedSpecs[key] }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white dark:bg-black/40 p-1.5 rounded-xl border border-slate-200 dark:border-white/10 shadow-inner">
+                      <button (click)="updateItemQty(i, -1)" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white hover:bg-indigo-600 hover:text-white transition-colors font-bold border border-slate-200 dark:border-white/5">-</button>
+                      <span class="w-6 text-center font-black text-sm text-slate-900 dark:text-white">{{ item.quantity }}</span>
+                      <button (click)="updateItemQty(i, 1)" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white hover:bg-indigo-600 hover:text-white transition-colors font-bold border border-slate-200 dark:border-white/5">+</button>
+                    </div>
+                    <button (click)="removeItem(i)" class="p-3 text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all border border-transparent hover:border-rose-500/20">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
                   </div>
                 </div>
               </div>
+
+              <!-- Notes -->
+              <div>
+                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Implementation Notes</label>
+                <textarea [(ngModel)]="editingNotes" 
+                          class="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-[1.5rem] p-5 text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none min-h-[120px] transition-all shadow-inner"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-8 bg-slate-50 dark:bg-white/2 border-t border-slate-100 dark:border-white/5 flex gap-4">
+            <button (click)="showEditModal = false" class="px-8 py-4 bg-transparent text-slate-500 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-all">Cancel</button>
+            <button (click)="saveEdit()" 
+                    [disabled]="isSavingEdit || !editingRequest?.items?.length"
+                    class="flex-1 px-8 py-4 bg-indigo-600 text-white font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 disabled:opacity-50">
+              {{ isSavingEdit ? 'Synchronizing...' : 'Apply Protocol' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GOODS RECEIPT PANEL -->
+      <div *ngIf="showReceiptModal" class="fixed inset-0 z-[120] flex justify-center items-start pt-12 overflow-y-auto pb-12">
+        <div class="absolute inset-0 bg-black/60 dark:bg-black/90 backdrop-blur-xl" (click)="showReceiptModal = false"></div>
+        
+        <div class="bg-white dark:bg-slate-950 rounded-[3rem] w-full max-w-4xl shadow-2xl relative z-10 overflow-hidden border border-slate-200 dark:border-white/10 flex flex-col max-h-[90vh]">
+          <!-- Header -->
+          <div class="bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-black p-10 text-slate-900 dark:text-white shrink-0 border-b border-slate-200 dark:border-white/5">
+            <div class="flex justify-between items-start">
+              <div class="flex items-center gap-6">
+                <div class="w-16 h-16 rounded-[1.5rem] bg-indigo-600 flex items-center justify-center text-white shadow-2xl shadow-indigo-500/20">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div>
+                  <span class="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600 dark:text-indigo-400 mb-2 block opacity-70">Warehouse Audit Node</span>
+                  <h3 class="text-3xl font-black tracking-tighter">Goods Receipt Note</h3>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2 block">Packet Hash</span>
+                <p class="font-mono text-sm text-indigo-600 dark:text-indigo-400 font-black">#{{ (selectedOrderForReceipt?.id || '').substring(0,8).toUpperCase() }}</p>
+              </div>
+            </div>
+
+            <div class="mt-10 flex items-center justify-between bg-white dark:bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-sm">
+              <div class="flex items-center gap-6">
+                <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-900 dark:text-white text-lg font-black shadow-inner border border-slate-200 dark:border-white/5">
+                  {{ selectedOrderForReceipt?.supplierName?.substring(0,2)?.toUpperCase() }}
+                </div>
+                <div>
+                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Authenticated Vendor</p>
+                  <p class="text-lg font-black text-slate-900 dark:text-white tracking-tight">{{ selectedOrderForReceipt?.supplierName }}</p>
+                </div>
+              </div>
               
-              <a [href]="getInvoiceUrl()" target="_blank" class="flex items-center gap-3 px-5 py-3 bg-indigo-600 hover:bg-white hover:text-indigo-600 text-white text-[11px] font-black rounded-xl transition-all shadow-lg shadow-indigo-900/20 group">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" class="group-hover:scale-110 transition-transform" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                VIEW ORIGINAL INVOICE (PDF)
+              <a [href]="getInvoiceUrl()" target="_blank" class="flex items-center gap-4 px-6 py-4 bg-slate-100 dark:bg-white/5 hover:bg-indigo-600 dark:hover:bg-white text-slate-900 dark:text-white hover:text-white dark:hover:text-black text-[10px] font-black rounded-2xl transition-all shadow-sm dark:shadow-xl border border-slate-200 dark:border-white/10 group">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" class="group-hover:scale-110 transition-transform" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                INSPECT MANIFEST (PDF)
               </a>
             </div>
           </div>
 
-          <!-- Scrollable Content -->
-          <div class="p-8 overflow-y-auto custom-scrollbar flex-1 bg-slate-50/30">
-            <div class="flex flex-col gap-10">
-              
-              <!-- STEP 1: ITEM INSPECTION -->
+          <!-- Body -->
+          <div class="p-10 overflow-y-auto custom-scrollbar flex-1 bg-white dark:bg-slate-950">
+            <div class="flex flex-col gap-12">
               <div>
-                <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-black shadow-sm">01</div>
-                    <h4 class="text-sm font-black text-slate-800 uppercase tracking-widest">Itemized Inspection Checklist</h4>
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center gap-4">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px] font-black border border-indigo-500/30">01</div>
+                    <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Deployment Audit Checklist</h4>
                   </div>
-                  <div class="flex gap-4">
-                    <span class="text-[10px] font-black text-indigo-500 uppercase px-3 py-1 bg-indigo-50 rounded-full border border-indigo-100">
-                      {{ checkedCount }} / {{ selectedOrderForReceipt?.items?.length }} VERIFIED
-                    </span>
-                  </div>
+                  <span class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase px-4 py-1.5 bg-emerald-500/10 rounded-full border border-emerald-500/20 shadow-lg shadow-emerald-500/5">
+                    {{ checkedCount }} / {{ selectedOrderForReceipt?.items?.length }} VERIFIED
+                  </span>
                 </div>
                 
-                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="bg-slate-50 dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-white/5 overflow-hidden shadow-sm dark:shadow-2xl">
                   <table class="w-full text-left border-collapse">
                     <thead>
-                      <tr class="bg-slate-50">
-                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Inventory Item & Specifications</th>
-                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Expected Qty</th>
-                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Verification</th>
+                      <tr class="bg-slate-100 dark:bg-white/2">
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Inventory Signature & Specs</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">Payload</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Auth</th>
                       </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100">
+                    <tbody class="divide-y divide-slate-200 dark:divide-white/5">
                       <tr *ngFor="let item of selectedOrderForReceipt?.items; let i = index" 
-                          [ngClass]="{'bg-emerald-50/20': checkedItems[i]}"
-                          class="hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-5">
-                          <div class="flex flex-col gap-2">
+                          [ngClass]="{'bg-emerald-500/5': checkedItems[i]}"
+                          class="hover:bg-slate-100 dark:hover:bg-white/2 transition-colors">
+                        <td class="px-8 py-6">
+                          <div class="flex flex-col gap-3">
                             <div>
-                              <p class="text-sm font-bold" [ngClass]="checkedItems[i] ? 'text-emerald-700' : 'text-slate-700'">{{ item.name }}</p>
-                              <p class="text-[10px] text-slate-400 mt-0.5">{{ item.description || 'Verified specs in invoice' }}</p>
+                              <p class="text-sm font-black tracking-tight" [ngClass]="checkedItems[i] ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-900 dark:text-slate-200'">{{ item.name }}</p>
+                              <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">{{ item.description }}</p>
                             </div>
-                            <!-- SPECIFICATIONS DISPLAY -->
-                            <div *ngIf="item.selectedSpecs && objectKeys(item.selectedSpecs).length > 0" class="flex flex-wrap gap-2 mt-1">
-                              <div *ngFor="let key of objectKeys(item.selectedSpecs)" class="flex items-center bg-slate-100/80 border border-slate-200 rounded-lg px-2 py-1">
-                                <span class="text-[9px] font-black text-slate-400 uppercase mr-1.5">{{ key }}:</span>
-                                <span class="text-[10px] font-bold text-slate-700">{{ item.selectedSpecs[key] }}</span>
+                            <div *ngIf="item.selectedSpecs" class="flex flex-wrap gap-2">
+                              <div *ngFor="let key of objectKeys(item.selectedSpecs)" class="flex items-center bg-white dark:bg-black/40 border border-slate-200 dark:border-white/5 rounded-lg px-2.5 py-1 shadow-sm">
+                                <span class="text-[9px] font-black text-slate-500 uppercase mr-2 tracking-tighter">{{ key }}:</span>
+                                <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-300">{{ item.selectedSpecs[key] }}</span>
                               </div>
-                            </div>
-                            <div *ngIf="!item.selectedSpecs || objectKeys(item.selectedSpecs).length === 0" class="text-[10px] text-slate-400 italic">
-                              Standard configuration as per catalog.
                             </div>
                           </div>
                         </td>
-                        <td class="px-6 py-5 text-center">
-                          <span class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-xl text-xs font-black border border-slate-200 shadow-sm">×{{ item.quantity }}</span>
+                        <td class="px-8 py-6 text-center">
+                          <span class="px-4 py-2 bg-slate-200 dark:bg-black/60 text-slate-900 dark:text-white rounded-xl text-xs font-black border border-slate-300 dark:border-white/10 shadow-inner">×{{ item.quantity }}</span>
                         </td>
-                        <td class="px-6 py-5 text-right">
+                        <td class="px-8 py-6 text-right">
                           <label class="relative inline-flex items-center cursor-pointer group">
                             <input type="checkbox" class="sr-only peer" [(ngModel)]="checkedItems[i]">
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:bg-emerald-500 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all shadow-inner group-hover:after:scale-110"></div>
+                            <div class="w-12 h-6 bg-slate-200 dark:bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:bg-emerald-500 peer-checked:after:translate-x-6 after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all shadow-inner border border-slate-300 dark:border-white/5 group-hover:after:scale-110"></div>
                           </label>
                         </td>
                       </tr>
@@ -126,270 +170,275 @@ import { EquipmentRequest, STATUS_META, RequestStatus, PurchaseOrder } from '../
                 </div>
               </div>
 
-              <!-- STEP 2 & 3 -->
               <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div>
-                  <div class="flex items-center gap-3 mb-4">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-black shadow-sm">02</div>
-                    <h4 class="text-sm font-black text-slate-800 uppercase tracking-widest">Your Experience Audit</h4>
+                <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-2xl">
+                  <div class="flex items-center gap-4 mb-6">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px] font-black border border-indigo-500/30">02</div>
+                    <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Service Quality</h4>
                   </div>
-                  <div class="flex flex-col gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">How was the delivery quality?</p>
-                    <div class="flex gap-3 justify-center">
-                      <button *ngFor="let star of [1,2,3,4,5]" 
-                              (click)="receiptRating = star"
-                              type="button"
-                              class="text-4xl transition-all hover:scale-125 focus:outline-none filter drop-shadow-sm"
-                              [class.grayscale]="receiptRating < star">
-                        {{ receiptRating >= star ? '⭐' : '☆' }}
-                      </button>
-                    </div>
+                  <div class="flex gap-4 justify-center py-4">
+                    <button *ngFor="let star of [1,2,3,4,5]" 
+                            (click)="receiptRating = star"
+                            type="button"
+                            class="text-4xl transition-all hover:scale-125 hover:drop-shadow-[0_0_8px_rgba(0,0,0,0.1)] focus:outline-none"
+                            [class.opacity-20]="receiptRating < star">
+                      {{ receiptRating >= star ? '⭐' : '☆' }}
+                    </button>
                   </div>
                 </div>
 
-                <div>
-                  <div class="flex items-center gap-3 mb-4">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-black shadow-sm">03</div>
-                    <h4 class="text-sm font-black text-slate-800 uppercase tracking-widest">Inspection Notes & Log</h4>
+                <div class="bg-slate-50 dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-2xl">
+                  <div class="flex items-center gap-4 mb-6">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px] font-black border border-indigo-500/30">03</div>
+                    <h4 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Packet Logs</h4>
                   </div>
                   <textarea [(ngModel)]="receiptNotes" 
-                            placeholder="Describe any damage to packaging, serial number mismatches, or perfect condition..."
-                            class="w-full bg-white border border-slate-200 rounded-2xl p-5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all min-h-[120px] shadow-sm"></textarea>
+                            placeholder="Add validation log or damage report..."
+                            class="w-full bg-white dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-2xl p-5 text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition-all min-h-[100px] shadow-inner"></textarea>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Footer Actions -->
-          <div class="p-8 bg-white border-t border-slate-100 flex gap-4 shrink-0 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
-            <button (click)="showReceiptModal = false" type="button" class="px-6 py-4 bg-slate-50 text-slate-500 font-black rounded-2xl hover:bg-slate-100 transition-all uppercase text-[10px] tracking-widest border border-slate-200">Cancel Audit</button>
-            
-            <button (click)="submitReceipt(false)" 
-                    type="button"
-                    [disabled]="submittingReceipt || !allChecked"
-                    class="flex-1 px-6 py-4 bg-slate-200 text-slate-600 font-black rounded-2xl hover:bg-slate-300 transition-all uppercase text-[10px] tracking-widest disabled:opacity-30">
-              Confirm Receipt Only
-            </button>
-
+          <div class="p-10 bg-slate-50 dark:bg-black/50 border-t border-slate-200 dark:border-white/5 flex gap-6 shrink-0 backdrop-blur-md">
+            <button (click)="showReceiptModal = false" type="button" class="px-8 py-5 bg-transparent text-slate-500 font-black rounded-2xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all uppercase text-[10px] tracking-[0.2em] border border-slate-200 dark:border-white/10">Abort</button>
             <button (click)="submitReceipt(true)" 
                     type="button"
                     [disabled]="submittingReceipt || !allChecked"
-                    class="flex-[1.5] px-6 py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-slate-900 transition-all uppercase text-[10px] tracking-widest shadow-2xl shadow-indigo-200 disabled:opacity-20 disabled:cursor-not-allowed flex items-center justify-center gap-3 active:scale-[0.98] border border-indigo-500/20">
-              <span *ngIf="submittingReceipt" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-              <div *ngIf="!submittingReceipt" class="flex flex-col items-center">
-                <span class="flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                  Verify & Add to Inventory (AI)
-                </span>
-                <span class="text-[8px] opacity-70 mt-0.5">Auto-generates Serials & QR</span>
-              </div>
+                    class="flex-1 px-8 py-5 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-500 transition-all uppercase text-[10px] tracking-[0.3em] shadow-[0_10px_40px_rgba(79,70,229,0.3)] disabled:opacity-30 flex items-center justify-center gap-4 group">
+              <span *ngIf="submittingReceipt" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              {{ submittingReceipt ? 'Writing to Stock...' : 'Commit to Inventory' }}
+              <svg class="group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- HEADER & FILTERS -->
-      <div class="flex flex-col md:flex-row justify-between items-center bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-slate-200/60 shadow-sm gap-4">
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <!-- HEADER & SEARCH -->
+      <div class="flex flex-col md:flex-row justify-between items-center bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-2xl gap-8 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-indigo-500/5 to-transparent pointer-events-none"></div>
+        <div class="flex items-center gap-6 relative z-10">
+          <div class="w-16 h-16 rounded-[1.5rem] bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-500/20 shadow-inner">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           </div>
           <div>
-            <h2 class="text-xl font-black text-slate-800 tracking-tight">My Equipment Requests</h2>
-            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Stock Manager Procurement</p>
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Request Registry</h2>
+            <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.2em] mt-1 italic">Enterprise Deployment Management</p>
           </div>
         </div>
 
-        <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-2xl border border-slate-200/50">
-          <div class="flex bg-white rounded-xl shadow-sm border border-slate-200 p-0.5 mr-2">
-            <button (click)="viewMode = 'grid'" 
-                    [class.bg-indigo-600]="viewMode === 'grid'" 
-                    [class.text-white]="viewMode === 'grid'"
-                    class="p-2 rounded-lg transition-all duration-200">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
-            </button>
-            <button (click)="viewMode = 'list'" 
-                    [class.bg-indigo-600]="viewMode === 'list'" 
-                    [class.text-white]="viewMode === 'list'"
-                    class="p-2 rounded-lg transition-all duration-200">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            </button>
-          </div>
+        <div class="flex-1 max-w-md w-full relative z-10">
+          <input type="text" 
+                 [(ngModel)]="searchQuery" 
+                 placeholder="Search registry by item or owner..."
+                 class="w-full pl-14 pr-6 py-4 bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-2xl text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all shadow-inner placeholder:text-slate-400 dark:placeholder:text-slate-600">
+          <svg class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
 
-          <div class="flex gap-1">
-            <button *ngFor="let s of ['ALL', 'PENDING_IT_APPROVAL', 'APPROVED', 'SENT_TO_SUPPLIERS']"
-                    (click)="filterStatus = s"
-                    class="px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all"
-                    [ngClass]="filterStatus === s ? 'bg-slate-800 text-white shadow-lg shadow-slate-200' : 'text-slate-500 hover:bg-white hover:text-indigo-600'">
-              {{ s === 'ALL' ? 'All' : s.replace('_IT_APPROVAL', '').replace('_TO_SUPPLIERS', '').replace('_', ' ') }}
-            </button>
-          </div>
+        <div class="flex items-center gap-2 p-1.5 bg-slate-100 dark:bg-black/40 rounded-2xl border border-slate-200 dark:border-white/10 relative z-10 shadow-inner">
+          <button *ngFor="let s of filterOptions"
+                  (click)="filterStatus = s.id"
+                  class="px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                  [ngClass]="filterStatus === s.id ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'">
+            {{ s.label }}
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2 p-1.5 bg-slate-100 dark:bg-black/40 rounded-2xl border border-slate-200 dark:border-white/10 relative z-10 shadow-inner">
+          <button (click)="viewMode = 'list'"
+                  class="p-2.5 rounded-xl transition-all"
+                  [ngClass]="viewMode === 'list' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+          <button (click)="viewMode = 'card'"
+                  class="p-2.5 rounded-xl transition-all"
+                  [ngClass]="viewMode === 'card' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </button>
         </div>
       </div>
 
-      <div *ngIf="loading" class="flex items-center justify-center p-20 text-slate-500 gap-3">
-        <div class="w-8 h-8 border-3 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
-        <span class="font-black uppercase tracking-widest text-xs">Syncing with Central Stock...</span>
+      <div *ngIf="loading" class="flex flex-col items-center justify-center p-32 text-slate-400 gap-6">
+        <div class="w-16 h-16 border-4 border-indigo-500/10 border-t-indigo-500 rounded-full animate-spin shadow-[0_0_15px_rgba(99,102,241,0.2)]"></div>
+        <span class="font-black uppercase tracking-[0.3em] text-[10px] animate-pulse">Syncing Payload Buffer...</span>
       </div>
       
       <div *ngIf="!loading">
-        <div *ngIf="activeRequests.length === 0" class="flex flex-col items-center justify-center p-20 bg-white/50 backdrop-blur-sm border border-dashed border-slate-300 rounded-3xl text-slate-400">
-          <p class="font-bold uppercase tracking-widest text-xs">No active procurement requests</p>
+        <div *ngIf="filteredRequests.length === 0" class="flex flex-col items-center justify-center p-32 bg-slate-50 dark:bg-slate-900 border border-dashed border-slate-200 dark:border-white/10 rounded-[3rem] text-slate-400 shadow-inner">
+          <div class="w-24 h-24 rounded-full bg-slate-200 dark:bg-black/20 flex items-center justify-center mb-6 border border-slate-300 dark:border-white/5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" class="opacity-20" viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+          </div>
+          <p class="font-black uppercase tracking-[0.2em] text-xs opacity-50 italic">No Registry Entries Found</p>
+        </div>
+
+        <!-- LIST VIEW (Table) -->
+        <div *ngIf="viewMode === 'list'" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-[2.5rem] overflow-hidden shadow-sm dark:shadow-2xl">
+          <div class="overflow-x-auto custom-scrollbar">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-white/2">
+                  <th class="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Protocol</th>
+                  <th class="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Origin</th>
+                  <th class="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Payload</th>
+                  <th class="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest">Status</th>
+                  <th *ngIf="filterStatus === 'INBOUND' && userRole === 'STOCK_MANAGER'" class="px-8 py-6 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                <tr *ngFor="let req of filteredRequests" class="hover:bg-slate-50/50 dark:hover:bg-white/1 transition-colors">
+                  <td class="px-8 py-6">
+                    <span class="font-mono text-xs font-black text-indigo-600 dark:text-indigo-400">#{{ (req.id || '').substring(0,8).toUpperCase() }}</span>
+                    <p class="text-[9px] text-slate-400 mt-1 uppercase font-black tracking-tighter">{{ formatDate(req.createdAt) }}</p>
+                  </td>
+                  <td class="px-8 py-6">
+                    <div class="flex flex-col">
+                      <span class="text-sm font-black text-slate-900 dark:text-slate-200">{{ req.createdByName }}</span>
+                      <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest opacity-60">{{ req.createdByRole || 'Operator' }}</span>
+                    </div>
+                  </td>
+                  <td class="px-8 py-6">
+                    <div class="flex flex-col gap-1.5">
+                      <div *ngFor="let item of req.items.slice(0,2)" class="flex items-center gap-2">
+                        <span class="text-[9px] font-black px-1.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-md">×{{ item.quantity }}</span>
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[150px]">{{ item.name }}</span>
+                      </div>
+                      <span *ngIf="req.items.length > 2" class="text-[9px] font-black text-slate-400 uppercase tracking-widest">+{{ req.items.length - 2 }} overflow</span>
+                    </div>
+                  </td>
+                  <td class="px-8 py-6">
+                    <span class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border" [ngClass]="getStatusMeta(req.status).colorClass">
+                      {{ getStatusMeta(req.status).label }}
+                    </span>
+                  </td>
+                  <td *ngIf="filterStatus === 'INBOUND' && userRole === 'STOCK_MANAGER'" class="px-8 py-6 text-right">
+                    <div class="flex items-center justify-end gap-3">
+                      <button *ngIf="req.status === 'ORDER_CONFIRMED' && userRole === 'STOCK_MANAGER'" 
+                              (click)="openReceiptModal(req)"
+                              class="p-2.5 bg-indigo-600 text-white rounded-xl hover:bg-slate-900 dark:hover:bg-white dark:hover:text-black transition-all shadow-lg shadow-indigo-600/10"
+                              title="Confirm Receipt">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                      </button>
+                      <button *ngIf="canEdit(req)"
+                              (click)="openEditModal(req)"
+                              class="p-2.5 bg-white dark:bg-white/5 text-slate-400 dark:text-slate-500 rounded-xl hover:bg-indigo-600 hover:text-white dark:hover:bg-white dark:hover:text-black transition-all border border-slate-200 dark:border-white/5 shadow-sm"
+                              title="Edit Payload">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- GRID VIEW -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="viewMode === 'grid'">
-          <div *ngFor="let req of activeRequests" 
-               class="bg-white border border-slate-200 rounded-2xl p-6 hover:border-indigo-400 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all group flex flex-col h-full cursor-pointer relative overflow-hidden" 
-               (click)="selectRequest(req)">
+        <div *ngIf="viewMode === 'card'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div *ngFor="let req of filteredRequests" 
+               class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-[2.5rem] p-10 hover:border-indigo-500/40 hover:shadow-xl dark:hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-500 group flex flex-col h-full relative overflow-hidden shadow-sm dark:shadow-2xl">
             
-            <div class="absolute top-0 right-0 p-3">
-              <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter" [ngClass]="getStatusMeta(req.status).colorClass">
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-500/10 transition-all"></div>
+            
+            <div class="flex justify-between items-start mb-8 relative z-10">
+              <span class="px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm dark:shadow-xl backdrop-blur-md transition-all group-hover:scale-105" [ngClass]="getStatusMeta(req.status).colorClass">
                 {{ getStatusMeta(req.status).label }}
               </span>
+              <div class="text-right">
+                <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 opacity-60">Deployment ID</p>
+                <p class="text-xs font-mono text-indigo-600 dark:text-indigo-400 font-black tracking-tighter">#{{ (req.id || '').substring(0,8).toUpperCase() }}</p>
+              </div>
             </div>
 
-            <div class="flex-1 pt-4">
-              <div class="flex flex-col gap-3 mb-4">
-                <div *ngFor="let item of req.items.slice(0,3)" class="flex flex-col gap-1 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm font-black text-slate-800">{{ item.name }}</span>
-                    <span class="text-xs font-bold px-2 py-0.5 bg-slate-200 rounded-md text-slate-600">×{{ item.quantity }}</span>
+            <div class="flex-1 relative z-10">
+              <div class="flex flex-col gap-5">
+                <div *ngFor="let item of req.items.slice(0,3)" class="p-5 bg-slate-50 dark:bg-black/40 rounded-2xl border border-slate-100 dark:border-white/5 hover:border-indigo-500/20 hover:bg-white dark:hover:bg-black/60 transition-all group/item shadow-inner">
+                  <div class="flex items-center justify-between gap-4">
+                    <span class="text-sm font-black text-slate-900 dark:text-slate-200 group-hover/item:text-indigo-600 dark:group-hover/item:text-white transition-colors">{{ item.name }}</span>
+                    <span class="text-[10px] font-black px-3 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-indigo-600 dark:text-indigo-400 shadow-sm dark:shadow-lg">×{{ item.quantity }}</span>
                   </div>
-                  <div *ngIf="item.selectedSpecs && objectKeys(item.selectedSpecs).length > 0" class="flex flex-wrap gap-1 mt-1">
-                    <span *ngFor="let key of objectKeys(item.selectedSpecs)" class="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] rounded font-black uppercase tracking-tighter">
-                      {{ key }}: {{ item.selectedSpecs[key] }}
-                    </span>
+                  <div *ngIf="item.selectedSpecs" class="flex flex-wrap gap-2 mt-3">
+                    <div *ngFor="let key of objectKeys(item.selectedSpecs)" class="px-2.5 py-1 bg-white dark:bg-black/40 border border-slate-100 dark:border-white/5 text-slate-500 dark:text-slate-400 text-[9px] rounded-lg font-black uppercase tracking-tighter shadow-sm group-hover/item:border-indigo-500/10">
+                      {{ key }}: <span class="text-slate-700 dark:text-slate-200">{{ item.selectedSpecs[key] }}</span>
+                    </div>
                   </div>
                 </div>
                 <div *ngIf="(req.items.length || 0) > 3" class="text-center">
-                  <span class="text-[10px] font-black text-slate-300 uppercase">+{{ (req.items.length || 0) - 3 }} more items</span>
+                  <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] opacity-50">+{{ (req.items.length || 0) - 3 }} Overflow Items</span>
                 </div>
               </div>
-              <div *ngIf="req.status === 'ORDER_CONFIRMED' || req.status === 'RECEIVED'" class="mt-4 p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
-                <p class="text-[9px] font-black text-emerald-600 uppercase mb-1">Confirmed Supplier</p>
-                <p class="text-xs font-bold text-slate-800">{{ req.supplierName || 'System Confirmed' }}</p>
+              
+              <div *ngIf="req.status === 'ORDER_CONFIRMED' || req.status === 'RECEIVED'" class="mt-8 p-5 bg-emerald-500/5 rounded-2xl border border-emerald-500/10 shadow-inner group/supp">
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20 group-hover/supp:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  </div>
+                  <div>
+                    <p class="text-[9px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest opacity-60">Verified Origin</p>
+                    <p class="text-sm font-black text-slate-900 dark:text-slate-200 tracking-tight">{{ req.supplierName || 'System Vendor' }}</p>
+                  </div>
+                </div>
               </div>
-              <p *ngIf="req.notes" class="text-xs text-slate-500 italic line-clamp-2 bg-indigo-50/30 p-3 rounded-xl border border-indigo-50 mt-3">"{{ req.notes }}"</p>
+
+              <div class="mt-8 p-5 bg-slate-50 dark:bg-white/2 rounded-2xl border border-slate-100 dark:border-white/5 shadow-inner">
+                <div class="flex items-center gap-3 mb-3 opacity-40">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <span class="text-[9px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Operator Context</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                   <p class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest" *ngIf="req.createdByUserId !== userId">
+                     Requestor: {{ req.createdByName }} <span class="opacity-50" *ngIf="req.createdByRole">({{ req.createdByRole }})</span>
+                   </p>
+                   <p class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest" *ngIf="req.createdByUserId === userId && userRole === 'STOCK_MANAGER'">
+                     Created By You ({{ userRole }})
+                   </p>
+                   <p class="text-xs text-slate-600 dark:text-slate-500 italic leading-relaxed font-medium">"{{ req.notes || 'No technical context provided for this deployment.' }}"</p>
+                </div>
+              </div>
             </div>
 
-            <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center">
-              <div class="flex items-center gap-2">
-                <button *ngIf="req.status === 'ORDER_CONFIRMED'" 
-                        (click)="$event.stopPropagation(); openReceiptModal(req)"
-                        class="px-4 py-2 bg-indigo-600 text-white text-[10px] font-black rounded-xl hover:bg-slate-900 transition-all shadow-lg shadow-indigo-100">
-                  CONFIRM RECEIPT
+            <!-- ACTION BUTTONS -->
+            <div class="mt-10 pt-8 border-t border-slate-100 dark:border-white/5 flex items-center justify-between relative z-10">
+              <div class="flex items-center gap-3">
+                <button *ngIf="req.status === 'ORDER_CONFIRMED' && userRole === 'STOCK_MANAGER'" 
+                        (click)="openReceiptModal(req)"
+                        class="px-6 py-3 bg-indigo-600 text-white text-[10px] font-black rounded-xl hover:bg-slate-900 dark:hover:bg-white hover:text-white dark:hover:text-black transition-all shadow-xl shadow-indigo-600/10 uppercase tracking-widest active:scale-95">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" class="inline mr-2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  Confirm Receipt
                 </button>
-                <div *ngIf="req.status !== 'ORDER_CONFIRMED'" class="flex items-center gap-2 text-[10px] text-slate-400 font-black uppercase tracking-widest">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  {{ formatDate(req.createdAt) }}
-                </div>
+                <button *ngIf="canEdit(req)"
+                        (click)="openEditModal(req)"
+                        class="px-6 py-3 bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 text-[10px] font-black rounded-xl hover:bg-indigo-600 hover:text-white transition-all uppercase tracking-widest border border-slate-200 dark:border-white/5 active:scale-95">
+                  Edit Request
+                </button>
               </div>
-              <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              <div class="text-right">
+                <p class="text-[10px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest mb-1 opacity-50">Logged At</p>
+                <p class="text-xs font-black text-slate-500 dark:text-slate-400 tracking-tighter">{{ formatDate(req.createdAt) }}</p>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- LIST VIEW -->
-        <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm max-h-[500px] overflow-y-auto custom-scrollbar" *ngIf="viewMode === 'list' && activeRequests.length > 0">
-          <table class="w-full text-left border-collapse sticky-header">
-            <thead>
-              <tr class="bg-slate-50/80 backdrop-blur-sm sticky top-0 z-10">
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Items</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Supplier</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Action</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr *ngFor="let req of activeRequests" (click)="selectRequest(req)" class="hover:bg-slate-50 cursor-pointer transition-colors group">
-                <td class="px-6 py-4 text-xs font-bold text-slate-500">{{ formatDate(req.createdAt) }}</td>
-                <td class="px-6 py-4">
-                  <div class="flex gap-2">
-                    <span *ngFor="let item of req.items.slice(0,2)" class="px-2 py-1 bg-slate-800 text-white text-[10px] font-black rounded-lg">
-                      {{ item.name }} ({{ item.quantity }})
-                    </span>
-                    <span *ngIf="req.items.length > 2" class="text-[10px] text-slate-300 font-bold self-center">+{{ req.items.length - 2 }}</span>
-                  </div>
-                </td>
-                <td class="px-6 py-4 text-xs font-bold text-slate-700">
-                  {{ req.supplierName || '—' }}
-                </td>
-                <td class="px-6 py-4">
-                  <span class="px-2.5 py-1 rounded-full text-[9px] font-black uppercase" [ngClass]="getStatusMeta(req.status).colorClass">
-                    {{ getStatusMeta(req.status).label }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 text-right">
-                  <button *ngIf="req.status === 'ORDER_CONFIRMED'" 
-                          (click)="$event.stopPropagation(); openReceiptModal(req)"
-                          class="px-3 py-1.5 bg-indigo-600 text-white text-[9px] font-black rounded-lg hover:bg-slate-900 transition-all shadow-lg shadow-indigo-100">
-                    RECEIVE
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- REJECTED HISTORY SECTION -->
-      <div class="mt-12" *ngIf="!loading && rejectedRequests.length > 0">
-        <div class="flex items-center gap-4 mb-6">
-          <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-100 shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          </div>
-          <h3 class="text-lg font-black text-slate-800 uppercase tracking-tight">Rejected Requests History</h3>
-        </div>
-
-        <div class="bg-white border border-rose-100 rounded-3xl overflow-hidden shadow-xl shadow-rose-500/5">
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-rose-50/50">
-              <tr>
-                <th class="px-6 py-4 text-[10px] font-black text-rose-400 uppercase tracking-widest">Rejection Date</th>
-                <th class="px-6 py-4 text-[10px] font-black text-rose-400 uppercase tracking-widest">Requested Items</th>
-                <th class="px-6 py-4 text-[10px] font-black text-rose-400 uppercase tracking-widest">Rejection Reason</th>
-                <th class="px-6 py-4 text-[10px] font-black text-rose-400 uppercase tracking-widest">Action</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-rose-50">
-              <tr *ngFor="let req of rejectedRequests" (click)="selectRequest(req)" class="hover:bg-rose-50/30 transition-colors cursor-pointer">
-                <td class="px-6 py-4 text-xs font-bold text-slate-500">{{ formatDate(req.updatedAt || req.createdAt) }}</td>
-                <td class="px-6 py-4">
-                  <div class="flex flex-wrap gap-1">
-                    <span *ngFor="let item of req.items" class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded border border-slate-200">
-                      {{ item.name }}
-                    </span>
-                  </div>
-                </td>
-                <td class="px-6 py-4">
-                  <div class="flex items-start gap-2 text-rose-700 bg-rose-100/50 p-2 rounded-xl border border-rose-100 text-xs">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" class="mt-0.5 shrink-0" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    <span class="font-medium italic">"{{ req.rejectionReason || 'No reason specified' }}"</span>
-                  </div>
-                </td>
-                <td class="px-6 py-4">
-                  <button (click)="$event.stopPropagation(); selectRequest(req)" class="text-[10px] font-black text-indigo-600 uppercase hover:underline">View Details</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
   `,
 })
 export class EquipmentRequestListComponent implements OnInit {
-  @Output() requestSelected = new EventEmitter<EquipmentRequest>();
+  @Input() userId: string = '';
+  @Input() userRole: string = '';
+  @Output() sendToRFQ = new EventEmitter<EquipmentRequest>();
 
   requests: EquipmentRequest[] = [];
   loading = true;
-  filterStatus = 'ALL';
-  viewMode: 'grid' | 'list' = 'grid';
+  filterStatus = 'PENDING';
+  searchQuery = '';
+  viewMode: 'list' | 'card' = 'list';
   objectKeys = Object.keys;
+
+  // Edit Modal State
+  showEditModal = false;
+  editingRequest: EquipmentRequest | null = null;
+  editingNotes = '';
+  isSavingEdit = false;
 
   // Receipt Modal State
   showReceiptModal = false;
@@ -408,45 +457,120 @@ export class EquipmentRequestListComponent implements OnInit {
 
   load(): void {
     this.loading = true;
-    this.procService.getAllRequests().subscribe({
-      next: (data) => { this.requests = data; this.loading = false; },
-      error: () => { this.loading = false; }
+    if (this.userRole === 'STOCK_MANAGER' || this.userRole === 'IT_MANAGER') {
+      // Stock Manager and IT Manager see all relevant requests
+      this.procService.getAllRequests().subscribe({
+        next: (data) => {
+          if (this.userRole === 'STOCK_MANAGER') {
+            this.requests = data.filter(r => 
+              r.createdByUserId === this.userId || 
+              r.status === 'ORDER_CONFIRMED' || 
+              r.status === 'RECEIVED' ||
+              r.status === 'REJECTED'
+            );
+          } else {
+            // IT Manager sees everything
+            this.requests = data;
+          }
+          this.loading = false;
+        },
+        error: () => { this.loading = false; }
+      });
+    } else {
+      // Others see only their own
+      this.procService.getRequestsByUser(this.userId).subscribe({
+        next: (data) => { this.requests = data; this.loading = false; },
+        error: () => { this.loading = false; }
+      });
+    }
+  }
+
+  get filteredRequests(): EquipmentRequest[] {
+    return this.requests.filter(r => {
+      const status = r.status || 'PENDING_IT_APPROVAL';
+      
+      let matchesStatus = status === this.filterStatus;
+      if (this.filterStatus === 'APPROVED') {
+        matchesStatus = ['APPROVED', 'SENT_TO_SUPPLIERS', 'RESPONDED'].includes(status);
+      }
+      if (this.filterStatus === 'INBOUND') {
+        matchesStatus = status === 'ORDER_CONFIRMED';
+      }
+      if (this.filterStatus === 'PENDING') {
+        matchesStatus = status === 'PENDING_IT_APPROVAL';
+      }
+      if (this.filterStatus === 'RECEIVED') {
+        matchesStatus = status === 'RECEIVED';
+      }
+      if (this.filterStatus === 'REJECTED') {
+        matchesStatus = status === 'REJECTED';
+      }
+
+      const matchesSearch = !this.searchQuery || 
+        r.items.some(i => i.name.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
+        (r.createdByName && r.createdByName.toLowerCase().includes(this.searchQuery.toLowerCase()));
+      return matchesStatus && matchesSearch;
     });
   }
 
-  get activeRequests(): EquipmentRequest[] {
-    const active = this.requests.filter(r => r.status !== 'REJECTED');
-    return this.filterStatus === 'ALL'
-      ? active
-      : active.filter(r => r.status === this.filterStatus);
+  get filterOptions() {
+    return [
+      { id: 'PENDING', label: 'Pending' },
+      { id: 'APPROVED', label: 'Approved' },
+      { id: 'INBOUND', label: 'Inbound' },
+      { id: 'RECEIVED', label: 'Received' },
+      { id: 'REJECTED', label: 'Rejected' }
+    ];
   }
 
-  get rejectedRequests(): EquipmentRequest[] {
-    return this.requests.filter(r => r.status === 'REJECTED');
+  canEdit(req: EquipmentRequest): boolean {
+    // Once a request enters the external phase (RFQ, Response, Order, or Receipt),
+    // it is locked for all users to ensure data integrity with vendor commitments.
+    const isLocked = ['SENT_TO_SUPPLIERS', 'RESPONDED', 'ORDER_CONFIRMED', 'RECEIVED'].includes(req.status || '');
+    if (isLocked) return false;
+
+    if (this.userRole === 'IT_MANAGER') return true;
+    return req.createdByUserId === this.userId;
   }
 
-  get checkedCount(): number {
-    return this.checkedItems.filter(v => v).length;
+  openEditModal(req: EquipmentRequest): void {
+    this.editingRequest = JSON.parse(JSON.stringify(req));
+    this.editingNotes = this.editingRequest?.notes || '';
+    this.showEditModal = true;
   }
 
-  get allChecked(): boolean {
-    if (!this.selectedOrderForReceipt?.items) return false;
-    return this.checkedItems.length === this.selectedOrderForReceipt.items.length && 
-           this.checkedItems.every(v => v === true);
+  updateItemQty(index: number, delta: number): void {
+    if (!this.editingRequest?.items) return;
+    const item = this.editingRequest.items[index];
+    item.quantity = Math.max(1, item.quantity + delta);
   }
 
-  selectRequest(req: EquipmentRequest): void {
-    this.requestSelected.emit(req);
+  removeItem(index: number): void {
+    this.editingRequest?.items?.splice(index, 1);
   }
 
-  openReceiptModal(req: EquipmentRequest): void {
-    const container = document.getElementById('procurement-scroll-container');
-    if (container) {
-      container.scrollTop = 0;
-    } else {
-      window.scrollTo(0, 0);
-    }
+  saveEdit(): void {
+    if (!this.editingRequest || !this.editingRequest.id) return;
+    this.isSavingEdit = true;
+    this.editingRequest.notes = this.editingNotes;
     
+    this.procService.updateRequest(this.editingRequest.id, this.editingRequest, this.userId, this.userRole === 'IT_MANAGER')
+      .subscribe({
+        next: () => {
+          this.isSavingEdit = false;
+          this.showEditModal = false;
+          this.toastService.success('Request synchronized successfully.');
+          this.load();
+        },
+        error: () => {
+          this.isSavingEdit = false;
+          this.toastService.error('Failed to sync changes.');
+        }
+      });
+  }
+
+  // --- RECEIPT LOGIC ---
+  openReceiptModal(req: EquipmentRequest): void {
     this.procService.getOrderByRequest(req.id!).subscribe({
       next: (po) => {
         this.selectedOrderForReceipt = po;
@@ -455,52 +579,41 @@ export class EquipmentRequestListComponent implements OnInit {
         this.checkedItems = new Array(po.items?.length || 0).fill(false);
         this.showReceiptModal = true;
       },
-      error: () => this.toastService.error('Could not find order details for this request.')
+      error: () => this.toastService.error('Packet manifest not found.')
     });
   }
 
-  getInvoiceUrl(): string {
-    if (!this.selectedOrderForReceipt?.selectedResponseId) return '#';
-    return this.procService.getViewUrl(this.selectedOrderForReceipt.selectedResponseId);
-  }
+  get checkedCount(): number { return this.checkedItems.filter(v => v).length; }
+  get allChecked(): boolean { return this.checkedItems.length > 0 && this.checkedItems.every(v => v); }
+  getInvoiceUrl(): string { return this.selectedOrderForReceipt?.selectedResponseId ? this.procService.getViewUrl(this.selectedOrderForReceipt.selectedResponseId) : '#'; }
 
   submitReceipt(postToStock: boolean): void {
     if (!this.selectedOrderForReceipt) return;
-    if (!this.allChecked) {
-      this.toastService.error('Please verify all items against the invoice before confirmation.');
-      return;
-    }
-    
     this.submittingReceipt = true;
-    this.procService.confirmReceipt(
-      this.selectedOrderForReceipt.id!, 
-      this.receiptNotes, 
-      this.receiptRating,
-      postToStock
-    ).subscribe({
-      next: () => {
-        this.submittingReceipt = false;
-        this.showReceiptModal = false;
-        this.toastService.success(
-          postToStock 
-            ? 'Success! Items verified and automatically added to inventory.' 
-            : 'Audit complete. Request marked as received.'
-        );
-        this.load();
-      },
-      error: () => {
-        this.submittingReceipt = false;
-        this.toastService.error('Failed to post receipt. Database rejected the audit.');
-      }
-    });
+    this.procService.confirmReceipt(this.selectedOrderForReceipt.id!, this.receiptNotes, this.receiptRating, postToStock)
+      .subscribe({
+        next: () => {
+          this.submittingReceipt = false;
+          this.showReceiptModal = false;
+          this.toastService.success('Manifest committed to local inventory.');
+          this.load();
+        },
+        error: () => { this.submittingReceipt = false; this.toastService.error('Commit failed.'); }
+      });
   }
 
-  getStatusMeta(status?: RequestStatus) {
-    return STATUS_META[status || 'PENDING_IT_APPROVAL'];
+  getStatusMeta(status?: RequestStatus) { 
+    const meta = STATUS_META[status || 'PENDING_IT_APPROVAL'];
+    
+    // Theme-aware color classes
+    let colorClass = 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-white/10';
+    if (status === 'APPROVED') colorClass = 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20';
+    if (status === 'REJECTED') colorClass = 'bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20';
+    if (status === 'PENDING_IT_APPROVAL') colorClass = 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20';
+    if (status === 'RECEIVED') colorClass = 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20';
+    
+    return { ...meta, colorClass };
   }
-
-  formatDate(d?: string): string {
-    if (!d) return '';
-    return new Date(d).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
-  }
+  
+  formatDate(d?: string): string { return d ? new Date(d).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : ''; }
 }

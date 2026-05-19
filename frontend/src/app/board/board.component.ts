@@ -24,8 +24,7 @@ import { RequestListComponent } from '../parts-management/request-list/request-l
 import { RequestManagerComponent } from '../parts-management/request-manager/request-manager.component';
 import { TicketsComponent } from '../tickets/tickets.component';
 import { ReportsComponent } from '../reports/reports.component';
-import { OsManagementComponent } from '../os-management/os-management.component';
-import { ApplicationManagementComponent } from '../application-management/application-management.component';
+import { SoftwareDashboardComponent } from '../software-management/software-dashboard/software-dashboard.component';
 import { TranslationService } from '../shared/translation.service';
 import { PartRequestService } from '../parts-management/part-request.service';
 import { EmployeeListComponent } from '../employee/employee-list/employee-list.component';
@@ -34,13 +33,16 @@ import { ToastComponent } from '../shared/toast/toast.component';
 import { ProcurementComponent } from '../procurement/procurement.component';
 import { ProcurementService } from '../procurement/procurement.service';
 
+import { TicketService } from '../tickets/ticket.service';
+import { RefreshService } from '../shared/refresh.service';
+
 @Component({
   selector: 'app-board',
   standalone: true,
 
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, ToastComponent, ProcurementComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, SoftwareDashboardComponent, EmployeeListComponent, HrDashboardComponent, ToastComponent, ProcurementComponent],
 
-  providers: [MessagingService],
+  providers: [MessagingService, TicketService],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
 })
@@ -67,6 +69,8 @@ export class BoardComponent implements OnInit {
 
   pendingRequestsCount: number = 0;
   pendingProcurementCount: number = 0;
+  activeTicketCount: number = 0;
+  private refreshSub?: Subscription;
 
 
   constructor(
@@ -80,7 +84,9 @@ export class BoardComponent implements OnInit {
 
     public ts: TranslationService,
     private partRequestService: PartRequestService,
-    private procurementService: ProcurementService
+    private procurementService: ProcurementService,
+    private ticketService: TicketService,
+    private refreshService: RefreshService
 
   ) { }
 
@@ -123,6 +129,7 @@ export class BoardComponent implements OnInit {
         // Live Notifications Subscription
         this.socketService.onNotificationUpdate.subscribe(() => {
           this.loadUnreadCount();
+          this.loadTicketCount();
         });
 
         // 2. Reduce non-realtime polling to once per minute (standard dashboard sync)
@@ -135,6 +142,12 @@ export class BoardComponent implements OnInit {
         this.procSub?.unsubscribe();
         this.procSub = this.procurementService.requestCreated$.subscribe(() => {
           this.loadUnreadCount();
+        });
+
+        // 4. Ticket Count for Technician
+        this.loadTicketCount();
+        this.refreshSub = this.refreshService.refresh$.subscribe(() => {
+          this.loadTicketCount();
         });
       }
     });
@@ -337,7 +350,7 @@ export class BoardComponent implements OnInit {
   setResourceFilter(filter: string): void {
     if (filter === '') {
       if (this.user?.role === 'IT_MANAGER') {
-        this.selectedResourceFilter = 'Operating Systems';
+        this.selectedResourceFilter = 'Software';
       } else {
         this.selectedResourceFilter = 'Parts';
       }
@@ -349,6 +362,26 @@ export class BoardComponent implements OnInit {
 
   openMessages(): void {
     this.activeTab = 'messages';
+  }
+
+  private loadTicketCount() {
+    if (!this.user) return;
+    
+    if (this.user.role === 'TECHNICIAN') {
+      this.ticketService.getTicketsForTechnician(this.user.id).subscribe(tickets => {
+        const active = tickets.filter(t => 
+          t.status !== 'Completed' && t.status !== 'Resolved' && t.status !== 'Closed' && t.status !== 'Cancelled'
+        );
+        this.activeTicketCount = active.length;
+      });
+    } else {
+      this.ticketService.getTicketsByUser(this.user.id).subscribe(tickets => {
+        const active = tickets.filter(t => 
+          t.status !== 'Completed' && t.status !== 'Resolved' && t.status !== 'Closed' && t.status !== 'Cancelled'
+        );
+        this.activeTicketCount = active.length;
+      });
+    }
   }
 
   logout(): void {

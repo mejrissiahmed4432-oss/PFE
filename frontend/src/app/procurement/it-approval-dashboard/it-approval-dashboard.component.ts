@@ -1,7 +1,8 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProcurementService } from '../procurement.service';
+import { ToastService } from '../../shared/toast.service';
 import { EquipmentRequest, STATUS_META, RequestStatus } from '../procurement.models';
 
 @Component({
@@ -9,121 +10,208 @@ import { EquipmentRequest, STATUS_META, RequestStatus } from '../procurement.mod
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="flex flex-col lg:flex-row gap-6">
+    <div class="flex flex-col lg:flex-row gap-10 animate-in fade-in duration-700 pb-12">
       
-      <!-- Main Content: Pending Approvals -->
-      <div class="flex-1 bg-white/70 backdrop-blur-md border border-slate-200/60 rounded-2xl p-6 shadow-sm">
-        <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-amber-50 text-amber-500 shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15h6"/></svg>
+      <!-- EDIT MODAL -->
+      <div *ngIf="showEditModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md" (click)="showEditModal = false"></div>
+        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-2xl shadow-2xl relative z-10 overflow-hidden border border-slate-200 dark:border-white/10 flex flex-col max-h-[90vh]">
+          <div class="p-8 border-b border-slate-100 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-white/2">
+            <div>
+              <h3 class="text-xl font-black text-slate-900 dark:text-white">Adjust Node Payload</h3>
+              <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Refining specifications before authorization</p>
+            </div>
+            <button (click)="showEditModal = false" class="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl text-slate-400 hover:text-rose-400 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
           </div>
-          <div>
-            <h2 class="text-lg font-bold text-slate-800 m-0">Pending Approvals</h2>
-            <p class="text-sm text-slate-500 mt-1">Review new equipment requests from Stock Managers.</p>
-          </div>
-        </div>
-
-        <div *ngIf="isLoading" class="flex items-center justify-center p-12 text-slate-500 gap-3">
-          <div class="w-6 h-6 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-          <span class="font-medium">Loading requests...</span>
-        </div>
-
-        <div *ngIf="!isLoading && pendingRequests.length === 0" class="flex flex-col items-center justify-center p-16 text-slate-400">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-4 opacity-50" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <p class="font-medium">All caught up! No pending requests.</p>
-        </div>
-
-        <div class="flex flex-col gap-4" *ngIf="!isLoading && pendingRequests.length > 0">
-          <div *ngFor="let req of pendingRequests" class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-5 bg-white border border-slate-200 rounded-2xl hover:border-indigo-300 hover:shadow-md transition-all">
-            
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-2">
-                <span class="text-xs text-slate-400 font-medium flex items-center gap-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  {{ formatDate(req.createdAt) }}
-                </span>
-              </div>
-              
-              <div class="text-sm font-medium text-slate-700 mb-3 flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs">👤</span>
-                {{ req.createdByName || 'Stock Manager' }}
-              </div>
-              
-              <div class="flex flex-col gap-2 mb-3">
-                <div *ngFor="let item of req.items" class="flex flex-col gap-1">
-                  <div class="flex items-center gap-2">
-                    <span class="px-2.5 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold shadow-sm">
-                      {{ item.name }} × {{ item.quantity }}
-                    </span>
-                    <span *ngIf="item.description" class="text-[11px] text-slate-400 italic">{{ item.description }}</span>
-                  </div>
-                  <!-- Specifications -->
-                  <div *ngIf="item.selectedSpecs && objectKeys(item.selectedSpecs).length > 0" class="flex flex-wrap gap-1.5 mt-1">
-                    <span *ngFor="let key of objectKeys(item.selectedSpecs)" class="px-2 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-[10px] rounded-md font-bold uppercase tracking-tight">
-                      {{ key }}: {{ item.selectedSpecs[key] }}
-                    </span>
+          
+          <div class="p-8 overflow-y-auto custom-scrollbar flex-1 bg-white dark:bg-slate-900/50">
+            <div class="flex flex-col gap-8">
+              <div>
+                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Quantity & Item Optimization</label>
+                <div class="flex flex-col gap-4">
+                  <div *ngFor="let item of editingRequest?.items; let i = index" class="p-5 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5 flex items-center justify-between gap-6 hover:border-indigo-500/30 transition-all">
+                    <div class="flex-1">
+                      <p class="text-sm font-black text-slate-900 dark:text-slate-200">{{ item.name }}</p>
+                      <div *ngIf="item.selectedSpecs" class="flex flex-wrap gap-1.5 mt-2">
+                        <span *ngFor="let key of objectKeys(item.selectedSpecs)" class="px-2 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[9px] rounded-md border border-indigo-500/20 font-black uppercase">
+                          {{ key }}: {{ item.selectedSpecs[key] }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white dark:bg-black/40 p-1.5 rounded-xl border border-slate-200 dark:border-white/10 shadow-inner">
+                      <button (click)="updateItemQty(i, -1)" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white hover:bg-indigo-600 hover:text-white transition-colors font-bold border border-slate-200 dark:border-white/5">-</button>
+                      <span class="w-6 text-center font-black text-sm text-slate-900 dark:text-white">{{ item.quantity }}</span>
+                      <button (click)="updateItemQty(i, 1)" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-white hover:bg-indigo-600 hover:text-white transition-colors font-bold border border-slate-200 dark:border-white/5">+</button>
+                    </div>
                   </div>
                 </div>
               </div>
-              
-              <div *ngIf="req.notes" class="text-sm text-slate-500 italic bg-slate-50/50 p-3 rounded-xl border border-slate-100 border-l-4 border-l-slate-300">
-                "{{ req.notes }}"
+
+              <div>
+                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Technical Adjustments / Decision Notes</label>
+                <textarea [(ngModel)]="editingNotes" 
+                          placeholder="Add technical context for this decision..."
+                          class="w-full bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-[1.5rem] p-5 text-sm text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none min-h-[120px] transition-all shadow-inner"></textarea>
               </div>
             </div>
+          </div>
 
-            <div class="w-full md:w-auto md:min-w-[180px]">
-              <div *ngIf="processingId === req.id" class="flex items-center justify-center gap-2 text-indigo-600 font-medium p-3">
-                <div class="w-4 h-4 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div> Processing...
-              </div>
-
-              <div *ngIf="processingId !== req.id && rejectingId !== req.id" class="flex flex-row md:flex-col gap-2">
-                <button class="flex-1 flex justify-center items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-xl shadow-sm transition-colors" (click)="approve(req.id!)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Approve
-                </button>
-                <button class="flex-1 flex justify-center items-center gap-2 px-4 py-2.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-semibold rounded-xl transition-colors" (click)="rejectingId = req.id; rejectReason = ''">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Reject
-                </button>
-              </div>
-
-              <div *ngIf="rejectingId === req.id" class="flex flex-col gap-2 bg-red-50 p-3 rounded-xl border border-red-100">
-                <textarea [(ngModel)]="rejectReason" class="w-full px-3 py-2 text-sm border border-red-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 resize-y" rows="2" placeholder="Reason for rejection..."></textarea>
-                <div class="flex gap-2">
-                  <button class="flex-1 px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-lg hover:bg-red-700 transition-colors" (click)="confirmReject(req.id!)" [disabled]="!rejectReason.trim()">Confirm Reject</button>
-                  <button class="px-3 py-1.5 bg-white text-slate-500 border border-slate-200 text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors" (click)="rejectingId = null">Cancel</button>
-                </div>
-              </div>
-            </div>
-
+          <div class="p-8 bg-slate-50 dark:bg-white/2 border-t border-slate-100 dark:border-white/5 flex gap-4">
+            <button (click)="showEditModal = false" class="px-8 py-4 bg-transparent text-slate-500 dark:text-slate-400 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-all">Abort</button>
+            <button (click)="saveEdit()" 
+                    [disabled]="isSavingEdit || !editingRequest?.items?.length"
+                    class="flex-1 px-8 py-4 bg-indigo-600 text-white font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 disabled:opacity-50">
+              {{ isSavingEdit ? 'Syncing...' : 'Commit Changes' }}
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Sidebar: Processed & Send to RFQ -->
-      <div class="w-full lg:w-80 flex flex-col gap-6">
-        <div class="bg-white/70 backdrop-blur-md border border-slate-200/60 rounded-2xl p-5 shadow-sm">
-          <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 flex justify-between items-center">
-            Recently Processed
-            <span class="text-xs font-normal text-slate-400 normal-case">{{ processedRequests.length }} items</span>
-          </h3>
+      <!-- Main Content: Pending Queue -->
+      <div class="flex-1">
+        <div class="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-2xl relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
           
-          <div class="flex flex-col gap-3">
-            <div *ngFor="let req of processedRequests.slice(0,5)" class="p-3 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:border-slate-200 transition-colors">
-              <div class="flex justify-between items-center mb-2">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase" [ngClass]="getStatusMeta(req.status).colorClass">
-                  {{ getStatusMeta(req.status).label }}
-                </span>
+          <div class="flex items-center justify-between mb-10 relative z-10">
+            <div class="flex items-center gap-5">
+              <div class="w-16 h-16 rounded-[1.5rem] flex items-center justify-center bg-amber-500/10 text-amber-600 dark:text-amber-400 shadow-inner border border-amber-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               </div>
-              <div class="flex justify-between items-center mt-2">
-                <span class="text-xs text-slate-500">{{ req.items.length }} item(s)</span>
-                <button class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 group" (click)="sendToRFQ.emit(req)" *ngIf="req.status === 'APPROVED'">
-                  Send RFQ <span class="group-hover:translate-x-1 transition-transform">→</span>
-                </button>
+              <div>
+                <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Review Protocol Queue</h2>
+                <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">{{ pendingRequests.length }} Decision Nodes Awaiting Auth</p>
+              </div>
+            </div>
+            
+            <div class="bg-slate-100 dark:bg-black/40 p-1.5 rounded-2xl flex gap-1 border border-slate-200 dark:border-white/5 shadow-inner">
+              <div class="px-4 py-2 bg-indigo-600 rounded-xl text-[10px] font-black text-white uppercase shadow-lg">Live Queue</div>
+            </div>
+          </div>
+
+          <div *ngIf="isLoading" class="flex flex-col items-center justify-center p-32 text-slate-400 gap-6">
+            <div class="w-16 h-16 border-4 border-indigo-500/10 border-t-indigo-500 rounded-full animate-spin"></div>
+            <span class="font-black uppercase tracking-widest text-[10px] animate-pulse">Scanning Decision Layer...</span>
+          </div>
+
+          <div *ngIf="!isLoading && pendingRequests.length === 0" class="flex flex-col items-center justify-center p-32 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-[2.5rem] text-slate-400 shadow-inner bg-slate-50/50 dark:bg-black/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" stroke="currentColor" stroke-width="1" class="mb-6 opacity-20" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <p class="font-black uppercase tracking-widest text-xs italic opacity-50">Protocol Stack is Empty</p>
+          </div>
+
+          <div class="flex flex-col gap-6 relative z-10" *ngIf="!isLoading && pendingRequests.length > 0">
+            <div *ngFor="let req of pendingRequests" 
+                 class="group relative bg-slate-50 dark:bg-white/2 border border-slate-100 dark:border-white/5 rounded-[2rem] p-8 hover:bg-white dark:hover:bg-white/5 hover:border-indigo-500/30 shadow-sm dark:hover:shadow-[0_20px_60px_rgba(0,0,0,0.4)] transition-all duration-500">
+              
+              <div class="flex flex-col xl:flex-row justify-between gap-10">
+                <div class="flex-1">
+                  <div class="flex items-center gap-4 mb-8">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-200 dark:bg-black/40 flex items-center justify-center text-sm font-black text-indigo-600 dark:text-indigo-400 shadow-inner border border-slate-300 dark:border-white/5 group-hover:scale-110 transition-transform">
+                      {{ req.createdByName?.substring(0,1) || 'S' }}
+                    </div>
+                    <div>
+                      <p class="text-sm font-black text-slate-900 dark:text-white tracking-tight">{{ req.createdByName || 'System Node' }}</p>
+                      <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">{{ formatDate(req.createdAt) }}</p>
+                    </div>
+                  </div>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+                    <div *ngFor="let item of req.items" class="p-6 bg-white dark:bg-black/40 border border-slate-200 dark:border-white/5 rounded-2xl shadow-sm dark:shadow-inner group/item hover:border-indigo-500/20 transition-colors">
+                      <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-black text-slate-900 dark:text-slate-200 group-hover/item:text-indigo-600 dark:group-hover/item:text-white transition-colors">{{ item.name }}</span>
+                        <span class="px-3 py-1.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl text-[10px] font-black border border-indigo-500/20 shadow-sm dark:shadow-lg">×{{ item.quantity }}</span>
+                      </div>
+                      <div *ngIf="item.selectedSpecs">
+                        <div class="flex flex-wrap gap-2">
+                          <div *ngFor="let key of objectKeys(item.selectedSpecs)" class="inline-flex items-center bg-slate-50 dark:bg-white/5 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-white/5 shadow-sm">
+                            <span class="text-[9px] font-black text-slate-500 uppercase mr-2 tracking-tighter">{{ key }}:</span>
+                            <span class="text-[10px] font-black text-slate-700 dark:text-slate-300">{{ item.selectedSpecs[key] }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div *ngIf="req.notes" class="p-6 bg-indigo-500/5 rounded-2xl border border-indigo-500/10 relative overflow-hidden group/notes">
+                    <div class="absolute -right-4 -bottom-4 w-12 h-12 bg-indigo-500/10 rounded-full blur-xl"></div>
+                    <svg class="mb-3 text-indigo-500/30" width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C20.1216 16 21.017 16.8954 21.017 18V21C21.017 22.1046 20.1216 23 19.017 23H16.017C14.9124 23 14.017 22.1046 14.017 21ZM3.017 21L3.017 18C3.017 16.8954 3.91243 16 5.017 16H8.017C9.12157 16 10.017 16.8954 10.017 18V21C10.017 22.1046 9.12157 23 8.017 23H5.017C3.91243 23 3.017 22.1046 3.017 21Z" /></svg>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 italic leading-relaxed font-medium relative z-10">"{{ req.notes }}"</p>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-4 min-w-[240px]">
+                  <div *ngIf="processingId === req.id" class="flex flex-col items-center justify-center gap-4 p-12 bg-slate-50 dark:bg-black/40 rounded-3xl border border-slate-200 dark:border-white/5 shadow-inner">
+                    <div class="w-10 h-10 border-4 border-indigo-500/10 border-t-indigo-500 rounded-full animate-spin"></div>
+                    <p class="text-[10px] font-black text-slate-500 dark:text-slate-600 uppercase tracking-widest">Committing Decision...</p>
+                  </div>
+
+                  <div *ngIf="processingId !== req.id && rejectingId !== req.id" class="flex flex-col gap-3 h-full justify-center">
+                    <button (click)="approve(req.id!)" class="w-full py-5 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_15px_40px_rgba(16,185,129,0.2)] transition-all flex items-center justify-center gap-3 active:scale-95 group">
+                      <svg class="group-hover:scale-110 transition-transform" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                      Authorize Request
+                    </button>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                      <button (click)="openEditModal(req)" class="py-4 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:bg-indigo-600 hover:text-white hover:border-transparent text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        Adjust
+                      </button>
+                      <button (click)="rejectingId = req.id; rejectReason = ''" class="py-4 bg-slate-100 dark:bg-white/5 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-500 hover:bg-rose-600 hover:text-white hover:border-transparent text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+
+                  <div *ngIf="rejectingId === req.id" class="flex flex-col gap-5 bg-rose-500/5 p-8 rounded-[2rem] border border-rose-500/20 shadow-sm dark:shadow-2xl relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 w-12 h-12 bg-rose-500/10 rounded-full blur-xl"></div>
+                    <p class="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest relative z-10">Provide Logic for Denial</p>
+                    <textarea [(ngModel)]="rejectReason" class="w-full p-4 text-xs font-bold border border-rose-200 dark:border-rose-500/20 rounded-xl focus:ring-2 focus:ring-rose-500 outline-none transition-all resize-none bg-white dark:bg-black/40 text-slate-900 dark:text-white min-h-[100px] shadow-inner relative z-10" placeholder="e.g., Mismatch with architecture, Budget exceed..."></textarea>
+                    <div class="flex gap-2 relative z-10">
+                      <button (click)="confirmReject(req.id!)" [disabled]="!rejectReason.trim()" class="flex-1 py-4 bg-rose-600 text-white text-[10px] font-black uppercase rounded-xl hover:bg-rose-500 disabled:opacity-30 transition-all shadow-lg active:scale-95">Confirm Denial</button>
+                      <button (click)="rejectingId = null" class="px-5 py-4 bg-transparent text-slate-500 text-[10px] font-black uppercase rounded-xl border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 transition-all">Cancel</button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Sidebar: Processed Buffer -->
+      <div class="w-full lg:w-[380px] flex flex-col gap-10 shrink-0">
+        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 text-slate-900 dark:text-white shadow-sm dark:shadow-2xl shadow-black/40 border border-slate-200 dark:border-white/5 relative overflow-hidden">
+          <div class="absolute -top-10 -left-10 w-40 h-40 bg-indigo-600/5 rounded-full blur-3xl"></div>
           
-          <div *ngIf="processedRequests.length === 0" class="text-center p-6 text-sm text-slate-400">
-            No recently processed requests.
+          <div class="flex items-center justify-between mb-10 pb-6 border-b border-slate-100 dark:border-white/5 relative z-10">
+            <h3 class="text-sm font-black uppercase tracking-[0.2em] text-slate-500">Processed Log</h3>
+            <span class="px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[10px] font-black text-indigo-600 dark:text-indigo-400 shadow-inner">{{ processedRequests.length }} Nodes</span>
+          </div>
+          
+          <div class="flex flex-col gap-5 relative z-10">
+            <div *ngFor="let req of processedRequests.slice(0,8)" 
+                 class="p-6 bg-slate-50 dark:bg-white/2 border border-slate-100 dark:border-white/5 rounded-[1.5rem] hover:bg-white dark:hover:bg-white/5 hover:border-indigo-500/20 transition-all cursor-pointer group shadow-inner">
+              <div class="flex justify-between items-center mb-4">
+                <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm dark:shadow-xl backdrop-blur-md border" [ngClass]="getStatusMeta(req.status).colorClass">
+                  {{ getStatusMeta(req.status).label }}
+                </span>
+                <span class="text-[9px] font-bold text-slate-500 dark:text-slate-600 uppercase tracking-tighter">{{ formatDateShort(req.updatedAt || req.createdAt) }}</span>
+              </div>
+              <p class="text-xs font-black text-slate-700 dark:text-slate-300 mb-5 tracking-tight">{{ req.createdByName }} • {{ req.items.length }} Hardware Layer(s)</p>
+              
+              <button *ngIf="req.status === 'APPROVED'" 
+                      (click)="sendToRFQ.emit(req)"
+                      class="w-full py-3 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:bg-slate-900 dark:hover:bg-white hover:text-white dark:hover:text-black transition-all flex items-center justify-center gap-3 shadow-lg active:scale-95 group/btn">
+                Launch RFQ Node
+                <svg class="group/btn:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+          
+          <div *ngIf="processedRequests.length === 0" class="text-center py-20 text-slate-400">
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] italic opacity-30">Buffer Registry Clear</p>
           </div>
         </div>
       </div>
@@ -132,7 +220,11 @@ import { EquipmentRequest, STATUS_META, RequestStatus } from '../procurement.mod
   `
 })
 export class ItApprovalDashboardComponent implements OnInit {
+  @Input() userId: string = '';
+  @Input() userRole: string = '';
   @Output() sendToRFQ = new EventEmitter<EquipmentRequest>();
+  @Output() pendingCountChanged = new EventEmitter<number>();
+
   pendingRequests: EquipmentRequest[] = [];
   processedRequests: EquipmentRequest[] = [];
   isLoading = true;
@@ -141,7 +233,13 @@ export class ItApprovalDashboardComponent implements OnInit {
   rejectReason = '';
   objectKeys = Object.keys;
 
-  constructor(private procService: ProcurementService) {}
+  // Edit State
+  showEditModal = false;
+  editingRequest: EquipmentRequest | null = null;
+  editingNotes = '';
+  isSavingEdit = false;
+
+  constructor(private procService: ProcurementService, private toastService: ToastService) {}
   ngOnInit(): void { this.load(); }
 
   load(): void {
@@ -150,6 +248,7 @@ export class ItApprovalDashboardComponent implements OnInit {
       next: (data) => {
         this.pendingRequests = data.filter(r => r.status === 'PENDING_IT_APPROVAL');
         this.processedRequests = data.filter(r => r.status !== 'PENDING_IT_APPROVAL');
+        this.pendingCountChanged.emit(this.pendingRequests.length);
         this.isLoading = false;
       },
       error: () => { this.isLoading = false; }
@@ -158,14 +257,56 @@ export class ItApprovalDashboardComponent implements OnInit {
 
   approve(id: string): void {
     this.processingId = id;
-    this.procService.approveRequest(id).subscribe({ next: () => { this.processingId = null; this.load(); }, error: () => { this.processingId = null; } });
+    this.procService.approveRequest(id).subscribe({
+      next: () => { this.processingId = null; this.toastService.success('Authorization protocol committed.'); this.load(); },
+      error: () => { this.processingId = null; this.toastService.error('Authorization failure.'); }
+    });
   }
 
   confirmReject(id: string): void {
     this.processingId = id;
-    this.procService.rejectRequest(id, this.rejectReason).subscribe({ next: () => { this.processingId = null; this.rejectingId = null; this.rejectReason = ''; this.load(); }, error: () => { this.processingId = null; } });
+    this.procService.rejectRequest(id, this.rejectReason).subscribe({
+      next: () => { this.processingId = null; this.rejectingId = null; this.toastService.success('Denial protocol committed.'); this.load(); },
+      error: () => { this.processingId = null; this.toastService.error('Denial failure.'); }
+    });
   }
 
-  getStatusMeta(status?: RequestStatus) { return STATUS_META[status || 'PENDING_IT_APPROVAL']; }
-  formatDate(d?: string): string { if (!d) return ''; return new Date(d).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }); }
+  // Edit Logic
+  openEditModal(req: EquipmentRequest): void {
+    this.editingRequest = JSON.parse(JSON.stringify(req));
+    this.editingNotes = this.editingRequest?.notes || '';
+    this.showEditModal = true;
+  }
+
+  updateItemQty(index: number, delta: number): void {
+    if (!this.editingRequest?.items) return;
+    const item = this.editingRequest.items[index];
+    item.quantity = Math.max(1, item.quantity + delta);
+  }
+
+  saveEdit(): void {
+    if (!this.editingRequest || !this.editingRequest.id) return;
+    this.isSavingEdit = true;
+    this.editingRequest.notes = this.editingNotes;
+    this.procService.updateRequest(this.editingRequest.id, this.editingRequest, this.userId, true)
+      .subscribe({
+        next: () => { this.isSavingEdit = false; this.showEditModal = false; this.toastService.success('Payload synchronized.'); this.load(); },
+        error: () => { this.isSavingEdit = false; this.toastService.error('Sync failure.'); }
+      });
+  }
+
+  getStatusMeta(status?: RequestStatus) { 
+    const meta = STATUS_META[status || 'PENDING_IT_APPROVAL'];
+    
+    // Theme-aware color classes
+    let colorClass = 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-white/10';
+    if (status === 'APPROVED') colorClass = 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20';
+    if (status === 'REJECTED') colorClass = 'bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20';
+    if (status === 'PENDING_IT_APPROVAL') colorClass = 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20';
+    if (status === 'RECEIVED') colorClass = 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20';
+    
+    return { ...meta, colorClass };
+  }
+  formatDate(d?: string): string { return d ? new Date(d).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : ''; }
+  formatDateShort(d?: string): string { return d ? new Date(d).toLocaleDateString('en-GB', { day:'2-digit', month:'short' }) : ''; }
 }

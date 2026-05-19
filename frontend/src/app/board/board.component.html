@@ -61,7 +61,7 @@
           <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
           <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
         </svg>
-        <span class="nav-label">Employees</span>
+        <span class="nav-label">{{ t('Employees') }}</span>
       </a>
       <!-- Stock -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'"
@@ -172,7 +172,7 @@
         </div>
         <div class="flex-1 flex items-center justify-between overflow-hidden"
           [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">
-          <span class="nav-item-label !w-auto !opacity-100">Procurement</span>
+          <span class="nav-item-label !w-auto !opacity-100">{{ t('Procurement') }}</span>
           <span *ngIf="pendingProcurementCount > 0"
             class="px-2 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded-full ml-2 flex-shrink-0">{{
             pendingProcurementCount }}</span>
@@ -248,7 +248,7 @@
         </div>
         <div class="flex-1 flex items-center justify-between overflow-hidden"
           [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">
-          <span class="nav-item-label !w-auto !opacity-100">Requests</span>
+          <span class="nav-item-label !w-auto !opacity-100">{{ t('Requests') }}</span>
           <span *ngIf="pendingRequestsCount > 0"
             class="px-2 py-0.5 bg-blue-600 text-white text-[10px] font-bold rounded-full ml-2 flex-shrink-0">{{
             pendingRequestsCount }}</span>
@@ -270,7 +270,7 @@
             <line x1="12" y1="22.08" x2="12" y2="12"></line>
           </svg>
           <span class="nav-item-label-flex"
-            [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Resources</span>
+            [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">{{ t('Resources') }}</span>
           <svg *ngIf="!isSidebarCollapsed" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
             class="nav-chevron" [class.rotate-90]="activeTab === 'parts'">
@@ -282,22 +282,14 @@
             [ngClass]="selectedResourceFilter === 'Parts' ? 'nav-sub-item-active' : 'nav-sub-item-default'"
             (click)="setResourceFilter('Parts')" *ngIf="user?.role !== 'IT_MANAGER'">
             <div class="nav-sub-dot" [ngClass]="selectedResourceFilter === 'Parts' ? 'bg-blue-400' : 'bg-slate-600'">
-            </div><span>Parts</span>
+            </div><span>{{ t('Parts') }}</span>
           </a>
           <a href="javascript:void(0)" class="nav-sub-item"
-            [ngClass]="selectedResourceFilter === 'Operating Systems' ? 'nav-sub-item-active' : 'nav-sub-item-default'"
-            (click)="setResourceFilter('Operating Systems')">
+            [ngClass]="selectedResourceFilter === 'Software' ? 'nav-sub-item-active' : 'nav-sub-item-default'"
+            (click)="setResourceFilter('Software')">
             <div class="nav-sub-dot"
-              [ngClass]="selectedResourceFilter === 'Operating Systems' ? 'bg-blue-400' : 'bg-slate-600'"></div>
-            <span>Operating Systems</span>
-          </a>
-          <a href="javascript:void(0)" class="nav-sub-item"
-            [ngClass]="selectedResourceFilter === 'Applications' ? 'nav-sub-item-active' : 'nav-sub-item-default'"
-            (click)="setResourceFilter('Applications')">
-            <div class="nav-sub-dot"
-              [ngClass]="selectedResourceFilter === 'Applications' ? 'bg-blue-400' : 'bg-slate-600'"></div>
-            <span>Applications</span>
-
+              [ngClass]="selectedResourceFilter === 'Software' ? 'bg-blue-400' : 'bg-slate-600'"></div>
+            <span>Software & Licenses</span>
           </a>
         </div>
       </div>
@@ -316,8 +308,14 @@
           <line x1="16" y1="13" x2="8" y2="13"></line>
           <line x1="16" y1="17" x2="8" y2="17"></line>
         </svg>
-        <span class="nav-item-label"
-          [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Requests</span>
+        <div class="nav-item-label flex items-center justify-between flex-1 overflow-hidden"
+          [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">
+          <span class="!w-auto !opacity-100">{{ t('Requests') }}</span>
+          <span *ngIf="pendingRequestsCount > 0"
+            class="px-1.5 py-0.5 bg-blue-600 text-white text-[9px] font-bold rounded-full flex-shrink-0">
+            {{ pendingRequestsCount }}
+          </span>
+        </div>
       </a>
 
       <!-- Support Tickets -->
@@ -332,9 +330,18 @@
           </path>
           <line x1="12" y1="9" x2="12" y2="15"></line>
         </svg>
-        <span class="nav-item-label"
-          [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Tickets</span>
-
+        <div class="nav-item-label flex items-center justify-between flex-1 overflow-hidden"
+          [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">
+          <span class="!w-auto !opacity-100">{{ t('Tickets') }}</span>
+          <span *ngIf="activeTicketCount > 0"
+            class="px-1.5 py-0.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex-shrink-0">
+            {{ activeTicketCount }}
+          </span>
+        </div>
+        <span *ngIf="isSidebarCollapsed && activeTicketCount > 0"
+          class="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 ring-2 ring-[var(--bg-sidebar)] text-[7px] font-bold text-white">
+          {{ activeTicketCount }}
+        </span>
       </a>
 
     </nav>
@@ -612,8 +619,8 @@
         <!-- Dashboard Greeting -->
         <div class="flex items-center justify-between mb-6">
           <div>
-            <h1 class="greeting-title">Good morning, {{ user?.firstName || 'Michael' }} 👋</h1>
-            <p class="greeting-sub">Here's what's happening with your inventory today.</p>
+            <h1 class="greeting-title">{{ t('Good_Morning') }}, {{ user?.firstName || 'Michael' }} 👋</h1>
+            <p class="greeting-sub">{{ t('Inventory_Status') }}</p>
           </div>
           <div class="flex items-center gap-2">
             <span class="role-badge">{{ user?.role || 'User' }}</span>
@@ -658,16 +665,12 @@
       <!-- Parts Management View (Technician Workspace) -->
 
       <app-parts-management
-        *ngIf="activeTab === 'parts' && selectedResourceFilter !== 'Operating Systems' && selectedResourceFilter !== 'Applications'"
+        *ngIf="activeTab === 'parts' && selectedResourceFilter !== 'Software'"
         [resourceFilter]="selectedResourceFilter"></app-parts-management>
 
-      <!-- Operating Systems Management View -->
-      <app-os-management
-        *ngIf="activeTab === 'parts' && selectedResourceFilter === 'Operating Systems'"></app-os-management>
-
-      <!-- Applications Management View -->
-      <app-application-management
-        *ngIf="activeTab === 'parts' && selectedResourceFilter === 'Applications'"></app-application-management>
+      <!-- Software Management View -->
+      <app-software-dashboard
+        *ngIf="activeTab === 'parts' && selectedResourceFilter === 'Software'"></app-software-dashboard>
 
 
       <!-- My Requests Component View -->

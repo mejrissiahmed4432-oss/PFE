@@ -251,7 +251,7 @@
               <span class="info-value">
                 <span class="tag" [ngClass]="{
                   'tag-active': equipment?.status === 'Available',
-                  'tag-expired': equipment?.status === 'Broken',
+                  'tag-expired': equipment?.status === 'Broken' || equipment?.status === 'Unrepairable',
                   'tag-maintenance': equipment?.status === 'Maintenance',
                   'tag-unassigned': equipment?.status === 'Out of Stock' || equipment?.status === 'In Use',
                   'tag-allocated': equipment?.status === 'Allocated',
@@ -911,8 +911,9 @@
                 [disabled]="formData.status !== 'Available' && formData.status !== 'In Stock'">
                 <option value="" disabled>Select an available shelf</option>
                 <option *ngIf="formData.status === 'Maintenance'" value="MAINTENANCE_AREA">Maintenance Area</option>
-                <option *ngIf="formData.status === 'Broken'" value="SCRAP_YARD">Scrap Yard</option>
+                <option *ngIf="formData.status === 'Broken' || formData.status === 'Unrepairable'" value="SCRAP_YARD">Scrap Yard</option>
                 <option *ngIf="formData.status === 'Out of Stock'" value="OUT_OF_STOCK">Out of Stock</option>
+                <option *ngIf="formData.status === 'Installed'" value="">Installed (No Shelf)</option>
                 <option *ngFor="let s of availableShelves" [value]="s.id">
                   Shelf {{ s.nb }}
                   ({{ (equipment?.id && !isAddSimilar && s.id === equipment?.shelfId) ?

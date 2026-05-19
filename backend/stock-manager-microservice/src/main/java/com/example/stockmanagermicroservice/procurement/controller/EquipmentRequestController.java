@@ -43,6 +43,25 @@ public class EquipmentRequestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * PUT /api/procurement/requests/{id} — Update a request.
+     * Query params: requesterId (user's ID), isItManager (true/false)
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<EquipmentRequest> updateRequest(
+            @PathVariable String id,
+            @RequestBody EquipmentRequest updated,
+            @RequestParam(defaultValue = "") String requesterId,
+            @RequestParam(defaultValue = "false") boolean isItManager) {
+        try {
+            return ResponseEntity.ok(service.updateRequest(id, updated, requesterId, isItManager));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(403).build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     /** PUT /api/procurement/requests/{id}/approve — IT Manager approves */
     @PutMapping("/{id}/approve")
     public ResponseEntity<EquipmentRequest> approve(@PathVariable String id) {

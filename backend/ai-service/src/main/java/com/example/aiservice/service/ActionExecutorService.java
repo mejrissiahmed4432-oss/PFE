@@ -29,7 +29,10 @@ public class ActionExecutorService {
         Map.entry("REJECT_REQUEST",      Set.of("stock_manager", "it_manager", "admin")),
         Map.entry("SUBMIT_PART_REQUEST", Set.of("technician", "admin")),
         Map.entry("CREATE_TASK",         Set.of("stock_manager", "it_manager", "technician", "admin")),
+        Map.entry("UPDATE_TASK",         Set.of("stock_manager", "it_manager", "technician", "admin")),
+        Map.entry("DELETE_TASK",         Set.of("stock_manager", "it_manager", "technician", "admin")),
         Map.entry("UPDATE_TICKET",       Set.of("stock_manager", "it_manager", "technician", "admin")),
+        Map.entry("DELETE_TICKET",       Set.of("stock_manager", "it_manager", "technician", "admin")),
         Map.entry("SEND_MESSAGE",        Set.of("stock_manager", "it_manager", "technician", "admin")),
         Map.entry("CREATE_CATEGORY",     Set.of("stock_manager", "it_manager", "admin")),
         Map.entry("ADD_TYPE",            Set.of("stock_manager", "it_manager", "admin")),
@@ -86,8 +89,26 @@ public class ActionExecutorService {
                         (String) payload.get("id"), "REJECTED");
                 case "SUBMIT_PART_REQUEST" -> technicianClient.createPartRequest(payload, userId);
                 case "CREATE_TASK"         -> userClient.createTask(payload, userId);
-                case "UPDATE_TICKET"       -> userClient.updateTicket(
-                        (String) payload.get("id"), payload);
+                case "UPDATE_TASK"         -> {
+                    String updateId = resolveTaskId(payload);
+                    if (updateId == null) yield "❌ Could not find task by title, date, or ID.";
+                    yield userClient.updateTask(updateId, payload);
+                }
+                case "DELETE_TASK"         -> {
+                    String deleteId = resolveTaskId(payload);
+                    if (deleteId == null) yield "❌ Could not find task by title, date, or ID.";
+                    yield userClient.deleteTask(deleteId);
+                }
+                case "UPDATE_TICKET"       -> {
+                    String updateId = resolveTicketId(payload);
+                    if (updateId == null) yield "❌ Could not find ticket by title, date, or ID.";
+                    yield userClient.updateTicket(updateId, payload);
+                }
+                case "DELETE_TICKET"       -> {
+                    String deleteId = resolveTicketId(payload);
+                    if (deleteId == null) yield "❌ Could not find ticket by title, date, or ID.";
+                    yield userClient.deleteTicket(deleteId);
+                }
                 case "SEND_MESSAGE"        -> {
                     if (Boolean.TRUE.equals(payload.get("multiMessage"))) {
                         java.util.List<Map<String, Object>> messages = (java.util.List<Map<String, Object>>) payload.get("messages");
@@ -146,10 +167,11 @@ public class ActionExecutorService {
                     }
                     // 3. Also try matching by equipment name (fuzzy)
                     String name = (String) payload.get("equipmentName");
-                    if (name != null) {
+                    if (name != null && !name.isBlank()) {
                         for (Map<String, Object> eq : allEquipment) {
                             String eqName = String.valueOf(eq.getOrDefault("equipmentName", ""));
-                            if (eqName.equalsIgnoreCase(name)) {
+                            // Fuzzy matching: contains and case-insensitive
+                            if (eqName.toLowerCase().contains(name.toLowerCase())) {
                                 String eqId = String.valueOf(eq.getOrDefault("id", ""));
                                 log.info("Resolved name '{}' to equipment ID {}", name, eqId);
                                 return eqId;
@@ -163,6 +185,63 @@ public class ActionExecutorService {
         }
 
         // 4. Fall back to whatever ID was provided (might still work)
+        return id;
+    }
+
+    private String resolveTaskId(Map<String, Object> payload) {
+        String id = (String) payload.get("id");
+        if (id != null && !id.isBlank() && id.length() == 24) return id;
+
+        String title = (String) payload.get("title");
+        String date = (String) payload.get("dueDate");
+        if ((title != null && !title.isBlank()) || (date != null && !date.isBlank())) {
+            try {
+                java.util.List<Map<String, Object>> tasks = userClient.getAllTasks();
+                if (tasks != null) {
+                    for (Map<String, Object> t : tasks) {
+                        String tTitle = String.valueOf(t.getOrDefault("title", ""));
+                        String tDate = String.valueOf(t.getOrDefault("dueDate", ""));
+                        
+                        // Exact match priority, then fuzzy contains
+                        boolean matchesTitle = title == null || tTitle.equalsIgnoreCase(title) || tTitle.toLowerCase().contains(title.toLowerCase());
+                        boolean matchesDate = date == null || tDate.startsWith(date);
+                        
+                        if (matchesTitle && matchesDate) {
+                            return String.valueOf(t.get("id"));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Failed to resolve task: {}", e.getMessage());
+            }
+        }
+        return id;
+    }
+
+    private String resolveTicketId(Map<String, Object> payload) {
+        String id = (String) payload.get("id");
+        if (id != null && !id.isBlank() && id.length() == 24) return id;
+
+        String title = (String) payload.get("title");
+        String date = (String) payload.get("createdAt");
+        if ((title != null && !title.isBlank()) || (date != null && !date.isBlank())) {
+            try {
+                java.util.List<Map<String, Object>> tickets = userClient.getAllTickets();
+                if (tickets != null) {
+                    for (Map<String, Object> t : tickets) {
+                        String tTitle = String.valueOf(t.getOrDefault("title", ""));
+                        String tDate = String.valueOf(t.getOrDefault("createdAt", ""));
+                        boolean matchesTitle = title == null || tTitle.equalsIgnoreCase(title) || tTitle.toLowerCase().contains(title.toLowerCase());
+                        boolean matchesDate = date == null || tDate.startsWith(date);
+                        if (matchesTitle && matchesDate) {
+                            return String.valueOf(t.get("id"));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Failed to resolve ticket: {}", e.getMessage());
+            }
+        }
         return id;
     }
 

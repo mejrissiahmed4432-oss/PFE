@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface TaskRepository extends MongoRepository<Task, String> {
     List<Task> findByStatus(String status);
-
     List<Task> findByUserId(String userId);
-
+    long countByUserIdAndStatusIn(String userId, List<String> statuses);
+    long countByAssignedToAndStatusIn(String assignedTo, List<String> statuses);
 }

@@ -18,10 +18,12 @@ import {
   ACTION_TYPES_BY_CATEGORY, CATEGORY_ICONS
 } from '../workbench.model';
 
+import { PartRequestWizardComponent } from '../../parts-management/part-request-wizard/part-request-wizard.component';
+
 @Component({
   selector: 'app-live-workbench',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PartRequestWizardComponent],
   templateUrl: './live-workbench.component.html',
   styleUrl: './live-workbench.component.css'
 })
@@ -29,7 +31,18 @@ export class LiveWorkbenchComponent implements OnInit {
   @Input() ticket!: Ticket;
   @Input() equipment!: Equipment;
   @Input() userInventory: any[] = [];
-  @Output() complete = new EventEmitter<{ workNote: string; repairTasks: any[]; partsUsed: any[]; isBroken?: boolean }>();
+  @Input() currentUser: any;
+  isRequestWizardOpen = false;
+  wizardInitialSelection: any = null;
+  @Output() complete = new EventEmitter<{
+    workNote: string;
+    repairTasks: any[];
+    partsUsed: any[];
+    isBroken?: boolean;
+    diagnosisResult?: string;
+    validationSummary?: string;
+    partsInstalled?: any[];
+  }>();
   @Output() suspendWorkbench = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
@@ -96,6 +109,7 @@ export class LiveWorkbenchComponent implements OnInit {
   showCancelDialog = false;
   showCompleteDialog = false;
   showBrokenDialog = false;
+  brokenReason = '';
 
   stepWarningModal = { title: '', message: '', show: false };
   pendingTargetStep: WorkflowStep | null = null;
@@ -143,10 +157,7 @@ export class LiveWorkbenchComponent implements OnInit {
   inventorySearch = '';
   cachedInventory: any[] = [];
 
-  // Timers
-  elapsedTimeDisplay = '00:00:00';
-  timerInterval: any;
-  liveActionTimers: Record<string, string> = {};
+
 
   constructor(
     private engine: WorkbenchEngineService,
@@ -162,8 +173,7 @@ export class LiveWorkbenchComponent implements OnInit {
     }
     this.loadState();
 
-    // Start Live Timer
-    this.startLiveTimer();
+
 
     const eqType = this.equipment?.type || this.equipment?.category || 'unknown';
     this.engine.getCapabilities(eqType).subscribe(cap => {
@@ -189,47 +199,12 @@ export class LiveWorkbenchComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-    }
+    // Component cleanup
   }
 
   // ── Timers & Mini Stats ───────────────────────────────────────────────────
 
-  startLiveTimer(): void {
-    this.updateTimers();
-    this.timerInterval = setInterval(() => {
-      this.updateTimers();
-    }, 1000);
-  }
 
-  updateTimers(): void {
-    if (!this.state.startedAt) return;
-    const start = new Date(this.state.startedAt).getTime();
-    const now = Date.now();
-    const diff = Math.max(0, Math.floor((now - start) / 1000));
-    this.elapsedTimeDisplay = this.formatSeconds(diff);
-
-    // Update individual action timers
-    if (this.state.actionStartTimes) {
-      Object.keys(this.state.actionStartTimes).forEach(actionId => {
-        const action = this.state.actions.find(a => a.id === actionId);
-        if (action) {
-          const actionStart = new Date(this.state.actionStartTimes![actionId]).getTime();
-          const activeDiff = Math.max(0, Math.floor((now - actionStart) / 1000));
-          const totalTime = (action.timeSpent || 0) + activeDiff;
-          this.liveActionTimers[actionId] = this.formatSeconds(totalTime);
-        }
-      });
-    }
-  }
-
-  formatSeconds(seconds: number): string {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  }
 
   get ticketPriorityLabel(): string {
     return this.ticket.priority || 'Medium';
@@ -284,7 +259,7 @@ export class LiveWorkbenchComponent implements OnInit {
 
   confirmStepWarning(): void {
     this.stepWarningModal.show = false;
-    
+
     if (this.pendingTargetStep) {
       this.actuallyProceedTo(this.pendingTargetStep);
       this.pendingTargetStep = null;
@@ -301,12 +276,12 @@ export class LiveWorkbenchComponent implements OnInit {
     // Ensure critical logic runs if we are PASSING the plan step
     const planIdx = this.steps.findIndex(s => s.key === 'plan');
     if (currentIdx <= planIdx && targetIdx > planIdx) {
-      this.buildValidationChecklist();
+      // Automatic generation removed per user request
     }
 
     this.animDir = targetIdx > currentIdx ? 'right' : 'left';
     this.animating = true;
-    
+
     setTimeout(() => {
       this.state.currentStep = step;
 
@@ -352,8 +327,8 @@ export class LiveWorkbenchComponent implements OnInit {
 
           this.refreshInventory();
         }
-        // Removed noisy return log
 
+        this.saveState();
         this.animating = false;
       }, 200);
     }
@@ -371,7 +346,7 @@ export class LiveWorkbenchComponent implements OnInit {
     } else {
       // Moving forward: must validate current step first
       const result = this.engine.validateStep(this.state.currentStep, this.state);
-      
+
       if (!result.valid) {
         this.pendingTargetStep = step;
         this.stepWarningModal = {
@@ -431,7 +406,16 @@ export class LiveWorkbenchComponent implements OnInit {
     if (this.state.aiDiagnosisCauses && this.state.aiDiagnosisCauses.length > 0) {
       const causesText = this.state.aiDiagnosisCauses.map(c => `- ${c}`).join('\n');
       const checksText = this.state.aiDiagnosisChecks?.map(c => `- ${c}`).join('\n') || '';
-      this.state.diagnosisResult = `Likely Causes:\n${causesText}\n\nSuggested Checks:\n${checksText}`;
+
+      const diagnosisText = `AI Recommendation:\n${causesText}\n\nSuggested Checks:\n${checksText}`;
+
+      // Update only manual observations as requested
+      if (!this.state.manualDiagnosis || this.state.manualDiagnosis.trim() === '') {
+        this.state.manualDiagnosis = `AI Analysis integrated on ${new Date().toLocaleTimeString()}\n${causesText}`;
+      } else {
+        this.state.manualDiagnosis += `\n\n--- AI Supplement ---\n${causesText}`;
+      }
+
       this.onTestingContextChanged();
       this.saveState();
     }
@@ -440,7 +424,7 @@ export class LiveWorkbenchComponent implements OnInit {
   generateDiagnosis() {
     this.activeAiTab = 'diagnosis';
     if (this.aiLoading || this.state.lastAiDiagnosisInput === this.ticket.description) return;
-    
+
     this.aiLoading = true;
     const prompt = `Analyze this problem description and provide possible causes and suggested checks: ${this.ticket.description}. Format exactly as follows: \nCauses:\n- cause 1\n- cause 2\nChecks:\n- check 1\n- check 2`;
 
@@ -545,10 +529,6 @@ Similar Case:
   // ── Plan Step ───────────────────────────────────────────────────────────────
   activeStrategyType: 'standard' | 'quick' | 'deep' = 'standard';
 
-  setStrategyType(type: 'standard' | 'quick' | 'deep') {
-    this.activeStrategyType = type;
-  }
-
   // ── Helper: create a WorkbenchAction with validated type ────────────────────
   private mkAction(
     category: ActionCategory,
@@ -571,271 +551,93 @@ Similar Case:
       resources: [],
       expandedInExecution: false,
       priority,
-      estimatedTime,
+      estimatedTime: '', // Removed as requested
       isAiGenerated: true
     };
   }
 
   generateAIPlan() {
     if (this.aiPlanLoading || this.state.aiPlanGenerated) return;
+
+    const dText = (this.state.diagnosisResult || '').trim();
+    if (dText.length < 5) {
+      this.stepError = "Please complete the diagnosis step before generating a plan.";
+      setTimeout(() => this.stepError = '', 5000);
+      return;
+    }
+
     this.aiPlanLoading = true;
 
-    // ── Local Intelligent Plan Engine ────────────────────────────────────────
-    // The backend AI pipeline injects a 600-word technician system prompt that
-    // overrides any structured format, causing every call to return a generic
-    // Markdown answer instead of ACTION lines. We generate the plan locally
-    // from keyword analysis so it is instant, reliable, and 100% context-specific.
+    const d = (this.state.diagnosisResult || '').trim();
 
-    const d = (
-      (this.state.diagnosisResult || '') + ' ' +
-      (this.state.manualDiagnosis  || '') + ' ' +
-      (this.ticket.description     || '')
-    ).toLowerCase();
+    const prompt = `[SYS_NO_ACTION]
+You are an expert IT maintenance technician.
+Based STRICTLY and ONLY on the following diagnosis result:
+"${d}"
 
-    const isQuick   = this.activeStrategyType === 'quick';
-    const isDeep    = this.activeStrategyType === 'deep';
+Generate a comprehensive, non-redundant, step-by-step repair strategy. Avoid splitting simple tasks into multiple steps (e.g., instead of "Remove RAM" and "Install RAM", just use "Replace RAM").
+Return all necessary technical steps to fully resolve the issue in the following EXACT format line by line, without any markdown or conversational filler:
+- Group: [Hardware|Software|Configuration|Network|Maintenance|Inspection|Power|Security|Storage|Peripheral|Performance|Thermal|Consumables|Firmware|Cabling] | Kind: [Test|Replace|Clean|Configure|Upgrade|Restore] | Target: [Specific Component Name] | Desc: [Concise technical action] | Priority: [High|Medium|Low]`;
 
-    const has = (...kw: string[]) => kw.some(k => d.includes(k));
+    this.aiService.query(prompt).subscribe({
+      next: (res) => {
+        const text = res.answer || '';
+        const lines = text.split('\n');
 
-    const actions: WorkbenchAction[] = [];
+        const rawActions: WorkbenchAction[] = [];
+        lines.forEach(line => {
+          if (line.includes('Group:') && line.includes('Kind:')) {
+            const parts = line.split('|');
+            if (parts.length >= 5) {
+              const categoryStr = parts[0].replace(/.*Group:/i, '').replace(/\*/g, '').trim();
+              const typeStr = parts[1].replace(/.*Kind:/i, '').replace(/\*/g, '').trim();
+              const targetStr = parts[2].replace(/.*Target:/i, '').replace(/\*/g, '').trim();
+              const descStr = parts[3].replace(/.*Desc:/i, '').replace(/\*/g, '').trim();
+              const priorityStr = parts[4].replace(/.*Priority:/i, '').replace(/\*/g, '').trim();
 
-    // ── Always: Pre-repair backup ──────────────────────────────────────────
-    actions.push(this.mkAction(
-      'Maintenance', 'Backup', 'User Data & System State',
-      'Back up all critical user files and create a system restore point before any hardware or software intervention.',
-      'High', isQuick ? '10m' : '20m'
-    ));
+              rawActions.push(this.mkAction(categoryStr as ActionCategory, typeStr, targetStr, descStr, priorityStr as 'High' | 'Medium' | 'Low', '30m'));
+            }
+          }
+        });
 
-    // ── RAM / Memory ────────────────────────────────────────────────────────
-    if (has('ram', 'memory', 'mémoire', 'memoire', 'dimm', 'ddr')) {
-      actions.push(this.mkAction(
-        'Hardware', 'Test', 'RAM Module',
-        'Run MemTest86+ or Windows Memory Diagnostic to confirm RAM failure and identify the faulty slot.',
-        'High', '20m'
-      ));
-      actions.push(this.mkAction(
-        'Hardware', 'Replace', 'RAM Module',
-        'Power off, remove the faulty RAM stick(s), and seat the new compatible module (match speed, type, and capacity). Ensure clips lock.',
-        'High', '30m'
-      ));
-      if (!isQuick) {
-        actions.push(this.mkAction(
-          'Hardware', 'Test', 'RAM Slots',
-          'Boot into BIOS/UEFI to confirm the new RAM is fully detected. Verify in OS via Task Manager or system info.',
-          'High', '10m'
-        ));
+        // Client-side deduplication
+        const uniqueActions: WorkbenchAction[] = [];
+        const seen = new Map<string, WorkbenchAction>();
+
+        rawActions.forEach(action => {
+          // Key based on category, type, and target to prevent duplicate actions on the same component
+          const key = `${action.category}-${action.type}-${action.target}`.toLowerCase().trim();
+          if (!seen.has(key)) {
+            seen.set(key, action);
+            uniqueActions.push(action);
+          } else {
+            // Merge descriptions if same action type on same target
+            const existing = seen.get(key);
+            if (existing && !existing.description.includes(action.description)) {
+              existing.description += ' ' + action.description;
+            }
+          }
+        });
+
+        if (uniqueActions.length === 0 && text.length > 10) {
+          uniqueActions.push(this.mkAction('Maintenance', 'Inspect', 'General Component', text.substring(0, 200), 'Medium', '30m'));
+        }
+
+        // Filter out previous AI actions from state, keep manual ones
+        const manualActions = this.state.actions.filter(a => !a.isAiGenerated);
+        this.state.actions = [...manualActions, ...uniqueActions.slice(0, 15)];
+
+        this.state.lastGeneratedDiagnosis = this.state.diagnosisResult;
+        this.state.aiPlanGenerated = true;
+        this.aiPlanLoading = false;
+        this.saveState();
+        this.pushTimeline('AI Maintenance Plan Generated', '#2563eb', 'list');
+      },
+      error: () => {
+        this.aiPlanLoading = false;
+        this.stepError = "Failed to generate AI plan. Please try again.";
       }
-    }
-
-    // ── Hard Drive / Storage ────────────────────────────────────────────────
-    if (has('hard drive', 'hdd', 'ssd', 'storage', 'disk', 'disque', 'nvme', 'harddisk')) {
-      actions.push(this.mkAction(
-        'Storage', 'Test', 'Hard Drive (SMART Diagnostics)',
-        'Run CrystalDiskInfo or manufacturer diagnostic tool to read SMART attributes and confirm drive failure status.',
-        'High', '20m'
-      ));
-      actions.push(this.mkAction(
-        'Hardware', 'Replace', 'Hard Drive',
-        'Safely remove the failing drive. Install the replacement (SSD/HDD) and connect SATA/NVMe cables securely.',
-        'High', '45m'
-      ));
-      actions.push(this.mkAction(
-        'Software', 'Restore', 'Operating System',
-        'Reinstall the OS on the new drive from installation media, or restore a verified system image backup.',
-        'High', '60m'
-      ));
-      if (isDeep) {
-        actions.push(this.mkAction(
-          'Storage', 'Configure', 'Drive Partitions',
-          'Configure optimal partition layout (system, data, recovery) and format with appropriate file system.',
-          'Medium', '20m'
-        ));
-      }
-    }
-
-    // ── OS Update ───────────────────────────────────────────────────────────
-    if (has('os update', 'operating system', 'windows update', 'mise à jour', 'mise a jour', 'system update', 'os')) {
-      actions.push(this.mkAction(
-        'Software', 'Upgrade', 'Operating System',
-        'Apply all pending Windows/Linux OS updates and critical security patches. Allow multiple restarts as required.',
-        'High', '45m'
-      ));
-      if (!isQuick) {
-        actions.push(this.mkAction(
-          'Software', 'Configure', 'Windows Update Policy',
-          'Set update schedule to automatic. Verify Windows Update service is enabled and not blocked by Group Policy.',
-          'Low', '10m'
-        ));
-      }
-      if (isDeep) {
-        actions.push(this.mkAction(
-          'Software', 'Upgrade', 'Device Drivers',
-          'Update all device drivers (chipset, GPU, NIC, audio) from manufacturer websites after OS update.',
-          'Medium', '30m'
-        ));
-      }
-    }
-
-    // ── Thermal / Overheating ────────────────────────────────────────────────
-    if (has('overheat', 'thermal', 'temperature', 'fan', 'chauffe', 'cooling', 'heat')) {
-      if (!isQuick) {
-        actions.push(this.mkAction(
-          'Thermal', 'Clean', 'CPU Fan & Heatsink',
-          'Use compressed air to remove dust buildup from CPU fan blades, heatsink fins, and all internal vents.',
-          'High', '20m'
-        ));
-      }
-      actions.push(this.mkAction(
-        'Thermal', 'Replace', 'Thermal Paste (CPU)',
-        'Remove old dried thermal compound from CPU die and heatsink base. Apply a fresh pea-sized amount of quality thermal paste.',
-        'High', '25m'
-      ));
-      if (isDeep) {
-        actions.push(this.mkAction(
-          'Thermal', 'Test', 'Temperature Under Load',
-          'Run HWMonitor + stress test (Prime95/Furmark) for 15 minutes. Verify CPU stays below 85°C, GPU below 90°C.',
-          'Medium', '20m'
-        ));
-      }
-    }
-
-    // ── Network / Connectivity ───────────────────────────────────────────────
-    if (has('network', 'wifi', 'internet', 'réseau', 'reseau', 'connectivity', 'lan', 'ethernet')) {
-      actions.push(this.mkAction(
-        'Network', 'Configure', 'Network Adapter',
-        'Update NIC/WiFi adapter drivers. Reset TCP/IP stack with: netsh int ip reset && netsh winsock reset.',
-        'High', '20m'
-      ));
-      actions.push(this.mkAction(
-        'Network', 'Test', 'Network Connectivity',
-        'Ping gateway and external DNS (8.8.8.8). Run tracert to identify where packets are dropped.',
-        'Medium', '15m'
-      ));
-      if (isDeep) {
-        actions.push(this.mkAction(
-          'Network', 'Configure', 'DNS & IP Settings',
-          'Verify DHCP lease or configure static IP. Set preferred DNS to 8.8.8.8 / 1.1.1.1 if ISP DNS is faulty.',
-          'Low', '10m'
-        ));
-      }
-    }
-
-    // ── Power / Battery ──────────────────────────────────────────────────────
-    if (has('battery', 'batterie', 'power', 'alimentation', 'charging', 'recharge')) {
-      actions.push(this.mkAction(
-        'Power', 'Test', 'Battery & Charging Circuit',
-        'Measure battery capacity with BatteryInfoView or OEM diagnostic. Check charger output voltage with multimeter.',
-        'High', '15m'
-      ));
-      actions.push(this.mkAction(
-        'Power', 'Replace', 'Battery',
-        'Replace the degraded battery with an OEM-compatible unit. Verify rated voltage and capacity (mAh) match specs.',
-        'High', '30m'
-      ));
-    }
-
-    // ── Screen / Display ─────────────────────────────────────────────────────
-    if (has('screen', 'display', 'écran', 'ecran', 'monitor', 'lcd', 'panel', 'backlight')) {
-      actions.push(this.mkAction(
-        'Hardware', 'Test', 'Display Panel',
-        'Connect an external monitor via HDMI/VGA to determine if the fault is in the panel or the GPU/cable.',
-        'High', '15m'
-      ));
-      actions.push(this.mkAction(
-        'Hardware', 'Replace', 'Display Panel',
-        'Disassemble bezel carefully. Disconnect LVDS/eDP cable and swap the faulty panel with a compatible replacement.',
-        'High', '60m'
-      ));
-    }
-
-    // ── Virus / Security ─────────────────────────────────────────────────────
-    if (has('virus', 'malware', 'ransomware', 'spyware', 'security', 'trojan', 'infected')) {
-      actions.push(this.mkAction(
-        'Security', 'Virus Scan', 'Full System',
-        'Boot into Safe Mode. Run full scan with updated Malwarebytes + Windows Defender. Quarantine/remove all threats.',
-        'High', '45m'
-      ));
-      if (!isQuick) {
-        actions.push(this.mkAction(
-          'Security', 'Audit', 'System Registry & Startup',
-          'Use Autoruns (Sysinternals) to review startup programs. Disable suspicious entries. Check hosts file for tampering.',
-          'High', '30m'
-        ));
-      }
-      if (isDeep) {
-        actions.push(this.mkAction(
-          'Security', 'Configure', 'Firewall & Windows Defender',
-          'Re-enable Windows Firewall. Ensure real-time protection is active. Apply recommended security baseline policy.',
-          'Medium', '20m'
-        ));
-      }
-    }
-
-    // ── Firmware (deep only) ─────────────────────────────────────────────────
-    if (isDeep) {
-      actions.push(this.mkAction(
-        'Firmware', 'Upgrade', 'BIOS / UEFI',
-        'Check manufacturer site for BIOS updates. Flash the latest BIOS version to resolve hardware compatibility issues.',
-        'Low', '30m'
-      ));
-    }
-
-    // ── Fallback: at least a general inspection if no keywords matched ────────
-    if (actions.length <= 1) {
-      actions.push(this.mkAction(
-        'Maintenance', 'Inspect', 'System Hardware',
-        'Perform a full hardware inspection: check all connectors, power supply voltages, and component seating.',
-        'High', '30m'
-      ));
-      actions.push(this.mkAction(
-        'Software', 'Audit', 'System Logs & Drivers',
-        'Review Windows Event Viewer and Device Manager. Update all out-of-date drivers.',
-        'Medium', '25m'
-      ));
-      actions.push(this.mkAction(
-        'Configuration', 'Configure', 'System Settings',
-        'Review startup programs, power plan settings, and performance options for optimal configuration.',
-        'Low', '20m'
-      ));
-    }
-
-    // ── Always: Post-repair validation ───────────────────────────────────────
-    actions.push(this.mkAction(
-      'Maintenance', 'Test', 'System Performance',
-      'Run a comprehensive benchmark and stress test to confirm all repaired components are stable and fully operational.',
-      'High', '20m'
-    ));
-    if (!isQuick) {
-      actions.push(this.mkAction(
-        'Maintenance', 'Inspect', 'Final Quality Check',
-        'Verify all physical connectors are secured, casing is reassembled, and system boots cleanly. Document findings.',
-        'Medium', '10m'
-      ));
-    }
-
-    // 1. Deduplicate the new AI suggestions internally first
-    const uniqueActions: WorkbenchAction[] = [];
-    actions.forEach(a => {
-      const exists = uniqueActions.some(ua => ua.type === a.type && ua.target === a.target);
-      if (!exists) uniqueActions.push(a);
     });
-
-    // 2. Filter out previous AI actions from state, keep manual ones
-    const manualActions = this.state.actions.filter(a => !a.isAiGenerated);
-    
-    // 3. Deduplicate new suggestions against existing manual actions
-    const finalAiActions: WorkbenchAction[] = [];
-    uniqueActions.forEach(ua => {
-      const exists = manualActions.some(ma => ma.type === ua.type && ma.target === ua.target);
-      if (!exists) finalAiActions.push(ua);
-    });
-
-    this.state.actions = [...manualActions, ...finalAiActions.slice(0, 8)];
-    this.state.lastGeneratedDiagnosis = this.state.diagnosisResult;
-    this.state.aiPlanGenerated = true;
-    this.aiPlanLoading = false;
-    this.saveState();
-    this.pushTimeline('AI Maintenance Plan Updated', '#2563eb', 'list');
   }
 
   // ── Auto-Match Inventory ──────────────────────────────────────────────────
@@ -853,29 +655,54 @@ Similar Case:
 
         // Clear existing resources if we are re-matching
         action.resources = [];
-        
-        const target = action.target.toLowerCase();
-        
+
+        const target = (action.target || '').toLowerCase();
+
         // Match Hardware
-        if (action.category === 'Hardware' || action.category === 'Storage' || action.category === 'Consumables') {
+        if (action.category === 'Hardware' || action.category === 'Storage' || action.category === 'Consumables' || action.category === 'Power' || action.category === 'Peripheral' || action.category === 'Thermal') {
           const match = this.userInventory.find(item => {
-            const name = item.name.toLowerCase();
+            const name = (item.name || '').toLowerCase();
             const spec = (item.specification || '').toLowerCase();
-            return target.includes(name) || name.includes(target) || target.includes(spec);
+            const isMatch = target.includes(name) || name.includes(target) || (spec && target.includes(spec));
+            if (isMatch) {
+              const used = this.getAssignedQuantity(item.name, item.specification);
+              return (item.totalQty - used) > 0;
+            }
+            return false;
           });
-          
+
           if (match) {
+            const specKeys = this.getAvailableSpecKeys();
+            let autoKey = specKeys.find(k =>
+              target.includes(k.toLowerCase()) ||
+              k.toLowerCase().includes(target)
+            );
+            if (!autoKey) {
+              const rawKey = target || match.name || '';
+              autoKey = rawKey.charAt(0).toUpperCase() + rawKey.slice(1);
+            }
+
             action.resources.push({
               resourceType: 'part',
               name: match.name,
               quantity: 1,
-              specification: match.specification
+              specification: match.specification,
+              equipmentId: match.id,
+              replacesSpecKey: autoKey
+            });
+          } else if (action.target) {
+            // Fallback: Write the required resource even if not in inventory
+            action.resources.push({
+              resourceType: 'part',
+              name: action.target,
+              quantity: 1,
+              specification: 'Required (Not in local inventory)'
             });
           }
         }
-        
+
         // Match Software
-        if (action.category === 'Software') {
+        if (action.category === 'Software' || action.category === 'Firmware') {
           // Check OS
           const osMatch = this.availableOs.find(os => {
             const name = (os.name || '').toLowerCase();
@@ -897,6 +724,12 @@ Similar Case:
                 resourceType: 'software',
                 name: appMatch.name || 'Application'
               });
+            } else if (action.target) {
+              action.resources.push({
+                resourceType: 'software',
+                name: action.target,
+                specification: 'Awaiting License/Installation'
+              });
             }
           }
         }
@@ -905,6 +738,7 @@ Similar Case:
       this.state.aiResourceMatched = true;
       this.aiResourceLoading = false;
       this.saveState();
+      this.refreshInventory();
       this.pushTimeline('Inventory Auto-Matched', '#10b981', 'package');
     }, 1500);
   }
@@ -996,11 +830,11 @@ Similar Case:
       return;
     }
 
-    this.addResourceToAction('part', part.name, Number(qty), part.specification);
+    this.addResourceToAction('part', part.name, Number(qty), part.specification, part.id);
     delete this.pendingPartAdd[key];
   }
 
-  addResourceToAction(resourceType: 'part' | 'software' | 'config' | 'network' | 'firmware' | 'service', name: string, quantity: number = 1, specification?: string) {
+  addResourceToAction(resourceType: 'part' | 'software' | 'config' | 'network' | 'firmware' | 'service', name: string, quantity: number = 1, specification?: string, equipmentId?: string) {
     const action = this.selectedAction;
     if (!action) return;
     if (!action.resources) action.resources = [];
@@ -1013,8 +847,22 @@ Similar Case:
 
     if (existing) {
       existing.quantity = (existing.quantity || 1) + quantity;
+      if (equipmentId) existing.equipmentId = equipmentId;
     } else {
-      action.resources.push({ resourceType, name, quantity, specification });
+      let replacesSpecKey: string | undefined = undefined;
+      if (resourceType === 'part') {
+        const target = (action.target || '').toLowerCase();
+        const specKeys = this.getAvailableSpecKeys();
+        replacesSpecKey = specKeys.find(k =>
+          target.includes(k.toLowerCase()) ||
+          k.toLowerCase().includes(target)
+        );
+        if (!replacesSpecKey) {
+          const rawKey = target || name || '';
+          replacesSpecKey = rawKey.charAt(0).toUpperCase() + rawKey.slice(1);
+        }
+      }
+      action.resources.push({ resourceType, name, quantity, specification, equipmentId, replacesSpecKey });
     }
     this.state.aiResourceMatched = false;
     this.saveState();
@@ -1038,7 +886,7 @@ Similar Case:
   }
 
   actionNeedsResource(action: WorkbenchAction): boolean {
-    const resourcedTypes = ['Install', 'Replace', 'Upgrade', 'Restore', 'Update', 'Clean']; 
+    const resourcedTypes = ['Install', 'Replace', 'Upgrade', 'Restore', 'Update', 'Clean'];
     // Cleaning might need consumables, so I'll keep it for now as an example
     return resourcedTypes.some(t => action.type.toLowerCase().includes(t.toLowerCase()));
   }
@@ -1129,26 +977,40 @@ Similar Case:
 
     // Auto-filter based on the action's target if no manual search is active
     if (this.selectedAction && this.selectedAction.target) {
-      const targetStr = this.selectedAction.target.toLowerCase();
-      const targetWords = targetStr.split(' ').filter((w: string) => w.length >= 3);
+      const targetStr = this.selectedAction.target.toLowerCase().trim();
+      const skipWords = ['replace', 'install', 'update', 'repair', 'clean', 'inspect', 'configure', 'modify', 'setup', 'test', 'remove', 'upgrade', 'on', 'the', 'with', 'and', 'for', 'part', 'component', 'system', 'device'];
+      let targetWords = targetStr.split(/[\s,]+/)
+        .filter((w: string) => w.length > 1)
+        .filter((w: string) => !skipWords.includes(w));
 
-      if (targetStr.includes('hard drive') || targetStr.includes('storage') || targetStr.includes('disk')) {
-        targetWords.push('hdd', 'ssd', 'nvme', 'drive');
+      if (targetWords.length === 0) {
+        targetWords = [targetStr];
+      }
+
+      if (targetStr.includes('hard drive') || targetStr.includes('storage') || targetStr.includes('disk') || targetStr.includes('ssd') || targetStr.includes('hdd')) {
+        targetWords.push('hdd', 'ssd', 'nvme', 'drive', 'storage', 'disk');
       }
       if (targetStr.includes('ram') || targetStr.includes('memory')) {
-        targetWords.push('ram', 'ddr', 'memory', 'dimm');
+        targetWords.push('ram', 'ddr', 'memory', 'dimm', 'sodimm');
       }
-      if (targetStr.includes('screen') || targetStr.includes('display')) {
-        targetWords.push('monitor', 'lcd', 'panel', 'display');
+      if (targetStr.includes('screen') || targetStr.includes('display') || targetStr.includes('monitor')) {
+        targetWords.push('monitor', 'lcd', 'panel', 'display', 'screen');
       }
       if (targetStr.includes('board') || targetStr.includes('mother')) {
-        targetWords.push('motherboard', 'mainboard', 'pcb');
+        targetWords.push('motherboard', 'mainboard', 'pcb', 'board');
+      }
+      if (targetStr.includes('power') || targetStr.includes('psu') || targetStr.includes('battery')) {
+        targetWords.push('power', 'psu', 'battery', 'charger', 'adapter');
       }
 
       if (targetWords.length > 0) {
         result = result.filter((p: any) => {
           const nameSpec = ((p.name || '') + ' ' + (p.specification || '') + ' ' + (p.category || '')).toLowerCase();
-          return targetWords.some((w: string) => nameSpec.includes(w));
+          return targetWords.some((w: string) => {
+            // Use word boundary to prevent 'ram' from matching 'frame'
+            const regex = new RegExp(`\\b${w}\\b`, 'i');
+            return regex.test(nameSpec);
+          });
         });
       }
     }
@@ -1158,6 +1020,26 @@ Similar Case:
 
   onInventorySearchChange(): void {
     this.refreshInventory();
+  }
+
+  openRequestWizard() {
+    if (!this.selectedAction) return;
+    this.wizardInitialSelection = {
+      category: this.selectedAction.category,
+      type: this.selectedAction.type,
+      name: this.selectedAction.target,
+      items: [{
+        specification: this.selectedAction.description || ''
+      }]
+    };
+    this.isRequestWizardOpen = true;
+  }
+
+  onRequestWizardClose(success: boolean) {
+    this.isRequestWizardOpen = false;
+    if (success) {
+      this.refreshInventory();
+    }
   }
 
   get filteredInventory(): any[] {
@@ -1249,11 +1131,13 @@ Similar Case:
       items.push({ label: 'Primary functionality verified', status: 'pending', autoGenerated: true });
     }
 
-    // Deduplicate and Append
+    // Deduplicate and Append (Stricter matching to prevent duplicates)
     let addedCount = 0;
     items.forEach(item => {
-      const cleanLabel = item.label.trim().toLowerCase();
-      const exists = this.state.validationChecklist.some(v => v.label.trim().toLowerCase() === cleanLabel);
+      const cleanLabel = item.label.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+      const exists = this.state.validationChecklist.some(v =>
+        v.label.trim().toLowerCase().replace(/[^a-z0-9]/g, '') === cleanLabel
+      );
       if (!exists) {
         this.state.validationChecklist.push(item);
         addedCount++;
@@ -1275,22 +1159,30 @@ Similar Case:
   generateAITests(): void {
     if (this.aiTestsLoading || this.state.aiTestsGenerated) return;
     this.aiTestsLoading = true;
-    
+
+    // Add standard standard checks since we removed auto-generation from the step transition
+    this.buildValidationChecklist();
+
     const eqType = this.equipment?.type || 'Unknown Device';
     const specs = JSON.stringify(this.equipment?.specifications || {});
+    const problemDesc = this.ticket?.description || 'No specific problem description';
     const diagnosis = this.state.diagnosisResult || this.state.manualDiagnosis || 'No diagnosis available';
     const actions = this.state.actions.map(a => `${a.type} on ${a.target} (${a.category})`).join(', ');
-    
+    const existingLabels = this.state.validationChecklist.map(v => v.label).join(', ');
+
     const prompt = `Act as a senior validation engineer. 
     Equipment: "${eqType}" (Specs: ${specs})
-    Diagnosis/Problem: "${diagnosis}"
+    Problem Reported: "${problemDesc}"
+    Diagnosis: "${diagnosis}"
     Actions Performed: [${actions}]
+    Existing Tests: [${existingLabels}]
     
-    Based on the diagnosis and the actions taken, suggest 5 to 7 specific technical validation tests to ensure the problem is solved and the system is stable.
+    Based on the diagnosis and the actions taken, suggest 3 to 5 NEW specific technical validation tests to ensure the problem is solved and the system is stable.
     Provide a short, distinct label for each test. Focus on what was actually repaired.
-    
+    DO NOT suggest any tests that conceptually duplicate or overlap with the 'Existing Tests'.
+
     You MUST respond strictly with a JSON array of strings. Do not include markdown or explanations.
-    Example: ["Verify GPU temperature under 4K stress", "Validate RAID rebuild completion", ...]`;
+    Example: ["Verify GPU temperature under 4K stress", "Validate RAID rebuild completion"]`;
 
     this.aiService.query(prompt).subscribe({
       next: (res) => {
@@ -1299,16 +1191,16 @@ Similar Case:
           let jsonStr = res.answer || '[]';
           jsonStr = jsonStr.replace(/^```json/i, '').replace(/^```/i, '').replace(/```$/i, '').trim();
           const parsed = JSON.parse(jsonStr);
-          
+
           if (Array.isArray(parsed)) {
             let addedCount = 0;
             parsed.forEach(label => {
               const lbl = label.toString().trim();
               if (!lbl) return;
-              
-              const cleanLbl = lbl.toLowerCase();
-              const exists = this.state.validationChecklist.some(v => v.label.trim().toLowerCase() === cleanLbl);
-              
+
+              const cleanLbl = lbl.toLowerCase().replace(/[^a-z0-9]/g, '');
+              const exists = this.state.validationChecklist.some(v => v.label.trim().toLowerCase().replace(/[^a-z0-9]/g, '') === cleanLbl);
+
               if (!exists) {
                 this.state.validationChecklist.push({
                   label: lbl,
@@ -1318,7 +1210,7 @@ Similar Case:
                 addedCount++;
               }
             });
-            
+
             if (addedCount > 0) {
               this.state.aiTestsGenerated = true;
               this.saveState();
@@ -1353,17 +1245,21 @@ Similar Case:
     this.saveState();
   }
 
-  markTestFail(item: ValidationItem): void {
-    item.status = 'failed';
+  addCheckToDiagnosis(check: string) {
+    const current = this.state.manualDiagnosis || '';
+    this.state.manualDiagnosis = current ? `${current}\n- ${check}` : `- ${check}`;
     this.saveState();
   }
 
   addValidationItem(): void {
     if (!this.newCheckLabel.trim()) return;
     const lbl = this.newCheckLabel.trim();
-    
-    // Deduplicate manual adds too
-    const exists = this.state.validationChecklist.some(v => v.label.trim().toLowerCase() === lbl.toLowerCase());
+
+    const cleanLabel = lbl.toLowerCase().replace(/\s+/g, ' ');
+    const exists = this.state.validationChecklist.some(v =>
+      v.label.trim().toLowerCase().replace(/\s+/g, ' ') === cleanLabel
+    );
+
     if (exists) {
       this.newCheckLabel = '';
       return;
@@ -1375,13 +1271,14 @@ Similar Case:
       autoGenerated: false
     });
     this.newCheckLabel = '';
-    this.onTestingContextChanged();
     this.saveState();
   }
 
   removeValidationItem(index: number): void {
     this.state.validationChecklist.splice(index, 1);
-    this.onTestingContextChanged();
+    if (this.state.validationChecklist.length === 0) {
+      this.state.aiTestsGenerated = false;
+    }
     this.saveState();
   }
 
@@ -1424,7 +1321,7 @@ Similar Case:
   exportReport(): void {
     const date = new Date().toISOString().slice(0, 10);
     const ticketId = this.ticket.id || 'N/A';
-    
+
     import('jspdf').then(({ default: jsPDF }) => {
       import('jspdf-autotable').then(({ default: autoTable }) => {
         const doc = new jsPDF('p', 'mm', 'a4');
@@ -1433,12 +1330,12 @@ Similar Case:
         // ── HEADER ───────────────────────────────────────────────────────────
         doc.setFillColor(30, 41, 59); // Slate 800
         doc.rect(0, 0, pageWidth, 40, 'F');
-        
+
         doc.setFontSize(22);
         doc.setTextColor(255, 255, 255);
         doc.setFont('helvetica', 'bold');
         doc.text('MAINTENANCE REPORT', 14, 25);
-        
+
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(148, 163, 184); // Slate 400
@@ -1446,7 +1343,7 @@ Similar Case:
 
         // ── DEVICE INFO WIDGETS (as seen in UI) ─────────────────────────────
         let yPos = 50;
-        
+
         autoTable(doc, {
           startY: yPos,
           head: [['EQUIPMENT', 'BRAND / MODEL', 'SERIAL NUMBER', 'STATUS']],
@@ -1461,7 +1358,7 @@ Similar Case:
           styles: { fontSize: 10, cellPadding: 5 },
           margin: { left: 14, right: 14 }
         });
-        
+
         yPos = (doc as any).lastAutoTable.finalY + 15;
 
         // ── PROBLEM & DIAGNOSIS ──────────────────────────────────────────────
@@ -1469,30 +1366,30 @@ Similar Case:
         doc.setTextColor(30, 41, 59);
         doc.setFont('helvetica', 'bold');
         doc.text('1. Problem & Technical Findings', 14, yPos);
-        
+
         yPos += 8;
         doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(239, 68, 68); // Red 500
         doc.text('INITIAL COMPLAINT:', 14, yPos);
-        
+
         yPos += 5;
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(71, 85, 105); // Slate 600
         const complaintLines = doc.splitTextToSize(this.ticket.description || 'No description provided.', pageWidth - 28);
         doc.text(complaintLines, 14, yPos);
-        
+
         yPos += (complaintLines.length * 5) + 5;
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(59, 130, 246); // Blue 500
         doc.text('TECHNICAL DIAGNOSIS:', 14, yPos);
-        
+
         yPos += 5;
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(71, 85, 105);
         const diagnosisLines = doc.splitTextToSize(this.state.diagnosisResult || 'Diagnosis not recorded.', pageWidth - 28);
         doc.text(diagnosisLines, 14, yPos);
-        
+
         yPos += (diagnosisLines.length * 5) + 15;
 
         // ── SERVICE TRANSFORMATION ───────────────────────────────────────────
@@ -1500,7 +1397,7 @@ Similar Case:
         doc.setTextColor(30, 41, 59);
         doc.setFont('helvetica', 'bold');
         doc.text('2. Service Transformation', 14, yPos);
-        
+
         yPos += 8;
         autoTable(doc, {
           startY: yPos,
@@ -1517,7 +1414,7 @@ Similar Case:
           },
           margin: { left: 14, right: 14 }
         });
-        
+
         yPos = (doc as any).lastAutoTable.finalY + 15;
 
         // ── WORK LOG (ACTIONS) ───────────────────────────────────────────────
@@ -1525,7 +1422,7 @@ Similar Case:
         doc.setTextColor(30, 41, 59);
         doc.setFont('helvetica', 'bold');
         doc.text(`3. Work Log (${this.completedActions.length} Actions)`, 14, yPos);
-        
+
         autoTable(doc, {
           startY: yPos + 5,
           head: [['CATEGORY', 'ACTION', 'TARGET', 'STATUS']],
@@ -1540,19 +1437,19 @@ Similar Case:
           styles: { fontSize: 9 },
           margin: { left: 14, right: 14 }
         });
-        
+
         yPos = (doc as any).lastAutoTable.finalY + 15;
 
         // ── INVENTORY CONSUMPTION ────────────────────────────────────────────
         const allResources = this.state.actions.flatMap(a => (a.resources || []).map(r => ({ ...r, actionTarget: a.target })));
-        
+
         if (allResources.length > 0) {
           if (yPos > 240) { doc.addPage(); yPos = 20; }
           doc.setFontSize(14);
           doc.setTextColor(30, 41, 59);
           doc.setFont('helvetica', 'bold');
           doc.text('4. Inventory Consumption', 14, yPos);
-          
+
           autoTable(doc, {
             startY: yPos + 5,
             head: [['RESOURCE', 'TYPE', 'QTY', 'SPECIFICATION', 'ASSIGNED TO']],
@@ -1571,6 +1468,8 @@ Similar Case:
           yPos = (doc as any).lastAutoTable.finalY + 15;
         }
 
+
+
         // ── VALIDATION SUITE ─────────────────────────────────────────────────
         if (this.state.validationChecklist.length > 0) {
           if (yPos > 240) { doc.addPage(); yPos = 20; }
@@ -1578,7 +1477,7 @@ Similar Case:
           doc.setTextColor(30, 41, 59);
           doc.setFont('helvetica', 'bold');
           doc.text('5. Final System Validation', 14, yPos);
-          
+
           autoTable(doc, {
             startY: yPos + 5,
             head: [['VALIDATION ITEM', 'STATUS', 'DIAGNOSTICS / REASON']],
@@ -1604,7 +1503,7 @@ Similar Case:
         doc.setTextColor(30, 41, 59);
         doc.setFont('helvetica', 'bold');
         doc.text('6. Final Technician Statement', 14, yPos);
-        
+
         yPos += 8;
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
@@ -1615,11 +1514,11 @@ Similar Case:
         // ── SIGNATURE ────────────────────────────────────────────────────────
         yPos += (noteLines.length * 5) + 30;
         if (yPos > 270) { doc.addPage(); yPos = 40; }
-        
+
         doc.setDrawColor(203, 213, 225);
         doc.line(14, yPos, 80, yPos);
         doc.line(pageWidth - 80, yPos, pageWidth - 14, yPos);
-        
+
         doc.setFontSize(8);
         doc.text('TECHNICIAN SIGNATURE', 14, yPos + 5);
         doc.text('DATE OF COMPLETION', pageWidth - 80, yPos + 5);
@@ -1639,16 +1538,32 @@ Similar Case:
   }
 
 
+  getAvailableSpecKeys(): string[] {
+    if (!this.equipment || !this.equipment.specifications) return [];
+    return Object.keys(this.equipment.specifications);
+  }
+
   confirmComplete(): void {
     const parts = this.state.actions
       .flatMap(a => a.resources.filter(r => r.resourceType === 'part'))
-      .map(r => ({ name: r.name, qty: r.quantity || 1, specification: r.specification }));
+      .map(r => ({
+        name: r.name,
+        qty: r.quantity || 1,
+        specification: r.specification,
+        equipmentId: r.equipmentId,
+        replacesSpecKey: r.replacesSpecKey
+      }));
 
     const tasks = this.state.actions.map(a => ({
       label: `[${a.category.toUpperCase()}] ${a.type} ${a.target}`,
       status: a.status,
       notes: a.notes
     }));
+
+    const completedTests = this.state.validationChecklist
+      .filter(v => v.status === 'success')
+      .map(v => v.label);
+    const validationSummary = `Verified ${completedTests.length}/${this.state.validationChecklist.length} checks.`;
 
     this.pushTimeline('Maintenance completed ✓', '#10b981', 'check-circle');
     this.saveState();
@@ -1657,23 +1572,31 @@ Similar Case:
       workNote: this.state.summaryNote,
       repairTasks: tasks,
       partsUsed: parts,
-      isBroken: false
+      isBroken: false,
+      diagnosisResult: this.state.diagnosisResult,
+      validationSummary,
+      partsInstalled: parts // Includes equipmentId and replacesSpecKey now
     });
     this.showCompleteDialog = false;
     this.clearState();
   }
 
   confirmBrokenDevice(): void {
-    const workNote = "UNREPAIRABLE: Device hardware failure exceeds repair thresholds. Asset marked as BROKEN.";
-    
-    this.complete.emit({ 
-      workNote, 
-      repairTasks: [], 
+    const reason = this.brokenReason.trim() || 'Device hardware failure exceeds repair thresholds.';
+    const workNote = `UNREPAIRABLE: ${reason} Asset marked as BROKEN.`;
+
+    this.complete.emit({
+      workNote,
+      repairTasks: [],
       partsUsed: [],
-      isBroken: true 
+      isBroken: true,
+      diagnosisResult: this.state.diagnosisResult,
+      validationSummary: `Device marked as unrepairable during diagnosis/testing phase. Reason: ${reason}`,
+      partsInstalled: []
     });
-    
+
     this.showBrokenDialog = false;
+    this.brokenReason = '';
     this.clearState();
   }
 
@@ -1694,14 +1617,20 @@ Similar Case:
   // ── Timeline ────────────────────────────────────────────────────────────────
 
   pushTimeline(title: string, color: string, icon: string = 'info'): void {
-    // Unique Phase Transition Logic: If we are adding a step transition, remove previous instances of it
-    // to keep the timeline concise as requested.
-    if (title.includes('Started') || title.includes('Completed') || title.includes('Returned to')) {
-      this.state.timeline = this.state.timeline.filter(t => t.title !== title);
-    }
-
-    this.state.timeline.push({ title, color, icon, time: this.formatDateTime(new Date()) });
+    if (!this.state.timeline) this.state.timeline = [];
+    this.state.timeline.unshift({ title, color, icon, time: this.formatDateTime(new Date()) });
     this.saveState();
+  }
+
+  get importantTimeline(): any[] {
+    const criticalKeywords = [
+      'Started', 'AI Diagnosis', 'AI Maintenance Plan',
+      'Completed', 'Inventory Auto-Matched', 'tests added', 'Suite Synchronized', 'Maintenance completed ✓'
+    ];
+
+    return (this.state.timeline || []).filter(entry =>
+      criticalKeywords.some(kw => entry.title.includes(kw))
+    );
   }
 
   cleanupTimeline(): void {
