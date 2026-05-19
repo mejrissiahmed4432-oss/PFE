@@ -894,13 +894,25 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     this.equipmentService.getAllEquipment().subscribe({
       next: (allEq) => {
         this.isLoadingPartsForInstall = false;
-        // Robust filter: matching any part that is "Available" (case-insensitive) OR has no assigned PC,
-        // excluding this equipment itself.
-        this.availablePartsForInstall = allEq.filter(e => 
+        
+        // Filter parts
+        const filtered = allEq.filter(e => 
           (e.status?.toLowerCase() === 'available' || !e.assignedToEquipmentId) && 
           e.id !== this.equipment?.id
         );
-        this.filteredPartsForInstall = [...this.availablePartsForInstall];
+
+        // Deduplicate by ID
+        const seenIds = new Set<string>();
+        const uniqueParts: Equipment[] = [];
+        for (const p of filtered) {
+          if (p.id && !seenIds.has(p.id)) {
+            seenIds.add(p.id);
+            uniqueParts.push(p);
+          }
+        }
+
+        this.availablePartsForInstall = uniqueParts;
+        this.filteredPartsForInstall = [...uniqueParts];
       },
       error: (err) => {
         this.isLoadingPartsForInstall = false;
