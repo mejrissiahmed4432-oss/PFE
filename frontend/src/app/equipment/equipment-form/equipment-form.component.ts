@@ -49,6 +49,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   showInstallModal: boolean = false;
   availablePartsForInstall: Equipment[] = [];
   selectedPartToInstall: Equipment | null = null;
+  selectedPartId: string = '';
   installSpecKey: string = '';
   private snSubject = new Subject<string>();
 
@@ -804,13 +805,15 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   openInstallModal(): void {
     this.equipmentService.getAllEquipment().subscribe({
       next: (allEq) => {
-        // Filter parts in stock that are not this parent equipment itself
+        // Robust filter: matching any part that is "Available" (case-insensitive) OR has no assigned PC,
+        // excluding this equipment itself.
         this.availablePartsForInstall = allEq.filter(e => 
-          e.status === 'Available' && 
+          (e.status?.toLowerCase() === 'available' || !e.assignedToEquipmentId) && 
           e.id !== this.equipment?.id
         );
         this.showInstallModal = true;
         this.selectedPartToInstall = null;
+        this.selectedPartId = '';
         this.installSpecKey = '';
       },
       error: (err) => {
@@ -820,11 +823,25 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     });
   }
 
+  onPartIdSelected(partId: string): void {
+    this.selectedPartId = partId;
+    const part = this.availablePartsForInstall.find(p => p.id === partId);
+    if (part) {
+      this.selectedPartToInstall = part;
+      this.installSpecKey = part.type ? part.type.toUpperCase() : '';
+    } else {
+      this.selectedPartToInstall = null;
+      this.installSpecKey = '';
+    }
+  }
+
   onPartSelected(part: Equipment): void {
     this.selectedPartToInstall = part;
     if (part) {
+      this.selectedPartId = part.id || '';
       this.installSpecKey = part.type ? part.type.toUpperCase() : '';
     } else {
+      this.selectedPartId = '';
       this.installSpecKey = '';
     }
   }
