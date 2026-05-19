@@ -45,6 +45,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   isCheckingSN: boolean = false;
   originalSN: string = '';
   formGenerateQr: boolean = false;  // QR code checkbox for edit form
+  installedParts: Equipment[] = [];
   private snSubject = new Subject<string>();
 
   equipmentTypes = [
@@ -130,6 +131,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
               if (this.formData.type) {
                 this.loadAvailableShelves();
               }
+              this.loadInstalledParts();
             },
             error: (err) => {
               console.error('Error fetching full equipment detail', err);
@@ -757,6 +759,42 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   isLegacyType(): boolean {
     if (!this.formData.type || !this.availableTypes) return false;
     return !this.availableTypes.some(t => t.name === this.formData.type);
+  }
+
+  loadInstalledParts(): void {
+    if (!this.equipment || !this.equipment.id) return;
+    this.equipmentService.getAllEquipment().subscribe({
+      next: (allEq) => {
+        this.installedParts = allEq.filter(e => e.assignedToEquipmentId === this.equipment?.id);
+      },
+      error: (err) => console.error('Error loading installed parts', err)
+    });
+  }
+
+  uninstallPart(part: Equipment): void {
+    if (!part.id) return;
+    this.equipmentService.returnPart(part.id).subscribe({
+      next: () => {
+        this.toastService.success(`Part ${part.equipmentName} uninstalled and returned to stock.`);
+        this.loadInstalledParts();
+        if (this.equipment && this.equipment.id) {
+          this.equipmentService.getEquipmentById(this.equipment.id).subscribe(fullEq => {
+            this.equipment = fullEq;
+            this.formData = { ...fullEq };
+            if (this.formData.purchaseDate) {
+              this.formData.purchaseDate = this.formatDate(this.formData.purchaseDate);
+            }
+            if (this.formData.warrantyExpiration) {
+              this.formData.warrantyExpiration = this.formatDate(this.formData.warrantyExpiration);
+            }
+          });
+        }
+      },
+      error: (err: any) => {
+        console.error('Error uninstalling part', err);
+        this.toastService.error(`Failed to uninstall part: ${err.error?.message || err.message || 'Unknown error'}`);
+      }
+    });
   }
 
   trackByKey(index: number, item: any): string {

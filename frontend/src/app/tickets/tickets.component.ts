@@ -867,6 +867,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
     this.workbenchTicket = { ...ticket };
     // Resolve workbenchEquipment from selectedEquipment or equipment list (needed for part lifecycle)
     this.workbenchEquipment = this.selectedEquipment
+      || (ticket.equipmentId ? this.equipments.find(e => e.id === ticket.equipmentId) : undefined)
       || this.equipments.find(e => e.name === ticket.equipmentName || e.equipmentName === ticket.equipmentName)
       || null;
     
@@ -1029,7 +1030,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
           });
         };
 
-        const eq = this.equipments.find(e => e.id === completedEquipmentId);
+        const eq = this.equipments.find(e => e.id === completedEquipmentId)
+          || (completedEquipmentName ? this.equipments.find(e => e.name === completedEquipmentName || e.equipmentName === completedEquipmentName) : undefined);
         if (eq) {
           processEquipmentUpdate(eq);
         } else if (completedEquipmentId) {

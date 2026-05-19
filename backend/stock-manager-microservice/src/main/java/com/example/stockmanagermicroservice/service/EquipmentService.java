@@ -289,6 +289,9 @@ public class EquipmentService {
             String oldShelfId = equipment.getShelfId();
             Integer oldQte = equipment.getQte() != null ? equipment.getQte() : 1;
 
+            // Store original assignment state before mutation
+            boolean wasAssigned = equipment.getAssignedToEquipmentId() != null || equipment.getAssignedToEquipmentName() != null;
+
             String status = equipmentDetails.getStatus();
             String newShelfId = equipmentDetails.getShelfId();
             Integer newQte = equipmentDetails.getQte() != null ? equipmentDetails.getQte() : oldQte;
@@ -422,7 +425,7 @@ public class EquipmentService {
             }
             
             // Handle explicit clearing of part PC assignment fields (e.g. Unrepairable or manual status change)
-            boolean clearAssignedToEquipment = (equipment.getAssignedToEquipmentId() != null || equipment.getAssignedToEquipmentName() != null)
+            boolean clearAssignedToEquipment = wasAssigned
                     && equipmentDetails.getAssignedToEquipmentId() == null
                     && equipmentDetails.getAssignedToEquipmentName() == null;
 
@@ -734,6 +737,31 @@ public class EquipmentService {
         eq.setAllocatedToTechnicianId(null);
         eq.setAllocatedToTechnicianName(null);
         eq.setUpdatedAt(LocalDateTime.now());
+
+        if (eq.getAssignedToEquipmentId() != null) {
+            String parentId = eq.getAssignedToEquipmentId();
+            eq.setAssignedToEquipmentId(null);
+            eq.setAssignedToEquipmentName(null);
+            
+            java.util.Optional<Equipment> optParent = equipmentRepository.findById(parentId);
+            if (optParent.isPresent()) {
+                Equipment parent = optParent.get();
+                if (parent.getSpecifications() != null) {
+                    String partType = (eq.getType() != null ? eq.getType() : "").toLowerCase().trim();
+                    String specKey = null;
+                    for (String key : parent.getSpecifications().keySet()) {
+                        if (key.toLowerCase().trim().equals(partType)) {
+                            specKey = key;
+                            break;
+                        }
+                    }
+                    if (specKey != null) {
+                        parent.getSpecifications().remove(specKey);
+                        equipmentRepository.save(parent);
+                    }
+                }
+            }
+        }
         
         addLifecycleEntry(eq, "Returned to Stock", "Part returned to central stock", "Technician");
         

@@ -1,0 +1,105 @@
+[33mcommit bd1675eed697de469b41f2cdf2384a0771867ed3[m[33m ([m[1;35mrefs/stash[m[33m)[m
+Merge: fedefbe c2b8354
+Author: mejrissiahmed4432-oss <mejrissiahmed4432@gmail.com>
+Date:   Tue May 19 13:55:58 2026 +0200
+
+    WIP on main: fedefbe [1;31mupdate[ms 7
+
+[33mcommit c2b83540f7a616a92051c6530e4c40888422b780[m
+Author: mejrissiahmed4432-oss <mejrissiahmed4432@gmail.com>
+Date:   Tue May 19 13:55:58 2026 +0200
+
+    index on main: fedefbe [1;31mupdate[ms 7
+
+[33mcommit fedefbeef96451bf9ef770db0d0956265a25e4b2[m
+Author: mejrissiahmed4432-oss <mejrissiahmed4432@gmail.com>
+Date:   Tue May 19 13:45:17 2026 +0200
+
+    [1;31mupdate[ms 7
+
+[33mcommit abb6099d66aea6e000b8e6ab5a2cac5a609e8698[m
+Author: mejrissiahmed4432-oss <mejrissiahmed4432@gmail.com>
+Date:   Mon May 11 14:49:53 2026 +0200
+
+    [1;31mupdate[ms 2
+
+[33mcommit f4bcc755a63c3c10f426c5d1ca7ee3746a5226af[m
+Author: mejrissiahmed4432-oss <mejrissiahmed4432@gmail.com>
+Date:   Fri May 8 15:43:33 2026 +0200
+
+    ai [1;31mupdate[m5
+
+[33mcommit ef32538d0854a3faa6cdbdaa746cb097f9cb7c6a[m
+Author: mejrissiahmed4432-oss <mejrissiahmed4432@gmail.com>
+Date:   Fri May 8 15:30:21 2026 +0200
+
+    [1;31mupdate[m ai service4
+
+[33mcommit d004a1ad8365e45830645a58021b458c80675ac3[m
+Author: mejrissiahmed4432-oss <mejrissiahmed4432@gmail.com>
+Date:   Fri May 8 15:26:28 2026 +0200
+
+    [1;31mupdate[m ai service 4
+
+[33mcommit e5881b0cd89f8c94f333c0f4d364b3185e20f56b[m
+Merge: abc12a4 5942032
+Author: mejrissiahmed4432-oss <mejrissiahmed4432@gmail.com>
+Date:   Sat May 2 12:44:09 2026 +0200
+
+    Merge pull request #1 from mejrissiahmed4432-oss/dashboard-[1;31mupdate[m
+    
+    [1;31mupdate[m board and dashboard
+
+[33mcommit 5942032a155de0d481f78ff5f0be6b779b853fb7[m[33m ([m[1;31morigin/dashboard-update[m[33m, [m[1;32mdashboard-update[m[33m)[m
+Author: mejrissiahmed4432-oss <mejrissiahmed4432@gmail.com>
+Date:   Sat May 2 12:28:57 2026 +0200
+
+    [1;31mupdate[m board and dashboard
+
+[33mcommit abc12a40294d2e5330c8ac268713aebb2164e1a5[m
+Author: mejrissiahmed4432-oss <mejrissiahmed4432@gmail.com>
+Date:   Wed Apr 29 17:17:12 2026 +0200
+
+    add ai service ,[1;31mupdate[m ticket logic
+
+[33mcommit 617d07f17833a1a6f3cf2b21720be6a58163660b[m
+Author: Ahmed Mejrissi <ahmed@example.com>
+Date:   Wed Apr 15 14:09:44 2026 +0200
+
+    notification [1;31mupdate[m
+
+[33mcommit b485a4bba6b964218b0549bc494c4b01c6c76895[m
+Author: Malek-Jr <romdhanemalek59@gmail.com>
+Date:   Tue Apr 14 00:57:06 2026 +0100
+
+    schedule and parts [1;31mupdate[ms
+
+[33mcommit 3167602a2525ddb7efd7d90df78c264b1b121b5e[m
+Author: Malek-Jr <romdhanemalek59@gmail.com>
+Date:   Thu Apr 9 17:51:02 2026 +0100
+
+    general [1;31mupdate[ms and fixing errors
+
+[33mcommit a0a39e13e09a9700b1e2e427bc73349c2e002276[m
+Author: Malek-Jr <romdhanemalek59@gmail.com>
+Date:   Tue Apr 7 21:24:22 2026 +0100
+
+    messaging, notifications and alerts [1;31mupdate[ms
+
+[33mcommit 420e8a45f283b7f99069e0119ab4bb0fe0057a5b[m
+Author: Malek-Jr <romdhanemalek59@gmail.com>
+Date:   Mon Apr 6 23:45:20 2026 +0100
+
+    messaging [1;31mupdate[m using websocket
+
+[33mcommit 2e2bb707a328948b1f4c26fef0a61c1d28ed1259[m
+Author: Malek-Jr <romdhanemalek59@gmail.com>
+Date:   Wed Apr 1 21:37:44 2026 +0100
+
+    equipments and shelves management [1;31mupdate[m
+
+[33mcommit 754cddb5615d06c2275cbffc796ece1a01105ed3[m
+Author: Ahmed Mejrissi <ahmed@example.com>
+Date:   Mon Mar 30 21:30:55 2026 +0200
+
+    stock manager [1;31mupdate[ms
