@@ -945,9 +945,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
         const completedEquipmentName: string | undefined = res.equipmentName || undefined;
         const completedTicketId: string | undefined = res.id;
 
-        const eq = this.equipments.find(e => e.id === completedEquipmentId);
-
-        if (eq) {
+        const processEquipmentUpdate = (eq: any) => {
           const wasInstalled = eq.assignedToEquipmentId || eq.assignedToEquipmentName;
           if (wasInstalled) {
             if (event.isBroken) {
@@ -1011,7 +1009,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
           }
 
           // ── AUTOMATED SPECIFICATION SYNC ──
-          // Apply spec changes for every installed part that has a replacesSpecKey mapping
           if (event.partsInstalled && event.partsInstalled.length > 0) {
             if (!eq.specifications) eq.specifications = {};
             event.partsInstalled.forEach((part: any) => {
@@ -1024,8 +1021,19 @@ export class TicketsComponent implements OnInit, OnDestroy {
           }
 
           this.equipmentService.updateEquipment(eq.id!, eq).subscribe({
-            next: () => this.calculateEquipmentHistory(eq)
+            next: () => {
+              this.calculateEquipmentHistory(eq);
+              this.loadAllData();
+              this.refreshService.triggerRefresh('TICKET');
+            }
           });
+        };
+
+        const eq = this.equipments.find(e => e.id === completedEquipmentId);
+        if (eq) {
+          processEquipmentUpdate(eq);
+        } else if (completedEquipmentId) {
+          this.equipmentService.getEquipmentById(completedEquipmentId).subscribe(fetchedEq => processEquipmentUpdate(fetchedEq));
         }
 
         this.applyTicketFilters();
@@ -1070,8 +1078,13 @@ export class TicketsComponent implements OnInit, OnDestroy {
           }
         }
         this.viewMode = 'tickets';
-        this.loadAllData();
-        this.refreshService.triggerRefresh('TICKET');
+        // Note: loadAllData() and triggerRefresh() are called inside processEquipmentUpdate's
+        // subscribe callback to ensure the DB write completes first.
+        // If no equipment was found to update, do a simple refresh.
+        if (!completedEquipmentId && !this.equipments.find(e => e.id === completedEquipmentId)) {
+          this.loadAllData();
+          this.refreshService.triggerRefresh('TICKET');
+        }
       }
     });
   }
