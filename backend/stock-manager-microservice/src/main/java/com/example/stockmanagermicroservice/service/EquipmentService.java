@@ -757,9 +757,10 @@ public class EquipmentService {
                     }
                     if (specKey != null) {
                         parent.getSpecifications().remove(specKey);
-                        equipmentRepository.save(parent);
                     }
                 }
+                addLifecycleEntry(parent, "Component Uninstalled", "Uninstalled component: " + eq.getEquipmentName() + " (S/N: " + (eq.getSerialNumber() != null ? eq.getSerialNumber() : "N/A") + ")", "System");
+                equipmentRepository.save(parent);
             }
         }
         

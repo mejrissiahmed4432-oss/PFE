@@ -963,7 +963,15 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
       actor: this.currentUserName || 'Stock Manager'
     });
 
-    // 2. Add to parent specifications if a spec key is provided
+    // 2. Add to parent specifications and parent lifecycle if a spec key is provided
+    if (!parent.lifecycle) parent.lifecycle = [];
+    parent.lifecycle.push({
+      status: 'Component Installed',
+      timestamp: new Date().toISOString(),
+      description: `Installed component: ${part.equipmentName} (S/N: ${part.serialNumber || 'N/A'})`,
+      actor: this.currentUserName || 'Stock Manager'
+    });
+
     if (this.installSpecKey) {
       if (!parent.specifications) parent.specifications = {};
       const specValue = `${part.brand} ${part.model || ''} (S/N: ${part.serialNumber || 'N/A'})`.trim();
