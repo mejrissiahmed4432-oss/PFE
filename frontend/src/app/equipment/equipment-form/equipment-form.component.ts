@@ -52,6 +52,11 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   selectedPartToInstall: Equipment | null = null;
   selectedPartId: string = '';
   installSpecKey: string = '';
+  installFilterCategory: string = '';
+  installFilterType: string = '';
+  installSearchQuery: string = '';
+  installAvailableTypes: any[] = [];
+  filteredPartsForInstall: Equipment[] = [];
   private snSubject = new Subject<string>();
 
   equipmentTypes = [
@@ -803,13 +808,88 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     });
   }
 
+  isAsset(): boolean {
+    if (!this.equipment || !this.equipment.type) return false;
+    const currentType = this.equipment.type.toLowerCase().trim();
+    for (const cat of this.categories) {
+      const foundType = cat.types?.find(t => t.name.toLowerCase().trim() === currentType);
+      if (foundType) {
+        return foundType.nature === 'Asset';
+      }
+    }
+    // Fallback standard assets
+    const assetTypes = ['pc', 'laptop', 'server'];
+    return assetTypes.includes(currentType);
+  }
+
+  onInstallCategoryChange(): void {
+    this.installFilterType = '';
+    this.selectedPartToInstall = null;
+    this.selectedPartId = '';
+    
+    if (!this.installFilterCategory) {
+      this.installAvailableTypes = [];
+    } else {
+      const cat = this.categories.find(c => c.name === this.installFilterCategory);
+      this.installAvailableTypes = cat ? (cat.types || []) : [];
+    }
+    this.applyInstallFilters();
+  }
+
+  onInstallTypeChange(): void {
+    this.selectedPartToInstall = null;
+    this.selectedPartId = '';
+    this.applyInstallFilters();
+  }
+
+  applyInstallFilters(): void {
+    let parts = [...this.availablePartsForInstall];
+
+    // Filter by category
+    if (this.installFilterCategory) {
+      parts = parts.filter(p => p.category === this.installFilterCategory);
+    }
+
+    // Filter by type
+    if (this.installFilterType) {
+      parts = parts.filter(p => p.type?.toLowerCase().trim() === this.installFilterType.toLowerCase().trim());
+    }
+
+    // Search query filter (Brand, Model, Serial, Name)
+    if (this.installSearchQuery) {
+      const q = this.installSearchQuery.toLowerCase().trim();
+      parts = parts.filter(p => 
+        (p.equipmentName || '').toLowerCase().includes(q) ||
+        (p.brand || '').toLowerCase().includes(q) ||
+        (p.model || '').toLowerCase().includes(q) ||
+        (p.serialNumber || '').toLowerCase().includes(q)
+      );
+    }
+
+    this.filteredPartsForInstall = parts;
+  }
+
   openInstallModal(): void {
     this.showInstallModal = true;
     this.isLoadingPartsForInstall = true;
     this.availablePartsForInstall = [];
+    this.filteredPartsForInstall = [];
     this.selectedPartToInstall = null;
     this.selectedPartId = '';
     this.installSpecKey = '';
+
+    // Reset filters
+    this.installFilterCategory = '';
+    this.installFilterType = '';
+    this.installSearchQuery = '';
+    this.installAvailableTypes = [];
+
+    // Ensure categories are loaded
+    if (!this.categories || this.categories.length === 0) {
+      this.categoryService.getAllCategories().subscribe(cats => {
+        this.categories = cats;
+      });
+    }
 
     this.equipmentService.getAllEquipment().subscribe({
       next: (allEq) => {
@@ -820,6 +900,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
           (e.status?.toLowerCase() === 'available' || !e.assignedToEquipmentId) && 
           e.id !== this.equipment?.id
         );
+        this.filteredPartsForInstall = [...this.availablePartsForInstall];
       },
       error: (err) => {
         this.isLoadingPartsForInstall = false;
