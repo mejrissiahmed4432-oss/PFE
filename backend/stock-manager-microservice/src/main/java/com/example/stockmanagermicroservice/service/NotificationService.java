@@ -1,8 +1,8 @@
 package com.example.stockmanagermicroservice.service;
 
+import com.example.stockmanagermicroservice.client.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,9 +11,7 @@ import java.util.Map;
 public class NotificationService {
 
     @Autowired
-    private RestTemplate restTemplate;
-
-    private static final String USER_SERVICE_URL = "http://user-microservice/api/notifications";
+    private UserClient userClient;
 
     public void createNotification(String title, String message, String type, String category, String relatedId, String recipientId, String targetRole) {
         Map<String, String> body = new HashMap<>();
@@ -26,10 +24,10 @@ public class NotificationService {
         body.put("targetRole", targetRole);
 
         try {
-            restTemplate.postForEntity(USER_SERVICE_URL, body, Void.class);
-            System.out.println("[NotificationService] Successfully delivered notification to " + USER_SERVICE_URL + " for role: " + targetRole);
+            userClient.createNotification(body);
+            System.out.println("[NotificationService] Successfully delivered notification via Feign for role: " + targetRole);
         } catch (Exception e) {
-            System.err.println("[NotificationService] CRITICAL: Failed to deliver notification to " + USER_SERVICE_URL + ". Error: " + e.getMessage());
+            System.err.println("[NotificationService] CRITICAL: Failed to deliver notification via Feign. Error: " + e.getMessage());
             e.printStackTrace();
         }
     }

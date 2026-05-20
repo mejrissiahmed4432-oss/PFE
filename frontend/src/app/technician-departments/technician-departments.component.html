@@ -1,0 +1,87 @@
+<div class="page-wrap">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Departments</h1>
+      <p class="page-sub">Organize and filter devices by department</p>
+    </div>
+    <div class="header-right">
+      <div class="ws-dot" [class.connected]="isConnected" [title]="isConnected ? 'Live' : 'Connecting...'">
+        <span class="ws-pulse" *ngIf="isConnected"></span>
+      </div>
+      <span class="last-updated" *ngIf="lastUpdated">{{ lastUpdated | date:'HH:mm:ss' }}</span>
+      <div class="search-wrap">
+        <i class="fas fa-search si"></i>
+        <input class="search-input" [(ngModel)]="deptSearch" placeholder="Search department...">
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="departments.length === 0">
+    <div class="spinner"></div>
+    <span>Connecting to live monitoring...</span>
+  </div>
+
+  <!-- Dept cards grid -->
+  <div class="dept-grid" *ngIf="departments.length > 0">
+    <div class="dept-card" *ngFor="let dept of filteredDepartments">
+
+      <!-- Card top -->
+      <div class="dc-icon-row">
+        <div class="dc-icon" [style.color]="deptColor(dept.departmentName)">
+          <i class="fas fa-building"></i>
+        </div>
+        <div>
+          <div class="dc-name">{{ dept.departmentName }}</div>
+          <div class="dc-sub">
+            <i class="fas fa-desktop dc-sub-icon"></i>
+            {{ dept.totalLaptops }} device{{ dept.totalLaptops !== 1 ? 's' : '' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Online / Offline / Not Found counts -->
+      <div class="dc-stats">
+        <div class="dc-stat">
+          <i class="fas fa-wifi dc-wifi-on"></i>
+          <span class="dc-stat-num">{{ dept.onlineCount }}</span>
+          <span class="dc-stat-lbl">Online</span>
+        </div>
+        <div class="dc-stat">
+          <i class="fas fa-wifi dc-wifi-off"></i>
+          <span class="dc-stat-num">{{ dept.offlineCount }}</span>
+          <span class="dc-stat-lbl">Offline</span>
+        </div>
+        <div class="dc-stat" *ngIf="dept.notFoundCount > 0">
+          <i class="fas fa-question-circle dc-wifi-unk"></i>
+          <span class="dc-stat-num">{{ dept.notFoundCount }}</span>
+          <span class="dc-stat-lbl">Not Found</span>
+        </div>
+      </div>
+
+      <!-- Top Devices by CPU -->
+      <div class="dc-top-devices" *ngIf="dept.topDevicesByCpu && dept.topDevicesByCpu.length > 0">
+        <div class="dc-top-label">Top Devices by Usage:</div>
+        <div class="dc-top-row" *ngFor="let d of dept.topDevicesByCpu">
+          <span class="dc-top-name">{{ d.equipmentName || d.serialNumber }}</span>
+          <span class="dc-top-cpu" [style.color]="cpuColor(d.cpuPercent)">
+            CPU: {{ d.cpuPercent | number:'1.0-0' }}%
+          </span>
+        </div>
+      </div>
+      <div class="dc-top-devices dc-no-devices"
+           *ngIf="!dept.topDevicesByCpu || dept.topDevicesByCpu.length === 0">
+        <i class="fas fa-info-circle"></i>&nbsp; No online devices
+      </div>
+
+      <!-- View All button -->
+      <button class="btn-view-all" (click)="openDevices(dept.departmentName)">
+        <i class="fas fa-th-list"></i> View All Devices
+      </button>
+
+    </div>
+  </div>
+
+</div>

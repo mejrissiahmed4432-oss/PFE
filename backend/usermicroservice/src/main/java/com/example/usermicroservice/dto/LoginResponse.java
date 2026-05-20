@@ -10,9 +10,10 @@ public class LoginResponse {
     private Role role;
     private String photo;
     private String token;
+    private String refreshToken;
     private String phoneNumber;
 
-    public LoginResponse(String id, String firstName, String lastName, String email, Role role, String photo, String token, String phoneNumber) {
+    public LoginResponse(String id, String firstName, String lastName, String email, Role role, String photo, String token, String refreshToken, String phoneNumber) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -20,6 +21,7 @@ public class LoginResponse {
         this.role = role;
         this.photo = photo;
         this.token = token;
+        this.refreshToken = refreshToken;
         this.phoneNumber = phoneNumber;
     }
 
@@ -44,6 +46,9 @@ public class LoginResponse {
 
     public String getToken() { return token; }
     public void setToken(String token) { this.token = token; }
+
+    public String getRefreshToken() { return refreshToken; }
+    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
 
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }

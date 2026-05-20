@@ -4,9 +4,9 @@ import com.example.stockmanagermicroservice.dto.DashboardStats;
 import com.example.stockmanagermicroservice.model.Equipment;
 import com.example.stockmanagermicroservice.repository.EquipmentRepository;
 import com.example.stockmanagermicroservice.repository.SupplierRepository;
+import com.example.stockmanagermicroservice.client.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,7 +23,7 @@ public class DashboardService {
     private SupplierRepository supplierRepository;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private UserClient userClient;
 
     public DashboardStats getDashboardStats() {
         DashboardStats stats = new DashboardStats();
@@ -62,8 +62,7 @@ public class DashboardService {
 
         // Live count of active alerts for STOCK_MANAGER role
         try {
-            String alertUrl = "http://user-microservice/api/alerts/active?role=STOCK_MANAGER";
-            List<?> activeAlerts = restTemplate.getForObject(alertUrl, List.class);
+            List<?> activeAlerts = userClient.getActiveAlerts("STOCK_MANAGER");
             stats.setLowStockAlerts(activeAlerts != null ? activeAlerts.size() : 0);
         } catch (Exception e) {
             System.err.println("Failed to fetch active alerts for dashboard: " + e.getMessage());

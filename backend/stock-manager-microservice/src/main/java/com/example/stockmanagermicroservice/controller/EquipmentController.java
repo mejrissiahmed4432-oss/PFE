@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/equipment")
@@ -131,6 +132,102 @@ public class EquipmentController {
     public ResponseEntity<String> cleanupDuplicates() {
         int removed = equipmentService.cleanupDuplicateOutOfStockRecords();
         return ResponseEntity.ok("Removed " + removed + " duplicate Out of Stock record(s).");
+    }
+
+    // ── IT Manager Equipment Management Endpoints ─────────────────────────
+
+    /** GET available equipment (status=Available, dept=stock) for IT Manager */
+    @GetMapping("/it-available")
+    public ResponseEntity<?> getAvailableInStock() {
+        try {
+            return ResponseEntity.ok(equipmentService.getAvailableInStock());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
+    /** GET all equipment currently In Use */
+    @GetMapping("/it-in-use")
+    public ResponseEntity<?> getAllInUse() {
+        try {
+            return ResponseEntity.ok(equipmentService.getAllInUse());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
+    /** GET equipment with assignment history (has been assigned at least once) */
+    @GetMapping("/it-assignment-history")
+    public ResponseEntity<?> getAssignmentHistory() {
+        try {
+            return ResponseEntity.ok(equipmentService.getAssignmentHistory());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
+    /** GET all pending return requests (for Stock Manager) */
+    @GetMapping("/return-requests")
+    public ResponseEntity<?> getReturnRequests() {
+        try {
+            return ResponseEntity.ok(equipmentService.getReturnRequests());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
+    /** POST assign equipment to users or department (IT Manager) */
+    @PostMapping("/{id}/it-assign")
+    public ResponseEntity<?> assignEquipmentIT(
+            @PathVariable String id,
+            @RequestBody java.util.Map<String, Object> request) {
+        try {
+            return ResponseEntity.ok(equipmentService.assignEquipmentIT(id, request));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Error: " + e.getMessage());
+        }
+    }
+
+    /** POST deassign equipment from users/department (IT Manager) */
+    @PostMapping("/{id}/it-deassign")
+    public ResponseEntity<?> deassignEquipmentIT(
+            @PathVariable String id,
+            @RequestBody(required = false) java.util.Map<String, String> body) {
+        try {
+            String actor = body != null ? body.getOrDefault("actor", "IT Manager") : "IT Manager";
+            return ResponseEntity.ok(equipmentService.deassignEquipmentIT(id, actor));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Error: " + e.getMessage());
+        }
+    }
+
+    /** POST request return of equipment to stock (IT Manager) */
+    @PostMapping("/{id}/request-return")
+    public ResponseEntity<?> requestReturn(
+            @PathVariable String id,
+            @RequestBody java.util.Map<String, String> body) {
+        try {
+            String note = body.getOrDefault("note", "");
+            String actor = body.getOrDefault("actor", "IT Manager");
+            return ResponseEntity.ok(equipmentService.requestReturnToIT(id, note, actor));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Error: " + e.getMessage());
+        }
+    }
+
+    /** POST process a return request (Stock Manager) */
+    @PostMapping("/{id}/process-return")
+    public ResponseEntity<?> processReturn(
+            @PathVariable String id,
+            @RequestBody java.util.Map<String, String> body) {
+        try {
+            String newStatus = body.getOrDefault("status", "Available");
+            String shelfId = body.getOrDefault("shelfId", null);
+            String actor = body.getOrDefault("actor", "Stock Manager");
+            return ResponseEntity.ok(equipmentService.processReturnRequest(id, newStatus, shelfId, actor));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Error: " + e.getMessage());
+        }
     }
 
     public static class PartAllocateRequest {

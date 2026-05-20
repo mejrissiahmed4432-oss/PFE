@@ -1,0 +1,479 @@
+<div class="page-wrap">
+
+  <!-- ══════════════════════════════════════════════════════════
+       LIST VIEW
+  ══════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="!selectedDevice">
+
+    <!-- Header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Devices</h1>
+        <p class="page-sub" *ngIf="!departmentFilter">All devices across your organization</p>
+        <p class="page-sub" *ngIf="departmentFilter">Devices in <strong>{{ departmentFilter }}</strong></p>
+      </div>
+      <div class="ws-pill" [class.connected]="isConnected">
+        <span class="ws-dot-inner"></span>
+        {{ isConnected ? 'Live' : 'Connecting…' }}
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <div class="search-wrap">
+        <i class="fas fa-search si"></i>
+        <input class="search-input" [(ngModel)]="deviceSearch" placeholder="Search hostname, serial...">
+      </div>
+      <select class="filter-select" [(ngModel)]="deviceDeptFilter">
+        <option value="all">🏢 All Departments</option>
+        <option *ngFor="let d of uniqueDepartments" [value]="d">{{ d }}</option>
+      </select>
+      <select class="filter-select" [(ngModel)]="deviceStatusFilter">
+        <option value="all">All Statuses</option>
+        <option value="UP">Online</option>
+        <option value="WARNING">Warning</option>
+        <option value="DOWN">Offline</option>
+        <option value="NOT_FOUND_YET">Not Found</option>
+      </select>
+    </div>
+
+    <div class="dv-meta">
+      <span>Showing <b>{{ filteredDevices.length }}</b> of <b>{{ allDevices.length }}</b> devices</span>
+      <span *ngIf="lastUpdated" class="last-updated-text">Updated: {{ lastUpdated | date:'HH:mm:ss' }}</span>
+    </div>
+
+    <!-- Table -->
+    <div class="dv-table-container">
+      <div class="loading-state" *ngIf="departments.length === 0">
+        <div class="spinner"></div><span>Connecting to live monitoring...</span>
+      </div>
+      <table class="premium-table" *ngIf="departments.length > 0">
+        <thead>
+          <tr>
+            <th class="th-sort" (click)="setSort('name')">Hostname
+              <i class="fas" [class.fa-sort]="sortCol!=='name'" [class.fa-sort-up]="sortCol==='name'&&sortDir===1" [class.fa-sort-down]="sortCol==='name'&&sortDir===-1"></i>
+            </th>
+            <th>SN (Serial Number)</th>
+            <th>Department</th>
+            <th class="th-sort" (click)="setSort('cpu')">CPU %
+              <i class="fas" [class.fa-sort]="sortCol!=='cpu'" [class.fa-sort-up]="sortCol==='cpu'&&sortDir===1" [class.fa-sort-down]="sortCol==='cpu'&&sortDir===-1"></i>
+            </th>
+            <th class="th-sort" (click)="setSort('ram')">RAM %
+              <i class="fas" [class.fa-sort]="sortCol!=='ram'" [class.fa-sort-up]="sortCol==='ram'&&sortDir===1" [class.fa-sort-down]="sortCol==='ram'&&sortDir===-1"></i>
+            </th>
+            <th class="th-sort" (click)="setSort('disk')">Disk %</th>
+            <th class="th-sort" (click)="setSort('temperature')">Temp °C
+              <i class="fas" [class.fa-sort]="sortCol!=='temperature'" [class.fa-sort-up]="sortCol==='temperature'&&sortDir===1" [class.fa-sort-down]="sortCol==='temperature'&&sortDir===-1"></i>
+            </th>
+            <th>Network</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="filteredDevices.length===0">
+            <td colspan="10" class="td-empty">No devices match your filters.</td>
+          </tr>
+          <tr *ngFor="let d of filteredDevices; trackBy: trackByDevice" class="table-row-animate">
+            <td>
+              <div class="dv-name-cell">
+                <div class="dv-avatar" [style.background]="deptColor(d.department)"><i class="fas fa-laptop"></i></div>
+                <div>
+                  <div class="dv-hostname">{{ d.equipmentName || 'Unknown' }}</div>
+                  <div class="dv-brand">{{ d.brand }} {{ d.model }}</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="mono-bold">{{ d.serialNumber || '—' }}</span></td>
+            <td><span class="dept-chip" [style.color]="deptColor(d.department)">{{ d.department }}</span></td>
+            <td>
+              <div class="metric-cell" *ngIf="d.upStatus!=='NOT_FOUND_YET'; else dash">
+                <div class="metric-bar-track"><div class="metric-bar-fill" [style.width.%]="d.cpuPercent" [style.background]="cpuColor(d.cpuPercent)"></div></div>
+                <span class="metric-val" [style.color]="cpuColor(d.cpuPercent)">{{ d.cpuPercent | number:'1.0-0' }}%</span>
+              </div>
+              <ng-template #dash><span class="mono-gray">—</span></ng-template>
+            </td>
+            <td>
+              <div class="metric-cell" *ngIf="d.upStatus!=='NOT_FOUND_YET'; else dash2">
+                <div class="metric-bar-track"><div class="metric-bar-fill" [style.width.%]="d.ramPercent" [style.background]="ramColor(d.ramPercent)"></div></div>
+                <span class="metric-val" [style.color]="ramColor(d.ramPercent)">{{ d.ramPercent | number:'1.0-0' }}%</span>
+              </div>
+              <ng-template #dash2><span class="mono-gray">—</span></ng-template>
+            </td>
+            <td><span class="mono-bold">{{ d.diskPercent | number:'1.0-0' }}%</span></td>
+            <td>
+              <div class="metric-cell" *ngIf="d.upStatus!=='NOT_FOUND_YET'; else dash3">
+                <span class="metric-val" [style.color]="tempColor(d.temperature)">{{ d.temperature | number:'1.0-1' }}°C</span>
+              </div>
+              <ng-template #dash3><span class="mono-gray">—</span></ng-template>
+            </td>
+            <td><span class="net-text">{{ d.networkSpeed || '—' }}</span></td>
+            <td>
+              <span class="status-badge" [ngClass]="statusCls(d)">
+                <span class="sbdot"></span>{{ statusLabel(d) }}
+              </span>
+            </td>
+            <td>
+              <div class="actions-wrap">
+                <button class="action-icon view" title="View Details" (click)="openDevice(d)" [disabled]="d.upStatus === 'NOT_FOUND_YET'" [ngClass]="{'disabled-btn': d.upStatus === 'NOT_FOUND_YET'}">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+  <!-- ══════════════════════════════════════════════════════════
+       DETAIL VIEW
+  ══════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="selectedDevice as dev">
+
+    <!-- Back button -->
+    <div class="detail-back-row">
+      <button class="btn-back" (click)="closeDevice()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back to Devices
+      </button>
+    </div>
+
+    <!-- Info Card -->
+    <div class="detail-info-card">
+      <div class="dic-left">
+        <div class="dic-hostname">{{ dev.equipmentName || 'Unknown Device' }}</div>
+        <div class="dic-meta-row">
+          <span class="dic-meta-item"><span class="dic-label">Department:</span> <strong>{{ dev.department }}</strong></span>
+          <span class="dic-meta-item"><span class="dic-label">IP Address:</span> <span class="dic-mono">{{ dev.ip || '—' }}</span></span>
+          <span class="dic-meta-item"><span class="dic-label">MAC Address:</span> <span class="dic-mono">{{ dev.macAddress || '—' }}</span></span>
+          <span class="dic-meta-item"><span class="dic-label">OS:</span> <strong>{{ dev.os || 'Unknown' }}</strong></span>
+          <span class="dic-meta-item"><span class="dic-label">S/N:</span> <span class="dic-mono">{{ dev.serialNumber || '—' }}</span></span>
+        </div>
+      </div>
+      <div class="dic-right">
+        <span class="status-badge lg" [ngClass]="statusCls(dev)">
+          <span class="sbdot"></span>{{ statusLabel(dev) }}
+        </span>
+        <div class="dic-agent-info">
+          <span class="dic-last-seen" *ngIf="dev.upStatus === 'DOWN'">Last seen: {{ dev.lastSeen || 'Not Found' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monitoring Panel -->
+    <div class="detail-monitoring-card">
+
+      <!-- Tabs -->
+      <div class="mon-tabs">
+        <button class="mon-tab" [class.active]="activeTab==='overview'"   (click)="activeTab='overview'">Overview</button>
+        <button class="mon-tab" [class.active]="activeTab==='cpu'"        (click)="activeTab='cpu'">CPU</button>
+        <button class="mon-tab" [class.active]="activeTab==='memory'"     (click)="activeTab='memory'">Memory</button>
+        <button class="mon-tab" [class.active]="activeTab==='disk'"       (click)="activeTab='disk'">Disk</button>
+        <button class="mon-tab" [class.active]="activeTab==='network'"    (click)="activeTab='network'">Network</button>
+        <button class="mon-tab" [class.active]="activeTab==='processes'"  (click)="activeTab='processes'">Processes</button>
+        <button class="mon-tab" [class.active]="activeTab==='temperature'" (click)="activeTab='temperature'">Temperature</button>
+      </div>
+
+      <div class="mon-content">
+
+        <!-- ── OVERVIEW ── -->
+        <div *ngIf="activeTab==='overview'" class="tab-overview">
+          <div class="overview-metrics">
+            <div class="ov-metric blue">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+              <span class="ov-label">CPU Usage</span>
+              <span class="ov-val" [style.color]="cpuColor(dev.cpuPercent)">{{ dev.cpuPercent | number:'1.0-0' }}%</span>
+            </div>
+            <div class="ov-metric purple">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <span class="ov-label">RAM Usage</span>
+              <span class="ov-val" [style.color]="ramColor(dev.ramPercent)">{{ dev.ramPercent | number:'1.0-0' }}%</span>
+            </div>
+            <div class="ov-metric green">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <span class="ov-label">Disk Usage</span>
+              <span class="ov-val" [style.color]="diskColor(dev.diskPercent)">{{ dev.diskPercent | number:'1.0-0' }}%</span>
+            </div>
+            <div class="ov-metric orange">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M10.54 15.1a6 6 0 0 1 2.92 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+              <span class="ov-label">Network</span>
+              <span class="ov-val net-val">{{ dev.networkSpeed || '—' }}</span>
+            </div>
+            <div class="ov-metric red">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+              <span class="ov-label">Temperature</span>
+              <span class="ov-val" [style.color]="tempColor(dev.temperature)">{{ dev.temperature | number:'1.0-1' }}°C</span>
+            </div>
+            <div class="ov-metric cyan">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="ov-label">Uptime</span>
+              <span class="ov-val" style="font-size: 1.3rem;">{{ dev.uptime || 'Not Found' }}</span>
+            </div>
+          </div>
+
+          <!-- Mini charts row -->
+          <div class="overview-charts" *ngIf="selectedHistory.length > 1">
+            <div class="mini-chart-card">
+              <div class="mc-title">CPU Usage Over Time</div>
+              <svg class="mc-svg" viewBox="0 0 600 140" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="gradCpu" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.02"/>
+                  </linearGradient>
+                </defs>
+                <path [attr.d]="buildAreaPath(cpuHistory,600,130)" fill="url(#gradCpu)"/>
+                <path [attr.d]="buildLinePath(cpuHistory,600,130)" fill="none" stroke="#3b82f6" stroke-width="2"/>
+              </svg>
+              <div class="x-labels" style="padding: 0 12px; margin-top: -5px; font-size: 0.75rem; color: #64748b;">
+                <span *ngFor="let t of timeLabels(selectedHistory)">{{ t }}</span>
+              </div>
+              <div class="mc-legend"><span class="mc-dot" style="background:#3b82f6"></span> CPU %</div>
+            </div>
+            <div class="mini-chart-card">
+              <div class="mc-title">RAM Usage Over Time</div>
+              <svg class="mc-svg" viewBox="0 0 600 140" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="gradRam" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.02"/>
+                  </linearGradient>
+                </defs>
+                <path [attr.d]="buildAreaPath(ramHistory,600,130)" fill="url(#gradRam)"/>
+                <path [attr.d]="buildLinePath(ramHistory,600,130)" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+              </svg>
+              <div class="x-labels" style="padding: 0 12px; margin-top: -5px; font-size: 0.75rem; color: #64748b;">
+                <span *ngFor="let t of timeLabels(selectedHistory)">{{ t }}</span>
+              </div>
+              <div class="mc-legend"><span class="mc-dot" style="background:#8b5cf6"></span> RAM %</div>
+            </div>
+            <div class="mini-chart-card">
+              <div class="mc-title">Temperature Over Time</div>
+              <svg class="mc-svg" viewBox="0 0 600 140" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="gradTemp" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ef4444" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#ef4444" stop-opacity="0.02"/>
+                  </linearGradient>
+                </defs>
+                <path [attr.d]="buildAreaPath(temperatureHistory,600,130)" fill="url(#gradTemp)"/>
+                <path [attr.d]="buildLinePath(temperatureHistory,600,130)" fill="none" stroke="#ef4444" stroke-width="2"/>
+              </svg>
+              <div class="x-labels" style="padding: 0 12px; margin-top: -5px; font-size: 0.75rem; color: #64748b;">
+                <span *ngFor="let t of timeLabels(selectedHistory)">{{ t }}</span>
+              </div>
+              <div class="mc-legend"><span class="mc-dot" style="background:#ef4444"></span> Temp °C</div>
+            </div>
+          </div>
+          <div class="no-history" *ngIf="selectedHistory.length <= 1">
+            <div class="spinner"></div> Collecting live data…
+          </div>
+        </div>
+
+        <!-- ── CPU ── -->
+        <div *ngIf="activeTab==='cpu'" class="tab-chart">
+          <div class="chart-header">
+            <div class="chart-title">CPU Performance Details</div>
+            <div class="chart-sub">Current usage: {{ dev.cpuPercent | number:'1.0-0' }}%</div>
+          </div>
+          <ng-container *ngIf="selectedHistory.length > 1; else loading">
+            <div class="chart-area">
+              <div class="y-labels">
+                <span *ngFor="let v of chartYLabels(cpuHistory)">{{ v }}</span>
+              </div>
+              <div class="chart-plot">
+                <svg class="full-svg" viewBox="0 0 600 200" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="gradCpuFull" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.25"/>
+                      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.02"/>
+                    </linearGradient>
+                  </defs>
+                  <line *ngFor="let v of [0,1,2,3,4]" x1="0" [attr.y1]="v*40" x2="600" [attr.y2]="v*40" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+                  <path [attr.d]="buildAreaPath(cpuHistory,600,190,5)" fill="url(#gradCpuFull)"/>
+                  <path [attr.d]="buildLinePath(cpuHistory,600,190,5)" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linejoin="round"/>
+                </svg>
+                <div class="x-labels">
+                  <span *ngFor="let t of timeLabels(selectedHistory)">{{ t }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="chart-legend"><span class="mc-dot" style="background:#3b82f6"></span> CPU %</div>
+          </ng-container>
+          <ng-template #loading><div class="no-history"><div class="spinner"></div> Collecting live data…</div></ng-template>
+        </div>
+
+        <!-- ── MEMORY ── -->
+        <div *ngIf="activeTab==='memory'" class="tab-chart">
+          <div class="chart-header">
+            <div class="chart-title">Memory Usage Details</div>
+            <div class="chart-sub">Current usage: {{ dev.ramPercent | number:'1.0-0' }}% <span *ngIf="dev.totalRam"> | Free: {{ dev.freeRam | number:'1.1-1' }} GB / Total: {{ dev.totalRam | number:'1.1-1' }} GB</span></div>
+          </div>
+          <ng-container *ngIf="selectedHistory.length > 1; else loading2">
+            <div class="chart-area">
+              <div class="y-labels">
+                <span *ngFor="let v of chartYLabels(ramHistory)">{{ v }}</span>
+              </div>
+              <div class="chart-plot">
+                <svg class="full-svg" viewBox="0 0 600 200" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="gradRamFull" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.25"/>
+                      <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.02"/>
+                    </linearGradient>
+                  </defs>
+                  <line *ngFor="let v of [0,1,2,3,4]" x1="0" [attr.y1]="v*40" x2="600" [attr.y2]="v*40" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+                  <path [attr.d]="buildAreaPath(ramHistory,600,190,5)" fill="url(#gradRamFull)"/>
+                  <path [attr.d]="buildLinePath(ramHistory,600,190,5)" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linejoin="round"/>
+                </svg>
+                <div class="x-labels">
+                  <span *ngFor="let t of timeLabels(selectedHistory)">{{ t }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="chart-legend"><span class="mc-dot" style="background:#8b5cf6"></span> RAM %</div>
+          </ng-container>
+          <ng-template #loading2><div class="no-history"><div class="spinner"></div> Collecting live data…</div></ng-template>
+        </div>
+
+        <!-- ── DISK ── -->
+        <div *ngIf="activeTab==='disk'" class="tab-disk">
+          <div class="chart-title">Disk Usage Breakdown</div>
+          <div class="chart-sub" *ngIf="dev.totalDisk" style="color: #64748b; font-size: 0.85rem; margin-bottom: 1rem; font-weight: 500;">
+            Total Disk Space: {{ dev.totalDisk | number:'1.1-1' }} GB | Free Space: {{ dev.freeDisk | number:'1.1-1' }} GB
+          </div>
+          <div class="disk-drives">
+            <div class="disk-drive-card" *ngFor="let d of deviceDisks">
+              <div class="ddc-header">
+                <span class="ddc-name">{{ d.name }} Drive</span>
+                <span class="ddc-size">{{ d.percent | number:'1.0-0' }}% used</span>
+              </div>
+              <div class="ddc-bar-track">
+                <div class="ddc-bar-fill" [style.width.%]="d.percent" [style.background]="diskColor(d.percent)"></div>
+              </div>
+              <div class="ddc-pct">{{ d.percent | number:'1.0-0' }}% used</div>
+            </div>
+            <div class="disk-drive-card" *ngIf="deviceDisks.length === 0">
+              <div class="ddc-header"><span class="ddc-name">No disks detected</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── NETWORK ── -->
+        <div *ngIf="activeTab==='network'" class="tab-chart">
+          <div class="chart-header">
+            <div class="chart-title">Network Traffic</div>
+            <div class="chart-sub">Current: {{ dev.networkSpeed || '—' }}</div>
+          </div>
+          <ng-container *ngIf="selectedHistory.length > 1; else loadingNet">
+            <div class="chart-area">
+              <div class="y-labels">
+                <span *ngFor="let v of stackedYLabels(networkInHistory, networkOutHistory)">{{ v | number:'1.0-1' }}</span>
+              </div>
+              <div class="chart-plot">
+                <svg class="full-svg" viewBox="0 0 600 200" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="gradNetIn" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#4ade80" stop-opacity="0.9"/>
+                      <stop offset="100%" stop-color="#4ade80" stop-opacity="0.6"/>
+                    </linearGradient>
+                    <linearGradient id="gradNetOut" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.9"/>
+                      <stop offset="100%" stop-color="#60a5fa" stop-opacity="0.6"/>
+                    </linearGradient>
+                  </defs>
+                  <line *ngFor="let v of [0,1,2,3,4]" x1="0" [attr.y1]="v*40" x2="600" [attr.y2]="v*40" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+                  
+                  <path [attr.d]="buildStackedAreaPath(networkInHistory, networkOutHistory, 600, 190, 5, false)" fill="url(#gradNetIn)"/>
+                  <path [attr.d]="buildStackedLinePath(networkInHistory, networkOutHistory, 600, 190, 5, false)" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linejoin="round"/>
+                  
+                  <path [attr.d]="buildStackedAreaPath(networkInHistory, networkOutHistory, 600, 190, 5, true)" fill="url(#gradNetOut)"/>
+                  <path [attr.d]="buildStackedLinePath(networkInHistory, networkOutHistory, 600, 190, 5, true)" fill="none" stroke="#3b82f6" stroke-width="1.5" stroke-linejoin="round"/>
+                </svg>
+                <div class="x-labels">
+                  <span *ngFor="let t of timeLabels(selectedHistory)">{{ t }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="chart-legend" style="justify-content: center; margin-top: 20px;">
+              <span class="mc-dot" style="background:transparent; border: 2px solid #22c55e;"></span> <span style="color:#22c55e; font-weight:600;">Incoming (KB/s)</span>
+              <span class="mc-dot" style="background:transparent; border: 2px solid #3b82f6; margin-left: 15px;"></span> <span style="color:#3b82f6; font-weight:600;">Outgoing (KB/s)</span>
+            </div>
+          </ng-container>
+          <ng-template #loadingNet><div class="no-history"><div class="spinner"></div> Collecting live data…</div></ng-template>
+        </div>
+
+        <!-- ── PROCESSES ── -->
+        <div *ngIf="activeTab==='processes'" class="tab-chart">
+          <div class="chart-header">
+            <div class="chart-title">Processes</div>
+            <div class="chart-sub">Current count: {{ currentProcesses }}</div>
+          </div>
+          <ng-container *ngIf="selectedHistory.length > 1; else loading3">
+            <div class="chart-area">
+              <div class="y-labels">
+                <span *ngFor="let v of processYLabels(processHistory)">{{ v }}</span>
+              </div>
+              <div class="chart-plot">
+                <svg class="full-svg" viewBox="0 0 600 200" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="gradProc" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.25"/>
+                      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.02"/>
+                    </linearGradient>
+                  </defs>
+                  <line *ngFor="let v of [0,1,2,3,4]" x1="0" [attr.y1]="v*40" x2="600" [attr.y2]="v*40" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+                  <path [attr.d]="buildProcessAreaPath(processHistory,600,190)" fill="url(#gradProc)"/>
+                  <path [attr.d]="buildProcessPath(processHistory,600,190)" fill="none" stroke="#0ea5e9" stroke-width="2.5" stroke-linejoin="round"/>
+                </svg>
+                <div class="x-labels"><span *ngFor="let t of timeLabels(selectedHistory)">{{ t }}</span></div>
+              </div>
+            </div>
+            <div class="chart-legend"><span class="mc-dot" style="background:#0ea5e9"></span> Processes</div>
+          </ng-container>
+          <ng-template #loading3><div class="no-history"><div class="spinner"></div> Collecting live data…</div></ng-template>
+        </div>
+
+        <!-- ── TEMPERATURE ── -->
+        <div *ngIf="activeTab==='temperature'" class="tab-chart">
+          <div class="chart-header">
+            <div class="chart-title">Temperature Details</div>
+            <div class="chart-sub">Current temperature: {{ dev.temperature | number:'1.0-1' }}°C</div>
+          </div>
+          <ng-container *ngIf="selectedHistory.length > 1; else loadingTemp">
+            <div class="chart-area">
+              <div class="y-labels">
+                <span *ngFor="let v of chartYLabels(temperatureHistory)">{{ v }}</span>
+              </div>
+              <div class="chart-plot">
+                <svg class="full-svg" viewBox="0 0 600 200" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="gradTempFull" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.25"/>
+                      <stop offset="100%" stop-color="#ef4444" stop-opacity="0.02"/>
+                    </linearGradient>
+                  </defs>
+                  <line *ngFor="let v of [0,1,2,3,4]" x1="0" [attr.y1]="v*40" x2="600" [attr.y2]="v*40" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+                  <path [attr.d]="buildAreaPath(temperatureHistory,600,190,5)" fill="url(#gradTempFull)"/>
+                  <path [attr.d]="buildLinePath(temperatureHistory,600,190,5)" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linejoin="round"/>
+                </svg>
+                <div class="x-labels">
+                  <span *ngFor="let t of timeLabels(selectedHistory)">{{ t }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="chart-legend"><span class="mc-dot" style="background:#ef4444"></span> Temp °C</div>
+          </ng-container>
+          <ng-template #loadingTemp><div class="no-history"><div class="spinner"></div> Collecting live data…</div></ng-template>
+        </div>
+
+      </div><!-- mon-content -->
+    </div><!-- detail-monitoring-card -->
+  </ng-container>
+
+</div>

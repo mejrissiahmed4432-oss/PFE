@@ -31,6 +31,7 @@ spring:
           enabled: true
           lower-case-service-id: true
       default-filters:
+        - AuthenticationFilter
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
       routes:
         - id: user-microservice
@@ -77,6 +78,11 @@ spring:
           predicates:
             - Path=/api/os/**, /api/os
 
+        - id: monitoring-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/api/monitoring/**
+
         - id: technician-route
           uri: lb://technician-microservice
           predicates:
@@ -92,6 +98,11 @@ spring:
           uri: lb://employee-microservice
           predicates:
             - Path=/api/employees/**, /api/employees
+
+        - id: department-route
+          uri: lb://employee-microservice
+          predicates:
+            - Path=/api/departments/**, /api/departments
 
         - id: it-manager-route
           uri: lb://it-manager-microservice

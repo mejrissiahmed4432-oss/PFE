@@ -1,0 +1,27 @@
+package com.example.stockmanagermicroservice.client;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Map;
+
+@FeignClient(name = "user-microservice")
+public interface UserClient {
+
+    @PostMapping("/api/notifications")
+    void createNotification(@RequestBody Map<String, String> body);
+
+    @PostMapping("/api/alerts/system")
+    void triggerSystemAlert(@RequestBody Map<String, String> body);
+
+    @PostMapping("/api/alerts/system/{key}/resolve")
+    void resolveSystemAlert(@PathVariable("key") String key);
+
+    @GetMapping("/api/alerts/active")
+    List<?> getActiveAlerts(@RequestParam("role") String role);
+}

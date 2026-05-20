@@ -1,0 +1,55 @@
+/* Tailwind handles most styling. Custom animations and specific styles go here. */
+
+.badge-assigned {
+  @apply bg-blue-50 text-blue-700 border-blue-200;
+}
+
+.badge-deassigned {
+  @apply bg-slate-50 text-slate-700 border-slate-200;
+}
+
+.badge-return-req {
+  @apply bg-amber-50 text-amber-700 border-amber-200;
+}
+
+.badge-returned {
+  @apply bg-emerald-50 text-emerald-700 border-emerald-200;
+}
+
+.badge-default {
+  @apply bg-slate-50 text-slate-600 border-slate-200;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Custom Scrollbar for inner lists */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-300;
+}

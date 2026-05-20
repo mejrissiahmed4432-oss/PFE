@@ -47,6 +47,9 @@ export class AuthService {
           sessionStorage.setItem('user_data', JSON.stringify(response));
           this.userSubject.next(response);
         }
+        if (response.refreshToken) {
+          sessionStorage.setItem('refresh_token', response.refreshToken);
+        }
       })
     );
   }
@@ -74,10 +77,16 @@ export class AuthService {
   }
 
   logout() {
+    const email = this.currentUser?.email;
     this.currentUser = null;
     sessionStorage.removeItem('auth_token');
+    sessionStorage.removeItem('refresh_token');
     sessionStorage.removeItem('user_data');
     this.userSubject.next(null);
+    // Notify backend to invalidate refresh token
+    if (email) {
+      this.http.post(`${this.apiUrl}/logout`, { email }).subscribe({ error: () => {} });
+    }
   }
 
   isLoggedIn(): boolean {

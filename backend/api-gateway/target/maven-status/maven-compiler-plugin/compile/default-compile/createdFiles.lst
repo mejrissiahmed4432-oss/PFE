@@ -1,1 +1,5 @@
+com\example\apigateway\filter\AuthenticationFilter.class
 com\example\apigateway\ApiGatewayApplication.class
+com\example\apigateway\filter\AuthenticationFilter$Config.class
+com\example\apigateway\util\JwtUtil.class
+com\example\apigateway\filter\RouteValidator.class

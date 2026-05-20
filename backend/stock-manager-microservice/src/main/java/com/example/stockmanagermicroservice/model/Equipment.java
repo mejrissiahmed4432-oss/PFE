@@ -65,6 +65,31 @@ public class Equipment {
     private String allocatedToTechnicianId;
     private List<LifecycleEntry> lifecycle = new ArrayList<>();
 
+    // ── IT Manager Assignment Fields ──────────────────────────────
+    /** IDs of users this equipment is assigned to (IT Manager assignment) */
+    private List<String> itAssignedUserIds = new ArrayList<>();
+
+    /** Names of users this equipment is assigned to */
+    private List<String> itAssignedUserNames = new ArrayList<>();
+
+    /** Department ID if equipment is shared-assigned to a department */
+    private String itAssignedDepartmentId;
+
+    /** Department name if equipment is shared-assigned to a department */
+    private String itAssignedDepartmentName;
+
+    /** When the IT Manager performed the last assignment */
+    private LocalDateTime itAssignedAt;
+
+    /** True if the IT Manager has requested a return to stock */
+    private Boolean returnRequested = false;
+
+    /** Note explaining why the equipment is being returned */
+    private String returnNote;
+
+    /** When the return was requested */
+    private LocalDateTime returnRequestedAt;
+
     // Constructors
     public Equipment() {}
 
@@ -173,4 +198,29 @@ public class Equipment {
 
     public List<LifecycleEntry> getLifecycle() { return lifecycle; }
     public void setLifecycle(List<LifecycleEntry> lifecycle) { this.lifecycle = lifecycle; }
+
+    // ── IT Manager Assignment Getters/Setters ──────────────────────
+    public List<String> getItAssignedUserIds() { return itAssignedUserIds; }
+    public void setItAssignedUserIds(List<String> itAssignedUserIds) { this.itAssignedUserIds = itAssignedUserIds; }
+
+    public List<String> getItAssignedUserNames() { return itAssignedUserNames; }
+    public void setItAssignedUserNames(List<String> itAssignedUserNames) { this.itAssignedUserNames = itAssignedUserNames; }
+
+    public String getItAssignedDepartmentId() { return itAssignedDepartmentId; }
+    public void setItAssignedDepartmentId(String itAssignedDepartmentId) { this.itAssignedDepartmentId = itAssignedDepartmentId; }
+
+    public String getItAssignedDepartmentName() { return itAssignedDepartmentName; }
+    public void setItAssignedDepartmentName(String itAssignedDepartmentName) { this.itAssignedDepartmentName = itAssignedDepartmentName; }
+
+    public LocalDateTime getItAssignedAt() { return itAssignedAt; }
+    public void setItAssignedAt(LocalDateTime itAssignedAt) { this.itAssignedAt = itAssignedAt; }
+
+    public Boolean getReturnRequested() { return returnRequested; }
+    public void setReturnRequested(Boolean returnRequested) { this.returnRequested = returnRequested; }
+
+    public String getReturnNote() { return returnNote; }
+    public void setReturnNote(String returnNote) { this.returnNote = returnNote; }
+
+    public LocalDateTime getReturnRequestedAt() { return returnRequestedAt; }
+    public void setReturnRequestedAt(LocalDateTime returnRequestedAt) { this.returnRequestedAt = returnRequestedAt; }
 }

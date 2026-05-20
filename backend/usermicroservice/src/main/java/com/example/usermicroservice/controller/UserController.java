@@ -29,10 +29,12 @@ import com.example.usermicroservice.dto.ForgotPasswordRequest;
 import com.example.usermicroservice.dto.LoginRequest;
 import com.example.usermicroservice.dto.LoginResponse;
 import com.example.usermicroservice.dto.ResetPasswordRequest;
+import com.example.usermicroservice.model.RefreshToken;
 import com.example.usermicroservice.model.User;
 import com.example.usermicroservice.model.UserStatus;
 import com.example.usermicroservice.repository.UserRepository;
 import com.example.usermicroservice.service.EmailService;
+import com.example.usermicroservice.service.RefreshTokenService;
 
 import com.example.usermicroservice.config.WebSocketEventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -56,6 +58,9 @@ public class UserController {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -98,6 +103,7 @@ public class UserController {
                 ));
 
             String token = jwtUtils.generateToken(user.getEmail());
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
             return ResponseEntity.ok(new LoginResponse(
                     user.getId(),
                     user.getFirstName(),
@@ -106,10 +112,40 @@ public class UserController {
                     user.getRole(),
                     user.getPhoto(),
                     token,
+                    refreshToken.getToken(),
                     user.getPhoneNumber()));
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid email or password"));
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> request) {
+        String requestRefreshToken = request.get("refreshToken");
+        if (requestRefreshToken == null || requestRefreshToken.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Refresh token is required"));
+        }
+        return refreshTokenService.findByToken(requestRefreshToken)
+            .map(rt -> {
+                if (refreshTokenService.isExpired(rt)) {
+                    refreshTokenService.deleteByUserEmail(rt.getUserEmail());
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                            .body(Map.of("message", "Refresh token expired. Please log in again."));
+                }
+                String newAccessToken = jwtUtils.generateToken(rt.getUserEmail());
+                return ResponseEntity.ok(Map.of("token", newAccessToken));
+            })
+            .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid refresh token")));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        if (email != null) {
+            refreshTokenService.deleteByUserEmail(email);
+        }
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
     @PostMapping("/forgot-password")

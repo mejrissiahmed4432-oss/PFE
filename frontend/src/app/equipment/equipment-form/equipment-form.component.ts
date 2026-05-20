@@ -25,6 +25,7 @@ import * as QRCode from 'qrcode';
 export class EquipmentFormComponent implements OnInit, AfterViewInit {
   @Input() equipment: Equipment | null = null;
   @Input() viewOnly: boolean = false;
+  @Input() hideEdit: boolean = false;
   @Input() isAddSimilar: boolean = false;
   @Output() closeEvent = new EventEmitter<boolean>();
   @Output() viewOtherEvent = new EventEmitter<string>();
@@ -283,18 +284,18 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     const digits = '0123456789';
     let result = '';
 
-    // Generate exactly 10 random alphanumeric chars
+    // Generate exactly 15 random alphanumeric chars
     const chars = letters + digits;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 15; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
 
     // Ensure it's never just letters or just digits (force at least one of each)
     if (!/\d/.test(result)) {
-      result = result.substring(0, 9) + digits.charAt(Math.floor(Math.random() * digits.length));
+      result = result.substring(0, 14) + digits.charAt(Math.floor(Math.random() * digits.length));
     }
     if (!/[a-zA-Z]/.test(result)) {
-      result = result.substring(0, 9) + letters.charAt(Math.floor(Math.random() * letters.length));
+      result = result.substring(0, 14) + letters.charAt(Math.floor(Math.random() * letters.length));
     }
 
     this.formData.serialNumber = result;
@@ -325,7 +326,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   }
 
   private performSNUniquenessCheck(sn: string): void {
-    if (!sn || sn.length !== 10) return;
+    if (!sn || sn.length !== 15) return;
 
     this.isCheckingSN = true;
     const excludeId = this.equipment?.id || undefined;
@@ -345,7 +346,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   get isSNInvalidLength(): boolean {
     const sn = this.formData.serialNumber || '';
-    return sn.length > 0 && sn.length !== 10;
+    return sn.length > 0 && sn.length !== 15;
   }
 
   get isSNInvalidFormat(): boolean {
@@ -356,7 +357,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   get isSNMissingChars(): boolean {
     const sn = this.formData.serialNumber || '';
-    if (sn.length !== 10 || this.isSNInvalidFormat) return false;
+    if (sn.length !== 15 || this.isSNInvalidFormat) return false;
     return !/[a-zA-Z]/.test(sn) || !/\d/.test(sn);
   }
 
@@ -364,7 +365,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     const sn = this.formData.serialNumber || '';
     if (!sn) return false;
 
-    const hasExactLength = sn.length === 10;
+    const hasExactLength = sn.length === 15;
     const onlyAlphanumeric = /^[a-zA-Z0-9]+$/.test(sn);
     const hasLetter = /[a-zA-Z]/.test(sn);
     const hasDigit = /\d/.test(sn);

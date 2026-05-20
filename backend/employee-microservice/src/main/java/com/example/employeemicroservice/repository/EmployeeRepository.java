@@ -12,4 +12,6 @@ public interface EmployeeRepository extends MongoRepository<Employee, String> {
     Optional<Employee> findByEmail(String email);
     List<Employee> findByDepartment(String department);
     List<Employee> findByEmploymentStatus(String employmentStatus);
+    long countByDepartment(String department);
+    long countByEmploymentStatus(String employmentStatus);
 }

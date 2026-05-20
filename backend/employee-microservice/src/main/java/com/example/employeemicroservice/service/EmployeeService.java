@@ -3,6 +3,10 @@ package com.example.employeemicroservice.service;
 import com.example.employeemicroservice.model.Employee;
 import com.example.employeemicroservice.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +17,9 @@ public class EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
@@ -44,7 +51,32 @@ public class EmployeeService {
                     if (updatedEmployee.getUserId() != null) {
                         employee.setUserId(updatedEmployee.getUserId());
                     }
-                    return employeeRepository.save(employee);
+
+                    Employee savedEmployee = employeeRepository.save(employee);
+
+                    // Sync common fields to the users collection
+                    // Link via employeeId or email
+                    Criteria criteria = new Criteria().orOperator(
+                            Criteria.where("employeeId").is(savedEmployee.getId()),
+                            Criteria.where("email").is(savedEmployee.getEmail())
+                    );
+                    if (savedEmployee.getUserId() != null && !savedEmployee.getUserId().isEmpty()) {
+                        criteria = new Criteria().orOperator(
+                                Criteria.where("employeeId").is(savedEmployee.getId()),
+                                Criteria.where("email").is(savedEmployee.getEmail()),
+                                Criteria.where("_id").is(savedEmployee.getUserId())
+                        );
+                    }
+
+                    Query query = new Query(criteria);
+                    Update update = new Update()
+                            .set("firstName", savedEmployee.getFirstName())
+                            .set("lastName", savedEmployee.getLastName())
+                            .set("email", savedEmployee.getEmail())
+                            .set("phoneNumber", savedEmployee.getPhone());
+                    mongoTemplate.updateMulti(query, update, "users");
+
+                    return savedEmployee;
                 })
                 .orElseThrow(() -> new RuntimeException("Employee not found with id " + id));
     }

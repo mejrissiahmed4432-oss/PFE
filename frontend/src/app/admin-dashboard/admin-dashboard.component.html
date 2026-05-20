@@ -1,0 +1,380 @@
+<div class="admin-container">
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <div class="admin-header">
+    <div>
+      <h1 class="page-title">Admin Management Console</h1>
+      <p class="page-subtitle">Manage departments and human resources</p>
+    </div>
+    <div class="tab-switcher">
+      <button class="tab-btn" [class.active]="activeSubTab === 'departments'" (click)="activeSubTab = 'departments'">
+        <i class="fas fa-sitemap"></i> Departments
+      </button>
+      <button class="tab-btn" [class.active]="activeSubTab === 'employees'" (click)="activeSubTab = 'employees'">
+        <i class="fas fa-users"></i> Employees
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ DEPARTMENTS TAB ══════════════════════════════════════ -->
+  <div *ngIf="activeSubTab === 'departments'">
+    <div class="content-actions">
+      <div class="search-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" [(ngModel)]="deptSearch"
+          (ngModelChange)="filterDepts()" placeholder="Search departments...">
+      </div>
+      <button class="btn-add" (click)="openAddDeptForm()">
+        <i class="fas fa-plus"></i> Add Department
+      </button>
+    </div>
+
+    <div class="table-card">
+      <div class="loading-state" *ngIf="isDeptLoading">
+        <div class="spinner"></div>
+        <span>Loading departments...</span>
+      </div>
+      <div class="empty-state" *ngIf="!isDeptLoading && filteredDepartments.length === 0">
+        <div class="empty-icon">
+          <i class="fas fa-sitemap" style="font-size:1.8rem; color:#94a3b8;"></i>
+        </div>
+        <h3>No departments found</h3>
+        <p>Try adjusting your search or add a new department.</p>
+      </div>
+      <table class="main-table" *ngIf="!isDeptLoading && filteredDepartments.length > 0">
+        <thead>
+          <tr>
+            <th>Department</th>
+            <th>Head of Department</th>
+            <th>Employees</th>
+            <th>Created</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let dept of filteredDepartments" class="clickable" (click)="openDeptDetail(dept)">
+            <td>
+              <div class="dept-cell">
+                <div class="dept-icon" [style.background]="getDeptColor(dept.name)">{{ getDeptInitial(dept.name) }}</div>
+                <div>
+                  <div class="dept-name">{{ dept.name }}</div>
+                  <div class="dept-desc">{{ dept.description || 'No description' }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="head-badge">
+                <i class="fas fa-user-tie" style="font-size:0.7rem;"></i>
+                {{ dept.headOfDepartment || 'Unassigned' }}
+              </span>
+            </td>
+            <td>
+              <span class="count-badge" [class.empty]="!dept.employeeCount">
+                {{ dept.employeeCount || 0 }} employees
+              </span>
+            </td>
+            <td>{{ dept.createdAt | date:'mediumDate' }}</td>
+            <td class="text-right" (click)="$event.stopPropagation()">
+              <div class="action-btns">
+                <button class="action-btn edit-btn" (click)="openEditDeptForm(dept)" title="Edit">
+                  <i class="fas fa-pen" style="font-size:0.75rem;"></i>
+                </button>
+                <button class="action-btn delete-btn" (click)="confirmDeleteDept(dept)" title="Delete">
+                  <i class="fas fa-trash" style="font-size:0.75rem;"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ EMPLOYEES TAB ════════════════════════════════════════ -->
+  <div *ngIf="activeSubTab === 'employees'">
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <div><div class="stat-value">{{ totalEmployees }}</div><div class="stat-label">Total Staff</div></div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon" style="background:#f0fdf4; color:#10b981;"><i class="fas fa-check-circle"></i></div>
+        <div><div class="stat-value">{{ totalActive }}</div><div class="stat-label">Active</div></div>
+      </div>
+      <div class="stat-card yellow">
+        <div class="stat-icon" style="background:#fffbeb; color:#f59e0b;"><i class="fas fa-clock"></i></div>
+        <div><div class="stat-value">{{ totalOnLeave }}</div><div class="stat-label">On Leave</div></div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-icon" style="background:#fef2f2; color:#ef4444;"><i class="fas fa-user-slash"></i></div>
+        <div><div class="stat-value">{{ totalTerminated }}</div><div class="stat-label">Terminated</div></div>
+      </div>
+    </div>
+
+    <div class="content-actions">
+      <div class="filters-left">
+        <div class="search-wrapper">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-input" [(ngModel)]="empSearch"
+            (ngModelChange)="filterEmployees()" placeholder="Search employees...">
+        </div>
+        <select class="filter-select" [(ngModel)]="empFilterStatus" (change)="filterEmployees()">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="On Leave">On Leave</option>
+          <option value="Terminated">Terminated</option>
+        </select>
+        <select class="filter-select" [(ngModel)]="empFilterDept" (change)="filterEmployees()">
+          <option value="">All Departments</option>
+          <option *ngFor="let d of allDepartmentNames" [value]="d">{{ d }}</option>
+        </select>
+      </div>
+      <button class="btn-add" (click)="openAddEmpForm()">
+        <i class="fas fa-user-plus"></i> Add Employee
+      </button>
+    </div>
+
+    <div class="table-card">
+      <div class="loading-state" *ngIf="isEmpLoading">
+        <div class="spinner"></div>
+        <span>Loading employees...</span>
+      </div>
+      <div class="empty-state" *ngIf="!isEmpLoading && pagedEmployees.length === 0">
+        <div class="empty-icon">
+          <i class="fas fa-users" style="font-size:1.8rem; color:#94a3b8;"></i>
+        </div>
+        <h3>No employees found</h3>
+        <p>Try adjusting your filters or add a new employee.</p>
+      </div>
+      <table class="main-table" *ngIf="!isEmpLoading && pagedEmployees.length > 0">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Role & Department</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let emp of pagedEmployees">
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar" [style.background]="getDeptColor(emp.department)">{{ getEmpInitials(emp) }}</div>
+                <div>
+                  <div class="user-name">{{ emp.firstName }} {{ emp.lastName }}</div>
+                  <div class="user-email">{{ emp.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="role-text">{{ emp.jobTitle }}</div>
+              <div class="dept-text">{{ emp.department }}</div>
+            </td>
+            <td><span class="phone-text">{{ emp.phone || '—' }}</span></td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(emp.employmentStatus)">
+                {{ emp.employmentStatus }}
+              </span>
+            </td>
+            <td class="text-right">
+              <div class="action-btns">
+                <button class="action-btn view-btn" (click)="openViewEmp(emp)" title="View">
+                  <i class="fas fa-eye" style="font-size:0.75rem;"></i>
+                </button>
+                <button class="action-btn edit-btn" (click)="openEditEmpForm(emp)" title="Edit">
+                  <i class="fas fa-pen" style="font-size:0.75rem;"></i>
+                </button>
+                <button class="action-btn delete-btn" (click)="confirmDeleteEmp(emp)" title="Delete">
+                  <i class="fas fa-trash" style="font-size:0.75rem;"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination-bar" *ngIf="filteredEmployees.length > EMP_PAGE_SIZE">
+        <div class="pagination-info">
+          Showing {{ (empCurrentPage - 1) * EMP_PAGE_SIZE + 1 }} to
+          {{ minVal(empCurrentPage * EMP_PAGE_SIZE, filteredEmployees.length) }}
+          of {{ filteredEmployees.length }} employees
+        </div>
+        <div class="pagination-btns">
+          <button class="page-btn" [disabled]="empCurrentPage === 1" (click)="goToEmpPage(empCurrentPage - 1)">
+            <i class="fas fa-chevron-left" style="font-size:0.7rem;"></i>
+          </button>
+          <button *ngFor="let p of empPageNumbers" class="page-btn"
+            [class.active]="p === empCurrentPage" (click)="goToEmpPage(p)">{{ p }}</button>
+          <button class="page-btn" [disabled]="empCurrentPage === totalEmpPages" (click)="goToEmpPage(empCurrentPage + 1)">
+            <i class="fas fa-chevron-right" style="font-size:0.7rem;"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODALS ════════════════════════════════════════════════ -->
+
+<!-- Department Form -->
+<div class="modal-overlay" *ngIf="showDeptForm">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>{{ editingDept ? 'Edit Department' : 'Add Department' }}</h3>
+      <button class="close-btn" (click)="showDeptForm = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Department Name *</label>
+        <input type="text" class="form-input" [(ngModel)]="deptForm.name" placeholder="e.g. Engineering, Sales...">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea class="form-input" [(ngModel)]="deptForm.description"
+          placeholder="Briefly describe this department..." rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Head of Department</label>
+        <input type="text" class="form-input" [(ngModel)]="deptForm.headOfDepartment" placeholder="Manager name...">
+      </div>
+      <div class="error-msg" *ngIf="deptFormError">{{ deptFormError }}</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="showDeptForm = false">Cancel</button>
+      <button class="btn btn-primary" [disabled]="isSavingDept" (click)="saveDept()">
+        <span class="loader" *ngIf="isSavingDept"></span>
+        <span *ngIf="!isSavingDept">{{ editingDept ? 'Save Changes' : 'Create Department' }}</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Employee Form -->
+<div class="modal-overlay" *ngIf="showEmpForm">
+  <div class="modal-card wide">
+    <div class="modal-header">
+      <h3>{{ isEmpViewOnly ? 'Employee Details' : (editingEmp ? 'Edit Employee' : 'Add Employee') }}</h3>
+      <button class="close-btn" (click)="showEmpForm = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>First Name *</label>
+          <input type="text" class="form-input" [(ngModel)]="empForm.firstName" [readonly]="isEmpViewOnly">
+        </div>
+        <div class="form-group">
+          <label>Last Name *</label>
+          <input type="text" class="form-input" [(ngModel)]="empForm.lastName" [readonly]="isEmpViewOnly">
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" class="form-input" [(ngModel)]="empForm.email" [readonly]="isEmpViewOnly">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" class="form-input" [(ngModel)]="empForm.phone" [readonly]="isEmpViewOnly">
+        </div>
+        <div class="form-group">
+          <label>Job Title</label>
+          <input type="text" class="form-input" [(ngModel)]="empForm.jobTitle" [readonly]="isEmpViewOnly">
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <select class="form-input" [(ngModel)]="empForm.department" [disabled]="isEmpViewOnly">
+            <option value="">Select department...</option>
+            <option *ngFor="let d of departments" [value]="d.name">{{ d.name }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Employment Status</label>
+          <select class="form-input" [(ngModel)]="empForm.employmentStatus" [disabled]="isEmpViewOnly">
+            <option value="Active">Active</option>
+            <option value="On Leave">On Leave</option>
+            <option value="Terminated">Terminated</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>CIN</label>
+          <input type="text" class="form-input" [(ngModel)]="empForm.cin" [readonly]="isEmpViewOnly">
+        </div>
+      </div>
+      <div class="error-msg" *ngIf="empFormError">{{ empFormError }}</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="showEmpForm = false">{{ isEmpViewOnly ? 'Close' : 'Cancel' }}</button>
+      <button class="btn btn-primary" *ngIf="!isEmpViewOnly" [disabled]="isSavingEmp" (click)="saveEmp()">
+        <span class="loader" *ngIf="isSavingEmp"></span>
+        <span *ngIf="!isSavingEmp">{{ editingEmp ? 'Save Changes' : 'Create Employee' }}</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation -->
+<div class="modal-overlay" *ngIf="showDeptDelete || showEmpDelete">
+  <div class="modal-card small">
+    <div class="modal-body" style="text-align:center; padding:32px 24px;">
+      <div class="delete-icon-wrap">
+        <i class="fas fa-exclamation-triangle" style="font-size:1.5rem;"></i>
+      </div>
+      <h3 style="font-size:1.1rem; font-weight:800; color:#1e293b; margin:0 0 8px;">Are you sure?</h3>
+      <p style="font-size:0.875rem; color:#64748b; line-height:1.6; margin:0 0 20px;">
+        This action cannot be undone.
+        <span *ngIf="showDeptDelete">"{{ deptToDelete?.name }}" will be permanently deleted.</span>
+        <span *ngIf="showEmpDelete">This employee record will be permanently removed.</span>
+      </p>
+      <button class="btn btn-danger" style="width:100%; justify-content:center; margin-bottom:8px;"
+        (click)="showDeptDelete ? executeDeleteDept() : executeDeleteEmp()">Delete Permanently</button>
+      <button class="btn btn-secondary" style="width:100%; justify-content:center;"
+        (click)="showDeptDelete = false; showEmpDelete = false">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Department Detail Slide-Over -->
+<div class="slide-over-overlay" *ngIf="isDeptDetailOpen" (click)="closeDeptDetail()">
+  <div class="slide-over" (click)="$event.stopPropagation()">
+    <div class="slide-header" [style.background]="getDeptColor(selectedDept?.name || '')">
+      <button class="close-btn-white" (click)="closeDeptDetail()">✕</button>
+      <div style="margin-top:8px;">
+        <h2>{{ selectedDept?.name }}</h2>
+        <p>{{ selectedDept?.description || 'No description available' }}</p>
+      </div>
+    </div>
+    <div class="slide-body">
+      <div class="info-section">
+        <div class="info-item">
+          <span class="label">Head of Dept.</span>
+          <span class="value">{{ selectedDept?.headOfDepartment || 'Unassigned' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Created</span>
+          <span class="value">{{ selectedDept?.createdAt | date:'longDate' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Team Size</span>
+          <span class="value">{{ deptEmployees.length }} members</span>
+        </div>
+      </div>
+      <div class="team-section">
+        <h3>Team Members</h3>
+        <div class="member-list" *ngIf="deptEmployees.length > 0">
+          <div class="member-item" *ngFor="let e of deptEmployees">
+            <div class="member-avatar" [style.background]="getDeptColor(selectedDept?.name || '')">{{ getEmpInitials(e) }}</div>
+            <div style="flex:1;">
+              <div class="member-name">{{ e.firstName }} {{ e.lastName }}</div>
+              <div class="member-role">{{ e.jobTitle }}</div>
+            </div>
+            <div class="status-dot"
+              [style.background]="e.employmentStatus === 'Active' ? '#16a34a' : e.employmentStatus === 'On Leave' ? '#f59e0b' : '#ef4444'">
+            </div>
+          </div>
+        </div>
+        <div class="no-members" *ngIf="deptEmployees.length === 0">
+          No employees assigned to this department yet.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

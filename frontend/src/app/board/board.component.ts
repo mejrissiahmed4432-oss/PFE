@@ -32,10 +32,15 @@ import { EmployeeListComponent } from '../employee/employee-list/employee-list.c
 import { HrDashboardComponent } from '../hr-dashboard/hr-dashboard.component';
 
 import { UserManagementComponent } from '../user-management/user-management.component';
+import { AdminDashboardComponent } from '../admin-dashboard/admin-dashboard.component';
+import { TechnicianDepartmentsComponent } from '../technician-departments/technician-departments.component';
+import { TechnicianDevicesComponent } from '../technician-devices/technician-devices.component';
 
 import { ToastComponent } from '../shared/toast/toast.component';
 import { ProcurementComponent } from '../procurement/procurement.component';
 import { ProcurementService } from '../procurement/procurement.service';
+import { ItEquipmentManagementComponent } from '../it-equipment-management/it-equipment-management.component';
+import { EquipmentReturnsComponent } from '../equipment-returns/equipment-returns.component';
 
 
 @Component({
@@ -43,7 +48,7 @@ import { ProcurementService } from '../procurement/procurement.service';
   standalone: true,
 
 
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, UserManagementComponent, ToastComponent, ProcurementComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, UserManagementComponent, ToastComponent, ProcurementComponent, AdminDashboardComponent, TechnicianDepartmentsComponent, TechnicianDevicesComponent, ItEquipmentManagementComponent, EquipmentReturnsComponent],
 
 
 
@@ -56,9 +61,24 @@ export class BoardComponent implements OnInit {
   selectedLanguage: 'en' | 'fr' = 'en'; // Default is English
   isAssistantOpen: boolean = false;
   isSidebarCollapsed: boolean = false;
+  /** Department filter passed to TechnicianDevicesComponent (null = all depts) */
+  devicesDeptFilter: string | null = null;
+
+  /** Called when 'View All Devices' is clicked on a dept card */
+  onViewDevices(deptName: string): void {
+    this.devicesDeptFilter = deptName;
+    this.activeTab = 'devices';
+  }
+
+  /** Open devices with no filter (from sidebar) */
+  openAllDevices(): void {
+    this.devicesDeptFilter = null;
+    this.activeTab = 'devices';
+  }
   activeTab: string = 'dashboard'; // Defaulting to dashboard for view
   selectedNatureFilter: 'Asset' | 'Consumable' | '' = '';
   selectedResourceFilter: string = '';
+  selectedEqTab: 'available' | 'in-use' | 'history' = 'available';
   unreadAlertsCount: number = 0;
   unreadMessagesCount: number = 0;
   isDarkMode: boolean = false;
@@ -112,9 +132,11 @@ export class BoardComponent implements OnInit {
         this.router.navigate(['/login']);
       } else {
         if (this.user.role === 'TECHNICIAN') {
-          this.activeTab = 'tickets';
+          this.activeTab = 'departments';
         } else if (this.user.role === 'IT_MANAGER') {
           this.activeTab = 'user-management';
+        } else if (this.user.role === 'ADMIN') {
+          this.activeTab = 'admin-dashboard';
         }
         this.loadUnreadCount();
 
@@ -340,10 +362,15 @@ export class BoardComponent implements OnInit {
 
       case 'procurement': return 'Procurement & Orders';
 
+      case 'eq-management': return 'Equipment Management';
+      case 'eq-returns': return 'Equipment Returns';
+
 
       case 'tickets': return this.t('Tickets');
 
       case 'employees': return this.t('Employee Directory');
+
+      case 'admin-dashboard': return 'Admin Management Console';
 
       default: return 'Medina It Manage';
     }
@@ -353,6 +380,11 @@ export class BoardComponent implements OnInit {
     this.equipmentService.setShelfFilter(null, null);
     this.selectedNatureFilter = nature;
     this.activeTab = 'equipment';
+  }
+
+  setEqTab(tab: 'available' | 'in-use' | 'history'): void {
+    this.selectedEqTab = tab;
+    this.activeTab = 'eq-management';
   }
 
   setResourceFilter(filter: string): void {

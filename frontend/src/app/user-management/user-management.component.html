@@ -194,12 +194,12 @@
               <div class="emp-email">{{ u.email }}</div>
             </td>
             <td>
-              <span class="role-pill" [ngClass]="u.role?.toLowerCase() || 'unknown'">
+              <span class="role-pill" [ngClass]="u.role ? u.role.toLowerCase() : 'unknown'">
                 {{ getRoleLabel(u.role || '') }}
               </span>
             </td>
             <td>
-              <span class="status-badge" [ngClass]="u.status?.toLowerCase() || 'pending'">
+              <span class="status-badge" [ngClass]="u.status ? u.status.toLowerCase() : 'pending'">
                 {{ u.status || 'PENDING' }}
               </span>
             </td>
@@ -455,7 +455,7 @@
           <div class="input-group">
             <label>Status</label>
             <div class="status-box-container">
-              <span class="status-badge" [class]="selectedUserDetails.status?.toLowerCase() || 'pending'">{{
+              <span class="status-badge" [class]="selectedUserDetails.status ? selectedUserDetails.status.toLowerCase() : 'pending'">{{
                 selectedUserDetails.status || 'PENDING' }}</span>
             </div>
           </div>

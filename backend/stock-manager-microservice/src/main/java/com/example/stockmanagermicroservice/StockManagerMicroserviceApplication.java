@@ -2,23 +2,22 @@
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableScheduling
+@EnableDiscoveryClient
+@EnableFeignClients
 public class StockManagerMicroserviceApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(StockManagerMicroserviceApplication.class, args);
     }
 
-    @Bean
-    @org.springframework.cloud.client.loadbalancer.LoadBalanced
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
+
 
     @Bean
     public org.springframework.boot.CommandLineRunner logEndpoints(org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping mapping) {

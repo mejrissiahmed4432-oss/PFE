@@ -168,7 +168,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     // We group by SN to allow multiple concurrent debounced checks.
     // We use switchMap inside the group to cancel previous checks if the same SN is typed quickly.
     this.snSubject.pipe(
-      filter(data => !!data.sn && data.sn.length === 10),
+      filter(data => !!data.sn && data.sn.length === 15),
       groupBy(data => data.sn),
       mergeMap(group => group.pipe(
         debounceTime(500),
@@ -438,8 +438,8 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
 
   // ── Step 3 Serial handles ─────────────────────────────────────────────
   isValidSerialNumber(sn: string): boolean {
-    // Exactly 10 chars, alphanumeric, min 1 letter, min 1 digit
-    const regex = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{10}$/;
+    // Exactly 15 chars, alphanumeric, min 1 letter, min 1 digit
+    const regex = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{15}$/;
     return regex.test(sn || '');
   }
 
@@ -460,7 +460,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     allSNs.forEach((sn, idx) => {
       if (!sn || sn.length === 0) return;
 
-      if (sn.length === 10 && this.isValidSerialNumber(sn)) {
+      if (sn.length === 15 && this.isValidSerialNumber(sn)) {
         // Check for internal duplicates in current batch
         const count = allSNs.filter(s => s === sn).length;
         if (count > 1) {
@@ -507,17 +507,17 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     const all = letters + digits;
     let result = '';
 
-    // Exactly 10 random alphanumeric chars
-    for (let i = 0; i < 10; i++) {
+    // Exactly 15 random alphanumeric chars
+    for (let i = 0; i < 15; i++) {
       result += all.charAt(Math.floor(Math.random() * all.length));
     }
 
     // Ensure at least one letter and one digit
     if (!/\d/.test(result)) {
-      result = result.substring(0, 9) + digits.charAt(Math.floor(Math.random() * digits.length));
+      result = result.substring(0, 14) + digits.charAt(Math.floor(Math.random() * digits.length));
     }
     if (!/[a-zA-Z]/.test(result)) {
-      result = result.substring(0, 9) + letters.charAt(Math.floor(Math.random() * letters.length));
+      result = result.substring(0, 14) + letters.charAt(Math.floor(Math.random() * letters.length));
     }
 
     return result;

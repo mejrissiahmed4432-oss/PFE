@@ -1,0 +1,151 @@
+/* ── Page ─────────────────────────────────────────────────── */
+.page-wrap { padding:24px; animation:fadeUp .3s ease-out; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+.page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.page-title  { font-size:1.5rem; font-weight:800; color:#1e293b; margin:0; }
+.page-sub    { font-size:.85rem; color:#64748b; margin:3px 0 0; }
+
+.ws-pill { display:inline-flex; align-items:center; gap:7px; padding:6px 14px; border-radius:20px; font-size:.78rem; font-weight:700; background:#f1f5f9; color:#94a3b8; }
+.ws-pill.connected { background:#dcfce7; color:#166534; }
+.ws-dot-inner { width:8px; height:8px; border-radius:50%; background:currentColor; animation:wsPulse 1.4s infinite; }
+@keyframes wsPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ── Filters ──────────────────────────────────────────────── */
+.filters-bar { display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+.search-wrap { position:relative; display:flex; align-items:center; }
+.si  { position:absolute; left:12px; color:#94a3b8; font-size:.85rem; }
+.search-input { padding:10px 14px 10px 36px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:.88rem; color:#1e293b; background:#f8fafc; width:260px; outline:none; transition:all .2s; font-family:inherit; }
+.search-input:focus { border-color:#3b82f6; background:white; box-shadow:0 0 0 3px rgba(59,130,246,.1); }
+.filter-select { padding:10px 14px; border:1.5px solid #e2e8f0; border-radius:12px; font-size:.88rem; color:#1e293b; background:white; outline:none; cursor:pointer; font-family:inherit; }
+.dv-meta { display:flex; justify-content:space-between; font-size:.8rem; color:#64748b; margin-bottom:14px; }
+.dv-meta b { color:#1e293b; }
+.last-updated-text { font-size:.74rem; color:#94a3b8; }
+
+/* ── Table ────────────────────────────────────────────────── */
+.dv-table-container { background:white; border:1px solid #e2e8f0; border-radius:16px; overflow-x:auto; box-shadow:0 2px 8px rgba(0,0,0,.04); }
+.premium-table { width:100%; border-collapse:separate; border-spacing:0; min-width:950px; }
+.premium-table th { background:#f8fafc; padding:13px 16px; text-align:left; font-size:.68rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:.06em; border-bottom:2px solid #e2e8f0; white-space:nowrap; }
+.premium-table td { padding:14px 16px; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
+.premium-table tr:last-child td { border-bottom:none; }
+.premium-table tbody tr:hover { background:#f8fafc; }
+.th-sort { cursor:pointer; user-select:none; }
+.th-sort:hover { color:#3b82f6; }
+.td-empty { text-align:center; padding:56px; color:#94a3b8; }
+
+.dv-name-cell { display:flex; align-items:center; gap:10px; }
+.dv-avatar { width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; color:white; font-size:.78rem; }
+.dv-hostname { font-size:.88rem; font-weight:700; color:#1e293b; }
+.dv-brand    { font-size:.72rem; color:#94a3b8; }
+.dept-chip   { font-size:.82rem; font-weight:700; }
+.mono-bold   { font-family:monospace; font-weight:700; color:#1e293b; font-size:.82rem; }
+.mono-gray   { color:#cbd5e1; }
+.net-text    { font-size:.8rem; color:#64748b; }
+
+.metric-cell { display:flex; align-items:center; gap:8px; min-width:90px; }
+.metric-bar-track { flex:1; height:6px; background:#f1f5f9; border-radius:3px; overflow:hidden; }
+.metric-bar-fill  { height:100%; border-radius:3px; transition:width .6s ease; }
+.metric-val { font-size:.75rem; font-weight:800; white-space:nowrap; }
+
+.status-badge { display:inline-flex; align-items:center; gap:5px; padding:5px 11px; border-radius:20px; font-size:.72rem; font-weight:700; white-space:nowrap; }
+.status-badge.lg { font-size:.82rem; padding:7px 16px; }
+.sbdot { width:7px; height:7px; border-radius:50%; }
+.badge-up      { background:#dcfce7; color:#166534; } .badge-up      .sbdot { background:#16a34a; }
+.badge-warning { background:#ffedd5; color:#9a3412; } .badge-warning .sbdot { background:#f97316; }
+.badge-down    { background:#fee2e2; color:#991b1b; } .badge-down    .sbdot { background:#ef4444; }
+.badge-unknown { background:#f1f5f9; color:#64748b; } .badge-unknown .sbdot { background:#94a3b8; }
+
+.actions-wrap { display:flex; gap:6px; }
+.action-icon { background:transparent; border:none; color:#94a3b8; padding:6px; border-radius:8px; cursor:pointer; display:flex; align-items:center; transition:all .2s; }
+.action-icon:hover,.action-icon.view:hover { background:#eff6ff; color:#3b82f6; }
+
+.loading-state { display:flex; align-items:center; gap:14px; padding:56px; color:#94a3b8; justify-content:center; }
+.spinner { width:26px; height:26px; border:3px solid rgba(59,130,246,.15); border-top-color:#3b82f6; border-radius:50%; animation:spin .8s linear infinite; flex-shrink:0; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+.table-row-animate { animation:fadeInRow .25s ease forwards; opacity:0; }
+@keyframes fadeInRow { from{opacity:0;transform:translateX(6px)} to{opacity:1;transform:translateX(0)} }
+
+/* ── Detail Back ──────────────────────────────────────────── */
+.detail-back-row { margin-bottom:16px; }
+.btn-back { display:inline-flex; align-items:center; gap:6px; background:white; border:1.5px solid #e2e8f0; border-radius:10px; padding:8px 16px; color:#3b82f6; font-weight:700; font-size:.85rem; cursor:pointer; transition:all .2s; font-family:inherit; }
+.btn-back:hover { border-color:#3b82f6; background:#eff6ff; }
+
+/* ── Device Info Card ─────────────────────────────────────── */
+.detail-info-card { background:white; border:1.5px solid #e2e8f0; border-radius:16px; padding:24px 28px; display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,.04); gap:24px; flex-wrap:wrap; }
+.dic-hostname { font-size:1.6rem; font-weight:800; color:#1e293b; margin-bottom:12px; }
+.dic-meta-row { display:flex; flex-wrap:wrap; gap:16px 28px; }
+.dic-meta-item { display:flex; align-items:center; gap:6px; font-size:.85rem; color:#475569; }
+.dic-label { color:#94a3b8; font-size:.8rem; }
+.dic-mono  { font-family:monospace; color:#3b82f6; font-weight:600; font-size:.82rem; }
+.dic-right { display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+.dic-agent-info { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+.dic-agent-pill { background:#f1f5f9; color:#64748b; font-size:.75rem; padding:4px 10px; border-radius:20px; font-weight:600; }
+.dic-last-seen  { font-size:.72rem; color:#94a3b8; }
+
+/* ── Monitoring Panel ─────────────────────────────────────── */
+.detail-monitoring-card { background:white; border:1.5px solid #e2e8f0; border-radius:16px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.04); }
+
+/* Tabs */
+.mon-tabs { display:flex; border-bottom:2px solid #e2e8f0; padding:0 20px; }
+.mon-tab  { background:none; border:none; padding:14px 18px; font-size:.88rem; font-weight:600; color:#64748b; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .2s; font-family:inherit; }
+.mon-tab:hover { color:#3b82f6; }
+.mon-tab.active { color:#3b82f6; border-bottom-color:#3b82f6; }
+
+.mon-content { padding:28px; }
+
+/* Overview */
+.overview-metrics { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:28px; }
+.ov-metric { display:flex; flex-direction:column; gap:8px; padding:18px; border-radius:14px; border:1.5px solid #e2e8f0; }
+.ov-metric.blue   { background:#eff6ff; border-color:#bfdbfe; }
+.ov-metric.purple { background:#f5f3ff; border-color:#ddd6fe; }
+.ov-metric.green  { background:#f0fdf4; border-color:#bbf7d0; }
+.ov-metric.orange { background:#fff7ed; border-color:#fed7aa; }
+.ov-metric.cyan   { background:#ecfeff; border-color:#a5f3fc; }
+.ov-metric.red    { background:#fef2f2; border-color:#fecaca; }
+.ov-label { font-size:.75rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.04em; }
+.ov-val   { font-size:1.8rem; font-weight:800; color:#1e293b; line-height:1; }
+.net-val  { font-size:1.4rem !important; }
+
+.overview-charts { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.mini-chart-card { background:#f8fafc; border-radius:14px; padding:16px; border:1px solid #e2e8f0; }
+.mc-title { font-size:.85rem; font-weight:700; color:#1e293b; margin-bottom:10px; }
+.mc-svg   { width:100%; height:120px; display:block; }
+.mc-legend { display:flex; align-items:center; gap:6px; font-size:.72rem; color:#64748b; margin-top:8px; }
+.mc-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+/* Full charts (CPU, Memory, Disk history) */
+.tab-chart .chart-header { margin-bottom:20px; }
+.chart-title { font-size:1rem; font-weight:700; color:#1e293b; }
+.chart-sub   { font-size:.82rem; color:#64748b; margin-top:4px; }
+
+.chart-area { display:flex; gap:12px; }
+.y-labels { display:flex; flex-direction:column; justify-content:space-between; font-size:.7rem; color:#94a3b8; width:30px; text-align:right; padding:4px 0; }
+.chart-plot { flex:1; display:flex; flex-direction:column; }
+.full-svg { width:100%; height:200px; display:block; }
+.x-labels { display:flex; justify-content:space-between; font-size:.68rem; color:#94a3b8; padding-top:6px; }
+.chart-legend { display:flex; align-items:center; gap:6px; font-size:.75rem; color:#64748b; margin-top:14px; }
+
+/* Disk */
+.disk-drives { display:flex; flex-direction:column; gap:16px; margin-top:20px; }
+.disk-drive-card { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px 20px; }
+.ddc-header { display:flex; justify-content:space-between; margin-bottom:10px; }
+.ddc-name { font-size:.9rem; font-weight:700; color:#1e293b; }
+.ddc-size { font-size:.8rem; color:#64748b; }
+.ddc-bar-track { height:10px; background:#e2e8f0; border-radius:5px; overflow:hidden; margin-bottom:6px; }
+.ddc-bar-fill  { height:100%; border-radius:5px; transition:width .6s ease; }
+.ddc-pct { font-size:.75rem; color:#94a3b8; }
+.disk-history-chart .chart-title { margin-bottom:16px; }
+
+/* Network */
+.network-stat-card { display:flex; align-items:center; gap:20px; background:#fff7ed; border:1.5px solid #fed7aa; border-radius:14px; padding:24px; margin-top:16px; width:fit-content; }
+.nsc-label { font-size:.8rem; color:#64748b; font-weight:600; }
+.nsc-val   { font-size:1.6rem; font-weight:800; color:#f97316; margin-top:4px; }
+
+/* Processes (dark theme chart) */
+.proc-dark { background:#111827; border-radius:12px; padding:12px 16px; }
+.proc-y span { color:#6b7280 !important; }
+.proc-x span { color:#6b7280; }
+.proc-legend { margin-top:10px; }
+
+.no-history { display:flex; align-items:center; justify-content:center; gap:14px; padding:60px; color:#94a3b8; }
