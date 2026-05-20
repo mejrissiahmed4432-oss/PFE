@@ -1,140 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/surfaceColor"
-    android:padding="16dp">
+    android:background="@color/surfaceColor">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="My Allocated Parts"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/textPrimary"
-        android:layout_marginBottom="4dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Parts allocated to you for installation"
-        android:textSize="12sp"
-        android:textColor="@color/textSecondary"
-        android:layout_marginBottom="16dp"/>
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none">
+        android:orientation="vertical"
+        android:padding="16dp">
 
+        <!-- Header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My Allocated Parts"
+            android:textColor="@color/textPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View parts allocated to you or submit a new part request"
+            android:textColor="@color/textSecondary"
+            android:textSize="12sp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Search Bar and Toggle Filters -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
 
-            <!-- Part item 1 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
+            <EditText
+                android:id="@+id/etSearchParts"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:hint="Search parts by name, brand..."
+                android:textColorHint="@color/textHint"
+                android:textColor="@color/textPrimary"
+                android:textSize="14sp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:layout_marginEnd="8dp"/>
+
+            <ImageButton
+                android:id="@+id/btnToggleFilters"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:src="@drawable/ic_ai"
+                app:tint="@color/textPrimary"
                 android:background="@drawable/bg_card"
-                android:padding="16dp"
-                android:layout_marginBottom="12dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="⚙️"
-                    android:textSize="24sp"
-                    android:layout_marginEnd="16dp"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Crucial 8GB DDR4 RAM"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/textPrimary"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="S/N: CRU-DDR4-8G-091"
-                        android:textSize="11sp"
-                        android:textColor="@color/textHint"/>
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ALLOCATED"
-                    android:textSize="9sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/badgeMaintenance"
-                    android:background="@drawable/bg_badge_maintenance"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"/>
-            </LinearLayout>
-
-            <!-- Part item 2 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/bg_card"
-                android:padding="16dp"
-                android:layout_marginBottom="12dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🔋"
-                    android:textSize="24sp"
-                    android:layout_marginEnd="16dp"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Dell 65W AC Adapter"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/textPrimary"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="S/N: DELL-PWR-65W-441"
-                        android:textSize="11sp"
-                        android:textColor="@color/textHint"/>
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ALLOCATED"
-                    android:textSize="9sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/badgeMaintenance"
-                    android:background="@drawable/bg_badge_maintenance"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"/>
-            </LinearLayout>
-
+                android:contentDescription="Toggle Filters" />
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+
+        <!-- Dynamic Category/Type Filter Spinners (Hidden by default, toggles on click) -->
+        <LinearLayout
+            android:id="@+id/layoutFilterOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:layout_marginBottom="12dp">
+
+            <Spinner
+                android:id="@+id/spCategoryFilter"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginEnd="8dp"/>
+
+            <Spinner
+                android:id="@+id/spTypeFilter"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_input_field"/>
+        </LinearLayout>
+
+        <!-- Parts list area -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvParts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"/>
+
+            <LinearLayout
+                android:id="@+id/layoutEmptyParts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                android:padding="24dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No allocated parts found"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Submit a request to allocate new inventory components"
+                    android:textColor="@color/textSecondary"
+                    android:textSize="11sp"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"/>
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- Request Part Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabRequestPart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:text="Request Parts"
+        android:textColor="@color/white"
+        app:icon="@drawable/ic_check"
+        app:iconTint="@color/white"
+        app:backgroundTint="@color/colorPrimary"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

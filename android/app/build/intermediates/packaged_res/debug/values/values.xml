@@ -73,8 +73,10 @@
     <string name="login_title">Sign In</string>
     <string name="logout">Sign Out</string>
     <string name="medinaflux_platform">MEDINAFLUX PLATFORM</string>
+    <string name="nav_alerts">Alerts Log</string>
     <string name="nav_dashboard">Dashboard</string>
     <string name="nav_parts">Parts</string>
+    <string name="nav_profile">My Profile</string>
     <string name="nav_reports">Reports</string>
     <string name="nav_requests">Requests</string>
     <string name="nav_schedule">Schedule</string>

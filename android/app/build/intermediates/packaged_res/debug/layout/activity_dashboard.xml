@@ -10,91 +10,458 @@
     <!-- ═══════════════════════════════════════════════
          MAIN CONTENT AREA
     ═══════════════════════════════════════════════ -->
-    <LinearLayout
+    <!-- ═══════════════════════════════════════════════
+         MAIN CONTENT AREA
+    ═══════════════════════════════════════════════ -->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/surfaceColor">
+        android:layout_height="match_parent">
 
-        <!-- Top Bar -->
         <LinearLayout
-            android:id="@+id/topBar"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="4dp"
-            android:paddingEnd="16dp"
-            android:background="@color/topbarBg"
-            android:elevation="4dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/surfaceColor">
 
-            <!-- Hamburger / Menu Button -->
-            <ImageButton
-                android:id="@+id/btnOpenDrawer"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                android:src="@drawable/ic_menu"
-                android:contentDescription="Open menu"
-                android:tint="@color/textSecondary"/>
-
-            <!-- Page Title + Subtitle -->
+            <!-- Top Bar -->
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="4dp">
-
-                <TextView
-                    android:id="@+id/tvPageTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Support Tickets"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/textPrimary"
-                    android:fontFamily="sans-serif-medium"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/medinaflux_platform"
-                    android:textSize="10sp"
-                    android:textColor="@color/textHint"
-                    android:letterSpacing="0.08"/>
-            </LinearLayout>
-
-            <!-- User Avatar -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/topBar"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:paddingStart="4dp"
+                android:paddingEnd="16dp"
+                android:background="@color/topbarBg"
+                android:elevation="4dp">
 
-                <TextView
-                    android:id="@+id/tvUserAvatar"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:background="@drawable/bg_avatar"
-                    android:text="MM"/>
+                <!-- Hamburger / Menu Button -->
+                <ImageButton
+                    android:id="@+id/btnOpenDrawer"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_menu"
+                    android:contentDescription="Open menu"
+                    android:tint="@color/textSecondary"/>
 
+                <!-- Page Title + Subtitle -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="4dp">
+
+                    <TextView
+                        android:id="@+id/tvPageTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Support Tickets"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"
+                        android:fontFamily="sans-serif-medium"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/medinaflux_platform"
+                        android:textSize="10sp"
+                        android:textColor="@color/textHint"
+                        android:letterSpacing="0.08"/>
+                </LinearLayout>
+
+                <!-- Topbar Actions Container -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginEnd="8dp">
+
+                    <!-- AI Assistant -->
+                    <ImageButton
+                        android:id="@+id/btnAI"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_ai"
+                        android:tint="@color/textSecondary"
+                        android:scaleType="fitCenter"
+                        android:padding="6dp"
+                        android:contentDescription="AI assistant"
+                        android:layout_marginEnd="2dp" />
+
+                    <!-- Language Selector -->
+                    <ImageButton
+                        android:id="@+id/btnLanguage"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_language"
+                        android:tint="@color/textSecondary"
+                        android:scaleType="fitCenter"
+                        android:padding="6dp"
+                        android:contentDescription="Change Language"
+                        android:layout_marginEnd="2dp" />
+
+                    <!-- Dark Mode Toggle -->
+                    <ImageButton
+                        android:id="@+id/btnModeToggle"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_mode_toggle"
+                        android:tint="@color/textSecondary"
+                        android:scaleType="fitCenter"
+                        android:padding="6dp"
+                        android:contentDescription="Toggle Dark Mode"
+                        android:layout_marginEnd="2dp" />
+
+                    <!-- Alert Indicator with badge -->
+                    <FrameLayout
+                        android:id="@+id/btnAlertContainer"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="2dp">
+                        <ImageButton
+                            android:id="@+id/btnAlert"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_alert"
+                            android:tint="@color/textSecondary"
+                            android:scaleType="fitCenter"
+                            android:padding="6dp"
+                            android:contentDescription="Alerts" />
+                        <TextView
+                            android:id="@+id/tvAlertBadge"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:gravity="center"
+                            android:background="@drawable/bg_badge_red"
+                            android:textColor="@color/white"
+                            android:textSize="9sp"
+                            android:textStyle="bold"
+                            android:text="0"
+                            android:layout_gravity="top|end"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <!-- Notification bell with badge -->
+                    <FrameLayout
+                        android:id="@+id/btnNotificationContainer"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="2dp">
+                        <ImageButton
+                            android:id="@+id/btnNotification"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_notification"
+                            android:tint="@color/textSecondary"
+                            android:scaleType="fitCenter"
+                            android:padding="6dp"
+                            android:contentDescription="Notifications" />
+                        <TextView
+                            android:id="@+id/tvNotificationBadge"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:gravity="center"
+                            android:background="@drawable/bg_badge_red"
+                            android:textColor="@color/white"
+                            android:textSize="9sp"
+                            android:textStyle="bold"
+                            android:text="0"
+                            android:layout_gravity="top|end"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                </LinearLayout>
+
+                <!-- Clickable User Avatar Container -->
+                <LinearLayout
+                    android:id="@+id/layoutUserAvatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless">
+
+                    <TextView
+                        android:id="@+id/tvUserAvatar"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_avatar"
+                        android:text="MM"/>
+
+                </LinearLayout>
             </LinearLayout>
+
+            <!-- Fragment Container -->
+            <FrameLayout
+                android:id="@+id/fragmentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
         </LinearLayout>
 
-        <!-- Fragment Container -->
-        <FrameLayout
-            android:id="@+id/fragmentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+        <!-- FLOATING PROFILE DROPDOWN CARD -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/profileDropdownCard"
+            android:layout_width="230dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="58dp"
+            android:layout_marginEnd="12dp"
+            android:visibility="gone"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/white">
 
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <!-- User Profile Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:id="@+id/tvDropdownAvatar"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_avatar"
+                        android:text="MM"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="10dp">
+
+                        <TextView
+                            android:id="@+id/tvDropdownName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Morad Mejri"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/textPrimary"
+                            android:singleLine="true"/>
+
+                        <TextView
+                            android:id="@+id/tvDropdownEmail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="morad.mejri@medina.com"
+                            android:textSize="10sp"
+                            android:textColor="@color/textHint"
+                            android:singleLine="true"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider"
+                    android:layout_marginVertical="4dp"/>
+
+                <!-- Profile Item -->
+                <LinearLayout
+                    android:id="@+id/menuProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_mail"
+                        android:tint="@color/textSecondary" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="My Profile"
+                        android:textSize="13sp"
+                        android:textColor="@color/textPrimary"/>
+                </LinearLayout>
+
+                <!-- Settings Item -->
+                <LinearLayout
+                    android:id="@+id/menuSettings"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_nav_settings"
+                        android:tint="@color/textSecondary" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="Account Settings"
+                        android:textSize="13sp"
+                        android:textColor="@color/textPrimary"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider"
+                    android:layout_marginVertical="4dp"/>
+
+                <!-- Logout Item -->
+                <LinearLayout
+                    android:id="@+id/menuLogout"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sign Out"
+                        android:textSize="13sp"
+                        android:textColor="#ef4444"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- FLOATING NOTIFICATION DROPDOWN CARD -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/notificationDropdownCard"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="58dp"
+            android:layout_marginEnd="50dp"
+            android:visibility="gone"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Header Details -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:text="Notifications"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btnMarkAllRead"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:text="Mark all as read"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:clickable="true"
+                        android:focusable="true" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <!-- Notifications Scroll Container -->
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/layoutNotificationsList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <!-- Programmatically populated -->
+
+                    </LinearLayout>
+                </ScrollView>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/divider" />
+
+                <!-- Footer clear all button -->
+                <TextView
+                    android:id="@+id/btnClearAllNotifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:gravity="center"
+                    android:text="Clear All"
+                    android:textColor="@color/textSecondary"
+                    android:textSize="12sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </FrameLayout>
 
     <!-- ═══════════════════════════════════════════════
          NAVIGATION DRAWER (SIDEBAR)  — start edge

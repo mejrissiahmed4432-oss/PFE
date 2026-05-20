@@ -1,0 +1,34 @@
+package com.medina.app.model;
+
+public class Shelf {
+    private String id;
+    private String nb;
+    private Integer maxQte;
+    private Integer minQte;
+    private Integer currentQte;
+    private String status;
+    private String equipmentType;
+
+    public Shelf() {}
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getNb() { return nb; }
+    public void setNb(String nb) { this.nb = nb; }
+
+    public Integer getMaxQte() { return maxQte; }
+    public void setMaxQte(Integer maxQte) { this.maxQte = maxQte; }
+
+    public Integer getMinQte() { return minQte; }
+    public void setMinQte(Integer minQte) { this.minQte = minQte; }
+
+    public Integer getCurrentQte() { return currentQte; }
+    public void setCurrentQte(Integer currentQte) { this.currentQte = currentQte; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getEquipmentType() { return equipmentType; }
+    public void setEquipmentType(String equipmentType) { this.equipmentType = equipmentType; }
+}

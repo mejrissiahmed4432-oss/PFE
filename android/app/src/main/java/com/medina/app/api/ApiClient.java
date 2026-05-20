@@ -23,17 +23,33 @@ public class ApiClient {
     private static final String BASE_URL = "http://192.168.0.140:8080/";
 
     private static Retrofit retrofit = null;
+    
+    // Static token variable loaded on launch/login
+    public static String authToken = null;
 
     public static Retrofit getClient() {
         if (retrofit == null) {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            OkHttpClient client = new OkHttpClient.Builder()
+            OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                     .addInterceptor(logging)
                     .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .build();
+                    .readTimeout(30, TimeUnit.SECONDS);
+
+            // Add dynamic authorization header interceptor
+            clientBuilder.addInterceptor(chain -> {
+                okhttp3.Request original = chain.request();
+                if (authToken != null && !authToken.isEmpty()) {
+                    okhttp3.Request request = original.newBuilder()
+                            .header("Authorization", "Bearer " + authToken)
+                            .build();
+                    return chain.proceed(request);
+                }
+                return chain.proceed(original);
+            });
+
+            OkHttpClient client = clientBuilder.build();
 
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)

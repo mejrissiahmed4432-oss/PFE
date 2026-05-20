@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="backgroundColor">#020617</color>
+    <color name="badgeAvailable">#34d399</color>
+    <color name="badgeAvailableBg">#064e3b</color>
+    <color name="badgeInstalled">#60a5fa</color>
+    <color name="badgeInstalledBg">#1e3a8a</color>
+    <color name="badgeMaintenance">#fbbf24</color>
+    <color name="badgeMaintenanceBg">#78350f</color>
+    <color name="badgeOpen">#f87171</color>
+    <color name="badgeOpenBg">#7f1d1d</color>
+    <color name="black">#ffffff</color>
+    <color name="cardBorder">#1e293b</color>
+    <color name="colorAccent">#60a5fa</color>
+    <color name="colorCyan">#0891b2</color>
+    <color name="colorPrimary">#3b82f6</color>
+    <color name="colorPrimaryVariant">#2563eb</color>
+    <color name="divider">#1e293b</color>
+    <color name="errorBackground">#7f1d1d</color>
+    <color name="errorBorder">#991b1b</color>
+    <color name="errorText">#f87171</color>
+    <color name="gradientEnd">#0891b2</color>
+    <color name="gradientStart">#2563eb</color>
+    <color name="inputBackground">#0f172a</color>
+    <color name="inputBorder">#1e293b</color>
+    <color name="inputBorderFocus">#3b82f6</color>
+    <color name="inputIcon">#64748b</color>
+    <color name="sidebarActiveItem">#3b82f6</color>
+    <color name="sidebarActiveShadow">#4D3b82f6</color>
+    <color name="sidebarBg">#0f172a</color>
+    <color name="sidebarBgEnd">#020617</color>
+    <color name="sidebarBorder">#1e293b</color>
+    <color name="sidebarSection">#64748b</color>
+    <color name="sidebarText">#94a3b8</color>
+    <color name="sidebarTextActive">#ffffff</color>
+    <color name="statCardOpen">#312e81</color>
+    <color name="statCardOpenEnd">#4c1d95</color>
+    <color name="statInProgress">#78350f</color>
+    <color name="statTesting">#064e3b</color>
+    <color name="statWaiting">#581c87</color>
+    <color name="successBackground">#064e3b</color>
+    <color name="successText">#34d399</color>
+    <color name="surfaceColor">#0b1329</color>
+    <color name="textHint">#64748b</color>
+    <color name="textLink">#60a5fa</color>
+    <color name="textPrimary">#f8fafc</color>
+    <color name="textSecondary">#94a3b8</color>
+    <color name="topbarBg">#0f172a</color>
+    <color name="topbarBorder">#1e293b</color>
+    <color name="topbarShadow">#22000000</color>
+    <color name="white">#0f172a</color>
+    <color name="white10">#1AFFFFFF</color>
+    <color name="white20">#33FFFFFF</color>
+    <color name="white5">#0DFFFFFF</color>
+    <style name="TextAppearance.Medina.Input" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    <style name="TextAppearance.Medina.Label" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.Medina.Subtitle" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.Medina.Title" parent="TextAppearance.AppCompat.Display1">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:fontFamily">serif</item>
+    </style>
+    <style name="Theme.MedinaApp" parent="Theme.MaterialComponents.NoActionBar">
+        
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/white</item>
+        
+        <item name="colorSecondary">@color/colorAccent</item>
+        <item name="colorSecondaryVariant">@color/colorAccent</item>
+        <item name="colorOnSecondary">@color/black</item>
+        
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <item name="android:windowBackground">@color/backgroundColor</item>
+    </style>
+</resources>

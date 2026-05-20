@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
@@ -25,6 +26,33 @@ public final class ActivityDashboardBinding implements ViewBinding {
 
   @NonNull
   public final TextView badgeTickets;
+
+  @NonNull
+  public final ImageButton btnAI;
+
+  @NonNull
+  public final ImageButton btnAlert;
+
+  @NonNull
+  public final FrameLayout btnAlertContainer;
+
+  @NonNull
+  public final TextView btnClearAllNotifications;
+
+  @NonNull
+  public final ImageButton btnLanguage;
+
+  @NonNull
+  public final TextView btnMarkAllRead;
+
+  @NonNull
+  public final ImageButton btnModeToggle;
+
+  @NonNull
+  public final ImageButton btnNotification;
+
+  @NonNull
+  public final FrameLayout btnNotificationContainer;
 
   @NonNull
   public final ImageButton btnOpenDrawer;
@@ -72,6 +100,21 @@ public final class ActivityDashboardBinding implements ViewBinding {
   public final TextView labelTickets;
 
   @NonNull
+  public final LinearLayout layoutNotificationsList;
+
+  @NonNull
+  public final LinearLayout layoutUserAvatar;
+
+  @NonNull
+  public final LinearLayout menuLogout;
+
+  @NonNull
+  public final LinearLayout menuProfile;
+
+  @NonNull
+  public final LinearLayout menuSettings;
+
+  @NonNull
   public final LinearLayout navDashboard;
 
   @NonNull
@@ -102,7 +145,28 @@ public final class ActivityDashboardBinding implements ViewBinding {
   public final LinearLayout navTickets;
 
   @NonNull
+  public final CardView notificationDropdownCard;
+
+  @NonNull
+  public final CardView profileDropdownCard;
+
+  @NonNull
   public final LinearLayout topBar;
+
+  @NonNull
+  public final TextView tvAlertBadge;
+
+  @NonNull
+  public final TextView tvDropdownAvatar;
+
+  @NonNull
+  public final TextView tvDropdownEmail;
+
+  @NonNull
+  public final TextView tvDropdownName;
+
+  @NonNull
+  public final TextView tvNotificationBadge;
 
   @NonNull
   public final TextView tvPageTitle;
@@ -111,21 +175,42 @@ public final class ActivityDashboardBinding implements ViewBinding {
   public final TextView tvUserAvatar;
 
   private ActivityDashboardBinding(@NonNull DrawerLayout rootView, @NonNull TextView badgeTickets,
-      @NonNull ImageButton btnOpenDrawer, @NonNull DrawerLayout drawerLayout,
-      @NonNull FrameLayout fragmentContainer, @NonNull ImageView iconDashboard,
-      @NonNull ImageView iconParts, @NonNull ImageView iconReports, @NonNull ImageView iconRequests,
+      @NonNull ImageButton btnAI, @NonNull ImageButton btnAlert,
+      @NonNull FrameLayout btnAlertContainer, @NonNull TextView btnClearAllNotifications,
+      @NonNull ImageButton btnLanguage, @NonNull TextView btnMarkAllRead,
+      @NonNull ImageButton btnModeToggle, @NonNull ImageButton btnNotification,
+      @NonNull FrameLayout btnNotificationContainer, @NonNull ImageButton btnOpenDrawer,
+      @NonNull DrawerLayout drawerLayout, @NonNull FrameLayout fragmentContainer,
+      @NonNull ImageView iconDashboard, @NonNull ImageView iconParts,
+      @NonNull ImageView iconReports, @NonNull ImageView iconRequests,
       @NonNull ImageView iconSchedule, @NonNull ImageView iconTickets,
       @NonNull TextView labelDashboard, @NonNull TextView labelParts,
       @NonNull TextView labelReports, @NonNull TextView labelRequests,
       @NonNull TextView labelSchedule, @NonNull TextView labelTickets,
-      @NonNull LinearLayout navDashboard, @NonNull LinearLayout navDrawer,
-      @NonNull LinearLayout navItemsContainer, @NonNull LinearLayout navLogout,
-      @NonNull LinearLayout navParts, @NonNull LinearLayout navReports,
-      @NonNull LinearLayout navRequests, @NonNull LinearLayout navSchedule,
-      @NonNull LinearLayout navSettings, @NonNull LinearLayout navTickets,
-      @NonNull LinearLayout topBar, @NonNull TextView tvPageTitle, @NonNull TextView tvUserAvatar) {
+      @NonNull LinearLayout layoutNotificationsList, @NonNull LinearLayout layoutUserAvatar,
+      @NonNull LinearLayout menuLogout, @NonNull LinearLayout menuProfile,
+      @NonNull LinearLayout menuSettings, @NonNull LinearLayout navDashboard,
+      @NonNull LinearLayout navDrawer, @NonNull LinearLayout navItemsContainer,
+      @NonNull LinearLayout navLogout, @NonNull LinearLayout navParts,
+      @NonNull LinearLayout navReports, @NonNull LinearLayout navRequests,
+      @NonNull LinearLayout navSchedule, @NonNull LinearLayout navSettings,
+      @NonNull LinearLayout navTickets, @NonNull CardView notificationDropdownCard,
+      @NonNull CardView profileDropdownCard, @NonNull LinearLayout topBar,
+      @NonNull TextView tvAlertBadge, @NonNull TextView tvDropdownAvatar,
+      @NonNull TextView tvDropdownEmail, @NonNull TextView tvDropdownName,
+      @NonNull TextView tvNotificationBadge, @NonNull TextView tvPageTitle,
+      @NonNull TextView tvUserAvatar) {
     this.rootView = rootView;
     this.badgeTickets = badgeTickets;
+    this.btnAI = btnAI;
+    this.btnAlert = btnAlert;
+    this.btnAlertContainer = btnAlertContainer;
+    this.btnClearAllNotifications = btnClearAllNotifications;
+    this.btnLanguage = btnLanguage;
+    this.btnMarkAllRead = btnMarkAllRead;
+    this.btnModeToggle = btnModeToggle;
+    this.btnNotification = btnNotification;
+    this.btnNotificationContainer = btnNotificationContainer;
     this.btnOpenDrawer = btnOpenDrawer;
     this.drawerLayout = drawerLayout;
     this.fragmentContainer = fragmentContainer;
@@ -141,6 +226,11 @@ public final class ActivityDashboardBinding implements ViewBinding {
     this.labelRequests = labelRequests;
     this.labelSchedule = labelSchedule;
     this.labelTickets = labelTickets;
+    this.layoutNotificationsList = layoutNotificationsList;
+    this.layoutUserAvatar = layoutUserAvatar;
+    this.menuLogout = menuLogout;
+    this.menuProfile = menuProfile;
+    this.menuSettings = menuSettings;
     this.navDashboard = navDashboard;
     this.navDrawer = navDrawer;
     this.navItemsContainer = navItemsContainer;
@@ -151,7 +241,14 @@ public final class ActivityDashboardBinding implements ViewBinding {
     this.navSchedule = navSchedule;
     this.navSettings = navSettings;
     this.navTickets = navTickets;
+    this.notificationDropdownCard = notificationDropdownCard;
+    this.profileDropdownCard = profileDropdownCard;
     this.topBar = topBar;
+    this.tvAlertBadge = tvAlertBadge;
+    this.tvDropdownAvatar = tvDropdownAvatar;
+    this.tvDropdownEmail = tvDropdownEmail;
+    this.tvDropdownName = tvDropdownName;
+    this.tvNotificationBadge = tvNotificationBadge;
     this.tvPageTitle = tvPageTitle;
     this.tvUserAvatar = tvUserAvatar;
   }
@@ -186,6 +283,60 @@ public final class ActivityDashboardBinding implements ViewBinding {
       id = R.id.badgeTickets;
       TextView badgeTickets = ViewBindings.findChildViewById(rootView, id);
       if (badgeTickets == null) {
+        break missingId;
+      }
+
+      id = R.id.btnAI;
+      ImageButton btnAI = ViewBindings.findChildViewById(rootView, id);
+      if (btnAI == null) {
+        break missingId;
+      }
+
+      id = R.id.btnAlert;
+      ImageButton btnAlert = ViewBindings.findChildViewById(rootView, id);
+      if (btnAlert == null) {
+        break missingId;
+      }
+
+      id = R.id.btnAlertContainer;
+      FrameLayout btnAlertContainer = ViewBindings.findChildViewById(rootView, id);
+      if (btnAlertContainer == null) {
+        break missingId;
+      }
+
+      id = R.id.btnClearAllNotifications;
+      TextView btnClearAllNotifications = ViewBindings.findChildViewById(rootView, id);
+      if (btnClearAllNotifications == null) {
+        break missingId;
+      }
+
+      id = R.id.btnLanguage;
+      ImageButton btnLanguage = ViewBindings.findChildViewById(rootView, id);
+      if (btnLanguage == null) {
+        break missingId;
+      }
+
+      id = R.id.btnMarkAllRead;
+      TextView btnMarkAllRead = ViewBindings.findChildViewById(rootView, id);
+      if (btnMarkAllRead == null) {
+        break missingId;
+      }
+
+      id = R.id.btnModeToggle;
+      ImageButton btnModeToggle = ViewBindings.findChildViewById(rootView, id);
+      if (btnModeToggle == null) {
+        break missingId;
+      }
+
+      id = R.id.btnNotification;
+      ImageButton btnNotification = ViewBindings.findChildViewById(rootView, id);
+      if (btnNotification == null) {
+        break missingId;
+      }
+
+      id = R.id.btnNotificationContainer;
+      FrameLayout btnNotificationContainer = ViewBindings.findChildViewById(rootView, id);
+      if (btnNotificationContainer == null) {
         break missingId;
       }
 
@@ -275,6 +426,36 @@ public final class ActivityDashboardBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.layoutNotificationsList;
+      LinearLayout layoutNotificationsList = ViewBindings.findChildViewById(rootView, id);
+      if (layoutNotificationsList == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutUserAvatar;
+      LinearLayout layoutUserAvatar = ViewBindings.findChildViewById(rootView, id);
+      if (layoutUserAvatar == null) {
+        break missingId;
+      }
+
+      id = R.id.menuLogout;
+      LinearLayout menuLogout = ViewBindings.findChildViewById(rootView, id);
+      if (menuLogout == null) {
+        break missingId;
+      }
+
+      id = R.id.menuProfile;
+      LinearLayout menuProfile = ViewBindings.findChildViewById(rootView, id);
+      if (menuProfile == null) {
+        break missingId;
+      }
+
+      id = R.id.menuSettings;
+      LinearLayout menuSettings = ViewBindings.findChildViewById(rootView, id);
+      if (menuSettings == null) {
+        break missingId;
+      }
+
       id = R.id.navDashboard;
       LinearLayout navDashboard = ViewBindings.findChildViewById(rootView, id);
       if (navDashboard == null) {
@@ -335,9 +516,51 @@ public final class ActivityDashboardBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.notificationDropdownCard;
+      CardView notificationDropdownCard = ViewBindings.findChildViewById(rootView, id);
+      if (notificationDropdownCard == null) {
+        break missingId;
+      }
+
+      id = R.id.profileDropdownCard;
+      CardView profileDropdownCard = ViewBindings.findChildViewById(rootView, id);
+      if (profileDropdownCard == null) {
+        break missingId;
+      }
+
       id = R.id.topBar;
       LinearLayout topBar = ViewBindings.findChildViewById(rootView, id);
       if (topBar == null) {
+        break missingId;
+      }
+
+      id = R.id.tvAlertBadge;
+      TextView tvAlertBadge = ViewBindings.findChildViewById(rootView, id);
+      if (tvAlertBadge == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDropdownAvatar;
+      TextView tvDropdownAvatar = ViewBindings.findChildViewById(rootView, id);
+      if (tvDropdownAvatar == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDropdownEmail;
+      TextView tvDropdownEmail = ViewBindings.findChildViewById(rootView, id);
+      if (tvDropdownEmail == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDropdownName;
+      TextView tvDropdownName = ViewBindings.findChildViewById(rootView, id);
+      if (tvDropdownName == null) {
+        break missingId;
+      }
+
+      id = R.id.tvNotificationBadge;
+      TextView tvNotificationBadge = ViewBindings.findChildViewById(rootView, id);
+      if (tvNotificationBadge == null) {
         break missingId;
       }
 
@@ -353,12 +576,16 @@ public final class ActivityDashboardBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityDashboardBinding((DrawerLayout) rootView, badgeTickets, btnOpenDrawer,
-          drawerLayout, fragmentContainer, iconDashboard, iconParts, iconReports, iconRequests,
-          iconSchedule, iconTickets, labelDashboard, labelParts, labelReports, labelRequests,
-          labelSchedule, labelTickets, navDashboard, navDrawer, navItemsContainer, navLogout,
-          navParts, navReports, navRequests, navSchedule, navSettings, navTickets, topBar,
-          tvPageTitle, tvUserAvatar);
+      return new ActivityDashboardBinding((DrawerLayout) rootView, badgeTickets, btnAI, btnAlert,
+          btnAlertContainer, btnClearAllNotifications, btnLanguage, btnMarkAllRead, btnModeToggle,
+          btnNotification, btnNotificationContainer, btnOpenDrawer, drawerLayout, fragmentContainer,
+          iconDashboard, iconParts, iconReports, iconRequests, iconSchedule, iconTickets,
+          labelDashboard, labelParts, labelReports, labelRequests, labelSchedule, labelTickets,
+          layoutNotificationsList, layoutUserAvatar, menuLogout, menuProfile, menuSettings,
+          navDashboard, navDrawer, navItemsContainer, navLogout, navParts, navReports, navRequests,
+          navSchedule, navSettings, navTickets, notificationDropdownCard, profileDropdownCard,
+          topBar, tvAlertBadge, tvDropdownAvatar, tvDropdownEmail, tvDropdownName,
+          tvNotificationBadge, tvPageTitle, tvUserAvatar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

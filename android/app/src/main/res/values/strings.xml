@@ -43,6 +43,8 @@
     <string name="nav_requests">Requests</string>
     <string name="nav_tickets">Support Tickets</string>
     <string name="nav_settings">Account Settings</string>
+    <string name="nav_profile">My Profile</string>
+    <string name="nav_alerts">Alerts Log</string>
     <string name="logout">Sign Out</string>
     <string name="open_drawer">Open navigation drawer</string>
     <string name="close_drawer">Close navigation drawer</string>

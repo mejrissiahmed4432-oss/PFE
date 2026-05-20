@@ -33,7 +33,19 @@ public class LoginActivity extends AppCompatActivity {
     private boolean passwordVisible = false;
 
     @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+        android.content.SharedPreferences prefs = getSharedPreferences("medina_prefs", MODE_PRIVATE);
+        boolean isDark = prefs.getBoolean("dark_mode", false);
+        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+            isDark ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES 
+                   : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+        );
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 

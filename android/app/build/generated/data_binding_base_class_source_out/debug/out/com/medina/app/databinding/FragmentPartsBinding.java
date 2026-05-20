@@ -4,25 +4,69 @@ package com.medina.app.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
+import androidx.viewbinding.ViewBindings;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.medina.app.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
+import java.lang.String;
 
 public final class FragmentPartsBinding implements ViewBinding {
   @NonNull
-  private final LinearLayout rootView;
+  private final CoordinatorLayout rootView;
 
-  private FragmentPartsBinding(@NonNull LinearLayout rootView) {
+  @NonNull
+  public final ImageButton btnToggleFilters;
+
+  @NonNull
+  public final EditText etSearchParts;
+
+  @NonNull
+  public final ExtendedFloatingActionButton fabRequestPart;
+
+  @NonNull
+  public final LinearLayout layoutEmptyParts;
+
+  @NonNull
+  public final LinearLayout layoutFilterOptions;
+
+  @NonNull
+  public final RecyclerView rvParts;
+
+  @NonNull
+  public final Spinner spCategoryFilter;
+
+  @NonNull
+  public final Spinner spTypeFilter;
+
+  private FragmentPartsBinding(@NonNull CoordinatorLayout rootView,
+      @NonNull ImageButton btnToggleFilters, @NonNull EditText etSearchParts,
+      @NonNull ExtendedFloatingActionButton fabRequestPart, @NonNull LinearLayout layoutEmptyParts,
+      @NonNull LinearLayout layoutFilterOptions, @NonNull RecyclerView rvParts,
+      @NonNull Spinner spCategoryFilter, @NonNull Spinner spTypeFilter) {
     this.rootView = rootView;
+    this.btnToggleFilters = btnToggleFilters;
+    this.etSearchParts = etSearchParts;
+    this.fabRequestPart = fabRequestPart;
+    this.layoutEmptyParts = layoutEmptyParts;
+    this.layoutFilterOptions = layoutFilterOptions;
+    this.rvParts = rvParts;
+    this.spCategoryFilter = spCategoryFilter;
+    this.spTypeFilter = spTypeFilter;
   }
 
   @Override
   @NonNull
-  public LinearLayout getRoot() {
+  public CoordinatorLayout getRoot() {
     return rootView;
   }
 
@@ -43,10 +87,63 @@ public final class FragmentPartsBinding implements ViewBinding {
 
   @NonNull
   public static FragmentPartsBinding bind(@NonNull View rootView) {
-    if (rootView == null) {
-      throw new NullPointerException("rootView");
-    }
+    // The body of this method is generated in a way you would not otherwise write.
+    // This is done to optimize the compiled bytecode for size and performance.
+    int id;
+    missingId: {
+      id = R.id.btnToggleFilters;
+      ImageButton btnToggleFilters = ViewBindings.findChildViewById(rootView, id);
+      if (btnToggleFilters == null) {
+        break missingId;
+      }
 
-    return new FragmentPartsBinding((LinearLayout) rootView);
+      id = R.id.etSearchParts;
+      EditText etSearchParts = ViewBindings.findChildViewById(rootView, id);
+      if (etSearchParts == null) {
+        break missingId;
+      }
+
+      id = R.id.fabRequestPart;
+      ExtendedFloatingActionButton fabRequestPart = ViewBindings.findChildViewById(rootView, id);
+      if (fabRequestPart == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutEmptyParts;
+      LinearLayout layoutEmptyParts = ViewBindings.findChildViewById(rootView, id);
+      if (layoutEmptyParts == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutFilterOptions;
+      LinearLayout layoutFilterOptions = ViewBindings.findChildViewById(rootView, id);
+      if (layoutFilterOptions == null) {
+        break missingId;
+      }
+
+      id = R.id.rvParts;
+      RecyclerView rvParts = ViewBindings.findChildViewById(rootView, id);
+      if (rvParts == null) {
+        break missingId;
+      }
+
+      id = R.id.spCategoryFilter;
+      Spinner spCategoryFilter = ViewBindings.findChildViewById(rootView, id);
+      if (spCategoryFilter == null) {
+        break missingId;
+      }
+
+      id = R.id.spTypeFilter;
+      Spinner spTypeFilter = ViewBindings.findChildViewById(rootView, id);
+      if (spTypeFilter == null) {
+        break missingId;
+      }
+
+      return new FragmentPartsBinding((CoordinatorLayout) rootView, btnToggleFilters, etSearchParts,
+          fabRequestPart, layoutEmptyParts, layoutFilterOptions, rvParts, spCategoryFilter,
+          spTypeFilter);
+    }
+    String missingId = rootView.getResources().getResourceName(id);
+    throw new NullPointerException("Missing required view with ID: ".concat(missingId));
   }
 }
