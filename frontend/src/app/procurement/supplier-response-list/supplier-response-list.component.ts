@@ -6,7 +6,7 @@ import { SupplierResponse, EquipmentRequest, RESPONSE_STATUS_META, SupplierRespo
 import { AiService } from '../../ai-assistant/ai.service';
 import { ToastService } from '../../shared/toast.service';
 import { forkJoin, from, of, Observable } from 'rxjs';
-import { map, catchError, mergeMap, toArray } from 'rxjs/operators';
+import { map, catchError, mergeMap } from 'rxjs/operators';
 
 interface GroupedResponses {
   requestId: string;
@@ -19,223 +19,8 @@ interface GroupedResponses {
   selector: 'app-supplier-response-list',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <div class="flex flex-col gap-10 animate-in fade-in duration-700 pb-12">
-      
-      <!-- HEADER -->
-      <div class="bg-white dark:bg-slate-900 p-10 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-2xl relative overflow-hidden transition-colors duration-300">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-teal-500/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
-        
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
-          <div class="flex items-center gap-6">
-            <div class="w-20 h-20 rounded-[2rem] flex items-center justify-center bg-teal-500/10 text-teal-600 dark:text-teal-400 shadow-inner border border-teal-500/20">
-              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            </div>
-            <div>
-              <h2 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Market Audit Center</h2>
-              <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1 italic">Vetting supplier quotations via AI Intelligence</p>
-            </div>
-          </div>
-          
-          <div class="flex items-center gap-2 p-1.5 bg-slate-100 dark:bg-black/40 rounded-[1.5rem] border border-slate-200 dark:border-white/5 shadow-inner">
-            <button (click)="showHistory = false" 
-                    [ngClass]="!showHistory ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                    class="px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all">Active Registry</button>
-            <button (click)="showHistory = true" 
-                    [ngClass]="showHistory ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                    class="px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all">Archive Log</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Loading -->
-      <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-[3rem] shadow-inner text-slate-400 gap-6">
-        <div class="w-16 h-16 border-4 border-teal-500/10 border-t-teal-500 rounded-full animate-spin"></div>
-        <p class="font-black uppercase tracking-[0.3em] text-[10px] animate-pulse">Syncing Vendor Payloads...</p>
-      </div>
-
-      <!-- Grouped List -->
-      <div *ngIf="!isLoading && displayedGroups.length > 0" class="flex flex-col gap-10">
-        <div *ngFor="let group of displayedGroups" 
-             class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-[3rem] overflow-hidden shadow-sm dark:shadow-2xl hover:shadow-xl dark:hover:shadow-[0_30px_70px_rgba(0,0,0,0.5)] transition-all duration-700 group/card">
-          
-          <!-- Group Header -->
-          <div class="p-10 bg-slate-50 dark:bg-white/2 border-b border-slate-200 dark:border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-8 relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-teal-500/5 to-transparent pointer-events-none"></div>
-            <div class="flex items-center gap-6 relative z-10">
-              <div class="w-14 h-14 rounded-2xl bg-white dark:bg-black/40 border border-slate-200 dark:border-white/10 flex items-center justify-center text-teal-600 dark:text-teal-400 shadow-inner group-hover/card:scale-110 transition-transform">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              </div>
-              <div>
-                <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">{{ group.requestTitle }}</h3>
-                <div class="flex items-center gap-4 mt-2">
-                  <span class="text-[10px] font-mono text-slate-400 dark:text-slate-500 font-bold tracking-tighter uppercase">ID: {{ (group.requestId || '').substring(0,8) }}</span>
-                  <span class="w-1 h-1 bg-slate-300 dark:bg-slate-700 rounded-full"></span>
-                  <span class="text-[10px] font-black text-teal-600 dark:text-teal-500 uppercase tracking-widest">{{ group.responses.length }} Payloads Received</span>
-                </div>
-              </div>
-            </div>
-            <div class="flex items-center gap-4 relative z-10">
-              <button class="px-8 py-4 bg-white dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 hover:bg-slate-900 dark:hover:bg-white hover:text-white dark:hover:text-black transition-all shadow-sm dark:shadow-xl active:scale-95" (click)="toggleGroup(group.requestId)">
-                {{ expandedGroups.has(group.requestId) ? 'Minimize' : 'Audit Quotes' }}
-              </button>
-            </div>
-          </div>
-
-          <!-- Group Body -->
-          <div *ngIf="expandedGroups.has(group.requestId)" class="p-10 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-white/5 animate-in fade-in zoom-in-95 duration-500">
-            
-            <!-- AI ANALYST -->
-            <div class="mb-12 group/ai relative overflow-hidden rounded-[2.5rem] border border-indigo-500/10 dark:border-indigo-500/20 bg-slate-50/50 dark:bg-black/40 p-10 shadow-inner">
-              <div class="absolute -right-20 -top-20 w-80 h-80 bg-indigo-600/5 rounded-full blur-[100px]"></div>
-              
-              <div class="flex flex-col md:flex-row items-center justify-between gap-10 mb-10 pb-10 border-b border-slate-200 dark:border-white/5 relative z-10">
-                <div class="flex items-center gap-6">
-                  <div class="w-16 h-16 rounded-[1.5rem] bg-indigo-600 text-white flex items-center justify-center shadow-2xl shadow-indigo-600/20 border border-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                  </div>
-                  <div>
-                    <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.3em]">AI Procurement Analyst</h3>
-                    <p class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-widest mt-1 italic opacity-70">Cross-Vendor Data Audit Node</p>
-                  </div>
-                </div>
-                <button (click)="runAIAnalysis(group)" 
-                        [disabled]="isAnalyzing[group.requestId]"
-                        class="w-full md:w-auto px-10 py-5 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl hover:bg-indigo-700 transition-all flex items-center justify-center gap-4 shadow-xl shadow-indigo-600/20 disabled:opacity-30 active:scale-95">
-                  <span *ngIf="isAnalyzing[group.requestId]" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                  {{ aiAnalysis[group.requestId] ? 'Refresh Intelligence' : 'Initialize Smart Audit' }}
-                </button>
-              </div>
-
-              <!-- AI Intelligence Panels -->
-              <div *ngIf="aiAnalysis[group.requestId]" class="animate-in slide-in-from-bottom-6 duration-700 relative z-10">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                  <div class="lg:col-span-2 flex flex-col gap-8">
-                    <div class="p-8 bg-white dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] shadow-sm">
-                      <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.3em] mb-4 opacity-70">Audit Reasoning & Neural Logic</p>
-                      <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-bold italic text-justify opacity-90">
-                        "{{ aiAnalysis[group.requestId].reasoning }}"
-                      </p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div class="p-6 bg-emerald-500/5 border border-emerald-500/10 dark:border-emerald-500/20 rounded-[2rem] shadow-sm">
-                        <p class="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                          Network Pros
-                        </p>
-                        <ul class="space-y-3">
-                          <li *ngFor="let pro of aiAnalysis[group.requestId].keyPros" class="text-xs text-slate-600 dark:text-slate-400 font-bold flex items-start gap-3">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span> {{ pro }}
-                          </li>
-                        </ul>
-                      </div>
-                      <div class="p-6 bg-rose-500/5 border border-rose-500/10 dark:border-rose-500/20 rounded-[2rem] shadow-sm">
-                        <p class="text-[9px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                          Risk Vectors
-                        </p>
-                        <ul class="space-y-3">
-                          <li *ngFor="let con of aiAnalysis[group.requestId].keyCons" class="text-xs text-slate-600 dark:text-slate-400 font-bold flex items-start gap-3">
-                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 shrink-0 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></span> {{ con }}
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="bg-slate-900 dark:bg-gradient-to-br dark:from-slate-950 dark:to-black rounded-[3rem] p-10 flex flex-col items-center justify-center text-center text-white border border-slate-700 dark:border-white/10 shadow-2xl relative overflow-hidden group/pick">
-                    <div class="absolute inset-0 bg-indigo-600/5 opacity-0 group-hover/pick:opacity-100 transition-opacity duration-700"></div>
-                    <p class="text-[9px] font-black text-slate-500 dark:text-slate-600 uppercase tracking-[0.4em] mb-6 relative z-10">Optimized selection</p>
-                    <div class="w-20 h-20 rounded-full bg-indigo-600 flex items-center justify-center mb-8 shadow-[0_0_40px_rgba(79,70,229,0.4)] border border-white/20 relative z-10">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                    </div>
-                    <div class="text-2xl font-black mb-4 tracking-tighter text-white relative z-10">{{ aiAnalysis[group.requestId].recommendedSupplier }}</div>
-                    <p class="text-xs text-indigo-300 font-bold italic opacity-80 leading-relaxed px-4 relative z-10">"{{ aiAnalysis[group.requestId].summary }}"</p>
-                  </div>
-                </div>
-              </div>
-
-              <div *ngIf="!aiAnalysis[group.requestId] && !isAnalyzing[group.requestId]" class="text-center py-10 relative z-10">
-                <p class="text-[10px] text-slate-400 dark:text-slate-600 font-black uppercase tracking-[0.4em] opacity-50">Intelligence buffer ready for processing</p>
-              </div>
-            </div>
-
-            <!-- RESPONSES TABLE -->
-            <div class="overflow-hidden rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-inner bg-slate-50/50 dark:bg-black/20">
-              <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="bg-white/50 dark:bg-white/2 border-b border-slate-200 dark:border-white/5">
-                  <th class="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Supplier Entity</th>
-                  <th class="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Pricing Payload</th>
-                  <th class="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-center">logistics</th>
-                  <th class="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Status</th>
-                  <th class="px-10 py-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">Commit Action</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-200 dark:divide-white/5">
-                <tr *ngFor="let resp of group.responses" 
-                    class="hover:bg-white dark:hover:bg-white/5 transition-all group/row" 
-                    [ngClass]="{'bg-indigo-600/5': resp.status === 'APPROVED_SUPPLIER'}">
-                  <td class="px-10 py-8">
-                    <div class="flex items-center gap-6">
-                      <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-black/60 text-slate-900 dark:text-white flex items-center justify-center font-black text-sm shadow-inner border border-slate-200 dark:border-white/10 group-hover/row:border-teal-500/30 transition-colors">
-                        {{ (resp.supplierName || '').substring(0,2).toUpperCase() }}
-                      </div>
-                      <div>
-                        <div class="text-sm font-black text-slate-900 dark:text-white tracking-tight">{{ resp.supplierName }}</div>
-                        <div class="text-[9px] text-slate-400 dark:text-slate-600 font-black uppercase tracking-[0.2em] mt-1 italic">Verified Network Vendor</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-10 py-8">
-                    <div class="text-base font-black text-slate-900 dark:text-white tracking-tight">{{ resp.totalPrice | number:'1.2-2' }} <span class="text-[10px] text-slate-500 uppercase font-black ml-1">{{ resp.currency }}</span></div>
-                    <div class="text-[9px] text-teal-600 dark:text-teal-400 font-black uppercase tracking-[0.2em] mt-2 opacity-70">Market Rate Verified</div>
-                  </td>
-                  <td class="px-10 py-8 text-center">
-                    <div class="inline-flex items-center gap-3 px-4 py-2 bg-white dark:bg-black/40 rounded-xl text-[10px] font-black text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-inner">
-                      <svg class="text-slate-400 dark:text-slate-600" xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                      {{ resp.deliveryDays }}D Lead Time
-                    </div>
-                  </td>
-                  <td class="px-10 py-8">
-                    <span class="px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-sm dark:shadow-2xl backdrop-blur-md border" [ngClass]="getRespMeta(resp.status).colorClass">
-                      {{ getRespMeta(resp.status).label }}
-                    </span>
-                  </td>
-                  <td class="px-10 py-8 text-right">
-                    <div class="flex items-center justify-end gap-4">
-                      <a [href]="viewUrl(resp.id!)" target="_blank" class="p-4 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-500 hover:text-white hover:bg-indigo-600 dark:hover:bg-indigo-600 hover:border-transparent rounded-2xl transition-all shadow-sm dark:shadow-xl group/btn" title="Inspect Documentation">
-                        <svg class="group-hover/btn:scale-110 transition-transform" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                      </a>
-                      
-                      <button *ngIf="resp.status === 'PENDING'" 
-                              (click)="approve(resp.id!)"
-                              class="px-6 py-4 bg-teal-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-teal-500 transition-all shadow-xl active:scale-95">
-                        Select Node
-                      </button>
-                      <button *ngIf="resp.status === 'APPROVED_SUPPLIER'" 
-                              (click)="createOrder.emit(resp)"
-                              class="px-6 py-4 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-indigo-700 transition-all shadow-xl active:scale-95">
-                        Issue Order
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Empty State -->
-      <div *ngIf="!isLoading && displayedGroups.length === 0" class="flex flex-col items-center justify-center py-40 bg-white dark:bg-slate-900 rounded-[4rem] border border-dashed border-slate-200 dark:border-white/10 shadow-inner">
-        <div class="w-24 h-24 bg-slate-100 dark:bg-black/40 text-slate-300 dark:text-slate-800 rounded-full flex items-center justify-center mb-8 border border-slate-200 dark:border-white/5">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" class="opacity-20" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </div>
-        <p class="text-slate-400 dark:text-slate-600 font-black uppercase tracking-[0.4em] text-xs opacity-50 italic">No Registry Entries Detected for {{ showHistory ? 'History' : 'Active Registry' }}</p>
-      </div>
-
-    </div>
-  `
+  templateUrl: './supplier-response-list.component.html',
+  styleUrls: ['./supplier-response-list.component.css']
 })
 export class SupplierResponseListComponent implements OnInit {
   @Output() createOrder = new EventEmitter<SupplierResponse>();
@@ -271,7 +56,6 @@ export class SupplierResponseListComponent implements OnInit {
 
   groupData(): void {
     const groupsMap = new Map<string, GroupedResponses>();
-
     this.responses.forEach(resp => {
       const rid = resp.requestId || 'Unknown';
       if (!groupsMap.has(rid)) {
@@ -285,7 +69,6 @@ export class SupplierResponseListComponent implements OnInit {
       }
       groupsMap.get(rid)?.responses.push(resp);
     });
-
     this.groupedResponses = Array.from(groupsMap.values());
     if (this.displayedGroups.length > 0 && this.expandedGroups.size === 0) {
       this.expandedGroups.add(this.displayedGroups[0].requestId);
@@ -317,7 +100,6 @@ export class SupplierResponseListComponent implements OnInit {
   runAIAnalysis(group: GroupedResponses): void {
     const requestId = group.requestId;
     this.isAnalyzing[requestId] = true;
-
     const pdfFetchObservables = group.responses.map(resp => {
       const url = this.viewUrl(resp.id!);
       return from(fetch(url).then(res => res.blob())).pipe(
@@ -326,7 +108,6 @@ export class SupplierResponseListComponent implements OnInit {
         catchError(() => of({ ...resp, pdfBase64: null }))
       );
     });
-
     forkJoin(pdfFetchObservables).subscribe(responsesWithPdf => {
       const request = this.requests.find(r => r.id === requestId);
       const payload = {
@@ -340,17 +121,9 @@ export class SupplierResponseListComponent implements OnInit {
           pdfBase64: resp.pdfBase64
         }))
       };
-
       this.aiService.compareQuotations(payload).subscribe({
-        next: (res) => {
-          this.aiAnalysis[requestId] = res;
-          this.isAnalyzing[requestId] = false;
-          this.toastService.success('Neural Audit Node Complete.');
-        },
-        error: () => {
-          this.isAnalyzing[requestId] = false;
-          this.toastService.error('AI Intelligence Node Unavailable.');
-        }
+        next: (res) => { this.aiAnalysis[requestId] = res; this.isAnalyzing[requestId] = false; this.toastService.success('Neural Audit Node Complete.'); },
+        error: () => { this.isAnalyzing[requestId] = false; this.toastService.error('AI Intelligence Node Unavailable.'); }
       });
     });
   }
@@ -371,13 +144,10 @@ export class SupplierResponseListComponent implements OnInit {
 
   getRespMeta(status?: SupplierResponseStatus) { 
     const meta = RESPONSE_STATUS_META[status || 'PENDING'];
-    
-    // Theme-aware color classes
     let colorClass = 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-white/10';
     if (status === 'APPROVED_SUPPLIER') colorClass = 'bg-teal-50 text-teal-600 border-teal-100 dark:bg-teal-500/10 dark:text-teal-400 dark:border-teal-500/20';
     if (status === 'REJECTED_SUPPLIER') colorClass = 'bg-rose-50 text-rose-600 border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20';
     if (status === 'PENDING') colorClass = 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20';
-    
     return { ...meta, colorClass };
   }
 }

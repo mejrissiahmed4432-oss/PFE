@@ -1,25 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Medina IT Manage</string>
-    <string name="login_title">Welcome Back</string>
-    <string name="login_subtitle">Sign in to your IT management portal</string>
-    <string name="forgot_password_title">Reset Password</string>
-    <string name="forgot_password_subtitle">Enter your email to receive a recovery link</string>
-    <string name="reset_password_title">Create New Password</string>
-    <string name="reset_password_subtitle">Please enter your new secure password</string>
-    <string name="label_email">EMAIL ADDRESS</string>
-    <string name="label_password">PASSWORD</string>
-    <string name="label_new_password">NEW PASSWORD</string>
-    <string name="label_confirm_password">CONFIRM NEW PASSWORD</string>
-    <string name="hint_email">Enter your email</string>
+    <string name="app_name">MedinaFlux</string>
+
+    <!-- ─── Login screen ─── -->
+    <string name="login_title">Sign In</string>
+    <string name="login_subtitle">Access your IT management platform</string>
+    <string name="label_email">Email Address</string>
+    <string name="hint_email">you@company.com</string>
+    <string name="label_password">Password</string>
     <string name="hint_password">Enter your password</string>
-    <string name="hint_new_password">Enter new password</string>
-    <string name="hint_confirm_password">Confirm new password</string>
-    <string name="btn_sign_in">Sign In</string>
-    <string name="btn_send_reset">Send Reset Link</string>
-    <string name="btn_update_password">Change Password</string>
     <string name="link_forgot_password">Forgot password?</string>
-    <string name="link_back_to_login">Back to Sign In</string>
-    <string name="link_cancel">Cancel &amp; Back to Sign In</string>
-    <string name="footer">© 2026 ITManage — Enterprise Equipment Management</string>
+    <string name="sign_in">SIGN IN</string>
+
+    <!-- ─── Forgot Password screen ─── -->
+    <string name="forgot_password">Forgot password?</string>
+    <string name="forgot_password_title">Password Recovery</string>
+    <string name="forgot_password_subtitle">Enter your email to receive a reset link</string>
+    <string name="send_reset_link">SEND RESET LINK</string>
+
+    <!-- ─── Reset Password screen ─── -->
+    <string name="reset_password">Reset Password</string>
+    <string name="reset_password_title">New Password</string>
+    <string name="reset_password_subtitle">Enter and confirm your new password below</string>
+    <string name="update_password">UPDATE PASSWORD</string>
+    <string name="btn_update_password">Update Password</string>
+    <string name="new_password_hint">New password</string>
+    <string name="confirm_password_hint">Confirm new password</string>
+
+    <!-- ─── Shared UI ─── -->
+    <string name="back_to_login">Back to Login</string>
+    <string name="recovery">Recovery</string>
+    <string name="welcome">Welcome to MedinaFlux</string>
+    <string name="tagline">Manage your IT ecosystem efficiently</string>
+    <string name="footer">© 2025 MedinaFlux · All rights reserved</string>
+    <string name="copyright">© 2025 All rights reserved by Medina</string>
+
+    <!-- ─── Dashboard / Sidebar navigation ─── -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_schedule">Schedule</string>
+    <string name="nav_reports">Reports</string>
+    <string name="nav_parts">Parts</string>
+    <string name="nav_requests">Requests</string>
+    <string name="nav_tickets">Support Tickets</string>
+    <string name="nav_settings">Account Settings</string>
+    <string name="logout">Sign Out</string>
+    <string name="open_drawer">Open navigation drawer</string>
+    <string name="close_drawer">Close navigation drawer</string>
+
+    <!-- ─── Dashboard content ─── -->
+    <string name="service_desk">Service Desk</string>
+    <string name="service_desk_subtitle">EQUIPMENT &amp; TICKET MANAGEMENT</string>
+    <string name="equipment_browser">EQUIPMENT BROWSER</string>
+    <string name="service_queue">SERVICE QUEUE</string>
+    <string name="stat_open">OPEN</string>
+    <string name="stat_in_progress">IN PROGRESS</string>
+    <string name="stat_waiting">WAITING</string>
+    <string name="stat_testing">TESTING</string>
+    <string name="awaiting_action">Awaiting Action</string>
+    <string name="no_selection">No Selection Made</string>
+    <string name="no_selection_hint">Select equipment from the list to view details</string>
+    <string name="medinaflux_platform">MEDINAFLUX PLATFORM</string>
 </resources>

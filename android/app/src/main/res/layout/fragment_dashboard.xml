@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surfaceColor"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- ── Header Row ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+
+            <!-- Service Desk Icon + Title -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Icon Box -->
+                <LinearLayout
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:gravity="center"
+                    android:background="@drawable/bg_icon_service_desk">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🎫"
+                        android:textSize="20sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="12dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/service_desk"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"
+                        android:fontFamily="sans-serif-medium"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+                        <View
+                            android:layout_width="8dp"
+                            android:layout_height="8dp"
+                            android:background="@drawable/bg_dot_green"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:text="@string/service_desk_subtitle"
+                            android:textSize="11sp"
+                            android:textColor="@color/textHint"
+                            android:letterSpacing="0.04"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ── Tab Buttons: Equipment Browser / Service Queue ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_card"
+            android:padding="4dp"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:id="@+id/tabEquipment"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/equipment_browser"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.04"
+                android:textColor="@color/textPrimary"
+                android:background="@drawable/bg_tab_active"/>
+
+            <TextView
+                android:id="@+id/tabQueue"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/service_queue"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.04"
+                android:textColor="@color/textHint"
+                android:background="@android:color/transparent"/>
+        </LinearLayout>
+
+        <!-- ── Stats Row ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <!-- OPEN card (big purple) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="110dp"
+                android:layout_weight="1.2"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_stat_card_open"
+                android:layout_marginEnd="10dp"
+                android:padding="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OPEN"
+                    android:textSize="10sp"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.1"
+                    android:textColor="#CCFFFFFF"
+                    android:fontFamily="sans-serif-medium"/>
+                <TextView
+                    android:id="@+id/statOpen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="48sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/awaiting_action"
+                    android:textSize="10sp"
+                    android:textColor="#AAFFFFFF"/>
+            </LinearLayout>
+
+            <!-- Right mini stats (vertical) -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <!-- IN PROGRESS + WAITING row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+
+                    <!-- IN PROGRESS -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/bg_card"
+                        android:padding="10dp"
+                        android:layout_marginEnd="8dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⚡"
+                            android:textSize="16sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="IN PROGRESS"
+                            android:textSize="8sp"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.06"
+                            android:textColor="@color/statInProgress"
+                            android:fontFamily="sans-serif-medium"/>
+                        <TextView
+                            android:id="@+id/statInProgress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/textPrimary"/>
+                    </LinearLayout>
+
+                    <!-- WAITING -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/bg_card"
+                        android:padding="10dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🕐"
+                            android:textSize="16sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="WAITING"
+                            android:textSize="8sp"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.06"
+                            android:textColor="@color/statWaiting"
+                            android:fontFamily="sans-serif-medium"/>
+                        <TextView
+                            android:id="@+id/statWaiting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/textPrimary"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- TESTING row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/bg_card"
+                        android:padding="10dp"
+                        android:layout_marginEnd="8dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🟢"
+                            android:textSize="14sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="TESTING"
+                            android:textSize="8sp"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.06"
+                            android:textColor="@color/statTesting"
+                            android:fontFamily="sans-serif-medium"/>
+                        <TextView
+                            android:id="@+id/statTesting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/textPrimary"/>
+                    </LinearLayout>
+                    <!-- Spacer -->
+                    <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ── Equipment List Header ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Equipment"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/textPrimary"/>
+        </LinearLayout>
+
+        <!-- ── Equipment Item 1 ── -->
+        <LinearLayout
+            android:id="@+id/equipItem1"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_card"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_laptop"
+                android:tint="@color/textSecondary"
+                android:layout_marginEnd="14dp"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/eq1Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2PYEEUM75Y · LAPTOP"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textPrimary"/>
+                <TextView
+                    android:id="@+id/eq1Sub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📦 STOCK  🕐 LAST REPAIR: —"
+                    android:textSize="10sp"
+                    android:textColor="@color/textHint"/>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/eq1Status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AVAILABLE"
+                android:textSize="9sp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textColor="@color/badgeAvailable"
+                android:background="@drawable/bg_badge_available"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"/>
+        </LinearLayout>
+
+        <!-- ── Equipment Item 2 ── -->
+        <LinearLayout
+            android:id="@+id/equipItem2"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_card"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_laptop"
+                android:tint="@color/textSecondary"
+                android:layout_marginEnd="14dp"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/eq2Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HYVREJZTHO · LAPTOP"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textPrimary"/>
+                <TextView
+                    android:id="@+id/eq2Sub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📦 STOCK  🕐 LAST REPAIR: —"
+                    android:textSize="10sp"
+                    android:textColor="@color/textHint"/>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/eq2Status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AVAILABLE"
+                android:textSize="9sp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textColor="@color/badgeAvailable"
+                android:background="@drawable/bg_badge_available"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"/>
+        </LinearLayout>
+
+        <!-- ── Equipment Item 3 (Maintenance) ── -->
+        <LinearLayout
+            android:id="@+id/equipItem3"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_card"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_laptop"
+                android:tint="@color/textSecondary"
+                android:layout_marginEnd="14dp"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/eq3Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DELL44001 · LAPTOP"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textPrimary"/>
+                <TextView
+                    android:id="@+id/eq3Sub"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📦 UNASSIGNED  🕐 LAST REPAIR: —"
+                    android:textSize="10sp"
+                    android:textColor="@color/textHint"/>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/eq3Status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MAINTENANCE"
+                android:textSize="9sp"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:textColor="@color/badgeMaintenance"
+                android:background="@drawable/bg_badge_maintenance"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"/>
+        </LinearLayout>
+
+        <!-- Spacer at bottom -->
+        <View android:layout_width="match_parent" android:layout_height="80dp"/>
+
+    </LinearLayout>
+</ScrollView>

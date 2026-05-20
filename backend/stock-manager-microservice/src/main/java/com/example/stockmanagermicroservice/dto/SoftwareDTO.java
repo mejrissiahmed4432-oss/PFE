@@ -10,6 +10,7 @@ public class SoftwareDTO {
     private String status;
     private int totalSeats;
     private int availableSeats;
+    private java.time.LocalDateTime createdAt;
 
     public SoftwareDTO() {}
 
@@ -39,4 +40,7 @@ public class SoftwareDTO {
 
     public int getAvailableSeats() { return availableSeats; }
     public void setAvailableSeats(int availableSeats) { this.availableSeats = availableSeats; }
+
+    public java.time.LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(java.time.LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

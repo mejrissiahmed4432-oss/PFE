@@ -1,90 +1,85 @@
-<div class="flex flex-col h-full bg-[var(--bg-app)] selection:bg-indigo-500/30 transition-colors duration-300">
-  <!-- Header / Navigation Area (GLASS) -->
-  <div class="bg-white/80 dark:bg-[#0f172a]/80 backdrop-blur-xl border-b border-[var(--border-color)] px-8 py-6 shadow-sm dark:shadow-2xl relative z-[100]">
-    <div class="max-w-[1600px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
-      <div class="flex items-center gap-6">
-        <div class="w-1.5 h-10 bg-indigo-600 rounded-full shadow-[0_0_15px_rgba(79,70,229,0.5)]"></div>
-        <div>
-          <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tighter flex items-center gap-3">
-            Procurement & Assets
-            <span class="px-2.5 py-1 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-[10px] font-black text-slate-500 uppercase tracking-widest">Enterprise node</span>
-          </h1>
-          <p class="text-slate-500 text-xs font-bold mt-1 uppercase tracking-widest opacity-70">
-            Strategic resource deployment & market auditing
-          </p>
-        </div>
+<div class="procurement-page">
+
+  <!-- Header -->
+  <div class="proc-header">
+    <div class="proc-title-group">
+      <!-- Brand Logo -->
+      <div class="proc-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+          <path d="M3 6h18"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
       </div>
-      
+      <div>
+        <h1>Procurement</h1>
+        <p>Manage equipment requests, approvals &amp; purchase orders</p>
+      </div>
+    </div>
+
+    <div class="header-right">
       <!-- Tab Navigation -->
-      <nav class="flex items-center p-1.5 bg-slate-100 dark:bg-black/40 rounded-2xl border border-slate-200 dark:border-white/5 shadow-inner backdrop-blur-md">
-        <button *ngFor="let tab of tabs"
-                (click)="activeTab = tab.id"
-                class="relative px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 rounded-xl flex items-center gap-3 group"
-                [ngClass]="activeTab === tab.id ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'">
-          
+      <nav class="proc-tabs">
+        <button
+          *ngFor="let tab of tabs"
+          (click)="activeTab = tab.id"
+          class="tab-btn"
+          [class.active]="activeTab === tab.id">
+
           {{ tab.label }}
 
-          <!-- Dynamic Badge -->
-          <span *ngIf="tab.count && tab.count > 0"
-                class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-600 text-[10px] font-black text-white ring-2 ring-white dark:ring-black shadow-lg px-1.5">
+          <span *ngIf="tab.count && tab.count > 0" class="tab-badge">
             {{ tab.count }}
           </span>
-
-          <!-- Active Indicator (Glow) -->
-          <div *ngIf="activeTab === tab.id" 
-               class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-white rounded-full shadow-[0_0_10px_white] md:block"></div>
         </button>
       </nav>
     </div>
   </div>
 
   <!-- Content Area -->
-  <div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
-    <div class="max-w-[1600px] mx-auto">
-      
-      <!-- Dashboard -->
-      <app-procurement-dashboard *ngIf="activeTab === 'dashboard'"
-                                 [userId]="userId"
-                                 [userRole]="userRole">
-      </app-procurement-dashboard>
+  <div class="proc-content">
 
-      <!-- New Request Form -->
-      <app-equipment-request-form *ngIf="activeTab === 'new-request'"
-                                  [userId]="userId"
-                                  [userName]="userName"
-                                  [userRole]="userRole"
-                                  (requestCreated)="activeTab = 'my-requests'">
-      </app-equipment-request-form>
+    <!-- Dashboard -->
+    <app-procurement-dashboard *ngIf="activeTab === 'dashboard'"
+                               [userId]="userId"
+                               [userRole]="userRole">
+    </app-procurement-dashboard>
 
+    <!-- New Request Form -->
+    <app-equipment-request-form *ngIf="activeTab === 'new-request'"
+                                [userId]="userId"
+                                [userName]="userName"
+                                [userRole]="userRole"
+                                (requestCreated)="activeTab = 'my-requests'">
+    </app-equipment-request-form>
 
+    <!-- My Requests List -->
+    <app-equipment-request-list *ngIf="activeTab === 'my-requests'"
+                                [userId]="userId"
+                                [userRole]="userRole"
+                                (sendToRFQ)="onSendToRFQ($event)">
+    </app-equipment-request-list>
 
-      <!-- My Requests List -->
-      <app-equipment-request-list *ngIf="activeTab === 'my-requests'"
-                                  [userId]="userId"
-                                  [userRole]="userRole"
-                                  (sendToRFQ)="onSendToRFQ($event)">
-      </app-equipment-request-list>
+    <!-- Approvals (IT Only) -->
+    <app-it-approval-dashboard *ngIf="activeTab === 'approvals'"
+                               [userId]="userId"
+                               [userRole]="userRole"
+                               (pendingCountChanged)="pendingApprovalsCount = $event">
+    </app-it-approval-dashboard>
 
-      <!-- Approvals (IT Only) -->
-      <app-it-approval-dashboard *ngIf="activeTab === 'approvals'"
-                                 [userId]="userId"
-                                 [userRole]="userRole"
-                                 (pendingCountChanged)="pendingApprovalsCount = $event">
-      </app-it-approval-dashboard>
+    <!-- RFQ Manager (IT Only) -->
+    <app-rfq-manager *ngIf="activeTab === 'rfq'">
+    </app-rfq-manager>
 
-      <!-- RFQ Manager (IT Only) -->
-      <app-rfq-manager *ngIf="activeTab === 'rfq'">
-      </app-rfq-manager>
+    <!-- Supplier Responses (IT Only) -->
+    <app-supplier-response-list *ngIf="activeTab === 'responses'"
+                                (createOrder)="onCreateOrder($event)">
+    </app-supplier-response-list>
 
-      <!-- Supplier Responses (IT Only) -->
-      <app-supplier-response-list *ngIf="activeTab === 'responses'"
-                                  (createOrder)="onCreateOrder($event)">
-      </app-supplier-response-list>
+    <!-- Purchase Order View -->
+    <app-purchase-order-view *ngIf="activeTab === 'orders'">
+    </app-purchase-order-view>
 
-      <!-- Purchase Order View -->
-      <app-purchase-order-view *ngIf="activeTab === 'orders'">
-      </app-purchase-order-view>
-
-    </div>
   </div>
 </div>

@@ -201,7 +201,7 @@ export class BoardComponent implements OnInit {
       // Procurement Requests
       this.procurementService.getAllRequests().subscribe(requests => {
         if (role === 'IT_MANAGER') {
-          this.pendingProcurementCount = requests.filter(r => r.status === 'PENDING_IT_APPROVAL' || r.status === 'RESPONDED').length;
+          this.pendingProcurementCount = requests.filter(r => r.status === 'PENDING_IT_APPROVAL' || r.status === 'APPROVED' || r.status === 'RESPONDED').length;
         } else if (role === 'STOCK_MANAGER' || role === 'ADMIN') {
           // Stock Managers care about approved requests that need RFQs or further action
           this.pendingProcurementCount = requests.filter(r => r.status === 'APPROVED' || r.status === 'PENDING_IT_APPROVAL' || r.status === 'RESPONDED').length;

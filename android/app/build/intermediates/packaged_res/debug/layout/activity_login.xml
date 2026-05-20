@@ -6,167 +6,77 @@
     android:orientation="vertical"
     android:background="@color/backgroundColor">
 
-    <!-- ═══ DARK HERO HEADER (Left panel equivalent for mobile) ═══ -->
+    <!-- ═══ HEADER BANNER (Exactly matching MedinaFlux web layout) ═══ -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="220dp">
+        android:layout_height="220dp"
+        android:background="@drawable/bg_banner_gradient">
 
-        <!-- Background image -->
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/login_bg"
-            android:scaleType="centerCrop" />
-
-        <!-- Animated decorative orbs over the image -->
+        <!-- Animated decorative orbs -->
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/bg_animated_orbs" />
 
-        <!-- Dark overlay gradient -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_hero_overlay" />
-
-        <!-- Hero content -->
+        <!-- Header Content -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center_vertical"
             android:paddingHorizontal="24dp"
             android:paddingVertical="20dp">
 
-            <!-- Enterprise badge -->
+            <!-- Navbar -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:background="@drawable/bg_badge"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="24dp">
 
-                <View
-                    android:layout_width="6dp"
-                    android:layout_height="6dp"
-                    android:background="@drawable/bg_badge_dot"
-                    android:layout_marginEnd="6dp" />
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/medinaflux_logo"
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ENTERPRISE PLATFORM"
-                    android:textColor="#60a5fa"
-                    android:textSize="9sp"
-                    android:letterSpacing="0.12"
-                    android:textStyle="bold" />
+                    android:text="MedinaFlux"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp" />
             </LinearLayout>
 
-            <!-- Brand name -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ITManage"
-                android:textColor="@color/white"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                android:fontFamily="serif" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Unified IT Equipment Management Platform"
-                android:textColor="#94a3b8"
-                android:textSize="11sp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Stats strip -->
+            <!-- Welcome Section -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="8dp">
 
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="99.9%"
-                        android:textColor="#60a5fa"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="UPTIME"
-                        android:textColor="#64748b"
-                        android:textSize="8sp"
-                        android:letterSpacing="0.1" />
-                </LinearLayout>
+                    android:text="Welcome to MedinaFlux"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="24dp"
-                    android:background="#334155"
-                    android:layout_marginHorizontal="16dp" />
-
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="24/7"
-                        android:textColor="#60a5fa"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="MONITORING"
-                        android:textColor="#64748b"
-                        android:textSize="8sp"
-                        android:letterSpacing="0.1" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="24dp"
-                    android:background="#334155"
-                    android:layout_marginHorizontal="16dp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="AI"
-                        android:textColor="#60a5fa"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="PREDICTIONS"
-                        android:textColor="#64748b"
-                        android:textSize="8sp"
-                        android:letterSpacing="0.1" />
-                </LinearLayout>
+                    android:text="MANAGE YOUR IT ECOSYSTEM EFFICIENTLY"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginTop="6dp" />
             </LinearLayout>
+
         </LinearLayout>
     </FrameLayout>
 

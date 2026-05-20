@@ -7,7 +7,7 @@ import { Software, LicensePool, SoftwareAssignment } from './software.model';
   providedIn: 'root'
 })
 export class SoftwareService {
-  private baseUrl = 'http://localhost:8081/api/software';
+  private baseUrl = 'http://localhost:8000/api/software';
 
   constructor(private http: HttpClient) {}
 

@@ -109,8 +109,9 @@ public class LoginActivity extends AppCompatActivity {
                                     .putString("user_name", user.getFirstName() + " " + user.getLastName())
                                     .putString("user_role", user.getRole())
                                     .apply();
-                            // TODO: Navigate to dashboard
-                            showError("Login successful! Welcome " + user.getFirstName());
+                            // Navigate to dashboard
+                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                            finish();
                         } else if (response.code() == 401) {
                             showError("Invalid email or password.");
                         } else {

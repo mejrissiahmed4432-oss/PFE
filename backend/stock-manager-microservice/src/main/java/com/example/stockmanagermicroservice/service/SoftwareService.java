@@ -85,6 +85,7 @@ public class SoftwareService {
         
         dto.setTotalSeats(total);
         dto.setAvailableSeats(available);
+        dto.setCreatedAt(software.getCreatedAt());
         
         return dto;
     }

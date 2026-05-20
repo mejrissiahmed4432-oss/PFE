@@ -158,7 +158,7 @@
     </a>
 
     <!-- Resources (Parts Management) -->
-    <div class="flex flex-col" *ngIf="user?.role === 'TECHNICIAN' || user?.role === 'IT_MANAGER'">
+    <div class="flex flex-col" *ngIf="user?.role === 'TECHNICIAN' || user?.role === 'IT_MANAGER' || user?.role === 'STOCK_MANAGER'">
       <a href="javascript:void(0)" (click)="onTabChange('parts'); onResourceFilterChange('')"
          class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative"
          [ngClass]="activeTab === 'parts' && selectedResourceFilter === '' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20' : 'hover:bg-white/5 hover:text-white'">
@@ -173,9 +173,10 @@
       <!-- Sub-items -->
       <div *ngIf="activeTab === 'parts' && !isSidebarCollapsed" class="pl-11 pr-3 flex flex-col gap-1 mt-1 mb-2">
         <a *ngIf="user?.role !== 'IT_MANAGER'" href="javascript:void(0)" (click)="onResourceFilterChange('Parts')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Parts' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Parts' ? 'bg-blue-400' : 'bg-gray-500'"></div>Parts</a>
-        <a href="javascript:void(0)" (click)="onResourceFilterChange('Operating Systems')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Operating Systems' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Operating Systems' ? 'bg-blue-400' : 'bg-gray-500'"></div>OS</a>
-        <a href="javascript:void(0)" (click)="onResourceFilterChange('Applications')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Applications' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Applications' ? 'bg-blue-400' : 'bg-gray-500'"></div>Applications</a>
-        <a href="javascript:void(0)" (click)="onResourceFilterChange('Drivers')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Drivers' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Drivers' ? 'bg-blue-400' : 'bg-gray-500'"></div>Drivers</a>
+        <a *ngIf="user?.role !== 'STOCK_MANAGER'" href="javascript:void(0)" (click)="onResourceFilterChange('Software')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Software' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Software' ? 'bg-blue-400' : 'bg-gray-500'"></div>Software &amp; Licenses</a>
+        <a *ngIf="user?.role !== 'STOCK_MANAGER'" href="javascript:void(0)" (click)="onResourceFilterChange('Operating Systems')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Operating Systems' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Operating Systems' ? 'bg-blue-400' : 'bg-gray-500'"></div>OS</a>
+        <a *ngIf="user?.role !== 'STOCK_MANAGER'" href="javascript:void(0)" (click)="onResourceFilterChange('Applications')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Applications' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Applications' ? 'bg-blue-400' : 'bg-gray-500'"></div>Applications</a>
+        <a *ngIf="user?.role !== 'STOCK_MANAGER'" href="javascript:void(0)" (click)="onResourceFilterChange('Drivers')" class="text-xs font-medium py-1.5 px-2 rounded-lg transition-colors hover:text-white flex items-center gap-2" [ngClass]="selectedResourceFilter === 'Drivers' ? 'text-white bg-white/10' : 'text-gray-400'"><div class="w-1.5 h-1.5 rounded-full" [ngClass]="selectedResourceFilter === 'Drivers' ? 'bg-blue-400' : 'bg-gray-500'"></div>Drivers</a>
       </div>
     </div>
   </nav>

@@ -1,0 +1,215 @@
+<div class="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-10 animate-in fade-in slide-in-from-bottom-6 duration-700 pb-12">
+  
+  <!-- LEFT PANEL: Smart AI Builder -->
+  <div class="flex-1 flex flex-col gap-8">
+    
+    <!-- Header -->
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-[2.5rem] p-10 shadow-sm dark:shadow-2xl relative overflow-hidden group">
+      <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-all"></div>
+      <div class="flex items-center gap-6 relative z-10">
+        <div class="w-16 h-16 rounded-[1.5rem] flex items-center justify-center bg-blue-600/10 text-blue-600 dark:text-blue-400 border border-blue-600/20 shadow-inner">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        </div>
+        <div>
+          <h2 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter m-0">Deployment Builder</h2>
+          <p class="text-xs text-slate-500 mt-2 font-black uppercase tracking-[0.2em] italic opacity-70">Neural Payload Assembly Node</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Smart Assistant -->
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-blue-500/20 rounded-[3rem] shadow-sm dark:shadow-2xl relative z-20 group/ai">
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent opacity-0 group-hover/ai:opacity-100 transition-opacity duration-1000 rounded-[3rem] overflow-hidden pointer-events-none"></div>
+      
+      <div class="p-10 flex items-center justify-between relative z-10">
+        <div class="flex items-center gap-6">
+          <div class="w-16 h-16 rounded-[1.5rem] bg-blue-600 flex items-center justify-center text-white shadow-xl dark:shadow-[0_10px_30px_rgba(37, 99, 235,0.4)] border border-white/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">AI Neural Architect</h3>
+            <span class="inline-flex items-center px-4 py-1.5 rounded-xl text-[10px] font-black bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 uppercase tracking-[0.2em] mt-2 shadow-sm dark:shadow-lg">
+              ACTIVE CORE
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 dark:bg-black/40 p-10 pt-2 border-t border-slate-200 dark:border-white/5 relative z-10 rounded-b-[3rem]">
+        <p class="text-sm text-slate-600 dark:text-slate-400 mb-8 leading-relaxed font-bold italic opacity-80">
+          "Input your technical requirements in natural language. Our neural engine will parse items, identify models, and pre-configure specifications."
+        </p>
+        
+        <div class="relative group/input">
+          <textarea [(ngModel)]="aiText" (ngModelChange)="onAiInput()" rows="4" 
+                    placeholder="e.g. 'Deploy 5 high-end dev workstations with 64GB RAM and ultra-wide monitors'" 
+                    class="w-full px-8 py-8 bg-white dark:bg-black/60 border border-slate-200 dark:border-white/10 rounded-[2rem] text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all resize-none shadow-inner placeholder:text-slate-400 dark:placeholder:text-slate-700 font-medium"></textarea>
+          
+          <!-- Autocomplete Dropdown -->
+          <div *ngIf="showAutocomplete && autocompleteResults.length > 0" 
+               class="absolute z-50 w-full mt-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-[2rem] shadow-2xl max-h-80 overflow-y-auto custom-scrollbar overflow-x-hidden backdrop-blur-xl bg-white/90 dark:bg-slate-900/90">
+            <div *ngFor="let res of autocompleteResults" 
+                 class="p-6 hover:bg-blue-600 hover:text-white cursor-pointer border-b border-slate-100 dark:border-white/5 last:border-0 flex flex-col gap-2 transition-all group/res" 
+                 (click)="selectAutocomplete(res)">
+              <div class="font-black text-sm text-slate-900 dark:text-white group-hover/res:text-white">{{ res.name }}</div>
+              <div class="text-[9px] font-black text-blue-600 dark:text-blue-400 group-hover/res:text-blue-200 uppercase tracking-[0.2em]">{{ res.category }}</div>
+            </div>
+          </div>
+          
+          <div class="absolute bottom-6 right-6 flex gap-4">
+            <button class="flex items-center justify-center px-8 py-4 bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white rounded-2xl transition-all font-black text-[10px] uppercase tracking-widest gap-3 border border-slate-200 dark:border-white/5 active:scale-95"
+                    (click)="addCurrentTextToCart()" [disabled]="isParsing || !aiText.trim()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Custom item
+            </button>
+            <button class="flex items-center justify-center px-10 py-4 bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-2xl transition-all shadow-xl shadow-blue-500/25 hover:shadow-blue-500/35 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 font-black text-[10px] uppercase tracking-[0.2em] gap-3 active:scale-95 group/btn"
+                    (click)="parseWithAI(aiText)" [disabled]="isParsing || !aiText.trim()">
+              <div *ngIf="isParsing" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              <svg *ngIf="!isParsing" class="group-hover:scale-110 transition-transform" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              {{ isParsing ? 'Parsing Neural Layer...' : 'Process with AI' }}
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Specifications Panel -->
+      <div *ngIf="showSpecsPanel && activeCatalogItem" class="m-8 p-10 bg-slate-50 dark:bg-black/60 border border-slate-200 dark:border-blue-500/30 rounded-[2.5rem] shadow-sm dark:shadow-2xl animate-in zoom-in-95 duration-500">
+        <div class="flex justify-between items-start mb-10 border-b border-slate-200 dark:border-white/5 pb-8">
+          <div class="flex items-center gap-5">
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-500/20">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div>
+              <h4 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Configure: {{ activeCatalogItem.name }}</h4>
+              <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">Refining hardware specifications</p>
+            </div>
+          </div>
+          <button (click)="cancelSpecsSelection()" class="p-3 bg-slate-200 dark:bg-white/5 rounded-2xl text-slate-500 hover:text-rose-500 hover:bg-rose-500/10 transition-all border border-slate-300 dark:border-white/5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        
+        <div class="flex flex-col gap-10 mb-10">
+          <div *ngFor="let spec of activeSpecs">
+            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{{ spec.name }} Registry</label>
+            <div class="flex flex-wrap gap-3">
+              <button *ngFor="let val of spec.possibleValues" 
+                      class="px-6 py-3 border rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 shadow-sm"
+                      [ngClass]="{
+                        'border-blue-500 bg-blue-600 text-white shadow-blue-600/20': selectedSpecsForActiveItem[spec.name] === val,
+                        'border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-500 hover:border-blue-500/50': selectedSpecsForActiveItem[spec.name] !== val
+                      }"
+                      (click)="selectSpecValue(spec.name, val)">
+                {{ val }}
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex justify-end gap-4 border-t border-slate-200 dark:border-white/5 pt-8">
+          <button (click)="confirmSpecsAndAddToCart()" class="px-10 py-5 bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl shadow-xl shadow-blue-500/25 hover:shadow-blue-500/35 transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-95">
+            {{ editItemIndex !== null ? 'Sync Update' : 'Commit to Cart' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Parsed Results -->
+      <div *ngIf="parsedItems.length > 0 && !showSpecsPanel" class="m-8 p-10 bg-blue-500/5 border border-blue-500/20 rounded-[2.5rem] animate-in slide-in-from-top-6 duration-700">
+        <h4 class="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em] mb-8 pb-4 border-b border-blue-500/10">Neural Parsing confirmation</h4>
+        <div class="flex flex-col gap-4 mb-10">
+          <div *ngFor="let p of parsedItems" class="flex flex-col p-6 bg-white dark:bg-black/40 rounded-[1.5rem] border border-slate-200 dark:border-white/5 shadow-inner">
+            <div class="flex justify-between items-center mb-4">
+              <div class="flex items-center gap-4">
+                <span class="px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-black shadow-lg">×{{ p.quantity }}</span>
+                <span class="text-sm font-black text-slate-900 dark:text-slate-200 tracking-tight">{{ p.name }}</span>
+              </div>
+              <div class="text-[9px] font-black text-slate-500 uppercase tracking-widest italic">Best Match: {{ getBestMatchName(p.name) || 'Custom Payload' }}</div>
+            </div>
+            <div *ngIf="p.detectedSpecs && objectKeys(p.detectedSpecs).length > 0" class="flex flex-wrap gap-2">
+              <span *ngFor="let key of objectKeys(p.detectedSpecs)" class="px-3 py-1 bg-blue-50 dark:bg-white/5 text-blue-600 dark:text-blue-400 text-[10px] rounded-lg font-black uppercase tracking-tighter border border-blue-100 dark:border-white/5">
+                {{ key }}: {{ p.detectedSpecs[key] }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-end gap-4">
+          <button class="px-8 py-4 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-blue-600 dark:hover:text-white transition-colors" (click)="resetAIBuffer()">Reset Buffer</button>
+          <button class="px-10 py-4 bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl shadow-blue-500/25 hover:shadow-blue-500/35 hover:-translate-y-0.5 active:translate-y-0 active:scale-95" (click)="addParsedToCart()">Commit All to registry</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Deployment Cart -->
+  <div class="lg:w-[450px] shrink-0 flex flex-col gap-10">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-[3rem] shadow-sm dark:shadow-2xl flex flex-col h-full sticky top-12 overflow-hidden">
+      <div class="p-10 border-b border-slate-200 dark:border-white/5 flex justify-between items-center bg-slate-50 dark:bg-white/2 backdrop-blur-md">
+        <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.3em]">Deployment registry</h3>
+        <span class="px-4 py-2 bg-blue-600 text-white text-[10px] font-black rounded-xl shadow-lg shadow-blue-600/20">{{ totalItems }} UNITS</span>
+      </div>
+
+      <div class="p-10 flex-1 overflow-y-auto custom-scrollbar max-h-[600px] bg-white dark:bg-slate-900/50">
+        <div *ngIf="cart.length === 0" class="flex flex-col items-center justify-center py-20 text-slate-300 dark:text-slate-700 opacity-30 gap-6">
+          <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <p class="text-xs font-black uppercase tracking-[0.3em]">Registry Empty</p>
+        </div>
+
+        <div class="flex flex-col gap-6">
+          <div *ngFor="let item of cart; let i = index" class="p-6 bg-slate-50 dark:bg-black/40 border border-slate-100 dark:border-white/5 rounded-[2rem] relative group hover:border-blue-500/20 transition-all shadow-inner">
+            <div class="flex justify-between items-start mb-5">
+              <div class="font-black text-sm text-slate-900 dark:text-slate-200 pr-10 tracking-tight leading-tight group-hover:text-blue-600 dark:group-hover:text-white transition-colors">{{ item.name }}</div>
+              <div class="absolute top-5 right-5 flex items-center gap-3">
+                <button class="p-2 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-200 dark:hover:bg-white/5 rounded-lg transition-all" (click)="editCartItem(i)" title="Edit Node">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-200 dark:hover:bg-white/5 rounded-lg transition-all" (click)="removeFromCart(i)" title="Purge Node">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+            
+            <div class="flex items-start gap-5">
+              <div class="flex flex-col items-center border border-slate-200 dark:border-white/10 rounded-xl bg-white dark:bg-black/60 p-1 shadow-inner">
+                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-blue-600 dark:hover:text-white transition-colors font-black" (click)="item.quantity = item.quantity + 1; saveCartToStorage()">+</button>
+                <div class="w-8 py-2 text-center text-sm font-black text-blue-600 dark:text-blue-400">{{ item.quantity }}</div>
+                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-blue-600 dark:hover:text-white transition-colors font-black disabled:opacity-20" (click)="item.quantity = item.quantity - 1; saveCartToStorage()" [disabled]="item.quantity <= 1">-</button>
+              </div>
+              <div class="flex-1 flex flex-col gap-4">
+                <div *ngIf="item.selectedSpecs && objectKeys(item.selectedSpecs).length > 0" class="flex flex-wrap gap-2">
+                  <span *ngFor="let key of objectKeys(item.selectedSpecs)" class="px-3 py-1 bg-white dark:bg-white/5 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/5 text-[9px] rounded-lg font-black uppercase tracking-tighter shadow-sm">
+                    {{ key }}: <span class="text-slate-700 dark:text-slate-200">{{ item.selectedSpecs[key] }}</span>
+                  </span>
+                </div>
+                <input type="text" [(ngModel)]="item.description" placeholder="Technical Context..." 
+                       class="w-full px-4 py-2 bg-transparent border-b border-slate-200 dark:border-white/10 text-xs text-slate-600 dark:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors italic font-medium placeholder:text-slate-300 dark:placeholder:text-slate-800">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-10" *ngIf="cart.length > 0">
+          <label class="block text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4 opacity-50">Global Operational Context</label>
+          <textarea [(ngModel)]="notes" (ngModelChange)="saveCartToStorage()" rows="3" placeholder="Define urgency, project hash, and mission critical factors..." 
+                    class="w-full px-6 py-5 bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/5 rounded-[2rem] text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all shadow-inner resize-none font-medium placeholder:text-slate-400 dark:placeholder:text-slate-800"></textarea>
+        </div>
+      </div>
+
+      <div class="p-10 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/2 rounded-b-[3rem] backdrop-blur-md">
+        <div *ngIf="error" class="mb-6 p-5 bg-rose-600/10 text-rose-600 dark:text-rose-400 text-xs font-black rounded-2xl border border-rose-500/20 shadow-lg animate-bounce uppercase tracking-widest text-center">{{ error }}</div>
+        <div *ngIf="success" class="mb-6 p-5 bg-emerald-600/10 text-emerald-600 dark:text-emerald-400 text-xs font-black rounded-2xl border border-emerald-500/20 flex items-center justify-center gap-4 animate-in fade-in zoom-in-95 uppercase tracking-widest">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Registry Synchronized!
+        </div>
+        
+        <button class="w-full flex items-center justify-center gap-4 px-10 py-6 bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-[10px] font-black uppercase tracking-[0.4em] rounded-[2rem] shadow-xl shadow-blue-500/25 hover:shadow-blue-500/35 transition-all hover:-translate-y-1 active:translate-y-0 disabled:opacity-30 disabled:pointer-events-none group" 
+                (click)="submit()" [disabled]="isSubmitting || cart.length === 0">
+          <span *ngIf="isSubmitting" class="w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+          <svg *ngIf="!isSubmitting" class="group-hover:scale-110 transition-transform" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          {{ isSubmitting ? 'Syncing registry...' : 'Initialize Deployment' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

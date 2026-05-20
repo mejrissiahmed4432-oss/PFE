@@ -8,6 +8,7 @@ export interface Software {
   status: string;
   totalSeats?: number;
   availableSeats?: number;
+  createdAt?: string;
 }
 
 export enum LicenseModel {
