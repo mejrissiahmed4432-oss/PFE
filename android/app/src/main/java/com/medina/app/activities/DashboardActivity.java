@@ -24,6 +24,7 @@ import com.medina.app.R;
 import com.medina.app.api.ApiClient;
 import com.medina.app.model.Alert;
 import com.medina.app.model.Notification;
+import com.medina.app.model.ConversationSummary;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,10 +55,11 @@ public class DashboardActivity extends AppCompatActivity {
     private View btnMarkAllRead, btnClearAllNotifications;
 
     // Sidebar items and layouts
-    private LinearLayout navDashboard, navSchedule, navReports, navParts, navRequests, navTickets, navSettings, navLogout;
-    private ImageView iconDashboard, iconSchedule, iconReports, iconParts, iconRequests, iconTickets;
-    private TextView labelDashboard, labelSchedule, labelReports, labelParts, labelRequests, labelTickets;
-    private TextView badgeTickets;
+    private LinearLayout navDashboard, navSchedule, navReports, navParts, navRequests, navTickets, navChat, navSettings, navLogout;
+    private ImageView iconDashboard, iconSchedule, iconReports, iconParts, iconRequests, iconTickets, iconChat;
+    private TextView labelDashboard, labelSchedule, labelReports, labelParts, labelRequests, labelTickets, labelChat;
+    private TextView badgeTickets, badgeChat;
+    private View btnAiFab;
 
     private SharedPreferences prefs;
     private Handler syncHandler;
@@ -124,9 +126,10 @@ public class DashboardActivity extends AppCompatActivity {
         navParts = findViewById(R.id.navParts);
         navRequests = findViewById(R.id.navRequests);
         navTickets = findViewById(R.id.navTickets);
+        navChat = findViewById(R.id.navChat);
         navSettings = findViewById(R.id.navSettings);
         navLogout = findViewById(R.id.navLogout);
-
+ 
         // Sidebar Icons
         iconDashboard = findViewById(R.id.iconDashboard);
         iconSchedule = findViewById(R.id.iconSchedule);
@@ -134,7 +137,8 @@ public class DashboardActivity extends AppCompatActivity {
         iconParts = findViewById(R.id.iconParts);
         iconRequests = findViewById(R.id.iconRequests);
         iconTickets = findViewById(R.id.iconTickets);
-
+        iconChat = findViewById(R.id.iconChat);
+ 
         // Sidebar Labels
         labelDashboard = findViewById(R.id.labelDashboard);
         labelSchedule = findViewById(R.id.labelSchedule);
@@ -142,7 +146,10 @@ public class DashboardActivity extends AppCompatActivity {
         labelParts = findViewById(R.id.labelParts);
         labelRequests = findViewById(R.id.labelRequests);
         labelTickets = findViewById(R.id.labelTickets);
+        labelChat = findViewById(R.id.labelChat);
         badgeTickets = findViewById(R.id.badgeTickets);
+        badgeChat = findViewById(R.id.badgeChat);
+        btnAiFab = findViewById(R.id.btnAiFab);
 
         // Display user info in topbar and dropdown
         String userName = prefs.getString("user_name", "Morad Mejri");
@@ -160,15 +167,23 @@ public class DashboardActivity extends AppCompatActivity {
         navParts.setOnClickListener(v -> selectMenuItem(3));
         navRequests.setOnClickListener(v -> selectMenuItem(4));
         navTickets.setOnClickListener(v -> selectMenuItem(5));
+        navChat.setOnClickListener(v -> selectMenuItem(9));
 
         navSettings.setOnClickListener(v -> {
             closeDropdowns();
             selectMenuItem(6);
         });
 
-        navLogout.setOnClickListener(v -> {
-            performLogout();
-        });
+        navLogout.setOnClickListener(v -> performLogout());
+
+        // AI Assistant Floating Action Button
+        if (btnAiFab != null) {
+            btnAiFab.setOnClickListener(v -> {
+                closeDropdowns();
+                AiAssistantBottomSheet sheet = new AiAssistantBottomSheet();
+                sheet.show(getSupportFragmentManager(), "ai_assistant");
+            });
+        }
 
         // Profile Dropdown Toggle
         layoutUserAvatar.setOnClickListener(v -> {
@@ -585,6 +600,14 @@ public class DashboardActivity extends AppCompatActivity {
                 fragment = new AlertsFragment();
                 title = getString(R.string.nav_alerts);
                 break;
+            case 9:
+                fragment = new ChatFragment();
+                title = getString(R.string.nav_chat);
+                navChat.setBackgroundResource(R.drawable.bg_nav_item_active);
+                iconChat.setColorFilter(Color.WHITE);
+                labelChat.setTextColor(Color.WHITE);
+                if (badgeChat != null) badgeChat.setVisibility(View.GONE);
+                break;
         }
 
         if (fragment != null) {
@@ -624,6 +647,10 @@ public class DashboardActivity extends AppCompatActivity {
         navTickets.setBackgroundResource(R.drawable.bg_nav_item_default);
         iconTickets.setColorFilter(defaultColor);
         labelTickets.setTextColor(defaultColor);
+
+        navChat.setBackgroundResource(R.drawable.bg_nav_item_default);
+        iconChat.setColorFilter(defaultColor);
+        labelChat.setTextColor(defaultColor);
 
         navSettings.setBackgroundResource(android.R.color.transparent);
     }

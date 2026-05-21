@@ -42,6 +42,7 @@
     <string name="nav_parts">Parts</string>
     <string name="nav_requests">Requests</string>
     <string name="nav_tickets">Support Tickets</string>
+    <string name="nav_chat">Messages</string>
     <string name="nav_settings">Account Settings</string>
     <string name="nav_profile">My Profile</string>
     <string name="nav_alerts">Alerts Log</string>

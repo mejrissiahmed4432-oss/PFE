@@ -4,49 +4,22 @@
   <div class="wb-card wb-header-card">
     <div class="header-left">
       <button class="back-btn" (click)="suspend()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
       </button>
       <div class="header-title-group">
         <h2 class="title">Live Workbench</h2>
         <div class="wb-stat-mini-row">
-          <span class="stat-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <polyline points="10 9 9 9 8 9"></polyline>
-            </svg> {{ ticket.id || 'N/A' }}</span>
-          <span class="stat-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-              <line x1="12" y1="9" x2="12" y2="13"></line>
-              <line x1="12" y1="17" x2="12.01" y2="17"></line>
-            </svg> {{ ticketPriorityLabel }}</span>
-          <span class="stat-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2">
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg> {{ getEquipmentType() }}</span>
-          <span class="stat-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2">
-              <polyline points="9 11 12 14 22 4"></polyline>
-              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-            </svg> {{ state.actions.length }} Actions</span>
+          <span class="stat-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> {{ ticket.id || 'N/A' }}</span>
+          <span class="stat-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> {{ ticketPriorityLabel }}</span>
+          <span class="stat-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg> {{ getEquipmentType() }}</span>
+          <span class="stat-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg> {{ state.actions.length }} Actions</span>
         </div>
       </div>
     </div>
     <div class="header-right">
       <span class="status-badge active">Active</span>
       <button class="btn-cancel-styled" (click)="showCancelDialog = true">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="15" y1="9" x2="9" y2="15"></line>
-          <line x1="9" y1="9" x2="15" y2="15"></line>
-        </svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
         Cancel
       </button>
     </div>
@@ -56,8 +29,7 @@
   <div class="wb-card wb-stepper-card">
     <nav class="wb-stepper">
       <ng-container *ngFor="let step of steps; let i = index">
-        <div class="wb-step-item" [class.active]="state.currentStep === step.key"
-          [class.completed]="isStepCompleted(step.key)" (click)="goToStep(step.key)">
+        <div class="wb-step-item" [class.active]="state.currentStep === step.key" [class.completed]="isStepCompleted(step.key)" (click)="goToStep(step.key)">
           <div class="wb-step-circle">
             <span *ngIf="isStepCompleted(step.key)">✓</span>
             <span *ngIf="!isStepCompleted(step.key)">{{ i + 1 }}</span>
@@ -77,10 +49,7 @@
       <div *ngIf="state.currentStep === 'diagnosis'" class="equipment-info-card">
         <div class="eic-header">
           <div class="eic-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-              <line x1="2" y1="10" x2="22" y2="10"></line>
-            </svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
           </div>
           <div class="eic-details">
             <h3>{{ getEquipmentName() }}</h3>
@@ -94,8 +63,7 @@
           <div class="eic-status"><span class="status-badge maintenance">In Maintenance</span></div>
         </div>
 
-        <div class="eic-specs-section"
-          *ngIf="equipment.specifications && (equipment.specifications | keyvalue).length > 0">
+        <div class="eic-specs-section" *ngIf="equipment.specifications && (equipment.specifications | keyvalue).length > 0">
           <div class="specs-grid">
             <div class="spec-item" *ngFor="let spec of equipment.specifications | keyvalue">
               <span class="spec-label">{{ spec.key }}</span>
@@ -106,11 +74,7 @@
 
         <div class="eic-problem">
           <div class="problem-header">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
             <strong>Problem</strong>
           </div>
           <p>{{ ticket.description || 'No description provided.' }}</p>
@@ -137,17 +101,13 @@
 
           <!-- ── STEP 1: DIAGNOSIS ── -->
           <div *ngIf="state.currentStep === 'diagnosis'" class="wb-step-view">
-
+            
             <!-- AI Diagnosis Assistant -->
             <div class="ai-assistant-panel" [class.collapsed]="!showAiDiagnosis">
               <div class="ai-header-group">
                 <div class="ai-title">
                   <div class="ai-spark-icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <path
-                        d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                    </svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
                   </div>
                   <div class="ai-title-text">
                     <h4>AI Diagnosis Assistant</h4>
@@ -155,16 +115,9 @@
                   </div>
                 </div>
                 <div class="ai-header-actions">
-                  <button class="btn-toggle-ai" (click)="toggleAiDiagnosis()"
-                    [title]="showAiDiagnosis ? 'Hide' : 'Show'">
-                    <svg *ngIf="showAiDiagnosis" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.5">
-                      <polyline points="18 15 12 9 6 15"></polyline>
-                    </svg>
-                    <svg *ngIf="!showAiDiagnosis" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.5">
-                      <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
+                  <button class="btn-toggle-ai" (click)="toggleAiDiagnosis()" [title]="showAiDiagnosis ? 'Hide' : 'Show'">
+                    <svg *ngIf="showAiDiagnosis" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                    <svg *ngIf="!showAiDiagnosis" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </button>
                 </div>
               </div>
@@ -172,19 +125,11 @@
               <div class="ai-content-wrapper" *ngIf="showAiDiagnosis">
                 <div class="ai-tabs-row">
                   <button class="btn-ai-tab" [class.active]="activeAiTab === 'diagnosis'" (click)="generateDiagnosis()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2.5">
-                      <circle cx="11" cy="11" r="8"></circle>
-                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     {{ state.lastAiDiagnosisInput === ticket.description ? 'Diagnosis' : 'Generate Diagnosis' }}
                   </button>
-                  <button class="btn-ai-tab" [class.active]="activeAiTab === 'predictive'"
-                    (click)="runPredictiveAnalysis()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2.5">
-                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                    </svg>
+                  <button class="btn-ai-tab" [class.active]="activeAiTab === 'predictive'" (click)="runPredictiveAnalysis()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                     {{ state.lastAiPredictiveInput === ticket.description ? 'Predictive' : 'Predictive Analysis' }}
                   </button>
                 </div>
@@ -199,19 +144,12 @@
                 </div>
 
                 <!-- Diagnosis Results -->
-                <div
-                  *ngIf="!aiLoading && activeAiTab === 'diagnosis' && state.aiDiagnosisCauses && state.aiDiagnosisCauses.length > 0"
-                  class="ai-result-section animate-fade-in">
+                <div *ngIf="!aiLoading && activeAiTab === 'diagnosis' && state.aiDiagnosisCauses && state.aiDiagnosisCauses.length > 0" class="ai-result-section animate-fade-in">
                   <div class="ai-section-label">Potential Root Causes</div>
                   <div class="ai-causes-grid">
                     <div class="ai-cause-card" *ngFor="let cause of state.aiDiagnosisCauses">
                       <div class="cause-icon">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                          stroke-width="2.5">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <line x1="12" y1="16" x2="12" y2="12"></line>
-                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                       </div>
                       <span>{{ cause }}</span>
                     </div>
@@ -221,39 +159,26 @@
                   <div class="ai-checks-grid">
                     <div class="ai-check-card" *ngFor="let check of state.aiDiagnosisChecks">
                       <div class="check-info">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                          stroke-width="2.5">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         <span>{{ check }}</span>
                       </div>
-                      <button class="btn-add-note-minimal" (click)="addCheckToDiagnosis(check)"
-                        title="Add to Manual Diagnosis">+</button>
+                      <button class="btn-add-note-minimal" (click)="addCheckToDiagnosis(check)" title="Add to Manual Diagnosis">+</button>
                     </div>
                   </div>
 
                   <div class="ai-footer-actions">
                     <button class="btn-copy-ai" (click)="copyAiToDiagnosis()">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.5">
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                      </svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
                       Use these findings
                     </button>
                   </div>
                 </div>
 
                 <!-- Predictive Analysis Results -->
-                <div
-                  *ngIf="!aiLoading && activeAiTab === 'predictive' && state.aiPredictiveMap && state.aiPredictiveMap.length > 0"
-                  class="ai-result-section animate-fade-in">
+                <div *ngIf="!aiLoading && activeAiTab === 'predictive' && state.aiPredictiveMap && state.aiPredictiveMap.length > 0" class="ai-result-section animate-fade-in">
                   <div class="ai-predictive-banner">
                     <div class="banner-icon">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.5">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                      </svg>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                     </div>
                     <div>
                       <h5>Failure Risk Map</h5>
@@ -273,17 +198,11 @@
                           <span class="stat-label">Confidence</span>
                         </div>
                         <div class="failure-progress">
-                          <div class="progress-bar" [ngClass]="pred.risk.toLowerCase()"
-                            [style.width.%]="pred.percentage"></div>
+                          <div class="progress-bar" [ngClass]="pred.risk.toLowerCase()" [style.width.%]="pred.percentage"></div>
                         </div>
                       </div>
                       <div class="failure-footer">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                          stroke-width="2.5">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <line x1="12" y1="16" x2="12" y2="12"></line>
-                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                         <span>{{ pred.recommendation }}</span>
                       </div>
                     </div>
@@ -292,10 +211,7 @@
                   <!-- Similar Past Cases -->
                   <div class="ai-similar-cases-panel" *ngIf="state.aiSimilarCase">
                     <div class="panel-header">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.5">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                      </svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                       <h5>Similar Case Match</h5>
                     </div>
                     <div class="case-card">
@@ -310,19 +226,11 @@
                       </div>
                       <div class="case-stats">
                         <div class="case-stat">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                          </svg>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                           <span>{{ state.aiSimilarCase.timeToRepair }} repair</span>
                         </div>
                         <div class="case-stat">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                          </svg>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                           <span class="success">{{ state.aiSimilarCase.successRate }}% Success</span>
                         </div>
                       </div>
@@ -334,17 +242,13 @@
 
             <div class="diagnosis-form-group">
               <label>Diagnosis (Manual Observations)</label>
-              <textarea class="diag-textarea" [(ngModel)]="state.manualDiagnosis"
-                (ngModelChange)="onTestingContextChanged()"
-                placeholder="Enter your manual observations and initial findings..."></textarea>
+              <textarea class="diag-textarea" [(ngModel)]="state.manualDiagnosis" (ngModelChange)="onTestingContextChanged()" placeholder="Enter your manual observations and initial findings..."></textarea>
             </div>
 
 
             <div class="diagnosis-form-group">
               <label>Diagnosis Result <span class="required">*</span></label>
-              <textarea class="diag-textarea" [(ngModel)]="state.diagnosisResult"
-                (ngModelChange)="onTestingContextChanged()"
-                placeholder="Enter the final diagnosis conclusion..."></textarea>
+              <textarea class="diag-textarea" [(ngModel)]="state.diagnosisResult" (ngModelChange)="onTestingContextChanged()" placeholder="Enter the final diagnosis conclusion..."></textarea>
             </div>
 
             <!-- Removed Additional Notes -->
@@ -352,53 +256,39 @@
 
           <!-- ── STEP 2: PLAN ACTIONS ── -->
           <div *ngIf="state.currentStep === 'plan'" class="wb-step-view">
-
+            
             <!-- AI Plan Generator -->
             <div class="ai-assistant-panel" [class.collapsed]="!showAiPlan">
               <div class="ai-header-group">
                 <div class="ai-title">
                   <div class="ai-spark-icon" style="background: linear-gradient(135deg, #0ea5e9, #2563eb);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <path
-                        d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                    </svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
                   </div>
                   <div class="ai-title-text">
                     <h4>AI Maintenance Planner</h4>
-                    <span class="ai-badge"
-                      style="background: rgba(37, 99, 235, 0.1); color: #2563eb; border-color: rgba(37, 99, 235, 0.2);">AI-Strategy</span>
+                    <span class="ai-badge" style="background: rgba(37, 99, 235, 0.1); color: #2563eb; border-color: rgba(37, 99, 235, 0.2);">AI-Strategy</span>
                   </div>
                 </div>
                 <div class="ai-header-actions">
                   <button class="btn-toggle-ai" (click)="toggleAiPlan()" [title]="showAiPlan ? 'Hide' : 'Show'">
-                    <svg *ngIf="showAiPlan" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2.5">
-                      <polyline points="18 15 12 9 6 15"></polyline>
-                    </svg>
-                    <svg *ngIf="!showAiPlan" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.5">
-                      <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
+                    <svg *ngIf="showAiPlan" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                    <svg *ngIf="!showAiPlan" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </button>
                 </div>
               </div>
 
               <div class="ai-content-wrapper" *ngIf="showAiPlan">
                 <div class="ai-description-box" style="margin-bottom: 24px;">
-                  <p>Click below to architect a comprehensive maintenance plan. Our engine will analyze your diagnosis
-                    and create a context-aware sequence of technical actions.</p>
+                  <p>Click below to architect a comprehensive maintenance plan. Our engine will analyze your diagnosis and create a context-aware sequence of technical actions.</p>
                 </div>
 
                 <div class="ai-actions-row" style="margin-bottom: 0;">
-                  <button class="btn-ai-tab active" (click)="generateAIPlan()"
-                    [disabled]="aiPlanLoading || state.aiPlanGenerated"
-                    style="width: auto; padding: 8px 24px; min-width: 220px; justify-content: center; height: 38px;"
-                    [title]="state.aiPlanGenerated ? 'Plan already generated for this diagnosis' : 'Generate Technical Plan'">
-                    <svg *ngIf="!aiPlanLoading" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.5" style="margin-right: 8px;">
-                      <path d="M12 2v20M2 12h20M12 2l4 4-4 4M12 22l-4-4 4-4" />
-                    </svg>
+                  <button class="btn-ai-tab active" 
+                          (click)="generateAIPlan()" 
+                          [disabled]="aiPlanLoading || state.aiPlanGenerated" 
+                          style="width: auto; padding: 8px 24px; min-width: 220px; justify-content: center; height: 38px;"
+                          [title]="state.aiPlanGenerated ? 'Plan already generated for this diagnosis' : 'Generate Technical Plan'">
+                    <svg *ngIf="!aiPlanLoading" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 8px;"><path d="M12 2v20M2 12h20M12 2l4 4-4 4M12 22l-4-4 4-4"/></svg>
                     <span *ngIf="!aiPlanLoading" style="font-size: 0.8rem;">
                       {{ state.aiPlanGenerated ? 'Technical Plan Generated' : 'Generate Smart Maintenance Plan' }}
                     </span>
@@ -416,25 +306,16 @@
                 </div>
 
                 <!-- Plan Summary / Insight -->
-                <div *ngIf="!aiPlanLoading && state.lastGeneratedDiagnosis === state.diagnosisResult"
-                  class="ai-result-section animate-fade-in"
-                  style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border-color);">
+                <div *ngIf="!aiPlanLoading && state.lastGeneratedDiagnosis === state.diagnosisResult" class="ai-result-section animate-fade-in" style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border-color);">
                   <div class="ai-section-label">Strategy Insights</div>
-                  <div class="ai-insight-card"
-                    style="background: rgba(139, 92, 246, 0.03); border: 1px solid rgba(139, 92, 246, 0.1); border-radius: 12px; padding: 16px;">
+                  <div class="ai-insight-card" style="background: rgba(139, 92, 246, 0.03); border: 1px solid rgba(139, 92, 246, 0.1); border-radius: 12px; padding: 16px;">
                     <div style="display: flex; gap: 12px; align-items: flex-start;">
                       <div style="color: #8b5cf6; margin-top: 2px;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                          stroke-width="2.5">
-                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                       </div>
                       <div>
                         <p style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Smart Plan Ready</p>
-                        <p style="font-size: 13px; color: var(--text-muted);">We've added {{ state.actions.length }}
-                          optimized steps to your workbench. These steps prioritize critical hardware failures while
-                          ensuring software stability.</p>
+                        <p style="font-size: 13px; color: var(--text-muted);">We've added {{ state.actions.length }} optimized steps to your workbench. These steps prioritize critical hardware failures while ensuring software stability.</p>
                       </div>
                     </div>
                   </div>
@@ -444,10 +325,7 @@
 
             <div class="plan-header">
               <button class="btn-add-action" (click)="addAction()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Add Action
               </button>
             </div>
@@ -465,64 +343,64 @@
                   </div>
                   <div class="apc-header-meta">
                     <span class="action-status-badge" [class]="getStatusClass(action.status)">{{ action.status }}</span>
-                    <button class="btn-toggle-apc" (click)="action.isCollapsed = !action.isCollapsed"
-                      [title]="action.isCollapsed ? 'Show Details' : 'Hide Details'">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.5" [style.transform]="action.isCollapsed ? 'rotate(180deg)' : 'none'"
-                        style="transition: transform 0.3s;">
+                    <button class="btn-toggle-apc" (click)="action.isCollapsed = !action.isCollapsed" [title]="action.isCollapsed ? 'Show Details' : 'Hide Details'">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" [style.transform]="action.isCollapsed ? 'rotate(180deg)' : 'none'" style="transition: transform 0.3s;">
                         <polyline points="18 15 12 9 6 15"></polyline>
                       </svg>
                     </button>
                     <button class="btn-delete-action-modern" (click)="removeAction(action.id)" title="Delete Action">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.5">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-                        <path d="M10 11v6M14 11v6"></path>
-                      </svg>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path></svg>
                     </button>
                   </div>
                 </div>
 
                 <div class="apc-content-body" *ngIf="!action.isCollapsed">
                   <!-- Row 1: Category, Type & Priority -->
-                  <div class="apc-row-3">
-                    <div class="apc-field">
+                  <div class="apc-row-grid-three">
+                    <div class="apc-input-wrapper">
                       <label>Category</label>
-                      <select [(ngModel)]="action.category"
-                        (ngModelChange)="updateAction(action.id, 'category', $event)">
-                        <option *ngFor="let cat of ALL_ACTION_CATEGORIES" [value]="cat">{{ cat }}</option>
-                      </select>
+                      <div class="apc-select-container">
+                        <select [(ngModel)]="action.category" (ngModelChange)="updateAction(action.id, 'category', $event)">
+                          <option *ngFor="let cat of ALL_ACTION_CATEGORIES" [value]="cat">{{ cat }}</option>
+                        </select>
+                        <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </div>
                     </div>
-                    <div class="apc-field">
+                    <div class="apc-input-wrapper">
                       <label>Action Type</label>
-                      <select [(ngModel)]="action.type">
-                        <option *ngFor="let t of getActionTypesForCategory(action.category)" [value]="t">{{ t }}
-                        </option>
-                      </select>
+                      <div class="apc-select-container">
+                        <select [(ngModel)]="action.type">
+                          <option *ngFor="let t of getActionTypesForCategory(action.category)" [value]="t">{{ t }}</option>
+                        </select>
+                        <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </div>
                     </div>
-                    <div class="apc-field">
+                    <div class="apc-input-wrapper">
                       <label>Priority</label>
-                      <select [(ngModel)]="action.priority">
-                        <option value="High">High Priority</option>
-                        <option value="Medium">Medium Priority</option>
-                        <option value="Low">Low Priority</option>
-                      </select>
+                      <div class="apc-select-container priority-select" [class]="action.priority ? action.priority.toLowerCase() : ''">
+                        <select [(ngModel)]="action.priority">
+                          <option value="High">High Priority</option>
+                          <option value="Medium">Medium Priority</option>
+                          <option value="Low">Low Priority</option>
+                        </select>
+                        <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </div>
                     </div>
                   </div>
 
                   <!-- Row 2: Target -->
-                  <div class="apc-field" style="margin-top: 16px;">
+                  <div class="apc-input-wrapper">
                     <label>Target Element</label>
-                    <input type="text" [(ngModel)]="action.target"
-                      placeholder="e.g., RAM Module, OS Registry, BIOS Settings">
+                    <div class="apc-input-container">
+                      <input type="text" [(ngModel)]="action.target" placeholder="e.g., RAM Module, OS Registry, BIOS Settings">
+                      <svg class="input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                    </div>
                   </div>
 
                   <!-- Row 3: Description -->
-                  <div class="apc-field" style="margin-top: 16px;">
+                  <div class="apc-input-wrapper">
                     <label>Technical Description</label>
-                    <textarea [(ngModel)]="action.description"
-                      placeholder="Describe the maintenance steps in detail..."></textarea>
+                    <textarea [(ngModel)]="action.description" placeholder="Describe the maintenance steps in detail..."></textarea>
                   </div>
                 </div>
 
@@ -532,68 +410,44 @@
                     <span class="summary-badge type">{{ action.type || 'No Type' }}</span>
                     <span class="summary-badge target" *ngIf="action.target">Target: {{ action.target }}</span>
                   </div>
-                  <p class="apc-summary-desc" *ngIf="action.description">{{ action.description | slice:0:100 }}{{
-                    action.description.length > 100 ? '...' : '' }}</p>
+                  <p class="apc-summary-desc" *ngIf="action.description">{{ action.description | slice:0:100 }}{{ action.description.length > 100 ? '...' : '' }}</p>
                 </div>
               </div>
+              </div>
             </div>
-          </div>
 
           <!-- ── STEP 3: RESOURCES ── -->
           <div *ngIf="state.currentStep === 'resources'" class="wb-step-view">
-
+            
             <!-- AI Resource Matcher -->
             <div class="ai-assistant-panel" [class.collapsed]="!showAiResources" *ngIf="state.actions.length > 0">
               <div class="ai-header-group">
                 <div class="ai-title">
                   <div class="ai-spark-icon" style="background: linear-gradient(135deg, #0ea5e9, #2563eb);">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-                      stroke-linecap="round" stroke-linejoin="round">
-                      <path
-                        d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                    </svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
                   </div>
                   <div class="ai-title-text">
                     <h4>AI Resource Matcher</h4>
-                    <span class="ai-badge"
-                      style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.2);">Stock-Sync</span>
+                    <span class="ai-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.2);">Stock-Sync</span>
                   </div>
                 </div>
                 <div class="ai-header-actions">
-                  <button class="btn-toggle-ai" (click)="toggleAiResources()"
-                    [title]="showAiResources ? 'Hide' : 'Show'">
-                    <svg *ngIf="showAiResources" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.5">
-                      <polyline points="18 15 12 9 6 15"></polyline>
-                    </svg>
-                    <svg *ngIf="!showAiResources" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.5">
-                      <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
+                  <button class="btn-toggle-ai" (click)="toggleAiResources()" [title]="showAiResources ? 'Hide' : 'Show'">
+                    <svg *ngIf="showAiResources" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                    <svg *ngIf="!showAiResources" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </button>
                 </div>
               </div>
 
               <div class="ai-content-wrapper" *ngIf="showAiResources">
                 <div class="ai-description-box" style="margin-bottom: 20px;">
-                  <p>Our AI will scan the central inventory and software library to automatically match your planned
-                    actions with available resources.</p>
+                  <p>Our AI will scan the central inventory and software library to automatically match your planned actions with available resources.</p>
                 </div>
 
                 <div class="ai-actions-row" style="margin-bottom: 0;">
-                  <button class="btn-ai-tab active" (click)="matchResources()"
-                    [disabled]="aiResourceLoading || state.aiResourceMatched"
-                    style="width: auto; padding: 8px 24px; min-width: 200px; justify-content: center; height: 38px; border-color: rgba(37, 99, 235, 0.2);">
-                    <svg *ngIf="!aiResourceLoading" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2.5" style="margin-right: 8px;">
-                      <path
-                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                      </path>
-                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                      <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                    </svg>
-                    <span *ngIf="!aiResourceLoading" style="font-size: 0.8rem;">{{ state.aiResourceMatched ? 'Resources
-                      Synchronized' : 'Auto-Match Inventory' }}</span>
+                  <button class="btn-ai-tab active" (click)="matchResources()" [disabled]="aiResourceLoading || state.aiResourceMatched" style="width: auto; padding: 8px 24px; min-width: 200px; justify-content: center; height: 38px; border-color: rgba(37, 99, 235, 0.2);">
+                    <svg *ngIf="!aiResourceLoading" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 8px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span *ngIf="!aiResourceLoading" style="font-size: 0.8rem;">{{ state.aiResourceMatched ? 'Resources Synchronized' : 'Auto-Match Inventory' }}</span>
                     <span *ngIf="aiResourceLoading" style="font-size: 0.8rem;">Scanning Inventory...</span>
                   </button>
                 </div>
@@ -608,24 +462,15 @@
                 </div>
 
                 <!-- Match Summary -->
-                <div *ngIf="!aiResourceLoading && state.aiResourceMatched" class="ai-result-section animate-fade-in"
-                  style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border-color);">
-                  <div class="ai-insight-card"
-                    style="background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 12px; padding: 16px;">
+                <div *ngIf="!aiResourceLoading && state.aiResourceMatched" class="ai-result-section animate-fade-in" style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border-color);">
+                  <div class="ai-insight-card" style="background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 12px; padding: 16px;">
                     <div style="display: flex; gap: 12px; align-items: flex-start;">
                       <div style="color: #10b981; margin-top: 2px;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                          stroke-width="2.5">
-                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                       </div>
                       <div>
-                        <p style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Inventory Sync
-                          Complete</p>
-                        <p style="font-size: 13px; color: var(--text-muted);">We've analyzed {{ state.actions.length }}
-                          actions against current stock levels. All available parts and software licenses have been
-                          reserved for this ticket.</p>
+                        <p style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Inventory Sync Complete</p>
+                        <p style="font-size: 13px; color: var(--text-muted);">We've analyzed {{ state.actions.length }} actions against current stock levels. All available parts and software licenses have been reserved for this ticket.</p>
                       </div>
                     </div>
                   </div>
@@ -642,8 +487,10 @@
               <div class="resource-sidebar">
                 <h4 class="resource-side-title">Actions</h4>
                 <div class="resource-action-list">
-                  <button *ngFor="let action of state.actions" class="res-action-item"
-                    [class.active]="selectedActionId === action.id" (click)="selectActionForResources(action.id)">
+                  <button *ngFor="let action of state.actions" 
+                          class="res-action-item" 
+                          [class.active]="selectedActionId === action.id"
+                          (click)="selectActionForResources(action.id)">
                     <div class="ra-main">{{ action.type }} {{ action.target }}</div>
                     <div class="ra-sub">{{ action.category }}</div>
                   </button>
@@ -653,36 +500,21 @@
               <!-- Right: Resource Content -->
               <div class="resource-main-content">
                 <div *ngIf="!selectedAction" class="resource-placeholder">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5">
-                    <path
-                      d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                    </path>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                   <p>Select an action to view required resources</p>
                 </div>
 
                 <div *ngIf="selectedAction">
                   <!-- Case 1: Action Needs Resources (Replace, Install, etc.) -->
                   <div *ngIf="actionNeedsResource(selectedAction)">
-                    <div class="res-search-wrap"
-                      *ngIf="['Hardware', 'Software', 'Consumables', 'Storage'].includes(selectedAction.category)">
-                      <input type="text" class="res-search" [(ngModel)]="inventorySearch"
-                        (ngModelChange)="onInventorySearchChange()" placeholder="Search inventory or library...">
+                    <div class="res-search-wrap" *ngIf="['Hardware', 'Software', 'Consumables', 'Storage'].includes(selectedAction.category)">
+                      <input type="text" class="res-search" [(ngModel)]="inventorySearch" (ngModelChange)="onInventorySearchChange()" placeholder="Search inventory or library...">
                     </div>
 
                     <!-- Hardware Case -->
-                    <div
-                      *ngIf="selectedAction.category === 'Hardware' || selectedAction.category === 'Consumables' || selectedAction.category === 'Storage'">
+                    <div *ngIf="selectedAction.category === 'Hardware' || selectedAction.category === 'Consumables' || selectedAction.category === 'Storage'">
                       <div class="res-header">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
-                          <path
-                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                          </path>
-                          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                          <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                         <h4>Hardware Parts Inventory</h4>
                       </div>
                       <div class="res-items-grid">
@@ -696,28 +528,26 @@
                             <span class="rc-stock">Stock: {{ part.totalQty }}</span>
 
                             <!-- Quantity Picker -->
-                            <div *ngIf="pendingPartAdd[getPartKey(part)] !== undefined"
-                              style="display: flex; align-items: center; gap: 6px;">
-                              <input type="number" min="1" [max]="part.totalQty"
+                            <div *ngIf="pendingPartAdd[getPartKey(part)] !== undefined" style="display: flex; align-items: center; gap: 6px;">
+                              <input
+                                type="number"
+                                min="1"
+                                [max]="part.totalQty"
                                 [(ngModel)]="pendingPartAdd[getPartKey(part)]"
                                 style="width: 60px; padding: 4px 8px; border: 1.5px solid #6366f1; border-radius: 8px; font-size: 13px; font-weight: 700; text-align: center; outline: none;"
-                                (keyup.enter)="confirmPartAdd(part)">
-                              <button class="btn-res-add" (click)="confirmPartAdd(part)"
-                                style="background: #10b981; padding: 4px 10px;">✓</button>
-                              <button (click)="cancelPartQtyPicker(part)"
-                                style="background: #ef4444; color: white; border: none; border-radius: 8px; padding: 4px 8px; cursor: pointer; font-size: 12px; font-weight: 700;">✕</button>
+                                (keyup.enter)="confirmPartAdd(part)"
+                              >
+                              <button class="btn-res-add" (click)="confirmPartAdd(part)" style="background: #10b981; padding: 4px 10px;">✓</button>
+                              <button (click)="cancelPartQtyPicker(part)" style="background: #ef4444; color: white; border: none; border-radius: 8px; padding: 4px 8px; cursor: pointer; font-size: 12px; font-weight: 700;">✕</button>
                             </div>
 
                             <!-- Default + Add button -->
-                            <button *ngIf="pendingPartAdd[getPartKey(part)] === undefined" class="btn-res-add"
-                              (click)="openPartQtyPicker(part)">+ Add</button>
+                            <button *ngIf="pendingPartAdd[getPartKey(part)] === undefined" class="btn-res-add" (click)="openPartQtyPicker(part)">+ Add</button>
                           </div>
                         </div>
-                        <div *ngIf="filteredInventory.length === 0" class="res-empty-box"
-                          style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px; text-align: center;">
+                        <div *ngIf="filteredInventory.length === 0" class="res-empty-box" style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px; text-align: center;">
                           <span>No parts found in inventory for this category.</span>
-                          <button class="btn-res-add" (click)="openRequestWizard()"
-                            style="padding: 8px 16px; background: #6366f1; color: white;">Request Part</button>
+                          <button class="btn-res-add" (click)="openRequestWizard()" style="padding: 8px 16px; background: #6366f1; color: white;">Request Part</button>
                         </div>
                       </div>
                     </div>
@@ -725,11 +555,7 @@
                     <!-- Software Case -->
                     <div *ngIf="selectedAction.category === 'Software'">
                       <div class="res-header">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2">
-                          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                          <line x1="8" y1="21" x2="16" y2="21"></line>
-                          <line x1="12" y1="17" x2="12" y2="21"></line>
-                        </svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
                         <h4>Operating Systems</h4>
                       </div>
                       <div class="res-items-grid" style="margin-bottom: 24px;">
@@ -738,18 +564,13 @@
                             <p class="rc-name">{{ os.name }}</p>
                             <p class="rc-location">Version: {{ os.version }}</p>
                           </div>
-                          <button class="btn-res-add"
-                            (click)="addResourceToAction('software', os.name + ' ' + os.version)">+ Add</button>
+                          <button class="btn-res-add" (click)="addResourceToAction('software', os.name + ' ' + os.version)">+ Add</button>
                         </div>
-                        <div *ngIf="availableOs.length === 0" class="res-empty-box">No Operating Systems available.
-                        </div>
+                        <div *ngIf="availableOs.length === 0" class="res-empty-box">No Operating Systems available.</div>
                       </div>
 
                       <div class="res-header">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2">
-                          <polyline points="16 18 22 12 16 6"></polyline>
-                          <polyline points="8 6 2 12 8 18"></polyline>
-                        </svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
                         <h4>Applications & Packages</h4>
                       </div>
                       <div class="res-items-grid">
@@ -765,73 +586,48 @@
                     </div>
 
                     <!-- Default for resourced but unhandled categories -->
-                    <div *ngIf="!['Hardware', 'Software', 'Consumables', 'Storage'].includes(selectedAction.category)"
-                      class="resource-placeholder">
-                      <p>Resources for {{ selectedAction.category }} are managed externally or involve manual
-                        intervention.</p>
+                    <div *ngIf="!['Hardware', 'Software', 'Consumables', 'Storage'].includes(selectedAction.category)" class="resource-placeholder">
+                      <p>Resources for {{ selectedAction.category }} are managed externally or involve manual intervention.</p>
                     </div>
                   </div>
 
                   <!-- Case 2: Action DOES NOT Need Resources (Repair, Inspect, etc.) -->
                   <div *ngIf="!actionNeedsResource(selectedAction)" class="non-resourced-action-box animate-fade-in">
                     <div class="nra-icon">
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.5">
-                        <path
-                          d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
-                        </path>
-                      </svg>
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
                     </div>
                     <h3>Manual Intervention Required</h3>
-                    <p>The action <strong>"{{ selectedAction.type }} {{ selectedAction.target }}"</strong> is a
-                      procedural task that typically does not require physical parts or software installation from the
-                      inventory.</p>
+                    <p>The action <strong>"{{ selectedAction.type }} {{ selectedAction.target }}"</strong> is a procedural task that typically does not require physical parts or software installation from the inventory.</p>
                     <div class="nra-hint">
-                      <span>Pro-tip:</span> Use the "Execution" step to log time and detailed findings during the manual
-                      {{ selectedAction.type | lowercase }} process.
+                      <span>Pro-tip:</span> Use the "Execution" step to log time and detailed findings during the manual {{ selectedAction.type | lowercase }} process.
                     </div>
                   </div>
-
+                  
                   <!-- Selected Resources Summary -->
-                  <div class="res-header"
-                    style="margin-top: 32px; border-top: 1px solid var(--border-color, #e2e8f0); padding-top: 24px;">
+                  <div class="res-header" style="margin-top: 32px; border-top: 1px solid var(--border-color, #e2e8f0); padding-top: 24px;">
                     <h4>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                      </svg>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                       Assigned Resources
-                      <span class="res-count-badge"
-                        *ngIf="selectedAction.resources && selectedAction.resources.length">{{
-                        selectedAction.resources.length }}</span>
+                      <span class="res-count-badge" *ngIf="selectedAction.resources && selectedAction.resources.length">{{ selectedAction.resources.length }}</span>
                     </h4>
                   </div>
                   <div class="res-items-grid">
-                    <div *ngFor="let res of selectedAction.resources; let i = index" class="res-card-item"
-                      style="border-left: 3px solid #10b981;">
+                    <div *ngFor="let res of selectedAction.resources; let i = index" class="res-card-item" style="border-left: 3px solid #10b981;">
                       <div class="rc-info">
                         <p class="rc-name">{{ res.name }}</p>
-                        <p class="rc-location" *ngIf="res.specification"
-                          style="font-size: 11px; color: var(--text-muted, #64748b);">{{ res.specification }}</p>
+                        <p class="rc-location" *ngIf="res.specification" style="font-size: 11px; color: var(--text-muted, #64748b);">{{ res.specification }}</p>
                         <p class="rc-location" style="text-transform: capitalize;">
                           {{ res.resourceType }}
-                          <span *ngIf="res.quantity && res.quantity > 1"
-                            style="font-weight: 700; color: #10b981; margin-left: 4px;">x{{ res.quantity }}</span>
+                          <span *ngIf="res.quantity && res.quantity > 1" style="font-weight: 700; color: #10b981; margin-left: 4px;">x{{ res.quantity }}</span>
                         </p>
                       </div>
-                      <button class="btn-res-remove" (click)="removeResourceFromAction(i)"
-                        style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 4px;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                          stroke-width="2">
-                          <polyline points="3 6 5 6 21 6"></polyline>
-                          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-                          <path d="M10 11v6M14 11v6"></path>
-                        </svg>
+                      <button class="btn-res-remove" (click)="removeResourceFromAction(i)" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 4px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6M14 11v6"></path></svg>
                       </button>
                     </div>
-                    <div *ngIf="!selectedAction.resources || selectedAction.resources.length === 0"
-                      class="res-empty-box">No resources assigned to this action yet.</div>
+                    <div *ngIf="!selectedAction.resources || selectedAction.resources.length === 0" class="res-empty-box">No resources assigned to this action yet.</div>
                   </div>
-
+                  
                 </div>
               </div>
             </div>
@@ -847,8 +643,7 @@
             <div class="exec-header-card" *ngIf="state.actions.length > 0">
               <div class="ehc-info">
                 <h3 style="margin: 0 0 4px; font-size: 1.1rem; font-weight: 800; color: white;">Repair Execution</h3>
-                <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Log your progress and complete maintenance
-                  actions</p>
+                <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Log your progress and complete maintenance actions</p>
               </div>
               <div class="exec-progress-container">
                 <div class="exec-progress-label-modern">
@@ -862,34 +657,31 @@
             </div>
 
             <div class="exec-modern-list">
-              <div *ngFor="let action of state.actions; trackBy: trackById" class="exec-action-card-modern"
-                [class.inprogress]="action.status === 'In Progress'" [class.done]="action.status === 'Done'">
-
+              <div *ngFor="let action of state.actions; trackBy: trackById" 
+                   class="exec-action-card-modern" 
+                   [class.inprogress]="action.status === 'In Progress'" 
+                   [class.done]="action.status === 'Done'">
+                
                 <div class="eac-main">
                   <div class="eac-icon-box">
                     {{ getCategoryIcon(action.category) }}
                   </div>
-
+                  
                   <div class="eac-content">
                     <div class="eac-header-row">
                       <h4 class="eac-title">{{ action.type }} {{ action.target }}</h4>
-                      <select [(ngModel)]="action.status" (ngModelChange)="setActionStatus(action, $event)"
-                        class="eac-status-selector">
+                      <select [(ngModel)]="action.status" (ngModelChange)="setActionStatus(action, $event)" class="eac-status-selector">
                         <option value="Planned">Planned</option>
                         <option value="In Progress">In Progress</option>
                         <option value="Done">Done</option>
                       </select>
                     </div>
-
+                    
                     <p class="eac-description">{{ action.description }}</p>
-
+                    
                     <div class="eac-footer">
                       <button class="btn-toggle-instructions" (click)="toggleExecutionExpand(action)">
-                        <svg [style.transform]="action.expandedInExecution ? 'rotate(180deg)' : 'none'"
-                          style="transition: transform 0.2s;" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" stroke-width="2.5">
-                          <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
+                        <svg [style.transform]="action.expandedInExecution ? 'rotate(180deg)' : 'none'" style="transition: transform 0.2s;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         {{ action.expandedInExecution ? 'Hide Instructions' : 'Technical Instructions' }}
                       </button>
                     </div>
@@ -898,9 +690,7 @@
 
                 <!-- Expanded Instructions -->
                 <div class="eac-instructions-panel" *ngIf="action.expandedInExecution">
-                  <div
-                    style="font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.5px;">
-                    Standard Operating Procedure</div>
+                  <div style="font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 16px; letter-spacing: 0.5px;">Standard Operating Procedure</div>
                   <ul class="inst-list-modern">
                     <li *ngFor="let inst of getInstructions(action); let i = index" class="inst-item-modern">
                       <div class="inst-num-modern">{{ i + 1 }}</div>
@@ -915,15 +705,12 @@
           <!-- ── STEP 5: VALIDATION ── -->
           <div *ngIf="state.currentStep === 'validation'" class="wb-step-view">
             <div class="validation-card">
-              <div class="val-top-section"
-                style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 24px; border-radius: 20px; margin-bottom: 24px;">
+              <div class="val-top-section" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 24px; border-radius: 20px; margin-bottom: 24px;">
                 <div class="val-header-info">
-                  <h3 style="margin: 0 0 4px; font-size: 1.1rem; font-weight: 800; color: white;">Final System
-                    Validation</h3>
-                  <p style="font-size: 0.85rem; color: #94a3b8; margin: 0;">Comprehensive quality check before ticket
-                    closure</p>
+                  <h3 style="margin: 0 0 4px; font-size: 1.1rem; font-weight: 800; color: white;">Final System Validation</h3>
+                  <p style="font-size: 0.85rem; color: #94a3b8; margin: 0;">Comprehensive quality check before ticket closure</p>
                 </div>
-
+                
                 <div class="val-progress-metrics">
                   <div class="val-metric-box">
                     <span class="vmb-val">{{ validationProgress.percentage }}%</span>
@@ -931,10 +718,8 @@
                   </div>
                   <div class="val-progress-ring-wrap" style="width: 50px; height: 50px;">
                     <svg class="val-ring-svg" viewBox="0 0 80 80">
-                      <circle class="val-ring-bg" cx="40" cy="40" r="34" style="stroke: rgba(255,255,255,0.1);">
-                      </circle>
-                      <circle class="val-ring-fill" cx="40" cy="40" r="34" [style.stroke-dasharray]="2 * 3.14159 * 34"
-                        [style.stroke-dashoffset]="validationRingOffset" style="stroke: #10b981;"></circle>
+                      <circle class="val-ring-bg" cx="40" cy="40" r="34" style="stroke: rgba(255,255,255,0.1);"></circle>
+                      <circle class="val-ring-fill" cx="40" cy="40" r="34" [style.stroke-dasharray]="2 * 3.14159 * 34" [style.stroke-dashoffset]="validationRingOffset" style="stroke: #10b981;"></circle>
                     </svg>
                   </div>
                 </div>
@@ -945,51 +730,35 @@
                 <div class="ai-header-group">
                   <div class="ai-title">
                     <div class="ai-spark-icon" style="background: linear-gradient(135deg, #0ea5e9, #2563eb);">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path
-                          d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                      </svg>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
                     </div>
                     <div class="ai-title-text">
                       <h4>AI Testing Suite</h4>
-                      <span class="ai-badge"
-                        style="background: rgba(37, 99, 235, 0.1); color: #2563eb; border-color: rgba(37, 99, 235, 0.2);">QA-VALIDATE</span>
+                      <span class="ai-badge" style="background: rgba(37, 99, 235, 0.1); color: #2563eb; border-color: rgba(37, 99, 235, 0.2);">QA-VALIDATE</span>
                     </div>
                   </div>
                   <div class="ai-header-actions">
-                    <button class="btn-toggle-ai" (click)="showAiValidation = !showAiValidation"
-                      [title]="showAiValidation ? 'Hide' : 'Show'">
-                      <svg *ngIf="showAiValidation" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2.5">
-                        <polyline points="18 15 12 9 6 15"></polyline>
-                      </svg>
-                      <svg *ngIf="!showAiValidation" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2.5">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
+                    <button class="btn-toggle-ai" (click)="showAiValidation = !showAiValidation" [title]="showAiValidation ? 'Hide' : 'Show'">
+                      <svg *ngIf="showAiValidation" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                      <svg *ngIf="!showAiValidation" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </button>
                   </div>
                 </div>
 
                 <div class="ai-content-wrapper" *ngIf="showAiValidation">
                   <div class="ai-description-box" style="margin-bottom: 20px;">
-                    <p>Our AI will analyze your maintenance actions to generate a customized technical verification
-                      suite, ensuring every hardware and software change is fully validated.</p>
+                    <p>Our AI will analyze your maintenance actions to generate a customized technical verification suite, ensuring every hardware and software change is fully validated.</p>
                   </div>
 
                   <div class="ai-actions-row" style="margin-bottom: 0;">
-                    <button class="btn-ai-tab active" (click)="generateAITests()"
-                      [disabled]="aiTestsLoading || state.aiTestsGenerated"
-                      style="width: auto; padding: 8px 24px; min-width: 220px; justify-content: center; height: 38px;">
-
+                    <button class="btn-ai-tab active" 
+                            (click)="generateAITests()" 
+                            [disabled]="aiTestsLoading || state.aiTestsGenerated" 
+                            style="width: auto; padding: 8px 24px; min-width: 220px; justify-content: center; height: 38px;">
+                      
                       <div style="display: flex; align-items: center; gap: 8px;" *ngIf="!aiTestsLoading">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                          stroke-width="2.5">
-                          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                        </svg>
-                        <span style="font-size: 0.8rem;">{{ state.aiTestsGenerated ? 'Suite Synchronized' : 'Generate
-                          Testing Suite' }}</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                        <span style="font-size: 0.8rem;">{{ state.aiTestsGenerated ? 'Suite Synchronized' : 'Generate Testing Suite' }}</span>
                       </div>
                       <div class="wb-spinner-tiny" *ngIf="aiTestsLoading"></div>
                     </button>
@@ -1015,56 +784,32 @@
 
                 <div class="modern-table-body">
                   <div class="val-check-row-wrapper" *ngFor="let item of state.validationChecklist; let i = index">
-                    <div class="modern-val-row" [class.val-failed]="item.status === 'failed'"
-                      [class.val-success]="item.status === 'success'">
+                    <div class="modern-val-row" [class.val-failed]="item.status === 'failed'" [class.val-success]="item.status === 'success'">
                       <div class="mvc-info col-check">
-                        <div class="mvc-icon-wrap" [class.success]="item.status === 'success'"
-                          [class.failed]="item.status === 'failed'">
-                          <svg *ngIf="item.status === 'pending'" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2.5">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                          </svg>
-                          <svg *ngIf="item.status === 'success'" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                          </svg>
-                          <svg *ngIf="item.status === 'failed'" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="3">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                          </svg>
+                        <div class="mvc-icon-wrap" [class.success]="item.status === 'success'" [class.failed]="item.status === 'failed'">
+                          <svg *ngIf="item.status === 'pending'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                          <svg *ngIf="item.status === 'success'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                          <svg *ngIf="item.status === 'failed'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </div>
                         <div class="mvc-text">
                           <span class="mvc-label">{{ item.label }}</span>
-                          <span class="mvc-sub">{{ item.autoGenerated ? 'Auto-generated check' : 'Manual verification'
-                            }}</span>
+                          <span class="mvc-sub">{{ item.autoGenerated ? 'Auto-generated check' : 'Manual verification' }}</span>
                         </div>
                       </div>
 
                       <div class="mvc-status col-status">
-                        <span class="status-chip" [class.pending]="item.status === 'pending'"
-                          [class.success]="item.status === 'success'" [class.failed]="item.status === 'failed'">
+                        <span class="status-chip" [class.pending]="item.status === 'pending'" [class.success]="item.status === 'success'" [class.failed]="item.status === 'failed'">
                           {{ item.status | uppercase }}
                         </span>
                       </div>
-
+                      
                       <div class="mvc-actions col-actions">
                         <div class="val-btn-group">
-                          <button class="btn-val-tiny work" [class.active]="item.status === 'success'"
-                            (click)="markTestWork(item)" title="Mark as Working">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                              stroke-width="3">
-                              <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
+                          <button class="btn-val-tiny work" [class.active]="item.status === 'success'" (click)="markTestWork(item)" title="Mark as Working">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                           </button>
                           <button class="btn-val-tiny delete" (click)="removeValidationItem(i)" title="Delete Item">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                              stroke-width="2.5">
-                              <polyline points="3 6 5 6 21 6"></polyline>
-                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
-                              </path>
-                            </svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                           </button>
                         </div>
                       </div>
@@ -1074,8 +819,7 @@
 
                 <div class="val-table-footer">
                   <div class="val-quick-add">
-                    <input type="text" [(ngModel)]="newCheckLabel" (keyup.enter)="addValidationItem()"
-                      placeholder="Add custom validation check...">
+                    <input type="text" [(ngModel)]="newCheckLabel" (keyup.enter)="addValidationItem()" placeholder="Add custom validation check...">
                     <button (click)="addValidationItem()">+</button>
                   </div>
                 </div>
@@ -1085,29 +829,19 @@
             <div class="val-footer-section" style="margin-top: 32px; display: flex; flex-direction: column; gap: 24px;">
               <div class="validation-notes-card-modern">
                 <div class="vncm-header">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                   <label>Final Technician Observations</label>
                 </div>
-                <textarea [(ngModel)]="state.validationNotes"
-                  placeholder="Document any critical findings, performance benchmarks, or post-repair stability observations..."></textarea>
+                <textarea [(ngModel)]="state.validationNotes" placeholder="Document any critical findings, performance benchmarks, or post-repair stability observations..."></textarea>
               </div>
 
               <div class="val-warning-modern" *ngIf="!validationProgress.allDone">
                 <div class="vwm-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
-                    </path>
-                    <line x1="12" y1="9" x2="12" y2="13"></line>
-                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                  </svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                 </div>
                 <div class="vwm-content">
                   <p class="vwm-title">Incomplete Validation</p>
-                  <p class="vwm-desc">You must complete all {{ validationProgress.total }} validation checks before you
-                    can proceed to the final maintenance summary.</p>
+                  <p class="vwm-desc">You must complete all {{ validationProgress.total }} validation checks before you can proceed to the final maintenance summary.</p>
                 </div>
               </div>
             </div>
@@ -1118,23 +852,13 @@
             <div class="summary-card-modern">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                  <div
-                    style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #3b82f6;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2.5">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                      <polyline points="14 2 14 8 20 8"></polyline>
-                    </svg>
+                  <div style="width: 40px; height: 40px; background: rgba(59, 130, 246, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #3b82f6;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
                   </div>
                   <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #1e293b;">Maintenance Report</h3>
                 </div>
-                <button class="btn-export" (click)="exportReport()"
-                  style="background: #1e293b; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                  </svg>
+                <button class="btn-export" (click)="exportReport()" style="background: #1e293b; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                   Export PDF
                 </button>
               </div>
@@ -1162,28 +886,17 @@
               <!-- Problem & Diagnosis -->
               <div class="summary-section-modern">
                 <div class="ssm-header">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
-                    </path>
-                    <line x1="12" y1="9" x2="12" y2="13"></line>
-                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                  </svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                   <h4>Problem & Findings</h4>
                 </div>
                 <div class="ssm-content-box">
                   <div style="margin-bottom: 16px;">
-                    <div
-                      style="font-size: 0.75rem; font-weight: 800; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">
-                      Initial Complaint</div>
-                    <p style="margin: 0; font-size: 0.95rem; color: var(--text-main); opacity: 0.8; line-height: 1.5;">
-                      {{ ticket.description }}</p>
+                    <div style="font-size: 0.75rem; font-weight: 800; color: #ef4444; text-transform: uppercase; margin-bottom: 4px;">Initial Complaint</div>
+                    <p style="margin: 0; font-size: 0.95rem; color: var(--text-main); opacity: 0.8; line-height: 1.5;">{{ ticket.description }}</p>
                   </div>
                   <div>
-                    <div
-                      style="font-size: 0.75rem; font-weight: 800; color: #3b82f6; text-transform: uppercase; margin-bottom: 4px;">
-                      Technical Diagnosis</div>
-                    <p style="margin: 0; font-size: 0.95rem; color: var(--text-main); opacity: 0.8; line-height: 1.5;">
-                      {{ state.diagnosisResult }}</p>
+                    <div style="font-size: 0.75rem; font-weight: 800; color: #3b82f6; text-transform: uppercase; margin-bottom: 4px;">Technical Diagnosis</div>
+                    <p style="margin: 0; font-size: 0.95rem; color: var(--text-main); opacity: 0.8; line-height: 1.5;">{{ state.diagnosisResult }}</p>
                   </div>
                 </div>
               </div>
@@ -1191,11 +904,7 @@
               <!-- Transformation -->
               <div class="summary-section-modern">
                 <div class="ssm-header">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5">
-                    <polyline points="23 4 23 10 17 10"></polyline>
-                    <polyline points="1 20 1 14 7 14"></polyline>
-                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                  </svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                   <h4>Service Transformation</h4>
                 </div>
                 <div class="ba-modern-row">
@@ -1204,10 +913,7 @@
                     <p class="ba-card-text">Non-Functional</p>
                   </div>
                   <div class="ba-arrow-modern">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5">
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                      <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                   </div>
                   <div class="ba-card after">
                     <div class="ba-card-label">Restored State</div>
@@ -1219,18 +925,12 @@
               <!-- Actions Performed -->
               <div class="summary-section-modern" *ngIf="completedActions.length > 0">
                 <div class="ssm-header">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5">
-                    <path
-                      d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
-                    </path>
-                  </svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
                   <h4>Work Log ({{ completedActions.length }} Actions)</h4>
                 </div>
                 <div class="action-success-item-modern" *ngFor="let action of completedActions">
                   <div style="color: #10b981;">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                   </div>
                   <div class="asi-text">
                     <h5>{{ action.type }} {{ action.target }}</h5>
@@ -1242,41 +942,27 @@
               <!-- Resources -->
               <div class="summary-section-modern" *ngIf="totalResourcesAssigned > 0">
                 <div class="ssm-header">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5">
-                    <path
-                      d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                    </path>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                  </svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                   <h4>Inventory Consumption</h4>
                 </div>
                 <div class="summary-inventory-consumption-box">
                   <ng-container *ngFor="let action of state.actions">
-                    <div *ngIf="action.resources && action.resources.length > 0"
-                      style="margin-bottom: 16px; border-bottom: 1px dashed #fef3c7; padding-bottom: 12px;">
-                      <div
-                        style="font-size: 10px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 8px; opacity: 0.8; letter-spacing: 0.5px;">
-                        Linked to: {{ action.type }} {{ action.target }}
-                      </div>
-                      <div *ngFor="let res of action.resources"
-                        style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; margin-bottom: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                          <div style="display: flex; flex-direction: column;">
-                            <span style="color: #92400e; font-weight: 700;">{{ res.name }} <small
-                                *ngIf="(res.quantity || 0) > 1">(x{{ res.quantity }})</small></span>
-                            <span *ngIf="res.specification"
-                              style="font-size: 11px; color: #b45309; opacity: 0.9; font-weight: 500;">{{
-                              res.specification }}</span>
-                          </div>
-                          <span
-                            style="color: #b45309; font-size: 0.75rem; font-weight: 800; background: rgba(245, 158, 11, 0.1); padding: 2px 8px; border-radius: 6px;">{{
-                            res.resourceType | uppercase }}</span>
-                        </div>
-
-
-                      </div>
+                  <div *ngIf="action.resources && action.resources.length > 0" style="margin-bottom: 16px; border-bottom: 1px dashed #fef3c7; padding-bottom: 12px;">
+                    <div style="font-size: 10px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 8px; opacity: 0.8; letter-spacing: 0.5px;">
+                      Linked to: {{ action.type }} {{ action.target }}
                     </div>
+                    <div *ngFor="let res of action.resources" style="display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; margin-bottom: 8px;">
+                      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="display: flex; flex-direction: column;">
+                          <span style="color: #92400e; font-weight: 700;">{{ res.name }} <small *ngIf="(res.quantity || 0) > 1">(x{{ res.quantity }})</small></span>
+                          <span *ngIf="res.specification" style="font-size: 11px; color: #b45309; opacity: 0.9; font-weight: 500;">{{ res.specification }}</span>
+                        </div>
+                        <span style="color: #b45309; font-size: 0.75rem; font-weight: 800; background: rgba(245, 158, 11, 0.1); padding: 2px 8px; border-radius: 6px;">{{ res.resourceType | uppercase }}</span>
+                      </div>
+                      
+
+                    </div>
+                  </div>
                   </ng-container>
                 </div>
               </div>
@@ -1284,28 +970,21 @@
               <!-- Final Report -->
               <div class="summary-section-modern" style="margin-bottom: 0;">
                 <div class="ssm-header">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                   <h4>Final Technician Statement</h4>
                 </div>
-                <textarea class="final-report-textarea-modern" [(ngModel)]="state.summaryNote"
-                  placeholder="Provide any final technical notes, recommendations for the user, or upcoming maintenance requirements..."></textarea>
+                <textarea class="final-report-textarea-modern" [(ngModel)]="state.summaryNote" placeholder="Provide any final technical notes, recommendations for the user, or upcoming maintenance requirements..."></textarea>
               </div>
             </div>
 
             <!-- Hero Success Banner -->
             <div class="completion-hero-banner animate-fade-in" style="margin-top: 24px;">
               <div class="chb-icon-wrap">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </div>
               <div class="chb-content">
                 <h5>Mission Accomplished</h5>
-                <p>Repair workflow completed and verified. You are now ready to close this ticket and archive the
-                  session.</p>
+                <p>Repair workflow completed and verified. You are now ready to close this ticket and archive the session.</p>
               </div>
             </div>
           </div>
@@ -1314,7 +993,7 @@
 
         <footer class="wb-footer" *ngIf="!isLoading">
           <button class="btn-secondary" (click)="prevStep()" [disabled]="stepIndex === 0">Previous</button>
-
+          
           <div style="flex: 1;"></div>
 
           <button class="btn-broken-link" *ngIf="state.currentStep === 'diagnosis'" (click)="showBrokenDialog = true">
@@ -1322,26 +1001,21 @@
           </button>
 
           <button class="btn-primary" *ngIf="stepIndex < steps.length - 1" (click)="nextStep()">Continue →</button>
-          <button class="btn-complete" *ngIf="state.currentStep === 'summary'"
-            (click)="showCompleteDialog = true">Finish & Close</button>
+          <button class="btn-complete" *ngIf="state.currentStep === 'summary'" (click)="showCompleteDialog = true">Finish & Close</button>
         </footer>
       </div>
-    </div> <!-- Close wb-column-main -->
+      </div> <!-- Close wb-column-main -->
 
     <!-- SIDEBAR -->
     <div class="wb-column-sidebar">
       <div class="wb-card wb-combined-sidebar">
         <div class="sidebar-section">
           <div class="side-title-group">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
             <h3 class="side-title">Notes</h3>
           </div>
           <div class="notes-input-wrapper">
-            <textarea [(ngModel)]="state.globalNotes"
-              placeholder="Add notes about this maintenance ticket..."></textarea>
+            <textarea [(ngModel)]="state.globalNotes" placeholder="Add notes about this maintenance ticket..."></textarea>
           </div>
           <div class="notes-autosave-label">Auto-saved</div>
         </div>
@@ -1350,162 +1024,140 @@
 
         <div class="sidebar-section">
           <div class="side-title-group">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             <h3 class="side-title">Timeline</h3>
           </div>
           <div class="timeline-container">
             <div class="timeline-scroll-area">
               <div class="timeline-item" *ngFor="let item of importantTimeline">
-                <div class="timeline-icon-wrap">
-                  <!-- Ticket Created -->
-                  <svg *ngIf="item.icon === 'edit'" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="#ef4444" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                  </svg>
-                  <!-- Assigned -->
-                  <svg *ngIf="item.icon === 'user'" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="#6366f1" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                  <!-- Diagnosis / Search -->
-                  <svg *ngIf="item.icon === 'search'" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="#0ea5e9" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                  <!-- Check -->
-                  <svg *ngIf="item.icon === 'check-circle'" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="#10b981" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                  </svg>
-                  <!-- Info -->
-                  <svg *ngIf="item.icon === 'info'" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="#6366f1" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                  </svg>
-                </div>
-                <div class="timeline-content">
-                  <div class="timeline-title">{{ item.title }}</div>
-                  <div class="timeline-time">{{ item.time }}</div>
-                </div>
+              <div class="timeline-icon-wrap">
+                <!-- Ticket Created -->
+                <svg *ngIf="item.icon === 'edit'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <!-- Assigned -->
+                <svg *ngIf="item.icon === 'user'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <!-- Diagnosis / Search -->
+                <svg *ngIf="item.icon === 'search'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <!-- Check -->
+                <svg *ngIf="item.icon === 'check-circle'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <!-- Info -->
+                <svg *ngIf="item.icon === 'info'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
               </div>
+              <div class="timeline-content">
+                <div class="timeline-title">{{ item.title }}</div>
+                <div class="timeline-time">{{ item.time }}</div>
+              </div>
+            </div>
             </div>
           </div>
         </div>
       </div>
     </div> <!-- Close wb-column-sidebar -->
   </div> <!-- Close wb-workbench-split -->
-</div> <!-- Close wb-container -->
+  </div> <!-- Close wb-container -->
 
-<!-- CANCEL DIALOG -->
-<div class="wb-modal-overlay" *ngIf="showCancelDialog" (click)="showCancelDialog = false">
-  <div class="wb-modal" (click)="$event.stopPropagation()">
-    <h3>Discard Changes?</h3>
-    <p>Are you sure you want to cancel? All unsaved progress will be permanently lost.</p>
-    <div class="modal-btns">
-      <button class="btn-text" (click)="showCancelDialog = false">Keep Working</button>
-      <button class="btn-danger" (click)="confirmCancel()">Discard Progress</button>
+  <!-- CANCEL DIALOG -->
+  <div class="wb-modal-overlay" *ngIf="showCancelDialog" (click)="showCancelDialog = false">
+    <div class="wb-modal" (click)="$event.stopPropagation()">
+      <h3>Discard Changes?</h3>
+      <p>Are you sure you want to cancel? All unsaved progress will be permanently lost.</p>
+      <div class="modal-btns">
+        <button class="btn-text" (click)="showCancelDialog = false">Keep Working</button>
+        <button class="btn-danger" (click)="confirmCancel()">Discard Progress</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- COMPLETE DIALOG -->
-<div class="wb-modal-overlay" *ngIf="showCompleteDialog" (click)="showCompleteDialog = false">
-  <div class="wb-modal" (click)="$event.stopPropagation()">
-    <h3>Complete Maintenance?</h3>
-    <p>This will finalize the workbench and mark the ticket as resolved.</p>
-    <div class="modal-btns">
-      <button class="btn-text" (click)="showCompleteDialog = false">Cancel</button>
-      <button class="btn-complete" (click)="confirmComplete()">Confirm & Complete</button>
+  <!-- COMPLETE DIALOG -->
+  <div class="wb-modal-overlay" *ngIf="showCompleteDialog" (click)="showCompleteDialog = false">
+    <div class="wb-modal" (click)="$event.stopPropagation()">
+      <h3>Complete Maintenance?</h3>
+      <p>This will finalize the workbench and mark the ticket as resolved.</p>
+      <div class="modal-btns">
+        <button class="btn-text" (click)="showCompleteDialog = false">Cancel</button>
+        <button class="btn-complete" (click)="confirmComplete()">Confirm & Complete</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- CUSTOM ALERT DIALOG -->
-<div class="wb-modal-overlay" *ngIf="customAlert" (click)="closeAlert()">
-  <div class="wb-modal alert-modal" (click)="$event.stopPropagation()">
-    <div class="alert-icon-wrap">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="12"></line>
-        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-      </svg>
-    </div>
-    <h3>{{ customAlert.title }}</h3>
-    <p>{{ customAlert.message }}</p>
-    <div class="modal-btns">
-      <button class="btn-primary" (click)="closeAlert()">Understood</button>
+  <!-- CUSTOM ALERT DIALOG -->
+  <div class="wb-modal-overlay" *ngIf="customAlert" (click)="closeAlert()">
+    <div class="wb-modal alert-modal" (click)="$event.stopPropagation()">
+      <div class="alert-icon-wrap">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      </div>
+      <h3>{{ customAlert.title }}</h3>
+      <p>{{ customAlert.message }}</p>
+      <div class="modal-btns">
+        <button class="btn-primary" (click)="closeAlert()">Understood</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ── GENERIC STEP WARNING DIALOG (PROCEED ANYWAY) ── -->
-<div class="wb-modal-overlay" *ngIf="stepWarningModal.show"
-  (click)="stepWarningModal = { title: '', message: '', show: false }; pendingTargetStep = null;">
-  <div class="wb-modal alert-modal" (click)="$event.stopPropagation()">
-    <div class="alert-icon-wrap" style="background: #fee2e2;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="12"></line>
-        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-      </svg>
-    </div>
-    <h3>{{ stepWarningModal.title }}</h3>
-    <p>{{ stepWarningModal.message }}</p>
-    <div class="modal-btns">
-      <button class="btn-secondary" (click)="stepWarningModal.show = false">Go Back</button>
-      <button class="btn-primary" (click)="confirmStepWarning()"
-        style="background: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">Proceed Anyway</button>
+  <!-- ── GENERIC STEP WARNING DIALOG (PROCEED ANYWAY) ── -->
+  <div class="wb-modal-overlay" *ngIf="stepWarningModal.show" (click)="stepWarningModal = { title: '', message: '', show: false }; pendingTargetStep = null;">
+    <div class="wb-modal alert-modal" (click)="$event.stopPropagation()">
+      <div class="alert-icon-wrap" style="background: #fee2e2;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      </div>
+      <h3>{{ stepWarningModal.title }}</h3>
+      <p>{{ stepWarningModal.message }}</p>
+      <div class="modal-btns">
+        <button class="btn-secondary" (click)="stepWarningModal.show = false">Go Back</button>
+        <button class="btn-primary" (click)="confirmStepWarning()" style="background: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">Proceed Anyway</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ── BROKEN CONFIRMATION DIALOG ── -->
-<div class="wb-modal-overlay" *ngIf="showBrokenDialog" (click)="showBrokenDialog = false">
-  <div class="wb-modal alert-modal" (click)="$event.stopPropagation()">
-    <div class="alert-icon-wrap" style="background: #fee2e2; color: #ef4444; margin-bottom: 20px;">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-        <line x1="12" y1="9" x2="12" y2="13"></line>
-        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-      </svg>
-    </div>
-    <h3 style="margin: 0 0 8px; font-size: 1.2rem; font-weight: 800; text-align: center;">Mark as Unrepairable?</h3>
-    <p style="margin-bottom: 20px; font-size: 0.9rem; text-align: center; color: var(--text-muted, #64748b);">
-      This will flag this equipment as <strong>BROKEN</strong> and close the ticket immediately. Use this only if the
-      hardware cannot be fixed.
-    </p>
+  <!-- ── BROKEN CONFIRMATION DIALOG ── -->
+  <div class="wb-modal-overlay" *ngIf="showBrokenDialog" (click)="showBrokenDialog = false">
+    <div class="wb-modal alert-modal" (click)="$event.stopPropagation()">
+      <div class="alert-icon-wrap" style="background: #fee2e2; color: #ef4444; margin-bottom: 20px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      </div>
+      <h3 style="margin: 0 0 8px; font-size: 1.2rem; font-weight: 800; text-align: center;">Mark as Unrepairable?</h3>
+      <p style="margin-bottom: 20px; font-size: 0.9rem; text-align: center; color: var(--text-muted, #64748b);">
+        This will flag this equipment as <strong>BROKEN</strong> and close the ticket immediately. Use this only if the hardware cannot be fixed.
+      </p>
+      
+      <!-- Reason textarea -->
+      <div style="margin-bottom: 24px; text-align: left; width: 100%;">
+        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">
+          Reason for Failure <span class="required" style="color: #ef4444;">*</span>
+        </label>
+        <textarea [(ngModel)]="brokenReason" placeholder="Please specify the reason why the hardware cannot be repaired..." style="width: 100%; min-height: 80px; background: var(--bg-app); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; font-size: 0.85rem; color: var(--text-main); font-family: inherit; resize: vertical; box-sizing: border-box; outline: none; transition: 0.2s;"></textarea>
+      </div>
 
-    <!-- Reason textarea -->
-    <div style="margin-bottom: 24px; text-align: left; width: 100%;">
-      <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">
-        Reason for Failure <span class="required" style="color: #ef4444;">*</span>
-      </label>
-      <textarea [(ngModel)]="brokenReason"
-        placeholder="Please specify the reason why the hardware cannot be repaired..."
-        style="width: 100%; min-height: 80px; background: var(--bg-app); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; font-size: 0.85rem; color: var(--text-main); font-family: inherit; resize: vertical; box-sizing: border-box; outline: none; transition: 0.2s;"></textarea>
-    </div>
-
-    <div class="modal-btns">
-      <button class="btn-secondary" (click)="showBrokenDialog = false">Cancel</button>
-      <button class="btn-danger" [disabled]="!brokenReason || !brokenReason.trim()" (click)="confirmBrokenDevice()">Yes,
-        it's Broken</button>
+      <div class="modal-btns">
+        <button class="btn-secondary" (click)="showBrokenDialog = false">Cancel</button>
+        <button class="btn-danger" [disabled]="!brokenReason || !brokenReason.trim()" (click)="confirmBrokenDevice()">Yes, it's Broken</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ── PART REQUEST WIZARD MODAL ── -->
-<app-part-request-wizard *ngIf="isRequestWizardOpen" [visible]="isRequestWizardOpen" [user]="currentUser"
-  [initialPartSelection]="wizardInitialSelection" (closeWizard)="onRequestWizardClose($event)">
-</app-part-request-wizard>
+  <!-- ── PART REQUEST WIZARD MODAL ── -->
+  <app-part-request-wizard
+    *ngIf="isRequestWizardOpen"
+    [visible]="isRequestWizardOpen"
+    [user]="currentUser"
+    [initialPartSelection]="wizardInitialSelection"
+    (closeWizard)="onRequestWizardClose($event)">
+  </app-part-request-wizard>

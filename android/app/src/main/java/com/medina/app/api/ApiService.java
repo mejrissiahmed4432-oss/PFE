@@ -10,6 +10,8 @@ import com.medina.app.model.Alert;
 import com.medina.app.model.Task;
 import com.medina.app.model.PartRequest;
 import com.medina.app.model.Shelf;
+import com.medina.app.model.Message;
+import com.medina.app.model.ConversationSummary;
 
 import java.util.List;
 import java.util.Map;
@@ -107,4 +109,19 @@ public interface ApiService {
 
     @GET("api/shelves")
     Call<List<Shelf>> getAllShelves();
+
+    @GET("api/messages/conversations")
+    Call<List<ConversationSummary>> getConversations();
+
+    @GET("api/messages/history/{otherUserId}")
+    Call<List<Message>> getChatHistory(@Path("otherUserId") String otherUserId);
+
+    @POST("api/messages")
+    Call<Message> sendMessage(@Body Message message);
+
+    @PUT("api/messages/read/{senderId}")
+    Call<Map<String, String>> markAsRead(@Path("senderId") String senderId);
+
+    @GET("api/users")
+    Call<List<User>> getAllUsers();
 }
