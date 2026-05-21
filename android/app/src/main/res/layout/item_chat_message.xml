@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <!-- Timestamp label (center, shown once per group) -->
+    <TextView
+        android:id="@+id/tvMessageTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="10:30 AM"
+        android:textSize="10sp"
+        android:textColor="@color/textHint"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:background="@drawable/bg_badge"
+        android:visibility="gone"/>
+
+    <!-- Received bubble (left) -->
+    <LinearLayout
+        android:id="@+id/bubbleReceived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:orientation="vertical"
+        android:layout_marginTop="2dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/tvReceivedContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="240dp"
+                android:text="Message content here"
+                android:textSize="13sp"
+                android:textColor="@color/textPrimary"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:background="@drawable/bg_card"
+                android:lineSpacingMultiplier="1.2"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Sent bubble (right) -->
+    <LinearLayout
+        android:id="@+id/bubbleSent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:orientation="vertical"
+        android:layout_marginTop="2dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/tvSentContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="240dp"
+                android:text="Sent message content"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:background="@drawable/bg_button_gradient"
+                android:lineSpacingMultiplier="1.2"/>
+        </LinearLayout>
+
+        <!-- Read status -->
+        <TextView
+            android:id="@+id/tvReadStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="✓✓"
+            android:textSize="10sp"
+            android:textColor="@color/textHint"
+            android:layout_marginTop="2dp"/>
+    </LinearLayout>
+
+</LinearLayout>

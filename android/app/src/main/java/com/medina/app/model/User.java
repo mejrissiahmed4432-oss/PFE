@@ -9,6 +9,7 @@ public class User {
     private String phoneNumber;
     private String department;
     private String joinedDate;
+    private boolean online;
 
     public User() {}
 
@@ -46,4 +47,25 @@ public class User {
 
     public String getJoinedDate() { return joinedDate; }
     public void setJoinedDate(String joinedDate) { this.joinedDate = joinedDate; }
+
+    public boolean isOnline() { return online; }
+    public void setOnline(boolean online) { this.online = online; }
+
+    /** Convenience: returns "firstName lastName" or just one of them, never null */
+    public String getName() {
+        String fn = firstName != null ? firstName.trim() : "";
+        String ln = lastName  != null ? lastName.trim()  : "";
+        if (!fn.isEmpty() && !ln.isEmpty()) return fn + " " + ln;
+        if (!fn.isEmpty()) return fn;
+        if (!ln.isEmpty()) return ln;
+        return email != null ? email : "";
+    }
+
+    /** Allows setting a synthetic display name (used for fallback objects) */
+    public void setName(String fullName) {
+        if (fullName == null) return;
+        String[] parts = fullName.trim().split(" ", 2);
+        this.firstName = parts[0];
+        this.lastName  = parts.length > 1 ? parts[1] : "";
+    }
 }

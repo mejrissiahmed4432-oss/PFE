@@ -461,6 +461,34 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- GLOBAL AI ASSISTANT FLOATING ACTION BUTTON (FAB) -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btnAiFab"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+            
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_ai_fab">
+                
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_ai"
+                    android:tint="@color/white" />
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
     </FrameLayout>
 
     <!-- ═══════════════════════════════════════════════
@@ -580,6 +608,51 @@
                         android:fontFamily="sans-serif-medium"/>
                 </LinearLayout>
 
+                <!-- Section Label: INVENTORY -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="INVENTORY"
+                    android:textSize="10sp"
+                    android:textColor="@color/sidebarSection"
+                    android:letterSpacing="0.1"
+                    android:textAllCaps="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="6dp"/>
+
+                <!-- Parts -->
+                <LinearLayout
+                    android:id="@+id/navParts"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:background="@drawable/bg_nav_item_default"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginBottom="4dp">
+                    <ImageView
+                        android:id="@+id/iconParts"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_nav_parts"
+                        android:tint="@color/sidebarText"/>
+                    <TextView
+                        android:id="@+id/labelParts"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/nav_parts"
+                        android:textSize="14sp"
+                        android:textColor="@color/sidebarText"
+                        android:fontFamily="sans-serif-medium"/>
+                </LinearLayout>
+
                 <!-- Section Label: MANAGEMENT -->
                 <TextView
                     android:layout_width="wrap_content"
@@ -651,37 +724,6 @@
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
                         android:text="@string/nav_reports"
-                        android:textSize="14sp"
-                        android:textColor="@color/sidebarText"
-                        android:fontFamily="sans-serif-medium"/>
-                </LinearLayout>
-
-                <!-- Parts -->
-                <LinearLayout
-                    android:id="@+id/navParts"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:background="@drawable/bg_nav_item_default"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_marginBottom="4dp">
-                    <ImageView
-                        android:id="@+id/iconParts"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_nav_parts"
-                        android:tint="@color/sidebarText"/>
-                    <TextView
-                        android:id="@+id/labelParts"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="12dp"
-                        android:text="@string/nav_parts"
                         android:textSize="14sp"
                         android:textColor="@color/sidebarText"
                         android:fontFamily="sans-serif-medium"/>
@@ -760,6 +802,49 @@
                         android:textStyle="bold"
                         android:text="1"
                         android:visibility="visible"/>
+                </LinearLayout>
+
+                <!-- Chat / Messages -->
+                <LinearLayout
+                    android:id="@+id/navChat"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:background="@drawable/bg_nav_item_default"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginBottom="4dp">
+                    <ImageView
+                        android:id="@+id/iconChat"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_nav_chat"
+                        android:tint="@color/sidebarText"/>
+                    <TextView
+                        android:id="@+id/labelChat"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/nav_chat"
+                        android:textSize="14sp"
+                        android:textColor="@color/sidebarText"
+                        android:fontFamily="sans-serif-medium"/>
+                    <!-- Badge -->
+                    <TextView
+                        android:id="@+id/badgeChat"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:gravity="center"
+                        android:background="@drawable/bg_badge_red"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:text="0"
+                        android:visibility="gone"/>
                 </LinearLayout>
 
             </LinearLayout>

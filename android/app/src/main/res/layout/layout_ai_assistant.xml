@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- ── Gradient Header ── -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/bg_banner_gradient"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_ai"
+                android:tint="@color/white"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MedinaFlux AI"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Your intelligent assistant"
+                    android:textSize="11sp"
+                    android:textColor="#CCFFFFFF"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Close Button -->
+        <ImageButton
+            android:id="@+id/btnCloseAi"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_check"
+            android:tint="@color/white"
+            android:contentDescription="Close"/>
+    </RelativeLayout>
+
+    <!-- ── Scrollable Chat Log ── -->
+    <ScrollView
+        android:id="@+id/scrollAiChat"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="none"
+        android:background="@color/surfaceColor">
+
+        <LinearLayout
+            android:id="@+id/layoutAiMessages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Welcome Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardWelcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="👋 Hello! I'm your MedinaFlux AI assistant."
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="I can help you manage tasks, check stock levels, review reports, and more. What would you like to do?"
+                        android:textSize="12sp"
+                        android:textColor="@color/textSecondary"
+                        android:layout_marginTop="6dp"
+                        android:lineSpacingMultiplier="1.4"/>
+
+                    <!-- Suggestion Chips Row 1 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="14dp">
+
+                        <TextView
+                            android:id="@+id/chipTasks"
+                            android:layout_width="0dp"
+                            android:layout_height="36dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="📋 My Tasks"
+                            android:textSize="11sp"
+                            android:textColor="@color/colorPrimary"
+                            android:background="@drawable/bg_badge_installed"
+                            android:layout_marginEnd="6dp"
+                            android:clickable="true"
+                            android:focusable="true"/>
+
+                        <TextView
+                            android:id="@+id/chipStock"
+                            android:layout_width="0dp"
+                            android:layout_height="36dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="📦 Stock Status"
+                            android:textSize="11sp"
+                            android:textColor="@color/colorPrimary"
+                            android:background="@drawable/bg_badge_installed"
+                            android:clickable="true"
+                            android:focusable="true"/>
+                    </LinearLayout>
+
+                    <!-- Suggestion Chips Row 2 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp">
+
+                        <TextView
+                            android:id="@+id/chipTickets"
+                            android:layout_width="0dp"
+                            android:layout_height="36dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="🎫 Open Tickets"
+                            android:textSize="11sp"
+                            android:textColor="@color/colorPrimary"
+                            android:background="@drawable/bg_badge_installed"
+                            android:layout_marginEnd="6dp"
+                            android:clickable="true"
+                            android:focusable="true"/>
+
+                        <TextView
+                            android:id="@+id/chipReport"
+                            android:layout_width="0dp"
+                            android:layout_height="36dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="📊 Daily Report"
+                            android:textSize="11sp"
+                            android:textColor="@color/colorPrimary"
+                            android:background="@drawable/bg_badge_installed"
+                            android:clickable="true"
+                            android:focusable="true"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- AI Chat bubbles are added here programmatically -->
+
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"/>
+
+    <!-- ── Compose Bar ── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_input_field"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/etAiInput"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Ask me anything..."
+                android:textSize="14sp"
+                android:textColorHint="@color/textHint"
+                android:textColor="@color/textPrimary"
+                android:background="@null"
+                android:singleLine="true"
+                android:imeOptions="actionSend"/>
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btnAiSend"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="8dp"
+            app:cardCornerRadius="22dp"
+            app:cardElevation="2dp"
+            android:clickable="true"
+            android:focusable="true">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_ai_fab">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_arrow_right"
+                    android:tint="@color/white"/>
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</LinearLayout>
