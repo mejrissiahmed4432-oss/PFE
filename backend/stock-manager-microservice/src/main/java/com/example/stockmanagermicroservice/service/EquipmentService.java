@@ -300,7 +300,21 @@ public class EquipmentService {
             String oldShelfId = equipment.getShelfId();
             Integer oldQte = equipment.getQte() != null ? equipment.getQte() : 1;
 
+            // Store original assignment state before mutation
+            boolean wasAssigned = equipment.getAssignedToEquipmentId() != null || equipment.getAssignedToEquipmentName() != null;
+
             String status = equipmentDetails.getStatus();
+            String newAssignedToId = equipmentDetails.getAssignedToEquipmentId();
+
+            // Force unassign if component becomes broken or unrepairable
+            if ("Broken".equals(status) || "Unrepairable".equals(status)) {
+                newAssignedToId = null;
+                equipmentDetails.setAssignedToEquipmentId(null);
+                equipmentDetails.setAssignedToEquipmentName(null);
+            } else if (newAssignedToId != null && !newAssignedToId.trim().isEmpty()) {
+                status = "Installed";
+            }
+
             String newShelfId = equipmentDetails.getShelfId();
             Integer newQte = equipmentDetails.getQte() != null ? equipmentDetails.getQte() : oldQte;
 
@@ -313,10 +327,12 @@ public class EquipmentService {
 
             if ("Maintenance".equals(status)) {
                 newShelfId = "MAINTENANCE_AREA";
-            } else if ("Broken".equals(status)) {
+            } else if ("Broken".equals(status) || "Unrepairable".equals(status)) {
                 newShelfId = "SCRAP_YARD";
             } else if ("Out of Stock".equalsIgnoreCase(status)) {
                 newShelfId = "OUT_OF_STOCK";
+            } else if ("Installed".equals(status)) {
+                newShelfId = "";
             }
 
             if (newShelfId != null && !newShelfId.equals(oldShelfId)) {
@@ -357,6 +373,10 @@ public class EquipmentService {
             equipment.setNote(equipmentDetails.getNote());
             equipment.setDepartment(equipmentDetails.getDepartment());
             equipment.setCreatedBy(equipmentDetails.getCreatedBy());
+
+            // Part installation tracking — persist parent PC assignment
+            equipment.setAssignedToEquipmentId(equipmentDetails.getAssignedToEquipmentId());
+            equipment.setAssignedToEquipmentName(equipmentDetails.getAssignedToEquipmentName());
 
             // File Documents (Conditional update to avoid wiping un-fetched data)
             if (equipmentDetails.getInvoiceFileName() != null) {
@@ -432,11 +452,71 @@ public class EquipmentService {
             } else if (equipmentDetails.getWarrantyFileData() != null) {
                 update.set("warrantyFileData", equipmentDetails.getWarrantyFileData());
             }
+            // Update parent equipment specifications if assignment changed
+            String oldParentId = equipment.getAssignedToEquipmentId();
+            String newParentId = newAssignedToId;
+            boolean parentChanged = (oldParentId == null && newParentId != null) ||
+                                    (oldParentId != null && newParentId == null) ||
+                                    (oldParentId != null && newParentId != null && !oldParentId.equals(newParentId));
 
-            mongoTemplate.updateFirst(
-                    new org.springframework.data.mongodb.core.query.Query(
-                            org.springframework.data.mongodb.core.query.Criteria.where("_id").is(id)),
-                    update, Equipment.class);
+            if (parentChanged) {
+                // 1. Remove from old parent specifications if existed
+                if (oldParentId != null && !oldParentId.isEmpty()) {
+                    java.util.Optional<Equipment> optOldParent = equipmentRepository.findById(oldParentId);
+                    if (optOldParent.isPresent()) {
+                        Equipment oldParent = optOldParent.get();
+                        if (oldParent.getSpecifications() != null) {
+                            String partType = (equipment.getType() != null ? equipment.getType() : "").toLowerCase().trim();
+                            String specKey = null;
+                            for (String key : oldParent.getSpecifications().keySet()) {
+                                if (key.toLowerCase().trim().equals(partType)) {
+                                    specKey = key;
+                                    break;
+                                }
+                            }
+                            if (specKey != null) {
+                                oldParent.getSpecifications().remove(specKey);
+                            }
+                        }
+                        addLifecycleEntry(oldParent, "Component Uninstalled", "Uninstalled component: " + equipment.getEquipmentName() + " (S/N: " + (equipment.getSerialNumber() != null ? equipment.getSerialNumber() : "N/A") + ") due to status change", equipmentDetails.getCreatedBy() != null ? equipmentDetails.getCreatedBy() : "System");
+                        equipmentRepository.save(oldParent);
+                    }
+                }
+                
+                // 2. Add to new parent specifications if assigned
+                if (newParentId != null && !newParentId.isEmpty()) {
+                    java.util.Optional<Equipment> optNewParent = equipmentRepository.findById(newParentId);
+                    if (optNewParent.isPresent()) {
+                        Equipment newParent = optNewParent.get();
+                        if (newParent.getSpecifications() == null) {
+                            newParent.setSpecifications(new java.util.HashMap<>());
+                        }
+                        String partType = equipment.getType() != null ? equipment.getType() : "Part";
+                        String partValue = (equipment.getBrand() != null ? equipment.getBrand() : "") + " " + (equipment.getModel() != null ? equipment.getModel() : "");
+                        partValue = partValue.trim();
+                        if (partValue.isEmpty()) {
+                            partValue = equipment.getEquipmentName();
+                        }
+                        newParent.getSpecifications().put(partType, partValue);
+                        addLifecycleEntry(newParent, "Component Installed", "Installed component: " + equipment.getEquipmentName() + " (S/N: " + (equipment.getSerialNumber() != null ? equipment.getSerialNumber() : "N/A") + ")", equipmentDetails.getCreatedBy() != null ? equipmentDetails.getCreatedBy() : "System");
+                        equipmentRepository.save(newParent);
+                    }
+                }
+            }
+
+            // Handle explicit clearing of part PC assignment fields (e.g. Unrepairable or manual status change)
+            boolean clearAssignedToEquipment = wasAssigned
+                    && equipmentDetails.getAssignedToEquipmentId() == null
+                    && equipmentDetails.getAssignedToEquipmentName() == null;
+
+            mongoTemplate.updateFirst(new org.springframework.data.mongodb.core.query.Query(org.springframework.data.mongodb.core.query.Criteria.where("_id").is(id)), update, Equipment.class);
+
+            // Explicitly unset PC assignment if cleared (unassigned or unrepairable part detached from PC)
+            if (clearAssignedToEquipment) {
+                Update clearUpdate = new Update().unset("assignedToEquipmentId").unset("assignedToEquipmentName");
+                mongoTemplate.updateFirst(new org.springframework.data.mongodb.core.query.Query(org.springframework.data.mongodb.core.query.Criteria.where("_id").is(id)), clearUpdate, Equipment.class);
+            }
+
             Equipment updated = equipment;
 
             // Sync alerts if name changed (Deprecated - historical alerts act as
@@ -478,6 +558,21 @@ public class EquipmentService {
             }
 
             handleStockAlerts(updated, oldQte, newQte);
+
+            // Deduplicate stale database duplicates with the same Serial Number when installing/assigning
+            if ("Installed".equals(updated.getStatus()) && updated.getSerialNumber() != null && !updated.getSerialNumber().trim().isEmpty()) {
+                Query dupQuery = new Query(Criteria.where("serialNumber").is(updated.getSerialNumber().trim())
+                    .and("id").ne(id)
+                    .and("status").is("Available"));
+                List<Equipment> dups = mongoTemplate.find(dupQuery, Equipment.class);
+                for (Equipment dup : dups) {
+                    dup.setStatus("Installed");
+                    dup.setAssignedToEquipmentId(updated.getAssignedToEquipmentId());
+                    dup.setAssignedToEquipmentName(updated.getAssignedToEquipmentName());
+                    dup.setShelfId("");
+                    equipmentRepository.save(dup);
+                }
+            }
 
             return updated;
         }).orElseThrow(() -> new RuntimeException("Equipment not found with id " + id));
@@ -627,13 +722,32 @@ public class EquipmentService {
 
                 equipmentRepository.save(assignedPart);
 
-                if (eq.getShelfId() != null && !eq.getShelfId().isEmpty() &&
-                        !"MAINTENANCE_AREA".equals(eq.getShelfId()) &&
-                        !"SCRAP_YARD".equals(eq.getShelfId()) &&
-                        !"OUT_OF_STOCK".equals(eq.getShelfId()) &&
-                        !"Allocated".equals(eq.getStatus())) { // Only deduct from shelf if we are consuming from
-                                                               // general stock
-                    atomicUpdateShelfQuantity(eq.getShelfId(), -deduct);
+                // Sync specifications to the parent equipment
+                if (req.assignedToEquipmentId != null && !req.assignedToEquipmentId.isEmpty()) {
+                    java.util.Optional<Equipment> optParent = equipmentRepository.findById(req.assignedToEquipmentId);
+                    if (optParent.isPresent()) {
+                        Equipment parent = optParent.get();
+                        if (parent.getSpecifications() == null) {
+                            parent.setSpecifications(new java.util.HashMap<>());
+                        }
+                        String partType = eq.getType() != null ? eq.getType() : "Part";
+                        String partValue = (eq.getBrand() != null ? eq.getBrand() : "") + " " + (eq.getModel() != null ? eq.getModel() : "");
+                        partValue = partValue.trim();
+                        if (partValue.isEmpty()) {
+                            partValue = eq.getEquipmentName();
+                        }
+                        parent.getSpecifications().put(partType, partValue);
+                        addLifecycleEntry(parent, "Component Installed", "Installed component: " + eq.getEquipmentName() + " (S/N: " + (eq.getSerialNumber() != null ? eq.getSerialNumber() : "N/A") + ")", requesterId != null ? requesterId : "System");
+                        equipmentRepository.save(parent);
+                    }
+                }
+                
+                if (eq.getShelfId() != null && !eq.getShelfId().isEmpty() && 
+                    !"MAINTENANCE_AREA".equals(eq.getShelfId()) && 
+                    !"SCRAP_YARD".equals(eq.getShelfId()) && 
+                    !"OUT_OF_STOCK".equals(eq.getShelfId()) && 
+                    !"Allocated".equals(eq.getStatus())) { // Only deduct from shelf if we are consuming from general stock
+                     atomicUpdateShelfQuantity(eq.getShelfId(), -deduct);
                 }
             }
             if (remainingToConsume > 0) {
@@ -751,6 +865,34 @@ public class EquipmentService {
         eq.setAllocatedToTechnicianName(null);
         eq.setUpdatedAt(LocalDateTime.now());
 
+
+        if (eq.getAssignedToEquipmentId() != null) {
+            String parentId = eq.getAssignedToEquipmentId();
+            eq.setAssignedToEquipmentId(null);
+            eq.setAssignedToEquipmentName(null);
+            
+            java.util.Optional<Equipment> optParent = equipmentRepository.findById(parentId);
+            if (optParent.isPresent()) {
+                Equipment parent = optParent.get();
+                if (parent.getSpecifications() != null) {
+                    String partType = (eq.getType() != null ? eq.getType() : "").toLowerCase().trim();
+                    String specKey = null;
+                    for (String key : parent.getSpecifications().keySet()) {
+                        if (key.toLowerCase().trim().equals(partType)) {
+                            specKey = key;
+                            break;
+                        }
+                    }
+                    if (specKey != null) {
+                        parent.getSpecifications().remove(specKey);
+                    }
+                }
+                addLifecycleEntry(parent, "Component Uninstalled", "Uninstalled component: " + eq.getEquipmentName() + " (S/N: " + (eq.getSerialNumber() != null ? eq.getSerialNumber() : "N/A") + ")", "System");
+                equipmentRepository.save(parent);
+            }
+        }
+        
+        
         addLifecycleEntry(eq, "Returned to Stock", "Part returned to central stock", "Technician");
 
         equipmentRepository.save(eq);

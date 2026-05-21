@@ -1,6 +1,6 @@
 <div class="list-wrapper">
   <div class="table-header-area">
-    <h2 class="table-main-title">Equipment List</h2>
+    <h2 class="table-main-title">{{ 'Equipment_List' | translate }}</h2>
   </div>
 
 
@@ -10,10 +10,10 @@
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
       </svg>
-      <span>Viewing equipment contained in <strong>Shelf {{ filterShelfNb || filterShelfId }}</strong></span>
+      <span>{{ 'Viewing_Equipment_In' | translate }} <strong>{{ 'Shelf' | translate }} {{ filterShelfNb || filterShelfId }}</strong></span>
     </div>
     <button class="clear-filter-btn" (click)="clearShelfFilter()">
-      View All Equipment
+      {{ 'View_All_Equipment' | translate }}
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2">
         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -30,7 +30,7 @@
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" placeholder="Search equipment...">
+      <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()" [placeholder]="'Search_Equipment' | translate">
     </div>
 
     <div class="actions-group">
@@ -39,7 +39,7 @@
           stroke="currentColor" stroke-width="2">
           <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
         </svg>
-        Filters
+        {{ 'Filters' | translate }}
       </button>
 
       <div class="view-toggles">
@@ -141,12 +141,19 @@
           </td>
 
           <td>
-            <div class="authors-main-text">{{ group.name }}</div>
+            <div class="authors-main-text" style="display: flex; align-items: center; gap: 8px;">
+              {{ group.name }}
+              <span *ngIf="newEquipments.has(group.items[0].id!)" class="badge-new-modern">NEW</span>
+            </div>
             <div class="authors-sub-text">{{ group.brand || 'No Brand' }}</div>
           </td>
 
           <td>
-            <div class="authors-main-text">{{ group.category }}</div>
+            <div class="authors-main-text">
+              {{ group.category }}
+              <span *ngIf="group.isNew" class="badge-new-modern ml-2">NEW</span>
+              <span *ngIf="group.isUpdated" class="badge-updated-modern ml-2">UPDATED</span>
+            </div>
             <div class="authors-sub-text capitalize">{{ group.type }}</div>
           </td>
 
@@ -251,11 +258,19 @@
                 <tbody>
                   <tr *ngFor="let item of group.items">
                     <td>
-                      <div class="authors-main-text">{{ item.equipmentName || '—' }}</div>
+                      <div class="authors-main-text" style="display: flex; align-items: center; gap: 8px;">
+                        {{ item.equipmentName || '—' }}
+                        <span *ngIf="newEquipments.has(item.id!)" class="badge-new-modern xs">NEW</span>
+                        <span *ngIf="updatedEquipments.has(item.id!)" class="badge-updated-modern xs">UPDATED</span>
+                      </div>
                       <div class="authors-sub-text">Individual Asset</div>
                     </td>
                     <td>
-                      <div class="authors-main-text mono font-semibold">{{ item.serialNumber || '—' }}</div>
+                      <div class="authors-main-text">
+                        {{ item.serialNumber || '—' }}
+                        <span *ngIf="newEquipments.has(item.id!)" class="badge-new-modern ml-2">NEW</span>
+                        <span *ngIf="updatedEquipments.has(item.id!)" class="badge-updated-modern ml-2">UPDATED</span>
+                      </div>
                       <div class="authors-sub-text">S/N Tracking</div>
                     </td>
                     <td>
@@ -328,7 +343,11 @@
               <ng-container *ngTemplateOutlet="typeIconTemplate; context: { type: group.type }"></ng-container>
             </div>
             <div class="card-title-group">
-              <h3 class="font-bold text-dark">{{ group.name }}</h3>
+              <h3 class="font-bold text-dark" style="display: flex; align-items: center; gap: 8px;">
+                {{ group.name }}
+                <span *ngIf="newEquipments.has(group.items[0].id!)" class="badge-new-modern sm">NEW</span>
+                <span *ngIf="updatedEquipments.has(group.items[0].id!)" class="badge-updated-modern sm">UPDATED</span>
+              </h3>
               <span class="card-subtitle">{{ group.category }} / <span class="capitalize">{{ group.type }}</span></span>
             </div>
           </div>
@@ -438,7 +457,11 @@
               <ng-container *ngTemplateOutlet="typeIconTemplate; context: { type: group.type }"></ng-container>
             </div>
             <div class="card-title-group">
-              <h3 class="font-bold text-dark">{{ group.items[0].equipmentName }}</h3>
+              <h3 class="font-bold text-dark" style="display: flex; align-items: center; gap: 8px;">
+                {{ group.items[0].equipmentName }}
+                <span *ngIf="newEquipments.has(group.items[0].id!)" class="badge-new-modern sm">NEW</span>
+                <span *ngIf="updatedEquipments.has(group.items[0].id!)" class="badge-updated-modern sm">UPDATED</span>
+              </h3>
               <span class="card-subtitle" *ngIf="group.items[0].model">{{ group.items[0].model }}</span>
             </div>
           </div>
@@ -678,35 +701,7 @@
   </div>
 </div>
 
-<!-- ═══ Custom Delete Confirmation Modal (Messaging Style) ═══ -->
-<div class="delete-modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
-  <div class="delete-modal" (click)="$event.stopPropagation()">
-    <div class="delete-modal-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="3 6 5 6 21 6"></polyline>
-        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-        <path d="M10 11v6"></path>
-        <path d="M14 11v6"></path>
-        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
-      </svg>
-    </div>
-    <h3 class="delete-modal-title">{{ deleteModalTitle }}</h3>
-    <p class="delete-modal-desc">{{ deleteModalMessage }}</p>
-
-    <div class="delete-modal-actions">
-      <button class="delete-btn-confirm" (click)="confirmDelete()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2">
-          <polyline points="3 6 5 6 21 6"></polyline>
-          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-        </svg>
-        Delete
-      </button>
-      <button class="delete-btn-cancel" (click)="closeDeleteModal()">Cancel</button>
-    </div>
-  </div>
-</div>
+<!-- Delete Modal Removed (Using ConfirmDialogService) -->
 
 <!-- SVGs Template for Icons -->
 <ng-template #typeIconTemplate let-type="type">

@@ -33,7 +33,19 @@ public class LoginActivity extends AppCompatActivity {
     private boolean passwordVisible = false;
 
     @Override
+    protected void attachBaseContext(android.content.Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+        android.content.SharedPreferences prefs = getSharedPreferences("medina_prefs", MODE_PRIVATE);
+        boolean isDark = prefs.getBoolean("dark_mode", false);
+        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+            isDark ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES 
+                   : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+        );
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -109,8 +121,9 @@ public class LoginActivity extends AppCompatActivity {
                                     .putString("user_name", user.getFirstName() + " " + user.getLastName())
                                     .putString("user_role", user.getRole())
                                     .apply();
-                            // TODO: Navigate to dashboard
-                            showError("Login successful! Welcome " + user.getFirstName());
+                            // Navigate to dashboard
+                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                            finish();
                         } else if (response.code() == 401) {
                             showError("Invalid email or password.");
                         } else {

@@ -71,16 +71,16 @@
 
       <div class="stat-card">
         <div class="stat-content">
-          <span class="stat-label">Total Inventory</span>
+          <span class="stat-label">Software Assets</span>
           <div class="stat-main-row">
-            <h3 class="stat-number">{{ stats.totalEquipment * 4 }}</h3>
-            <span class="stat-percent positive">+8%</span>
+            <h3 class="stat-number">{{ stats.totalSoftware }}</h3>
+            <span class="stat-percent positive">+12%</span>
           </div>
         </div>
-        <div class="stat-icon-box cyan">
-          <!-- Stock icon -->
+        <div class="stat-icon-box purple">
+          <!-- Software icon -->
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
           </svg>
         </div>
       </div>
@@ -208,43 +208,48 @@
         </div>
       </div>
 
-      <div class="content-card timeline-card">
-        <h3 class="card-main-title">Status Overview</h3>
-        <p class="card-main-subtitle">+30% efficiency gains</p>
-        
-        <div class="timeline-wrapper">
-          <div class="timeline-item">
-            <div class="timeline-dot blue"></div>
-            <div class="timeline-content">
-              <span class="timeline-title">$2400, Infrastructure updates</span>
-              <span class="timeline-time">22 DEC 7:20 PM</span>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-dot red"></div>
-            <div class="timeline-content">
-              <span class="timeline-title">New asset #4219423 added</span>
-              <span class="timeline-time">21 DEC 11:21 PM</span>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-dot amber"></div>
-            <div class="timeline-content">
-              <span class="timeline-title">Server Maintenance Complete</span>
-              <span class="timeline-time">20 DEC 3:52 PM</span>
-            </div>
-          </div>
+      <div class="content-card project-card">
+        <div class="card-header-main">
+          <h3 class="card-main-title">Top Software Assets</h3>
+          <p class="card-main-subtitle">{{ softwareList.length }} premium software tracked</p>
         </div>
-
-        <div class="category-circle-chart mt-8">
-           <h4 class="mini-title mb-4">Equipment Mix</h4>
-           <div class="pie-wrap">
-             <canvas baseChart
-               [data]="pieChartData"
-               [options]="pieChartOptions"
-               [type]="pieChartType">
-             </canvas>
-           </div>
+        <div class="table-modern-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>SOFTWARE</th>
+                <th>VENDOR</th>
+                <th>TYPE</th>
+                <th>SEATS</th>
+                <th>VERSION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sw of softwareList">
+                <td>
+                  <div class="modern-cell-main">
+                    <div class="logo-circle purple">
+                      {{ sw.name.charAt(0) }}
+                    </div>
+                    <div class="cell-text-stack">
+                       <span class="cell-title">{{ sw.name }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ sw.vendor }}</td>
+                <td><span class="category-chip">{{ sw.type }}</span></td>
+                <td>
+                  <span class="font-bold text-[11px]" [class.text-emerald-600]="(sw.availableSeats || 0) > 0" [class.text-red-500]="(sw.availableSeats || 0) <= 0">
+                    {{ sw.availableSeats || 0 }} / {{ sw.totalSeats || 0 }}
+                  </span>
+                </td>
+                <td><span class="location-tag">{{ sw.version || 'N/A' }}</span></td>
+              </tr>
+              <tr *ngIf="softwareList.length === 0">
+                <td colspan="4" class="empty-row">No software assets found.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

@@ -62,6 +62,10 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/reset-password`, data);
   }
 
+  getAllUsers(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
+
   getCurrentUser() {
     if (!this.currentUser) {
       const userData = sessionStorage.getItem('user_data');

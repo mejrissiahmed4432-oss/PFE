@@ -43,6 +43,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activities.DashboardActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

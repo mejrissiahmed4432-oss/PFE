@@ -69,6 +69,13 @@ export class ProcurementService {
     return this.http.get<EquipmentRequest>(`${this.base}/requests/${id}`);
   }
 
+  /** Update a request — role-aware on the backend */
+  updateRequest(id: string, req: EquipmentRequest, requesterId: string, isItManager: boolean): Observable<EquipmentRequest> {
+    return this.http.put<EquipmentRequest>(
+      `${this.base}/requests/${id}?requesterId=${requesterId}&isItManager=${isItManager}`, req
+    ).pipe(tap(() => this.requestCreatedSource.next()));
+  }
+
   approveRequest(id: string): Observable<EquipmentRequest> {
     return this.http.put<EquipmentRequest>(`${this.base}/requests/${id}/approve`, {}).pipe(
       tap(() => this.requestCreatedSource.next())
@@ -84,7 +91,9 @@ export class ProcurementService {
   // ─── RFQ ──────────────────────────────────────────────────────────────────
 
   createRFQ(payload: { requestId: string; supplierIds: string[]; supplierEmails: string[]; selectedItemIndices?: number[] }): Observable<RFQ> {
-    return this.http.post<RFQ>(`${this.base}/rfq`, payload);
+    return this.http.post<RFQ>(`${this.base}/rfq`, payload).pipe(
+      tap(() => this.requestCreatedSource.next())
+    );
   }
 
   getAllRFQs(): Observable<RFQ[]> {
@@ -118,11 +127,15 @@ export class ProcurementService {
   }
 
   approveResponse(id: string): Observable<SupplierResponse> {
-    return this.http.put<SupplierResponse>(`${this.base}/responses/${id}/approve`, {});
+    return this.http.put<SupplierResponse>(`${this.base}/responses/${id}/approve`, {}).pipe(
+      tap(() => this.requestCreatedSource.next())
+    );
   }
 
   rejectResponse(id: string): Observable<SupplierResponse> {
-    return this.http.put<SupplierResponse>(`${this.base}/responses/${id}/reject`, {});
+    return this.http.put<SupplierResponse>(`${this.base}/responses/${id}/reject`, {}).pipe(
+      tap(() => this.requestCreatedSource.next())
+    );
   }
 
   getDownloadUrl(id: string): string {
@@ -146,7 +159,9 @@ export class ProcurementService {
   // ─── Purchase Orders ──────────────────────────────────────────────────────
 
   createOrder(payload: { requestId: string; rfqId: string; responseId: string }): Observable<PurchaseOrder> {
-    return this.http.post<PurchaseOrder>(`${this.base}/orders`, payload);
+    return this.http.post<PurchaseOrder>(`${this.base}/orders`, payload).pipe(
+      tap(() => this.requestCreatedSource.next())
+    );
   }
 
   getAllOrders(): Observable<PurchaseOrder[]> {

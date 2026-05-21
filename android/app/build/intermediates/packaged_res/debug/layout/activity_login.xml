@@ -6,167 +6,77 @@
     android:orientation="vertical"
     android:background="@color/backgroundColor">
 
-    <!-- ═══ DARK HERO HEADER (Left panel equivalent for mobile) ═══ -->
+    <!-- ═══ HEADER BANNER (Exactly matching MedinaFlux web layout) ═══ -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="220dp">
+        android:layout_height="220dp"
+        android:background="@drawable/bg_banner_gradient">
 
-        <!-- Background image -->
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/login_bg"
-            android:scaleType="centerCrop" />
-
-        <!-- Animated decorative orbs over the image -->
+        <!-- Animated decorative orbs -->
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/bg_animated_orbs" />
 
-        <!-- Dark overlay gradient -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_hero_overlay" />
-
-        <!-- Hero content -->
+        <!-- Header Content -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center_vertical"
             android:paddingHorizontal="24dp"
             android:paddingVertical="20dp">
 
-            <!-- Enterprise badge -->
+            <!-- Navbar -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:background="@drawable/bg_badge"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="24dp">
 
-                <View
-                    android:layout_width="6dp"
-                    android:layout_height="6dp"
-                    android:background="@drawable/bg_badge_dot"
-                    android:layout_marginEnd="6dp" />
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/medinaflux_logo"
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ENTERPRISE PLATFORM"
-                    android:textColor="#60a5fa"
-                    android:textSize="9sp"
-                    android:letterSpacing="0.12"
-                    android:textStyle="bold" />
+                    android:text="MedinaFlux"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp" />
             </LinearLayout>
 
-            <!-- Brand name -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ITManage"
-                android:textColor="@color/white"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                android:fontFamily="serif" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Unified IT Equipment Management Platform"
-                android:textColor="#94a3b8"
-                android:textSize="11sp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Stats strip -->
+            <!-- Welcome Section -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="8dp">
 
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="99.9%"
-                        android:textColor="#60a5fa"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="UPTIME"
-                        android:textColor="#64748b"
-                        android:textSize="8sp"
-                        android:letterSpacing="0.1" />
-                </LinearLayout>
+                    android:text="Welcome to MedinaFlux"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="24dp"
-                    android:background="#334155"
-                    android:layout_marginHorizontal="16dp" />
-
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="24/7"
-                        android:textColor="#60a5fa"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="MONITORING"
-                        android:textColor="#64748b"
-                        android:textSize="8sp"
-                        android:letterSpacing="0.1" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="24dp"
-                    android:background="#334155"
-                    android:layout_marginHorizontal="16dp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="AI"
-                        android:textColor="#60a5fa"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="PREDICTIONS"
-                        android:textColor="#64748b"
-                        android:textSize="8sp"
-                        android:letterSpacing="0.1" />
-                </LinearLayout>
+                    android:text="MANAGE YOUR IT ECOSYSTEM EFFICIENTLY"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginTop="6dp" />
             </LinearLayout>
+
         </LinearLayout>
     </FrameLayout>
 
@@ -195,15 +105,15 @@
                 android:paddingTop="32dp"
                 android:paddingBottom="24dp">
 
-            <!-- Logo -->
+            <!-- Logo (Enlarged) -->
             <ImageView
                 android:id="@+id/ivLogo"
-                android:layout_width="130dp"
-                android:layout_height="52dp"
+                android:layout_width="220dp"
+                android:layout_height="76dp"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/logo"
                 android:scaleType="fitCenter"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="28dp" />
 
             <!-- Title -->
             <TextView
@@ -213,7 +123,7 @@
                 android:layout_gravity="center_horizontal"
                 android:text="@string/login_title"
                 android:textColor="@color/textPrimary"
-                android:textSize="28sp"
+                android:textSize="30sp"
                 android:textStyle="bold"
                 android:fontFamily="serif" />
 
@@ -226,16 +136,16 @@
                 android:layout_marginTop="6dp"
                 android:text="@string/login_subtitle"
                 android:textColor="@color/textSecondary"
-                android:textSize="14sp" />
+                android:textSize="15sp" />
 
             <!-- Blue accent underline -->
             <View
                 android:id="@+id/accentUnderline"
-                android:layout_width="40dp"
+                android:layout_width="48dp"
                 android:layout_height="3dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="28dp"
                 android:background="@drawable/bg_title_accent" />
 
             <!-- Error box -->
@@ -265,31 +175,31 @@
                     android:textSize="13sp" />
             </LinearLayout>
 
-            <!-- Email label -->
+            <!-- Email label (Slightly larger) -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_email"
                 android:textColor="@color/textPrimary"
-                android:textSize="11sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:textAllCaps="true"
                 android:letterSpacing="0.1"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="8dp" />
 
-            <!-- Email input -->
+            <!-- Email input (Enlarged) -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="58dp"
                 android:background="@drawable/bg_input_field"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingHorizontal="14dp">
+                android:paddingHorizontal="16dp">
                 <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:src="@drawable/ic_mail"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="12dp"
                     android:scaleType="fitCenter" />
                 <EditText
                     android:id="@+id/etEmail"
@@ -301,38 +211,38 @@
                     android:textColorHint="@color/textHint"
                     android:inputType="textEmailAddress"
                     android:textColor="@color/textPrimary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:singleLine="true"
                     android:imeOptions="actionNext" />
             </LinearLayout>
 
-            <Space android:layout_width="match_parent" android:layout_height="16dp" />
+            <Space android:layout_width="match_parent" android:layout_height="20dp" />
 
-            <!-- Password label -->
+            <!-- Password label (Slightly larger) -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_password"
                 android:textColor="@color/textPrimary"
-                android:textSize="11sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:textAllCaps="true"
                 android:letterSpacing="0.1"
-                android:layout_marginBottom="6dp" />
+                android:layout_marginBottom="8dp" />
 
-            <!-- Password input -->
+            <!-- Password input (Enlarged) -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="58dp"
                 android:background="@drawable/bg_input_field"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingHorizontal="14dp">
+                android:paddingHorizontal="16dp">
                 <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:src="@drawable/ic_lock"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="12dp"
                     android:scaleType="fitCenter" />
                 <EditText
                     android:id="@+id/etPassword"
@@ -344,13 +254,13 @@
                     android:textColorHint="@color/textHint"
                     android:inputType="textPassword"
                     android:textColor="@color/textPrimary"
-                    android:textSize="15sp"
+                    android:textSize="16sp"
                     android:singleLine="true"
                     android:imeOptions="actionDone" />
                 <ImageButton
                     android:id="@+id/btnTogglePassword"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:background="@null"
                     android:contentDescription="Toggle password"
                     android:src="@drawable/ic_eye_off"
@@ -365,37 +275,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/link_forgot_password"
                 android:textColor="@color/textLink"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:clickable="true"
                 android:focusable="true" />
 
-            <Space android:layout_width="match_parent" android:layout_height="20dp" />
+            <Space android:layout_width="match_parent" android:layout_height="24dp" />
 
-            <!-- Sign In button: arrow icon + text -->
+            <!-- Sign In button (Enlarged) -->
             <LinearLayout
                 android:id="@+id/btnSignIn"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="58dp"
                 android:background="@drawable/bg_button_gradient"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:clickable="true"
                 android:focusable="true">
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:src="@drawable/ic_arrow_right"
                     android:scaleType="fitCenter"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_marginEnd="10dp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sign In"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="17sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.02" />
             </LinearLayout>
@@ -406,28 +316,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:visibility="gone"
                 android:indeterminateTint="@color/colorPrimary" />
 
-            <Space android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+            <Space android:layout_width="match_parent" android:layout_height="32dp" />
 
             <!-- Divider -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/divider"
-                android:layout_marginTop="32dp" />
+                android:background="@color/divider" />
 
             <!-- Footer -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/footer"
                 android:textColor="@color/textHint"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
 
             </LinearLayout>
         </ScrollView>

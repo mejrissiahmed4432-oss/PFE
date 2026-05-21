@@ -1,0 +1,506 @@
+<div class="detail-page" *ngIf="!isLoading && software">
+
+  <!-- ─── Back bar ─── -->
+  <div class="back-bar">
+    <button class="btn-back" (click)="onGoBack()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      Back to Software List
+    </button>
+  </div>
+
+  <!-- ─── Hero header ─── -->
+  <div class="detail-hero">
+    <div class="hero-icon-wrap" [ngClass]="{
+      'cat-dev': isDevTool(software.name, software.type),
+      'cat-office': isProductivityTool(software.name, software.type),
+      'cat-creative': isCreativeTool(software.name, software.type),
+      'cat-db': isDatabaseTool(software.name, software.type),
+      'cat-os': isOSTool(software.name, software.type),
+      'cat-default': isDefaultTool(software.name, software.type)
+    }">
+      <svg *ngIf="isDevTool(software.name, software.type)" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="16 18 22 12 16 6"></polyline>
+        <polyline points="8 6 2 12 8 18"></polyline>
+      </svg>
+      <svg *ngIf="isProductivityTool(software.name, software.type)" xmlns="http://www.w3.org/2000/svg" width="36"
+        height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+      <svg *ngIf="isCreativeTool(software.name, software.type)" xmlns="http://www.w3.org/2000/svg" width="36"
+        height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+        <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+        <path d="M2 2l7.586 7.586"></path>
+        <circle cx="11" cy="11" r="2"></circle>
+      </svg>
+      <svg *ngIf="isDatabaseTool(software.name, software.type)" xmlns="http://www.w3.org/2000/svg" width="36"
+        height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+      </svg>
+      <svg *ngIf="isOSTool(software.name, software.type)" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+      <svg *ngIf="isDefaultTool(software.name, software.type)" xmlns="http://www.w3.org/2000/svg" width="36" height="36"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+    </div>
+
+    <div class="hero-info">
+      <h1 class="hero-name">{{ software.name }}</h1>
+      <div class="hero-meta">
+        <span class="meta-chip">{{ software.vendor }}</span>
+        <span class="meta-dot">·</span>
+        <span class="meta-chip serial">Ver: {{ software.version || 'N/A' }}</span>
+      </div>
+      <div class="hero-tags">
+        <span class="tag tag-type">{{ software.type | titlecase }}</span>
+        <span class="tag" [ngClass]="software.status === 'ACTIVE' ? 'tag-active' : 'tag-expired'">{{ software.status
+          }}</span>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn-edit" (click)="showDeleteConfirm = true"
+        style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── Tab navigation ─── -->
+  <div class="detail-tabs">
+    <button class="tab-btn" [class.active]="activeTab==='overview'" (click)="activeTab='overview'">Overview</button>
+    <button class="tab-btn" [class.active]="activeTab==='pool'" (click)="activeTab='pool'">
+      License Pools
+      <span class="badge-count" *ngIf="pools.length > 0">{{ pools.length }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab==='assignments'" (click)="activeTab='assignments'">
+      Assignments
+      <span class="badge-count" *ngIf="assignments.length > 0">{{ assignments.length }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab==='keys'" (click)="activeTab='keys'">License Keys</button>
+    <button class="tab-btn" [class.active]="activeTab==='activity'" (click)="activeTab='activity'">Activity Log</button>
+  </div>
+
+  <!-- ─── Tab panels ─── -->
+  <div class="tab-content">
+
+    <!-- OVERVIEW -->
+    <ng-container *ngIf="activeTab==='overview'">
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-header">
+            <div class="info-card-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <span>Software Details</span>
+          </div>
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="info-label">Software Name</span>
+              <span class="info-value">{{ software.name || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Vendor</span>
+              <span class="info-value">{{ software.vendor || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Type</span>
+              <span class="info-value"><span class="tag tag-type">{{ software.type | titlecase }}</span></span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Version</span>
+              <span class="info-value mono">{{ software.version || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Website</span>
+              <span class="info-value">
+                <a *ngIf="software.website" [href]="software.website" target="_blank"
+                  style="color: #3b82f6; text-decoration: none;">{{ software.website }}</a>
+                <span *ngIf="!software.website">—</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-header">
+            <div class="info-card-icon green">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+              </svg>
+            </div>
+            <span>Utilization Overview</span>
+          </div>
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="info-label">Total Seats</span>
+              <span class="info-value">{{ totalSeats() }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Available Seats</span>
+              <span class="info-value" [ngClass]="{'active': availableSeats() > 0, 'expired': availableSeats() <= 0}">{{
+                availableSeats() }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Active Assignments</span>
+              <span class="info-value">{{ assignments.length }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">License Pools</span>
+              <span class="info-value">{{ pools.length }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- LICENSE POOLS -->
+    <ng-container *ngIf="activeTab==='pool'">
+      <div class="empty-state" *ngIf="pools.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1.5">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <p>No license pools configured.</p>
+      </div>
+
+      <div class="info-grid" *ngIf="pools.length > 0">
+        <div class="info-card" *ngFor="let pool of pools">
+          <div class="info-card-header" style="margin-bottom: 16px;">
+            <div class="info-card-icon purple">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+            <span>{{ pool.licenseModel }} Pool</span>
+          </div>
+
+          <div class="pool-badges" style="margin-bottom: 16px; display: flex; gap: 8px;">
+            <span class="tag" style="background: #f1f5f9; color: #475569;">{{ pool.activationMethod }}</span>
+
+            <span class="tag tag-expired" *ngIf="isExpired(pool.expirationDate)">Expired</span>
+            <span class="tag tag-active"
+              *ngIf="!isExpired(pool.expirationDate) && !isExpiringSoon(pool.expirationDate) && pool.expirationDate">Active</span>
+            <span class="tag" style="background: #fffbeb; color: #b45309;"
+              *ngIf="isExpiringSoon(pool.expirationDate)">Expiring Soon</span>
+
+            <span class="tag tag-expired" *ngIf="isSeatsExhausted(pool)">Exhausted</span>
+            <span class="tag" style="background: #fffbeb; color: #b45309;"
+              *ngIf="isSeatsLow(pool) && !isSeatsExhausted(pool)">Low Seats</span>
+          </div>
+
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="info-label">Seats Available</span>
+              <span class="info-value" [ngClass]="{'expired': (pool.availableSeats || 0) <= 0}">{{ pool.availableSeats
+                }} / {{ pool.totalSeats }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Renewal Type</span>
+              <span class="info-value">{{ pool.renewalType || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Expires</span>
+              <span class="info-value">{{ pool.expirationDate ? (pool.expirationDate | date:'mediumDate') : 'Never'
+                }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ASSIGNMENTS -->
+    <ng-container *ngIf="activeTab==='assignments'">
+
+      <!-- ACTIVE ASSIGNMENTS -->
+      <div class="info-grid">
+        <div class="info-card wide">
+          <div class="info-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div class="info-card-icon blue">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <span>Active Seat Assignments</span>
+            </div>
+            <button class="btn-primary" (click)="openAssignmentModal()"
+              style="padding: 8px 16px; font-size: 13px; border-radius: 8px; border: none; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);">
+              + Assign User
+            </button>
+          </div>
+
+          <div class="parts-table-wrapper" *ngIf="activeAssignments.length > 0">
+            <table class="parts-table detail-table">
+              <thead>
+                <tr>
+                  <th>Assigned To</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Date Assigned</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let asm of activeAssignments">
+                  <td><strong>{{ asm.assignedTargetName }}</strong></td>
+                  <td><span class="tag tag-type">{{ asm.assignedToType }}</span></td>
+                  <td><span class="tag tag-active">{{ asm.status }}</span></td>
+                  <td class="text-muted">{{ asm.assignedAt | date:'mediumDate' }}</td>
+                  <td style="text-align: right;">
+                    <button class="btn-cancel-alert" (click)="promptRevoke(asm.id!)"
+                      style="padding: 4px 10px; font-size: 12px; border-radius: 6px; border: 1px solid #fecaca; background: #fef2f2; color: #ef4444; font-weight: 600; cursor: pointer; transition: all 0.2s;">Revoke</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="activeAssignments.length === 0" style="padding: 32px; text-align: center; color: #64748b;">
+            <p>No active assignments.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ASSIGNMENT HISTORY -->
+      <div class="info-grid" style="margin-top: 24px;">
+        <div class="info-card wide">
+          <div class="info-card-header" style="display: flex; align-items: center; gap: 8px;">
+            <div class="info-card-icon" style="background: #f1f5f9; color: #64748b;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <span>Assignment History</span>
+          </div>
+
+          <div class="parts-table-wrapper" *ngIf="historyAssignments.length > 0">
+            <table class="parts-table detail-table">
+              <thead>
+                <tr>
+                  <th>Assigned To</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Date Assigned</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let asm of historyAssignments">
+                  <td><strong>{{ asm.assignedTargetName }}</strong></td>
+                  <td><span class="tag tag-type">{{ asm.assignedToType }}</span></td>
+                  <td><span class="tag" style="background: #f1f5f9; color: #64748b;">{{ asm.status }}</span></td>
+                  <td class="text-muted">{{ asm.assignedAt | date:'mediumDate' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="historyAssignments.length === 0" style="padding: 32px; text-align: center; color: #64748b;">
+            <p>No assignment history.</p>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- LICENSE KEYS -->
+    <ng-container *ngIf="activeTab==='keys'">
+      <div class="keys-intro"
+        style="margin-bottom: 24px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; gap: 12px; color: #475569;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <p style="margin: 0;">License keys are highly protected. Select a key-based pool to reveal its keys using your
+          IT Manager password.</p>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card" *ngFor="let pool of pools">
+          <div class="info-card-header">
+            <div class="info-card-icon amber">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path
+                  d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4">
+                </path>
+              </svg>
+            </div>
+            <span>{{ pool.licenseModel }} Pool Keys</span>
+          </div>
+
+          <div class="info-rows" *ngIf="pool.activationMethod === 'KEY_BASED'">
+            <div class="info-row">
+              <span class="info-label">Activation Method</span>
+              <span class="info-value">Key Based</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Keys Available</span>
+              <span class="info-value">{{ pool.totalSeats }}</span>
+            </div>
+            <div class="info-row" style="border-bottom: none; justify-content: flex-end;">
+              <button class="btn-redirect" (click)="promptRevealKeys(pool.id!)" style="padding: 8px 16px; width: 100%;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                Reveal Keys
+              </button>
+            </div>
+          </div>
+          <div class="info-rows" *ngIf="pool.activationMethod !== 'KEY_BASED'">
+            <div class="info-row" style="border-bottom: none; padding-bottom: 0;">
+              <span class="info-value" style="color: #94a3b8; font-style: italic; text-align: center; width: 100%;">
+                This pool uses {{ pool.activationMethod }}. No keys stored.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="pools.length === 0">
+        <p>No license pools configured.</p>
+      </div>
+    </ng-container>
+
+    <!-- ACTIVITY -->
+    <ng-container *ngIf="activeTab==='activity'">
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1.5">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+        <p>Activity log coming soon.</p>
+      </div>
+    </ng-container>
+
+  </div> <!-- /tab-content -->
+</div> <!-- /detail-page -->
+
+<!-- Loading State -->
+<div class="loading-state" *ngIf="isLoading"
+  style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px;">
+  <div class="spinner"></div>
+  <p style="color: #64748b; margin-top: 16px;">Loading software details...</p>
+</div>
+
+<!-- Password Modal -->
+<div class="modal-overlay" *ngIf="showPasswordModal">
+  <div class="modal-box">
+    <h2 class="modal-title">IT Manager Authorization</h2>
+    <p class="modal-sub">Enter your IT Manager password to reveal license keys.</p>
+    <input type="password" [(ngModel)]="adminPassword" placeholder="Enter password..." class="modal-input"
+      (keyup.enter)="submitRevealKeys()">
+    <div class="modal-error" *ngIf="revealError">{{ revealError }}</div>
+    <div class="keys-reveal-list" *ngIf="revealedKeys.length > 0">
+      <div class="key-item" *ngFor="let k of revealedKeys">{{ k }}</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" (click)="closePasswordModal()">Close</button>
+      <button class="btn-modal-confirm" (click)="submitRevealKeys()"
+        *ngIf="revealedKeys.length === 0">Authorize</button>
+    </div>
+  </div>
+</div>
+
+<!-- Unified Danger Alert Modal -->
+<div class="modal-backdrop" *ngIf="showDeleteConfirm || showRevokeConfirm"
+  style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+  <div class="modal-content"
+    style="background: white; border-radius: 16px; width: 100%; max-width: 420px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1); overflow: hidden; font-family: 'Inter', sans-serif;">
+
+    <!-- Header Area -->
+    <div
+      style="background: #fef2f2; padding: 24px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #fee2e2;">
+      <div
+        style="width: 48px; height: 48px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; color: #dc2626; flex-shrink: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+      <h2 style="margin: 0; color: #991b1b; font-size: 1.25rem; font-weight: 700;">
+        {{ showDeleteConfirm ? 'Delete Software' : 'Revoke License' }}
+      </h2>
+    </div>
+
+    <!-- Body -->
+    <div style="padding: 24px; background: white;">
+      <p style="color: #475569; margin: 0; font-size: 0.95rem; line-height: 1.5;">
+        <ng-container *ngIf="showDeleteConfirm">
+          Are you sure you want to permanently delete <strong>{{ software?.name }}</strong>? This will remove all pools
+          and assignments.
+        </ng-container>
+        <ng-container *ngIf="showRevokeConfirm">
+          Are you sure you want to revoke this assignment? The user will instantly lose access and the seat will be
+          returned to the pool.
+        </ng-container>
+        <br><br>
+        This action cannot be undone.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div
+      style="padding: 16px 24px; background: #f8fafc; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid #e2e8f0;">
+      <button (click)="showDeleteConfirm = false; showRevokeConfirm = false;"
+        style="padding: 10px 16px; background: transparent; border: none; color: #475569; font-weight: 700; cursor: pointer; border-radius: 8px;">
+        Cancel
+      </button>
+      <button (click)="showDeleteConfirm ? deleteSoftware() : confirmRevoke()"
+        style="padding: 10px 20px; background: #dc2626; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.2);">
+        {{ showDeleteConfirm ? 'Delete Software' : 'Revoke License' }}
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Assignment Modal -->
+<app-license-assignment-modal *ngIf="showAssignmentModal" [pool]="poolToAssign"
+  (closeModal)="onAssignmentClose($event)"></app-license-assignment-modal>

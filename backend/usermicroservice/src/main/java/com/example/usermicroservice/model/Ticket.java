@@ -20,14 +20,19 @@ public class Ticket {
     private String userName; // Creator's name
     private String userRole; // Creator's role
     private String assignedTo; // Assigned technician ID
+    private String technicianName; // Assigned technician's name
     private String equipmentName; // Equipment this ticket is for
+    private String equipmentId;   // Equipment record ID
     private String deadline;     // Optional deadline date
     private List<String> attachments; // Base64 or URLs of attachments
     private String workNote;
     private List<java.util.Map<String, Object>> repairTasks;
     private List<java.util.Map<String, Object>> partsUsed;
+    private List<java.util.Map<String, Object>> partsInstalled; // Full part details installed during maintenance
     private String createdAt;
     private String updatedAt;
+    private String diagnosisResult;
+    private String validationSummary;
 
     public Ticket() {}
 
@@ -70,8 +75,12 @@ public class Ticket {
     public void setUserRole(String userRole) { this.userRole = userRole; }
     public String getAssignedTo() { return assignedTo; }
     public void setAssignedTo(String assignedTo) { this.assignedTo = assignedTo; }
+    public String getTechnicianName() { return technicianName; }
+    public void setTechnicianName(String technicianName) { this.technicianName = technicianName; }
     public String getEquipmentName() { return equipmentName; }
     public void setEquipmentName(String equipmentName) { this.equipmentName = equipmentName; }
+    public String getEquipmentId() { return equipmentId; }
+    public void setEquipmentId(String equipmentId) { this.equipmentId = equipmentId; }
     public String getDeadline() { return deadline; }
     public void setDeadline(String deadline) { this.deadline = deadline; }
     public List<String> getAttachments() { return attachments; }
@@ -82,8 +91,14 @@ public class Ticket {
     public void setRepairTasks(List<java.util.Map<String, Object>> repairTasks) { this.repairTasks = repairTasks; }
     public List<java.util.Map<String, Object>> getPartsUsed() { return partsUsed; }
     public void setPartsUsed(List<java.util.Map<String, Object>> partsUsed) { this.partsUsed = partsUsed; }
+    public List<java.util.Map<String, Object>> getPartsInstalled() { return partsInstalled; }
+    public void setPartsInstalled(List<java.util.Map<String, Object>> partsInstalled) { this.partsInstalled = partsInstalled; }
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
     public String getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
+    public String getDiagnosisResult() { return diagnosisResult; }
+    public void setDiagnosisResult(String diagnosisResult) { this.diagnosisResult = diagnosisResult; }
+    public String getValidationSummary() { return validationSummary; }
+    public void setValidationSummary(String validationSummary) { this.validationSummary = validationSummary; }
 }

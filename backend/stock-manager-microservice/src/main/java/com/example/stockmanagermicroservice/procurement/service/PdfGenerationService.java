@@ -113,11 +113,11 @@ public class PdfGenerationService {
                 .setFont(boldFont).setFontSize(13).setFontColor(DARK_TEXT));
         document.add(new Paragraph("\n").setFontSize(4));
 
-        float[] colWidths = {40f, 250f, 100f, 110f};
+        float[] colWidths = {40f, 330f, 130f};
         Table itemTable = new Table(UnitValue.createPointArray(colWidths)).useAllAvailableWidth();
 
         // Header row
-        String[] headers = {"#", "Equipment / Item Description", "Quantity", "Unit (Specify Price)"};
+        String[] headers = {"#", "Equipment / Item Description & Specifications", "Quantity"};
         for (String h : headers) {
             itemTable.addHeaderCell(
                     new Cell().add(new Paragraph(h).setFont(boldFont).setFontSize(10).setFontColor(ColorConstants.WHITE))
@@ -155,16 +155,7 @@ public class PdfGenerationService {
             itemTable.addCell(createDataCell(String.valueOf(i + 1), normalFont, rowBg));
             itemTable.addCell(createDataCell(desc.toString(), normalFont, rowBg));
             itemTable.addCell(createDataCell(String.valueOf(item.getQuantity()), normalFont, rowBg));
-            itemTable.addCell(createDataCell("________________", normalFont, rowBg));
         }
-
-        // Totals row
-        itemTable.addCell(new Cell(1, 3)
-                .add(new Paragraph("TOTAL PRICE").setFont(boldFont).setFontSize(10).setFontColor(DARK_TEXT).setTextAlignment(TextAlignment.RIGHT))
-                .setPadding(8).setBackgroundColor(LIGHT_BLUE).setBorder(Border.NO_BORDER));
-        itemTable.addCell(new Cell()
-                .add(new Paragraph("________________").setFont(boldFont).setFontSize(10))
-                .setPadding(8).setBackgroundColor(LIGHT_BLUE).setBorder(Border.NO_BORDER));
 
         document.add(itemTable);
         document.add(new Paragraph("\n"));

@@ -26,6 +26,11 @@ public class TicketController {
         return ticketService.getTicketsByUser(userId);
     }
 
+    @GetMapping("/technician/{techId}")
+    public List<Ticket> getTicketsForTechnician(@PathVariable String techId) {
+        return ticketService.getTicketsForTechnician(techId);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Ticket> getTicketById(@PathVariable String id) {
         return ticketService.getTicketById(id)

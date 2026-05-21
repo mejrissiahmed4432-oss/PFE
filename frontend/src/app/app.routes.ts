@@ -10,3 +10,4 @@ export const routes: Routes = [
     { path: 'supplier-respond/:token', component: SupplierRespondComponent },
     { path: 'board', component: BoardComponent, canActivate: [roleGuard] },
 ];
+

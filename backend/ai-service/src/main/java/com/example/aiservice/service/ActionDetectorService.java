@@ -160,6 +160,8 @@ public class ActionDetectorService {
      * Returns true if an action is detected and updates the AiResponse with payload.
      */
     public boolean detectAndPopulate(String message, String role, String userId, AiResponse response) {
+        if (message.contains("[SYS_NO_ACTION]")) return false;
+
         String lower = message.toLowerCase();
         boolean potentialAction = lower.contains("add") || lower.contains("create") || 
                                  lower.contains("update") || lower.contains("approve") || 
@@ -202,7 +204,10 @@ public class ActionDetectorService {
                 REJECT_REQUEST             ✓             ✓            ✗         ✓
                 SUBMIT_PART_REQUEST        ✗             ✗            ✓         ✓
                 CREATE_TASK                ✓             ✓            ✓         ✓
+                UPDATE_TASK                ✓             ✓            ✓         ✓
+                DELETE_TASK                ✓             ✓            ✓         ✓
                 UPDATE_TICKET              ✓             ✓            ✓         ✓
+                DELETE_TICKET              ✓             ✓            ✓         ✓
                 SEND_MESSAGE               ✓             ✓            ✓         ✓
                 CREATE_CATEGORY            ✓             ✓            ✗         ✓
                 ADD_TYPE                   ✓             ✓            ✗         ✓
@@ -460,12 +465,41 @@ public class ActionDetectorService {
                 ════════════════════════════════════════════════════════
 
                 ════════════════════════════════════════════════════════
+                ACTION: UPDATE_TASK
+                ────────────────────────────────────────────────────────
+                id OR title OR dueDate [CRITICAL]   Search the message for a task title or date.
+                                                    If found → proceed. If not → block.
+                fields to update       [INFERRED]   Extract changes.
+
+                BLOCKING RULE: Block ONLY if no title, date, or ID is found.
+                ════════════════════════════════════════════════════════
+
+                ════════════════════════════════════════════════════════
+                ACTION: DELETE_TASK
+                ────────────────────────────────────────────────────────
+                id OR title OR dueDate [CRITICAL]   Search the message for a task title or date.
+                                                    If found → proceed. If not → block.
+                
+                BLOCKING RULE: Block ONLY if no title, date, or ID is found.
+                ════════════════════════════════════════════════════════
+
+                ════════════════════════════════════════════════════════
                 ACTION: UPDATE_TICKET
                 ────────────────────────────────────────────────────────
-                id              [CRITICAL]   Must be in message.
-                fields          [INFERRED]   Extract change intent.
+                id OR title OR createdAt [CRITICAL] Search the message for a ticket title or date.
+                                                    If found → proceed. If not → block.
+                fields to update         [INFERRED] Extract change intent.
 
-                BLOCKING RULE: Block only if no ticket ID.
+                BLOCKING RULE: Block ONLY if no title, date, or ID is found.
+                ════════════════════════════════════════════════════════
+
+                ════════════════════════════════════════════════════════
+                ACTION: DELETE_TICKET
+                ────────────────────────────────────────────────────────
+                id OR title OR createdAt [CRITICAL] Search the message for a ticket title or date.
+                                                    If found → proceed. If not → block.
+
+                BLOCKING RULE: Block ONLY if no title, date, or ID is found.
                 ════════════════════════════════════════════════════════
 
                 ════════════════════════════════════════════════════════

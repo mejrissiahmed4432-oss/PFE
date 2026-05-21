@@ -1,0 +1,249 @@
+<div class="wizard-overlay" (click)="cancel()">
+  <div class="wizard-panel" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="wizard-header">
+      <div class="wizard-header-left">
+        <div class="wizard-icon-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+        <div>
+          <h2 class="wizard-title">{{ editMode ? 'Update Software' : 'Add Software' }}</h2>
+          <p class="wizard-subtitle">{{ editMode ? 'Modify software general information' : 'Step ' + currentStep + ' of ' + totalSteps + ' — ' + stepLabels[currentStep - 1] }}</p>
+        </div>
+      </div>
+      <button class="wizard-close" (click)="cancel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <!-- Progress & Steps -->
+    <div class="wizard-progress-track">
+      <div class="wizard-progress-fill" [style.width.%]="(currentStep / totalSteps) * 100"></div>
+    </div>
+    <div class="wizard-step-dots">
+      <div *ngFor="let label of stepLabels; let i = index" class="step-dot"
+           [class.done]="i + 1 < currentStep"
+           [class.current]="i + 1 === currentStep"
+           [class.clickable-back]="i + 1 < currentStep"
+           (click)="i + 1 < currentStep ? goToStep(i + 1) : null">
+        <span class="dot-num">
+          <svg *ngIf="i + 1 < currentStep" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span *ngIf="i + 1 >= currentStep">{{ i + 1 }}</span>
+        </span>
+        <span class="dot-label">{{ label }}</span>
+      </div>
+    </div>
+
+    <!-- Body content -->
+    <div class="wizard-body">
+      <!-- Step 1: General Info -->
+      <div *ngIf="currentStep === 1" class="step-content animate-in">
+        <div class="step-hero">
+          <div class="step-hero-icon green">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          </div>
+          <div>
+            <h3>General Information</h3>
+            <p>Enter the core details for this software product.</p>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="field-group">
+            <label class="field-label">Software Name <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="software.name" class="field-input" placeholder="e.g. Adobe Photoshop CC">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Software Type <span class="req">*</span></label>
+            <select [(ngModel)]="software.type" class="field-select">
+              <option value="" disabled>Select Type...</option>
+              <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="field-group relative">
+            <label class="field-label">Vendor <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="software.vendor" (focus)="isVendorDropdownOpen = true" (blur)="closeDropdowns()" class="field-input" placeholder="Search or create vendor...">
+            <div *ngIf="isVendorDropdownOpen" class="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden animate-in">
+              <div class="max-h-48 overflow-y-auto">
+                <div *ngFor="let v of filteredVendors" (mousedown)="selectVendor(v)" class="px-4 py-2 hover:bg-slate-50 cursor-pointer text-sm text-slate-700">{{ v }}</div>
+              </div>
+              <div *ngIf="software.vendor && !vendors.includes(software.vendor)" (mousedown)="addNewVendor()" class="px-4 py-3 bg-blue-50 border-t border-blue-100 cursor-pointer hover:bg-blue-100 transition-colors">
+                <div class="flex items-center gap-2 text-blue-600 font-bold text-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  Create new vendor "{{ software.vendor }}"
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Version</label>
+            <input type="text" [(ngModel)]="software.version" class="field-input" placeholder="e.g. 2024, v3.1.0">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Website</label>
+          <input type="url" [(ngModel)]="software.website" class="field-input" placeholder="https://www.adobe.com">
+        </div>
+      </div>
+
+      <!-- Step 2: Licensing Setup -->
+      <div *ngIf="currentStep === 2" class="step-content animate-in">
+        <div class="step-hero">
+          <div class="step-hero-icon purple">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+          </div>
+          <div>
+            <h3>Licensing Model</h3>
+            <p>How is this software licensed?</p>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">License Mode <span class="req">*</span></label>
+          <div class="radio-cards grid-2">
+            <label class="radio-card" [class.selected]="pool.licenseModel === 'SUBSCRIPTION'">
+              <input type="radio" [(ngModel)]="pool.licenseModel" value="SUBSCRIPTION" (change)="autoSuggestActivation()">
+              <div class="radio-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+              <div><strong>Subscription</strong><span>Recurring billing (SaaS)</span></div>
+            </label>
+            <label class="radio-card" [class.selected]="pool.licenseModel === 'VOLUME'">
+              <input type="radio" [(ngModel)]="pool.licenseModel" value="VOLUME" (change)="autoSuggestActivation()">
+              <div class="radio-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg></div>
+              <div><strong>Volume / Perpetual</strong><span>Single key for multiple installs</span></div>
+            </label>
+            <label class="radio-card" [class.selected]="pool.licenseModel === 'OEM'">
+              <input type="radio" [(ngModel)]="pool.licenseModel" value="OEM" (change)="autoSuggestActivation()">
+              <div class="radio-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg></div>
+              <div><strong>OEM</strong><span>Tied to specific hardware</span></div>
+            </label>
+            <label class="radio-card" [class.selected]="pool.licenseModel === 'PERPETUAL'">
+              <input type="radio" [(ngModel)]="pool.licenseModel" value="PERPETUAL" (change)="autoSuggestActivation()">
+              <div class="radio-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+              <div><strong>Perpetual</strong><span>One-time purchase</span></div>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-5">
+          <div class="field-group">
+            <label class="field-label">Activation Method</label>
+            <select [(ngModel)]="pool.activationMethod" class="field-select">
+              <option *ngFor="let am of activationMethods" [value]="am">{{ am }}</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Total Seats (Capacity) <span class="req">*</span></label>
+            <input type="number" [(ngModel)]="pool.totalSeats" min="1" class="field-input" placeholder="e.g. 50">
+          </div>
+        </div>
+
+        <div class="info-note" *ngIf="pool.licenseModel === 'OEM'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <div>OEM licenses are bound to the motherboard of the device they are first installed on. You cannot transfer these seats to other devices later.</div>
+        </div>
+      </div>
+
+      <!-- Step 3: Keys & Credentials -->
+      <div *ngIf="currentStep === 3" class="step-content animate-in">
+        <div class="step-hero">
+          <div class="step-hero-icon amber">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          <div>
+            <h3>Keys & Credentials</h3>
+            <p>Provide the license keys or admin portal credentials for activation.</p>
+          </div>
+        </div>
+
+        <ng-container *ngIf="pool.activationMethod === 'KEY_BASED'">
+          <div class="field-group">
+            <label class="field-label">License Key(s) <span class="req">*</span></label>
+            <textarea [(ngModel)]="keysInput" rows="4" class="field-textarea mono" placeholder="Paste license keys here. One key per line."></textarea>
+            <span class="field-hint">Enter one key per line if tracking individual OEM/Retail keys. Or just one key if it's a Volume License.</span>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="pool.activationMethod === 'USER_LOGIN'">
+          <div class="two-col">
+            <div class="field-group">
+              <label class="field-label">Admin Portal URL</label>
+              <input type="text" class="field-input" placeholder="https://admin.microsoft.com">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Admin Email</label>
+              <input type="email" class="field-input" placeholder="admin@company.com">
+            </div>
+          </div>
+          <div class="info-note">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <div>Account-based licenses do not require license keys. Seats are assigned directly through the vendor's admin portal via email invitation.</div>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Step 4: Purchase & Renewal -->
+      <div *ngIf="currentStep === 4" class="step-content animate-in">
+        <div class="step-hero">
+          <div class="step-hero-icon blue">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+          </div>
+          <div>
+            <h3>Purchase & Renewal</h3>
+            <p>Track financials and expiration dates.</p>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="field-group">
+            <label class="field-label">Renewal Type</label>
+            <select [(ngModel)]="pool.renewalType" class="field-select">
+              <option *ngFor="let rt of renewalTypes" [value]="rt">{{ rt }}</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <!-- Cost and Purchase date are handled in Procurement -->
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="field-group">
+            <label class="field-label">Expiration Date <span *ngIf="pool.renewalType !== 'NONE'" class="req">*</span></label>
+            <input type="date" [(ngModel)]="pool.expirationDate" class="field-input">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="wizard-footer">
+      <div class="footer-left">
+        <button class="btn-back" (click)="prevStep()" [disabled]="currentStep === 1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          Back
+        </button>
+      </div>
+      
+      <div class="footer-center step-counter">
+        Step {{ currentStep }} of {{ totalSteps }}
+      </div>
+
+      <div class="footer-right">
+        <button *ngIf="currentStep < totalSteps" class="btn-next" (click)="nextStep()">
+          Next Step
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+        <button *ngIf="currentStep === totalSteps" class="btn-submit" (click)="submit()" [disabled]="isSubmitting">
+          <svg *ngIf="!isSubmitting" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          <svg *ngIf="isSubmitting" class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+          {{ isSubmitting ? 'Saving...' : (editMode ? 'Update Software' : 'Save Software') }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

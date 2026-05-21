@@ -16,6 +16,8 @@ export interface DashboardStats {
   totalSuppliers: number;
   warrantyExpiringSoon: number;
   lowStockAlerts: number;
+  totalSoftware: number;
+  totalLicenses: number;
   equipmentByCategory: { [key: string]: number };
   equipmentByLocation: { [key: string]: number };
   recentEquipment: Equipment[];

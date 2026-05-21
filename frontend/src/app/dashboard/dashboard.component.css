@@ -113,6 +113,7 @@
 
 .stat-icon-box.blue { background: #3b82f6; box-shadow: 0 4px 10px rgba(59,130,246,0.3); }
 .stat-icon-box.emerald { background: #10b981; box-shadow: 0 4px 10px rgba(16,185,129,0.3); }
+.stat-icon-box.purple { background: #8b5cf6; box-shadow: 0 4px 10px rgba(139,92,246,0.3); }
 .stat-icon-box.amber { background: #f59e0b; box-shadow: 0 4px 10px rgba(245,158,11,0.3); }
 .stat-icon-box.cyan { background: #06b6d4; box-shadow: 0 4px 10px rgba(6,182,212,0.3); }
 
@@ -264,9 +265,10 @@
   width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
   color: white; font-weight: 800; font-size: 0.9rem; background: #94a3b8;
 }
-.logo-circle.blue { background: #3b82f6; }
-.logo-circle.emerald { background: #10b981; }
-.logo-circle.amber { background: #f59e0b; }
+.logo-circle.blue { background: #eff6ff; color: #3b82f6; }
+.logo-circle.emerald { background: #ecfdf5; color: #10b981; }
+.logo-circle.amber { background: #fffbeb; color: #f59e0b; }
+.logo-circle.purple { background: #f5f3ff; color: #8b5cf6; }
 
 .location-tag {
   font-size: 0.75rem; font-weight: 700; color: var(--text-main);

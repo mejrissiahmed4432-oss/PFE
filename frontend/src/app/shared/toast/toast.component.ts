@@ -21,8 +21,8 @@ import { Subscription } from 'rxjs';
             <div class="icon-bg"></div>
             <i *ngIf="toast.type === 'success'" class="fas fa-check"></i>
             <i *ngIf="toast.type === 'info'" class="fas fa-info"></i>
-            <i *ngIf="toast.type === 'error'" class="fas fa-exclamation-circle"></i>
-            <i *ngIf="toast.type === 'warning'" class="fas fa-exclamation-triangle"></i>
+            <i *ngIf="toast.type === 'error' || toast.type === 'delete'" class="fas fa-exclamation-circle"></i>
+            <i *ngIf="toast.type === 'warning' || toast.type === 'update'" class="fas fa-exclamation-triangle"></i>
           </div>
           
           <div class="toast-text">
@@ -209,6 +209,21 @@ import { Subscription } from 'rxjs';
     .toast-card.warning i { color: #d97706; }
     .toast-card.warning .toast-badge { background: rgba(245, 158, 11, 0.1); color: #d97706; }
 
+    /* Delete (Red) & Update (Orange) Background Variants */
+    .toast-card.delete { background: rgba(239, 68, 68, 0.95); border-color: rgba(239, 68, 68, 0.2); }
+    .toast-card.delete .toast-indicator, .toast-card.delete .icon-bg { background: #fff; }
+    .toast-card.delete i, .toast-card.delete .toast-message, .toast-card.delete .toast-badge { color: #fff; }
+    .toast-card.delete .toast-badge { background: rgba(255, 255, 255, 0.2); }
+    .toast-card.delete .toast-time { color: rgba(255, 255, 255, 0.7); }
+    .toast-card.delete .toast-close-btn { color: rgba(255, 255, 255, 0.7); }
+
+    .toast-card.update { background: rgba(245, 158, 11, 0.95); border-color: rgba(245, 158, 11, 0.2); }
+    .toast-card.update .toast-indicator, .toast-card.update .icon-bg { background: #fff; }
+    .toast-card.update i, .toast-card.update .toast-message, .toast-card.update .toast-badge { color: #fff; }
+    .toast-card.update .toast-badge { background: rgba(255, 255, 255, 0.2); }
+    .toast-card.update .toast-time { color: rgba(255, 255, 255, 0.7); }
+    .toast-card.update .toast-close-btn { color: rgba(255, 255, 255, 0.7); }
+
     /* Progress Bar */
     .toast-progress-track {
       position: absolute;
@@ -231,6 +246,7 @@ import { Subscription } from 'rxjs';
     .toast-card.info .toast-progress-fill { color: #3b82f6; }
     .toast-card.error .toast-progress-fill { color: #ef4444; }
     .toast-card.warning .toast-progress-fill { color: #f59e0b; }
+    .toast-card.delete .toast-progress-fill, .toast-card.update .toast-progress-fill { color: #fff; }
 
     @keyframes shrink {
       from { width: 100%; }

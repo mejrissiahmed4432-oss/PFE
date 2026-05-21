@@ -9,6 +9,8 @@ public class DashboardStats {
     private long totalSuppliers;
     private long warrantyExpiringSoon; // within 30 days
     private long lowStockAlerts; // placeholder
+    private long totalSoftware;
+    private long totalLicenses;
     
     private Map<String, Long> equipmentByCategory;
     private Map<String, Long> equipmentByLocation;
@@ -26,6 +28,12 @@ public class DashboardStats {
 
     public long getLowStockAlerts() { return lowStockAlerts; }
     public void setLowStockAlerts(long lowStockAlerts) { this.lowStockAlerts = lowStockAlerts; }
+
+    public long getTotalSoftware() { return totalSoftware; }
+    public void setTotalSoftware(long totalSoftware) { this.totalSoftware = totalSoftware; }
+
+    public long getTotalLicenses() { return totalLicenses; }
+    public void setTotalLicenses(long totalLicenses) { this.totalLicenses = totalLicenses; }
 
     public Map<String, Long> getEquipmentByCategory() { return equipmentByCategory; }
     public void setEquipmentByCategory(Map<String, Long> equipmentByCategory) { this.equipmentByCategory = equipmentByCategory; }

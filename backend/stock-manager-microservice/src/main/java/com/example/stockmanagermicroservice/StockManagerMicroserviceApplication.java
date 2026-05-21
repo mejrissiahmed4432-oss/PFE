@@ -9,8 +9,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
+
 @EnableDiscoveryClient
 @EnableFeignClients
+
+@org.springframework.data.mongodb.config.EnableMongoAuditing
+
 public class StockManagerMicroserviceApplication {
 
     public static void main(String[] args) {

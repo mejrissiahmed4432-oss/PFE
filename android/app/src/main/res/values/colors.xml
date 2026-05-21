@@ -6,24 +6,24 @@
     <color name="colorPrimaryVariant">#1d4ed8</color>
     <color name="colorAccent">#60a5fa</color>
     <color name="colorCyan">#06b6d4</color>
-    
+
     <!-- UI Surfaces -->
     <color name="backgroundColor">#ffffff</color>
     <color name="surfaceColor">#f8fafc</color>
     <color name="divider">#e2e8f0</color>
-    
+
     <!-- Text Colors -->
     <color name="textPrimary">#0f172a</color>
     <color name="textSecondary">#475569</color>
     <color name="textHint">#94a3b8</color>
     <color name="textLink">#3b82f6</color>
-    
+
     <!-- Inputs -->
     <color name="inputBackground">#f1f5f9</color>
     <color name="inputBorder">#e2e8f0</color>
     <color name="inputBorderFocus">#3b82f6</color>
     <color name="inputIcon">#94a3b8</color>
-    
+
     <!-- Status -->
     <color name="errorText">#ef4444</color>
     <color name="errorBackground">#FEE2E2</color>
@@ -34,7 +34,45 @@
     <!-- Gradient aliases -->
     <color name="gradientStart">#1d4ed8</color>
     <color name="gradientEnd">#06b6d4</color>
-    
+
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+
+    <!-- ─── Sidebar / Dashboard dark theme ─── -->
+    <color name="sidebarBg">#0f172a</color>
+    <color name="sidebarBgEnd">#1e293b</color>
+    <color name="sidebarActiveItem">#3b82f6</color>
+    <color name="sidebarActiveShadow">#4D3b82f6</color>
+    <color name="sidebarText">#cbd5e1</color>
+    <color name="sidebarTextActive">#ffffff</color>
+    <color name="sidebarBorder">#1e2d3d</color>
+    <color name="sidebarSection">#475569</color>
+
+    <!-- Dashboard card colors -->
+    <color name="cardBorder">#e2e8f0</color>
+    <color name="statCardOpen">#4f46e5</color>
+    <color name="statCardOpenEnd">#7c3aed</color>
+    <color name="statInProgress">#f59e0b</color>
+    <color name="statWaiting">#8b5cf6</color>
+    <color name="statTesting">#10b981</color>
+
+    <!-- Status badges -->
+    <color name="badgeAvailable">#10b981</color>
+    <color name="badgeAvailableBg">#d1fae5</color>
+    <color name="badgeMaintenance">#f59e0b</color>
+    <color name="badgeMaintenanceBg">#fef3c7</color>
+    <color name="badgeInstalled">#3b82f6</color>
+    <color name="badgeInstalledBg">#dbeafe</color>
+    <color name="badgeOpen">#ef4444</color>
+    <color name="badgeOpenBg">#fee2e2</color>
+
+    <!-- Topbar -->
+    <color name="topbarBg">#ffffff</color>
+    <color name="topbarBorder">#f1f5f9</color>
+    <color name="topbarShadow">#0A000000</color>
+
+    <!-- Transparent overlays -->
+    <color name="white10">#1AFFFFFF</color>
+    <color name="white5">#0DFFFFFF</color>
+    <color name="white20">#33FFFFFF</color>
 </resources>

@@ -64,6 +64,7 @@ export interface WorkbenchAction {
   notes: string;
   resources: WorkbenchResource[];
   expandedInExecution?: boolean;
+  isCollapsed?: boolean;
 
   priority?: 'High' | 'Medium' | 'Low';
   estimatedTime?: string;
@@ -77,6 +78,8 @@ export interface WorkbenchResource {
   quantity?: number;
   value?: string;
   specification?: string;
+  equipmentId?: string;     // inventory item ID — used for lifecycle update on completion
+  replacesSpecKey?: string; // spec key this part replaces (e.g. "RAM", "Storage")
 }
 
 export interface ValidationItem {

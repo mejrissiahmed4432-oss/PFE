@@ -56,6 +56,7 @@ export interface EquipmentRequest {
   id?: string;
   createdByUserId?: string;
   createdByName?: string;
+  createdByRole?: string;
   items: EquipmentRequestItem[];
   notes?: string;
   status?: RequestStatus;

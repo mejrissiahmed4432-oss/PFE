@@ -207,6 +207,10 @@
     <button class="tab-btn" [class.active]="activeTab==='overview'" (click)="activeTab='overview'">Overview</button>
     <button class="tab-btn" [class.active]="activeTab==='specs'" (click)="activeTab='specs'"
       *ngIf="isComputerCategory()">Specifications</button>
+    <button class="tab-btn" [class.active]="activeTab==='parts'" (click)="activeTab='parts'" *ngIf="isAsset()">
+      Installed Parts
+      <span class="badge-count" *ngIf="installedParts.length > 0">{{ installedParts.length }}</span>
+    </button>
     <button class="tab-btn" [class.active]="activeTab==='purchase'" (click)="activeTab='purchase'">Purchase &
       Warranty</button>
     <button class="tab-btn" [class.active]="activeTab==='storage'" (click)="activeTab='storage'">Storage</button>
@@ -251,7 +255,7 @@
               <span class="info-value">
                 <span class="tag" [ngClass]="{
                   'tag-active': equipment?.status === 'Available',
-                  'tag-expired': equipment?.status === 'Broken',
+                  'tag-expired': equipment?.status === 'Broken' || equipment?.status === 'Unrepairable',
                   'tag-maintenance': equipment?.status === 'Maintenance',
                   'tag-unassigned': equipment?.status === 'Out of Stock' || equipment?.status === 'In Use',
                   'tag-allocated': equipment?.status === 'Allocated',
@@ -672,6 +676,87 @@
         </div>
       </div>
     </ng-container>
+ 
+    <!-- INSTALLED PARTS -->
+    <ng-container *ngIf="activeTab==='parts'">
+      <div class="info-grid">
+        <div class="info-card wide">
+          <div class="info-card-header" style="justify-content: space-between; display: flex; align-items: center; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div class="info-card-icon purple">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                </svg>
+              </div>
+              <span>Installed Parts ({{ installedParts.length }})</span>
+            </div>
+            <button class="btn-uninstall-part" style="border-color: #3b82f6; color: #3b82f6; background-color: #fff;" (click)="openInstallModal()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px; vertical-align: middle;">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Install Part
+            </button>
+          </div>
+
+          <!-- Parts Table -->
+          <div class="parts-table-wrapper" *ngIf="installedParts.length > 0">
+            <table class="parts-table">
+              <thead>
+                <tr>
+                  <th>Part Name</th>
+                  <th>Type</th>
+                  <th>Brand / Model</th>
+                  <th>Serial Number</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let part of installedParts">
+                  <td class="part-name-cell">
+                    <strong>{{ part.equipmentName }}</strong>
+                    <span class="part-id">{{ part.id }}</span>
+                  </td>
+                  <td><span class="tag tag-type">{{ part.type | titlecase }}</span></td>
+                  <td>{{ part.brand }} / {{ part.model || '—' }}</td>
+                  <td class="mono">{{ part.serialNumber }}</td>
+                  <td>
+                    <span class="tag tag-assigned">Installed</span>
+                  </td>
+                  <td>
+                    <button class="btn-uninstall-part" (click)="uninstallPart(part)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 22H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6"></path>
+                        <polyline points="12 18 16 22 22 16"></polyline>
+                      </svg>
+                      Uninstall
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-parts" *ngIf="installedParts.length === 0">
+            <div class="empty-parts-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+              </svg>
+            </div>
+            <h4>No Installed Parts</h4>
+            <p>There are no hardware parts installed in this equipment currently.</p>
+          </div>
+        </div>
+      </div>
+    </ng-container>
 
   </div> <!-- /tab-content -->
 </div> <!-- /detail-page -->
@@ -911,8 +996,9 @@
                 [disabled]="formData.status !== 'Available' && formData.status !== 'In Stock'">
                 <option value="" disabled>Select an available shelf</option>
                 <option *ngIf="formData.status === 'Maintenance'" value="MAINTENANCE_AREA">Maintenance Area</option>
-                <option *ngIf="formData.status === 'Broken'" value="SCRAP_YARD">Scrap Yard</option>
+                <option *ngIf="formData.status === 'Broken' || formData.status === 'Unrepairable'" value="SCRAP_YARD">Scrap Yard</option>
                 <option *ngIf="formData.status === 'Out of Stock'" value="OUT_OF_STOCK">Out of Stock</option>
+                <option *ngIf="formData.status === 'Installed'" value="">Installed (No Shelf)</option>
                 <option *ngFor="let s of availableShelves" [value]="s.id">
                   Shelf {{ s.nb }}
                   ({{ (equipment?.id && !isAddSimilar && s.id === equipment?.shelfId) ?
@@ -1047,3 +1133,148 @@
       </button>
     </div>
   </div>
+</ng-container>
+
+<!-- Install Part Modal Overlay -->
+<div class="install-modal-overlay" *ngIf="showInstallModal" (click)="showInstallModal = false">
+  <div class="install-modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="info-card-icon purple">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <h3>Install New Part</h3>
+      </div>
+      <button class="btn-close-modal" (click)="showInstallModal = false">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p class="modal-subtitle">Choose a part from active stock inventory to install inside <strong>{{ equipment?.equipmentName }}</strong>.</p>
+      
+      <!-- Loading Spinner -->
+      <div *ngIf="isLoadingPartsForInstall" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; gap: 12px;">
+        <svg class="spin-loader" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke="#e2e8f0" stroke-width="4"></circle>
+          <path fill="#3b82f6" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <span style="color: #64748b; font-size: 0.9rem; font-weight: 500;">Fetching parts from stock...</span>
+      </div>
+
+      <div *ngIf="!isLoadingPartsForInstall">
+        <!-- Category & Type Filters -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div class="input-group" style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-weight: 600; color: #475569; font-size: 0.85rem;">Select Category <span style="color: #ef4444;">*</span></label>
+            <select [(ngModel)]="installFilterCategory" (change)="onInstallCategoryChange()" class="field-select" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 10px; font-size: 0.85rem; color: #334155; background-color: #fff; cursor: pointer; transition: border-color 0.2s;">
+              <option value="">-- Choose Category --</option>
+              <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+            </select>
+          </div>
+          
+          <div class="input-group" style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-weight: 600; color: #475569; font-size: 0.85rem;">Select Type <span style="color: #ef4444;">*</span></label>
+            <select [(ngModel)]="installFilterType" (change)="onInstallTypeChange()" class="field-select" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 10px; font-size: 0.85rem; color: #334155; background-color: #fff; cursor: pointer; transition: border-color 0.2s;" [disabled]="!installFilterCategory">
+              <option value="">-- Choose Type --</option>
+              <option *ngFor="let t of installAvailableTypes" [value]="t.name">{{ t.name | titlecase }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Search Filter Box -->
+        <div class="input-group full-width" style="margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px;" *ngIf="installFilterCategory && installFilterType">
+          <label style="font-weight: 600; color: #475569; font-size: 0.85rem;">Search / Filter Parts <span style="color: #94a3b8; font-weight: 400;">(by brand, model, S/N...)</span></label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input type="text" [(ngModel)]="installSearchQuery" (ngModelChange)="applyInstallFilters()" placeholder="Type brand, model, or serial number to filter..." style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.85rem; color: #334155; transition: border-color 0.2s;" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="position: absolute; right: 12px; pointer-events: none;">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Selection list based on active filters -->
+        <div class="input-group full-width" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;" *ngIf="installFilterCategory && installFilterType">
+          <label style="font-weight: 600; color: #334155; font-size: 0.9rem;">Select Available Equipment <span style="color: #ef4444;">*</span></label>
+          
+          <div class="parts-install-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 240px; overflow-y: auto; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; background-color: #f8fafc;">
+            <div *ngFor="let p of filteredPartsForInstall" 
+                 (click)="onPartIdSelected(p.id!)"
+                 [style.border-color]="selectedPartId === p.id ? '#3b82f6' : '#cbd5e1'"
+                 [style.background-color]="selectedPartId === p.id ? '#eff6ff' : '#ffffff'"
+                 [style.box-shadow]="selectedPartId === p.id ? '0 2px 8px rgba(59, 130, 246, 0.15)' : 'none'"
+                 style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; cursor: pointer; transition: all 0.2s;"
+                 class="part-item-card">
+              
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <strong style="color: #1e293b; font-size: 0.9rem;">{{ p.equipmentName }}</strong>
+                  <span style="font-size: 0.75rem; background-color: #f1f5f9; padding: 2px 8px; border-radius: 12px; color: #475569; font-weight: 600;">{{ p.brand }}</span>
+                </div>
+                <div style="font-size: 0.8rem; color: #64748b; display: flex; gap: 16px;">
+                  <span><strong>S/N:</strong> <code style="font-family: monospace; background-color: #f1f5f9; padding: 2px 4px; border-radius: 4px;">{{ p.serialNumber }}</code></span>
+                  <span *ngIf="p.model"><strong>Model:</strong> {{ p.model }}</span>
+                </div>
+                <div *ngIf="p.location" style="font-size: 0.75rem; color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  Location: {{ p.location }}
+                </div>
+              </div>
+              
+              <!-- Checkmark / Selection Indicator -->
+              <div style="display: flex; align-items: center;">
+                <div [style.background-color]="selectedPartId === p.id ? '#3b82f6' : 'transparent'"
+                     [style.border-color]="selectedPartId === p.id ? '#3b82f6' : '#cbd5e1'"
+                     style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                  <svg *ngIf="selectedPartId === p.id" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            
+            <div *ngIf="filteredPartsForInstall.length === 0" style="color: #ef4444; font-size: 0.85rem; font-weight: 600; text-align: center; padding: 20px 10px;">
+              No matching unassigned parts found in stock for the selected category and type.
+            </div>
+          </div>
+        </div>
+
+        <!-- Prompts selection first -->
+        <div *ngIf="!installFilterCategory || !installFilterType" style="background-color: #f8fafc; border: 1.5px dashed #e2e8f0; border-radius: 8px; padding: 24px; text-align: center; color: #64748b; font-size: 0.85rem; margin-bottom: 20px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 8px; display: block; color: #94a3b8;">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Please select both a <strong>Category</strong> and a <strong>Type</strong> above to display matching parts in stock.
+        </div>
+
+        <!-- Spec Key input (Only when part is selected) -->
+        <div class="input-group full-width" *ngIf="selectedPartToInstall" style="animation: fadeInModal 0.25s ease-out; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
+          <label style="font-weight: 600; color: #334155; font-size: 0.9rem;">Specification Field Name <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">(e.g., RAM, SSD, STORAGE)</span></label>
+          <input type="text" [(ngModel)]="installSpecKey" placeholder="Enter spec key (leave blank to skip spec update)" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.9rem; color: #334155; transition: border-color 0.2s;" />
+          <div style="color: #64748b; font-size: 0.8rem; line-height: 1.5;">
+            Spec key will auto-fill or update in the parent specifications tab as: <br/>
+            <strong style="color: #3b82f6;">{{ installSpecKey || '(None)' }}</strong> &rarr; <code style="background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace;">{{ selectedPartToInstall.brand }} {{ selectedPartToInstall.model || '' }} (S/N: {{ selectedPartToInstall.serialNumber }})</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" style="padding: 10px 20px; border-radius: 8px; border: 1.5px solid #cbd5e1; background-color: #fff; color: #475569; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" (click)="showInstallModal = false">Cancel</button>
+      <button class="btn-primary" style="padding: 10px 20px; border-radius: 8px; border: none; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: #fff; font-weight: 600; font-size: 0.9rem; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); transition: all 0.2s;" [disabled]="!selectedPartToInstall" (click)="confirmInstallPart()">
+        Confirm Installation
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,10 +1,7 @@
 package com.example.usermicroservice.service;
 
-import com.example.usermicroservice.model.Ticket;
-import com.example.usermicroservice.model.AlertType;
-import com.example.usermicroservice.model.AlertPriority;
-import com.example.usermicroservice.model.TargetType;
-import com.example.usermicroservice.repository.TicketRepository;
+import com.example.usermicroservice.model.*;
+import com.example.usermicroservice.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +13,12 @@ public class TicketService {
 
     @Autowired
     private TicketRepository ticketRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TaskRepository taskRepository;
 
     @Autowired
     private NotificationService notificationService;
@@ -35,14 +38,57 @@ public class TicketService {
         return ticketRepository.findById(id);
     }
 
+    public List<Ticket> getTicketsForTechnician(String techId) {
+        return ticketRepository.findByAssignedToOrUserId(techId, techId);
+    }
+
+    private User findBestTechnician() {
+        List<User> technicians = userRepository.findByRole(Role.TECHNICIAN);
+        if (technicians.isEmpty()) return null;
+
+        User bestTech = null;
+        long minWorkload = Long.MAX_VALUE;
+
+        List<String> activeTicketStatuses = List.of("Open", "In Progress", "Waiting", "Testing");
+        List<String> activeTaskStatuses = List.of("Pending", "In Progress", "Paused");
+
+        for (User tech : technicians) {
+            long ticketCount = ticketRepository.countByAssignedToAndStatusIn(tech.getId(), activeTicketStatuses);
+            long taskCount = taskRepository.countByAssignedToAndStatusIn(tech.getId(), activeTaskStatuses);
+            
+            // Workload score: prioritize fewer open tickets and fewer schedule tasks
+            long workload = (ticketCount * 10) + taskCount;
+
+            if (workload < minWorkload) {
+                minWorkload = workload;
+                bestTech = tech;
+            }
+        }
+        return bestTech;
+    }
+
     public Ticket createTicket(Ticket ticket) {
         ticket.prePersist();
+        
+        // Auto-assign best technician if not already assigned
+        if (ticket.getAssignedTo() == null || ticket.getAssignedTo().isEmpty()) {
+            User bestTech = findBestTechnician();
+            if (bestTech != null) {
+                ticket.setAssignedTo(bestTech.getId());
+                ticket.setTechnicianName(bestTech.getFirstName() + " " + bestTech.getLastName());
+            }
+        } else if (ticket.getTechnicianName() == null || ticket.getTechnicianName().isEmpty()) {
+            // If ID is provided but Name is missing, fetch it
+            userRepository.findById(ticket.getAssignedTo()).ifPresent(u -> 
+                ticket.setTechnicianName(u.getFirstName() + " " + u.getLastName()));
+        }
+
         Ticket saved = ticketRepository.save(ticket);
         
         if (saved.getAssignedTo() != null && !saved.getAssignedTo().isEmpty()) {
             notificationService.createNotification(
                 "Ticket Assigned",
-                "Assignment for: '" + saved.getTitle() + "'. Category: " + saved.getCategory(),
+                "Assignment for: '" + saved.getTitle() + "'. Assigned Technician: " + saved.getTechnicianName(),
                 "INFO", "TICKET", saved.getId(), saved.getAssignedTo(), null
             );
         } else {
@@ -58,7 +104,7 @@ public class TicketService {
         if (saved.getUserId() != null) {
             notificationService.createNotification(
                 "Ticket Created Successfully",
-                "Your ticket '" + saved.getTitle() + "' has been submitted and is currently " + saved.getStatus() + ".",
+                "Your ticket '" + saved.getTitle() + "' has been submitted and assigned to " + (saved.getTechnicianName() != null ? saved.getTechnicianName() : "a technician") + ".",
                 "SUCCESS", "TICKET", saved.getId(), saved.getUserId(), null
             );
         }
@@ -76,7 +122,18 @@ public class TicketService {
             ticket.setCategory(ticketDetails.getCategory());
             ticket.setPriority(ticketDetails.getPriority());
             ticket.setStatus(ticketDetails.getStatus());
-            ticket.setAssignedTo(ticketDetails.getAssignedTo());
+            
+            // Handle assignment change
+            if (ticketDetails.getAssignedTo() != null && !ticketDetails.getAssignedTo().equals(oldAssignedTo)) {
+                ticket.setAssignedTo(ticketDetails.getAssignedTo());
+                // Update technician name as well
+                userRepository.findById(ticketDetails.getAssignedTo()).ifPresent(u -> 
+                    ticket.setTechnicianName(u.getFirstName() + " " + u.getLastName()));
+            } else if (ticketDetails.getAssignedTo() == null) {
+                ticket.setAssignedTo(null);
+                ticket.setTechnicianName(null);
+            }
+            
             ticket.setEquipmentName(ticketDetails.getEquipmentName());
             ticket.setDeadline(ticketDetails.getDeadline());
             ticket.setAttachments(ticketDetails.getAttachments());
@@ -85,6 +142,16 @@ public class TicketService {
             ticket.setWorkNote(ticketDetails.getWorkNote());
             ticket.setRepairTasks(ticketDetails.getRepairTasks());
             ticket.setPartsUsed(ticketDetails.getPartsUsed());
+            ticket.setPartsInstalled(ticketDetails.getPartsInstalled());
+            if (ticketDetails.getDiagnosisResult() != null) {
+                ticket.setDiagnosisResult(ticketDetails.getDiagnosisResult());
+            }
+            if (ticketDetails.getValidationSummary() != null) {
+                ticket.setValidationSummary(ticketDetails.getValidationSummary());
+            }
+            if (ticketDetails.getEquipmentId() != null && !ticketDetails.getEquipmentId().isEmpty()) {
+                ticket.setEquipmentId(ticketDetails.getEquipmentId());
+            }
             ticket.preUpdate();
             
             Ticket updated = ticketRepository.save(ticket);

@@ -13,7 +13,7 @@
 
 /* ── Root shell ──────────────────────────────────────────── */
 .shell {
-  @apply flex h-screen w-full overflow-hidden font-sans bg-[#f1f5f9];
+  @apply flex h-screen w-full overflow-hidden font-sans bg-[var(--bg-app)];
 }
 
 /* ── Sidebar ─────────────────────────────────────────────── */

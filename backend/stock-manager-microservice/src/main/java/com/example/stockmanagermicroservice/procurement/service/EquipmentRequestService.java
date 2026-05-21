@@ -27,15 +27,10 @@ public class EquipmentRequestService {
         request.setUpdatedAt(LocalDateTime.now());
         EquipmentRequest saved = repository.save(request);
 
-        // Notify IT Managers
         notificationService.createNotification(
             "New Equipment Request",
-            "A new equipment request from " + saved.getCreatedByName() + " is pending approval.",
-            "INFO",
-            "PROCUREMENT",
-            saved.getId(),
-            null,
-            "IT_MANAGER"
+            "A new equipment request from " + saved.getCreatedByName() + " is pending your approval.",
+            "INFO", "PROCUREMENT", saved.getId(), null, "IT_MANAGER"
         );
 
         return saved;
@@ -56,6 +51,37 @@ public class EquipmentRequestService {
         return repository.findById(id);
     }
 
+    /**
+     * Update an existing request.
+     * Stock Manager: only allowed while PENDING_IT_APPROVAL and they are the owner.
+     * IT Manager (isItManager=true): allowed at any status, any request.
+     */
+    public EquipmentRequest updateRequest(String id, EquipmentRequest updated, String requesterId, boolean isItManager) {
+        return repository.findById(id).map(req -> {
+            if (!isItManager) {
+                if (req.getCreatedByUserId() != null && !req.getCreatedByUserId().equals(requesterId)) {
+                    throw new SecurityException("You can only edit your own requests.");
+                }
+                if (req.getStatus() != RequestStatus.PENDING_IT_APPROVAL) {
+                    throw new IllegalStateException("Request can only be edited while pending approval.");
+                }
+            }
+            if (updated.getItems() != null) req.setItems(updated.getItems());
+            if (updated.getNotes() != null) req.setNotes(updated.getNotes());
+            req.setUpdatedAt(LocalDateTime.now());
+            EquipmentRequest saved = repository.save(req);
+
+            if (!isItManager) {
+                notificationService.createNotification(
+                    "Request Updated",
+                    saved.getCreatedByName() + " updated their pending equipment request.",
+                    "INFO", "PROCUREMENT", saved.getId(), null, "IT_MANAGER"
+                );
+            }
+            return saved;
+        }).orElseThrow(() -> new RuntimeException("Equipment request not found: " + id));
+    }
+
     /** IT Manager approves a request */
     public EquipmentRequest approveRequest(String id) {
         return repository.findById(id).map(req -> {
@@ -66,15 +92,10 @@ public class EquipmentRequestService {
             req.setUpdatedAt(LocalDateTime.now());
             EquipmentRequest saved = repository.save(req);
 
-            // Notify Creator
             notificationService.createNotification(
-                "Request Approved",
-                "Your equipment request has been approved by IT.",
-                "SUCCESS",
-                "PROCUREMENT",
-                saved.getId(),
-                saved.getCreatedByUserId(),
-                "STOCK_MANAGER"
+                "✅ Request Approved",
+                "Your equipment request has been approved by IT and is ready for procurement.",
+                "SUCCESS", "PROCUREMENT", saved.getId(), saved.getCreatedByUserId(), "STOCK_MANAGER"
             );
 
             return saved;
@@ -92,15 +113,10 @@ public class EquipmentRequestService {
             req.setUpdatedAt(LocalDateTime.now());
             EquipmentRequest saved = repository.save(req);
 
-            // Notify Creator
             notificationService.createNotification(
-                "Request Rejected",
-                "Your equipment request has been rejected. Reason: " + reason,
-                "ERROR",
-                "PROCUREMENT",
-                saved.getId(),
-                saved.getCreatedByUserId(),
-                null
+                "❌ Request Rejected",
+                "Your equipment request was rejected. Reason: " + reason,
+                "ERROR", "PROCUREMENT", saved.getId(), saved.getCreatedByUserId(), null
             );
 
             return saved;
@@ -113,6 +129,12 @@ public class EquipmentRequestService {
             req.setStatus(RequestStatus.SENT_TO_SUPPLIERS);
             req.setUpdatedAt(LocalDateTime.now());
             repository.save(req);
+
+            notificationService.createNotification(
+                "📤 RFQ Sent to Suppliers",
+                "Your approved equipment request has been sent to suppliers for quotation.",
+                "INFO", "PROCUREMENT", req.getId(), req.getCreatedByUserId(), "STOCK_MANAGER"
+            );
         });
     }
 
@@ -123,6 +145,18 @@ public class EquipmentRequestService {
                 req.setStatus(RequestStatus.RESPONDED);
                 req.setUpdatedAt(LocalDateTime.now());
                 repository.save(req);
+
+                notificationService.createNotification(
+                    "📩 Supplier Quotation Received",
+                    "A supplier responded to the request from " + req.getCreatedByName() + ". Review quotations now.",
+                    "INFO", "PROCUREMENT", req.getId(), null, "IT_MANAGER"
+                );
+
+                notificationService.createNotification(
+                    "📩 Quotation Received",
+                    "A supplier has submitted a quotation for your equipment request.",
+                    "SUCCESS", "PROCUREMENT", req.getId(), req.getCreatedByUserId(), "STOCK_MANAGER"
+                );
             }
         });
     }
@@ -134,6 +168,12 @@ public class EquipmentRequestService {
             req.setSupplierName(supplierName);
             req.setUpdatedAt(LocalDateTime.now());
             repository.save(req);
+
+            notificationService.createNotification(
+                "🛒 Order Confirmed",
+                "A purchase order was confirmed with " + supplierName + " for your equipment request.",
+                "SUCCESS", "PROCUREMENT", req.getId(), req.getCreatedByUserId(), "STOCK_MANAGER"
+            );
         });
     }
 
@@ -142,6 +182,12 @@ public class EquipmentRequestService {
             req.setStatus(RequestStatus.RECEIVED);
             req.setUpdatedAt(LocalDateTime.now());
             repository.save(req);
+
+            notificationService.createNotification(
+                "📦 Items Received",
+                "Equipment items from " + req.getCreatedByName() + "'s request have been received and added to inventory.",
+                "SUCCESS", "PROCUREMENT", req.getId(), null, "IT_MANAGER"
+            );
         });
     }
 }

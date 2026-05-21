@@ -45,11 +45,11 @@
 
 .wb-footer {
   padding: 20px 32px;
-  border-top: 1px solid var(--border-color, #e2e8f0);
+  border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-card, #fcfcfd);
+  background: var(--bg-card);
   border-radius: 0 0 20px 20px;
 }
 
@@ -81,15 +81,15 @@
 }
 
 .back-btn:hover {
-  background: var(--bg-app, #f1f5f9);
-  color: var(--text-main, #1e293b);
+  background: var(--bg-app);
+  color: var(--text-main);
 }
 
 .header-title-group .title {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--text-main, #1e293b);
+  color: var(--text-main);
 }
 
 /* Mini stat row */
@@ -103,9 +103,9 @@
 .stat-chip {
   font-size: 0.7rem;
   font-weight: 600;
-  color: var(--text-muted, #64748b);
-  background: var(--bg-app, #f8fafc);
-  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-muted);
+  background: var(--bg-app);
+  border: 1px solid var(--border-color);
   padding: 3px 8px;
   border-radius: 6px;
   display: flex;
@@ -126,11 +126,11 @@
   gap: 6px;
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--text-main, #1e293b);
-  background: var(--bg-app, #f8fafc);
+  color: var(--text-main);
+  background: var(--bg-app);
   padding: 6px 12px;
   border-radius: 12px;
-  border: 1px solid var(--border-color, #e2e8f0);
+  border: 1px solid var(--border-color);
 }
 
 .timer-icon {
@@ -2205,8 +2205,8 @@
 }
 
 .modern-table-card {
-  background: var(--bg-card, white);
-  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -2215,14 +2215,14 @@
 .modern-table-header {
   display: flex;
   padding: 12px 24px;
-  background: var(--bg-app, #f8fafc);
-  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-app);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .mth-col {
   font-size: 0.7rem;
   font-weight: 800;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -2245,7 +2245,7 @@
   display: flex;
   align-items: center;
   padding: 16px 24px;
-  border-bottom: 1px solid var(--border-color, #f1f5f9);
+  border-bottom: 1px solid var(--border-color);
   transition: 0.2s;
 }
 
@@ -2266,8 +2266,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-app, #f1f5f9);
-  color: var(--text-muted, #64748b);
+  background: var(--bg-app);
+  color: var(--text-muted);
   transition: 0.2s;
 }
 
@@ -2289,7 +2289,7 @@
 .mvc-label {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--text-main, #1e293b);
+  color: var(--text-main);
 }
 
 .mvc-sub {
@@ -2331,14 +2331,14 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  border: 1px solid var(--border-color, #e2e8f0);
-  background: white;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: 0.2s;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted);
 }
 
 .btn-val-tiny.work:hover,
@@ -2420,8 +2420,8 @@
 
 .val-table-footer {
   padding: 16px 24px;
-  background: var(--bg-app, #f8fafc);
-  border-top: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-app);
+  border-top: 1px solid var(--border-color);
 }
 
 .val-quick-add {
@@ -2432,7 +2432,7 @@
 .val-quick-add input {
   flex: 1;
   background: white;
-  border: 1.5px solid var(--border-color, #e2e8f0);
+  border: 1.5px solid var(--border-color);
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 0.85rem;
@@ -2508,8 +2508,8 @@
 
 /* ── VALIDATION FOOTER (NOTES & WARNINGS) ── */
 .validation-notes-card-modern {
-  background: var(--bg-card, white);
-  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -2525,7 +2525,7 @@
 .vncm-header label {
   font-size: 0.85rem;
   font-weight: 800;
-  color: var(--text-main, #1e293b);
+  color: var(--text-main);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -2533,12 +2533,12 @@
 .validation-notes-card-modern textarea {
   width: 100%;
   min-height: 120px;
-  background: var(--bg-app, #f8fafc);
-  border: 1.5px solid var(--border-color, #e2e8f0);
+  background: var(--bg-app);
+  border: 1.5px solid var(--border-color);
   border-radius: 12px;
   padding: 16px;
   font-size: 0.9rem;
-  color: var(--text-main, #1e293b);
+  color: var(--text-main);
   outline: none;
   resize: none;
   transition: 0.2s;
@@ -2601,8 +2601,8 @@
   justify-content: center;
   text-align: center;
   padding: 40px;
-  background: var(--bg-app, #f8fafc);
-  border: 1px dashed var(--border-color, #cbd5e1);
+  background: var(--bg-app);
+  border: 1px dashed var(--border-color);
   border-radius: 20px;
   margin-top: 20px;
 }
@@ -2616,12 +2616,12 @@
   margin: 0 0 12px;
   font-size: 1.1rem;
   font-weight: 800;
-  color: var(--text-main, #1e293b);
+  color: var(--text-main);
 }
 
 .non-resourced-action-box p {
   font-size: 0.9rem;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   line-height: 1.6;
   max-width: 320px;
   margin: 0 0 24px;
@@ -2690,7 +2690,7 @@
 }
 
 .exec-action-card-modern {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   border: 1px solid var(--border-color);
   margin-bottom: 16px;
@@ -2832,7 +2832,7 @@
 }
 
 .eac-instructions-panel {
-  background: #f8fafc;
+  background: var(--bg-app);
   border-top: 1px solid var(--border-color);
   padding: 20px;
   animation: slideDown 0.3s ease-out;
@@ -2855,15 +2855,15 @@
 .inst-num-modern {
   width: 22px;
   height: 22px;
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 800;
-  color: #64748b;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
@@ -2875,7 +2875,7 @@
 }
 
 .summary-card-modern {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   border: 1px solid var(--border-color);
   padding: 24px;
@@ -2890,16 +2890,16 @@
 }
 
 .summary-widget {
-  background: #f8fafc;
+  background: var(--bg-app);
   padding: 16px;
   border-radius: 16px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-color);
 }
 
 .sw-label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 4px;
@@ -2908,7 +2908,7 @@
 .sw-value {
   font-size: 1rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--text-main);
 }
 
 .summary-section-modern {
@@ -2926,14 +2926,14 @@
   margin: 0;
   font-size: 1rem;
   font-weight: 800;
-  color: #334155;
+  color: var(--text-main);
 }
 
 .ssm-content-box {
-  background: #f8fafc;
+  background: var(--bg-app);
   border-radius: 12px;
   padding: 20px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--border-color);
 }
 
 .ba-modern-row {
@@ -2977,8 +2977,8 @@
 .ba-arrow-modern {
   width: 40px;
   height: 40px;
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -2990,8 +2990,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: white;
-  border: 1px solid #f1f5f9;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   padding: 12px 16px;
   border-radius: 12px;
   margin-bottom: 8px;
@@ -3013,12 +3013,12 @@
 .final-report-textarea-modern {
   width: 100%;
   min-height: 120px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-app);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 20px;
   font-size: 0.9rem;
-  color: #1e293b;
+  color: var(--text-main);
   line-height: 1.6;
   transition: all 0.2s;
   resize: vertical;
@@ -3031,8 +3031,8 @@
 }
 
 .completion-hero-banner {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border: 1px solid #bbf7d0;
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 20px;
   padding: 24px;
   display: flex;
@@ -3103,7 +3103,7 @@
 }
 
 .wb-modal-card.broken {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 32px;
   width: 100%;

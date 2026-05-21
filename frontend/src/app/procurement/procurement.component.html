@@ -1,59 +1,85 @@
-<div class="flex flex-col h-full bg-slate-50/50">
-  <!-- Tab Navigation -->
-  <div class="px-6 pt-6 pb-2 border-b border-slate-200/60 backdrop-blur-sm sticky top-0 z-10">
-    <nav class="flex flex-wrap gap-2">
-      <button
-        *ngFor="let tab of tabs"
-        class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
-        [ngClass]="activeTab === tab.id ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20' : 'text-slate-500 hover:bg-white hover:text-slate-800 hover:shadow-sm'"
-        (click)="activeTab = tab.id">
-        <span class="text-base">{{ tab.icon }}</span>
-        <span>{{ tab.label }}</span>
-      </button>
-    </nav>
+<div class="procurement-page">
+
+  <!-- Header -->
+  <div class="proc-header">
+    <div class="proc-title-group">
+      <!-- Brand Logo -->
+      <div class="proc-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+          <path d="M3 6h18"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Procurement</h1>
+        <p>Manage equipment requests, approvals &amp; purchase orders</p>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <!-- Tab Navigation -->
+      <nav class="proc-tabs">
+        <button
+          *ngFor="let tab of tabs"
+          (click)="activeTab = tab.id"
+          class="tab-btn"
+          [class.active]="activeTab === tab.id">
+
+          {{ tab.label }}
+
+          <span *ngIf="tab.count && tab.count > 0" class="tab-badge">
+            {{ tab.count }}
+          </span>
+        </button>
+      </nav>
+    </div>
   </div>
 
-  <!-- Tab Content -->
-  <div id="procurement-scroll-container" class="flex-1 overflow-y-auto p-6 scroll-smooth">
-    <div class="max-w-7xl mx-auto animate-fade-in-up">
+  <!-- Content Area -->
+  <div class="proc-content">
 
-      <!-- Overview Dashboard -->
-      <app-procurement-dashboard *ngIf="activeTab === 'dashboard'">
-      </app-procurement-dashboard>
+    <!-- Dashboard -->
+    <app-procurement-dashboard *ngIf="activeTab === 'dashboard'"
+                               [userId]="userId"
+                               [userRole]="userRole">
+    </app-procurement-dashboard>
 
-      <!-- New Request (Stock Manager) -->
-      <app-equipment-request-form
-        *ngIf="activeTab === 'new-request'"
-        [userId]="userId"
-        [userName]="userName">
-      </app-equipment-request-form>
+    <!-- New Request Form -->
+    <app-equipment-request-form *ngIf="activeTab === 'new-request'"
+                                [userId]="userId"
+                                [userName]="userName"
+                                [userRole]="userRole"
+                                (requestCreated)="activeTab = 'my-requests'">
+    </app-equipment-request-form>
 
-      <!-- My Requests (Stock Manager) -->
-      <app-equipment-request-list
-        *ngIf="activeTab === 'my-requests'">
-      </app-equipment-request-list>
+    <!-- My Requests List -->
+    <app-equipment-request-list *ngIf="activeTab === 'my-requests'"
+                                [userId]="userId"
+                                [userRole]="userRole"
+                                (sendToRFQ)="onSendToRFQ($event)">
+    </app-equipment-request-list>
 
-      <!-- Approvals Dashboard (IT Manager) -->
-      <app-it-approval-dashboard
-        *ngIf="activeTab === 'approvals'"
-        (sendToRFQ)="onSendToRFQ($event)">
-      </app-it-approval-dashboard>
+    <!-- Approvals (IT Only) -->
+    <app-it-approval-dashboard *ngIf="activeTab === 'approvals'"
+                               [userId]="userId"
+                               [userRole]="userRole"
+                               (pendingCountChanged)="pendingApprovalsCount = $event">
+    </app-it-approval-dashboard>
 
-      <!-- RFQ Manager (IT Manager) -->
-      <app-rfq-manager
-        *ngIf="activeTab === 'rfq'">
-      </app-rfq-manager>
+    <!-- RFQ Manager (IT Only) -->
+    <app-rfq-manager *ngIf="activeTab === 'rfq'">
+    </app-rfq-manager>
 
-      <!-- Supplier Responses & Comparison (IT Manager) -->
-      <app-supplier-response-list
-        *ngIf="activeTab === 'responses'"
-        (createOrder)="onCreateOrder($event)">
-      </app-supplier-response-list>
+    <!-- Supplier Responses (IT Only) -->
+    <app-supplier-response-list *ngIf="activeTab === 'responses'"
+                                (createOrder)="onCreateOrder($event)">
+    </app-supplier-response-list>
 
-      <!-- Purchase Orders (IT Manager) -->
-      <app-purchase-order-view
-        *ngIf="activeTab === 'orders'">
-      </app-purchase-order-view>
-    </div>
+    <!-- Purchase Order View -->
+    <app-purchase-order-view *ngIf="activeTab === 'orders'">
+    </app-purchase-order-view>
+
   </div>
 </div>

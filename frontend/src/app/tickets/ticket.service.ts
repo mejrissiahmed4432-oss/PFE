@@ -19,6 +19,10 @@ export class TicketService {
     return this.http.get<Ticket[]>(`${this.apiUrl}/user/${userId}`);
   }
 
+  getTicketsForTechnician(techId: string): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.apiUrl}/technician/${techId}`);
+  }
+
   getTicket(id: string): Observable<Ticket> {
     return this.http.get<Ticket>(`${this.apiUrl}/${id}`);
   }

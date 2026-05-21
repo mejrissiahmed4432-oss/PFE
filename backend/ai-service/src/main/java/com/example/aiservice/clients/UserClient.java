@@ -144,6 +144,37 @@ public class UserClient {
     }
 
     @SuppressWarnings("unchecked")
+    public String updateTask(String id, Map<String, Object> payload) {
+        try {
+            Map<String, Object> result = webClient.put()
+                    .uri("/api/users/tasks/{id}", id)
+                    .bodyValue(payload)
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .block();
+            String title = result != null ? String.valueOf(result.getOrDefault("title", "task")) : "task";
+            return "✅ Task **" + title + "** has been updated.";
+        } catch (Exception e) {
+            log.error("Failed to update task {}: {}", id, e.getMessage());
+            throw new RuntimeException("Could not update task: " + e.getMessage());
+        }
+    }
+
+    public String deleteTask(String id) {
+        try {
+            webClient.delete()
+                    .uri("/api/users/tasks/{id}", id)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+            return "✅ Task has been deleted.";
+        } catch (Exception e) {
+            log.error("Failed to delete task {}: {}", id, e.getMessage());
+            throw new RuntimeException("Could not delete task: " + e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     public String updateTicket(String id, Map<String, Object> payload) {
         try {
             Map<String, Object> result = webClient.put()
@@ -157,6 +188,20 @@ public class UserClient {
         } catch (Exception e) {
             log.error("Failed to update ticket {}: {}", id, e.getMessage());
             throw new RuntimeException("Could not update ticket: " + e.getMessage());
+        }
+    }
+
+    public String deleteTicket(String id) {
+        try {
+            webClient.delete()
+                    .uri("/api/users/tickets/{id}", id)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
+            return "✅ Ticket has been deleted.";
+        } catch (Exception e) {
+            log.error("Failed to delete ticket {}: {}", id, e.getMessage());
+            throw new RuntimeException("Could not delete ticket: " + e.getMessage());
         }
     }
 }

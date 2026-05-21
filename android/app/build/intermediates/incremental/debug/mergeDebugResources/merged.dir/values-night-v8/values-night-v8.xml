@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="backgroundColor">#020617</color>
+    <color name="badgeAvailable">#34d399</color>
+    <color name="badgeAvailableBg">#064e3b</color>
+    <color name="badgeInstalled">#60a5fa</color>
+    <color name="badgeInstalledBg">#1e3a8a</color>
+    <color name="badgeMaintenance">#fbbf24</color>
+    <color name="badgeMaintenanceBg">#78350f</color>
+    <color name="badgeOpen">#f87171</color>
+    <color name="badgeOpenBg">#7f1d1d</color>
+    <color name="black">#ffffff</color>
+    <color name="cardBorder">#1e293b</color>
+    <color name="colorAccent">#60a5fa</color>
+    <color name="colorCyan">#0891b2</color>
+    <color name="colorPrimary">#3b82f6</color>
+    <color name="colorPrimaryVariant">#2563eb</color>
+    <color name="divider">#1e293b</color>
+    <color name="errorBackground">#7f1d1d</color>
+    <color name="errorBorder">#991b1b</color>
+    <color name="errorText">#f87171</color>
+    <color name="gradientEnd">#0891b2</color>
+    <color name="gradientStart">#2563eb</color>
+    <color name="inputBackground">#0f172a</color>
+    <color name="inputBorder">#1e293b</color>
+    <color name="inputBorderFocus">#3b82f6</color>
+    <color name="inputIcon">#64748b</color>
+    <color name="sidebarActiveItem">#3b82f6</color>
+    <color name="sidebarActiveShadow">#4D3b82f6</color>
+    <color name="sidebarBg">#0f172a</color>
+    <color name="sidebarBgEnd">#020617</color>
+    <color name="sidebarBorder">#1e293b</color>
+    <color name="sidebarSection">#64748b</color>
+    <color name="sidebarText">#94a3b8</color>
+    <color name="sidebarTextActive">#ffffff</color>
+    <color name="statCardOpen">#312e81</color>
+    <color name="statCardOpenEnd">#4c1d95</color>
+    <color name="statInProgress">#78350f</color>
+    <color name="statTesting">#064e3b</color>
+    <color name="statWaiting">#581c87</color>
+    <color name="successBackground">#064e3b</color>
+    <color name="successText">#34d399</color>
+    <color name="surfaceColor">#0b1329</color>
+    <color name="textHint">#64748b</color>
+    <color name="textLink">#60a5fa</color>
+    <color name="textPrimary">#f8fafc</color>
+    <color name="textSecondary">#94a3b8</color>
+    <color name="topbarBg">#0f172a</color>
+    <color name="topbarBorder">#1e293b</color>
+    <color name="topbarShadow">#22000000</color>
+    <color name="white">#0f172a</color>
+    <color name="white10">#1AFFFFFF</color>
+    <color name="white20">#33FFFFFF</color>
+    <color name="white5">#0DFFFFFF</color>
+    <style name="TextAppearance.Medina.Input" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    <style name="TextAppearance.Medina.Label" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.Medina.Subtitle" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/textSecondary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.Medina.Title" parent="TextAppearance.AppCompat.Display1">
+        <item name="android:textColor">@color/textPrimary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:fontFamily">serif</item>
+    </style>
+    <style name="Theme.AppCompat.DayNight" parent="Theme.AppCompat"/>
+    <style name="Theme.AppCompat.DayNight.DarkActionBar" parent="Theme.AppCompat"/>
+    <style name="Theme.AppCompat.DayNight.Dialog" parent="Theme.AppCompat.Dialog"/>
+    <style name="Theme.AppCompat.DayNight.Dialog.Alert" parent="Theme.AppCompat.Dialog.Alert"/>
+    <style name="Theme.AppCompat.DayNight.Dialog.MinWidth" parent="Theme.AppCompat.Dialog.MinWidth"/>
+    <style name="Theme.AppCompat.DayNight.DialogWhenLarge" parent="Theme.AppCompat.DialogWhenLarge"/>
+    <style name="Theme.AppCompat.DayNight.NoActionBar" parent="Theme.AppCompat.NoActionBar"/>
+    <style name="Theme.Material3.DayNight" parent="Theme.Material3.Dark"/>
+    <style name="Theme.Material3.DayNight.BottomSheetDialog" parent="Theme.Material3.Dark.BottomSheetDialog"/>
+    <style name="Theme.Material3.DayNight.Dialog" parent="Theme.Material3.Dark.Dialog"/>
+    <style name="Theme.Material3.DayNight.Dialog.Alert" parent="Theme.Material3.Dark.Dialog.Alert"/>
+    <style name="Theme.Material3.DayNight.Dialog.MinWidth" parent="Theme.Material3.Dark.Dialog.MinWidth"/>
+    <style name="Theme.Material3.DayNight.DialogWhenLarge" parent="Theme.Material3.Dark.DialogWhenLarge"/>
+    <style name="Theme.Material3.DayNight.NoActionBar" parent="Theme.Material3.Dark.NoActionBar"/>
+    <style name="Theme.Material3.DayNight.SideSheetDialog" parent="Theme.Material3.Dark.SideSheetDialog"/>
+    <style name="Theme.Material3.DynamicColors.DayNight" parent="Theme.Material3.DynamicColors.Dark"/>
+    <style name="Theme.MaterialComponents.DayNight" parent="Theme.MaterialComponents"/>
+    <style name="Theme.MaterialComponents.DayNight.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog"/>
+    <style name="Theme.MaterialComponents.DayNight.Bridge" parent="Theme.MaterialComponents.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.DarkActionBar" parent="Theme.MaterialComponents"/>
+    <style name="Theme.MaterialComponents.DayNight.DarkActionBar.Bridge" parent="Theme.MaterialComponents.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog" parent="Theme.MaterialComponents.Dialog"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.Alert" parent="Theme.MaterialComponents.Dialog.Alert"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.Alert.Bridge" parent="Theme.MaterialComponents.Dialog.Alert.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.Bridge" parent="Theme.MaterialComponents.Dialog.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.FixedSize" parent="Theme.MaterialComponents.Dialog.FixedSize"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.FixedSize.Bridge" parent="Theme.MaterialComponents.Dialog.FixedSize.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.MinWidth" parent="Theme.MaterialComponents.Dialog.MinWidth"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.MinWidth.Bridge" parent="Theme.MaterialComponents.Dialog.MinWidth.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.DialogWhenLarge" parent="Theme.MaterialComponents.DialogWhenLarge"/>
+    <style name="Theme.MaterialComponents.DayNight.NoActionBar" parent="Theme.MaterialComponents.NoActionBar"/>
+    <style name="Theme.MaterialComponents.DayNight.NoActionBar.Bridge" parent="Theme.MaterialComponents.NoActionBar.Bridge"/>
+    <style name="Theme.MedinaApp" parent="Theme.MaterialComponents.NoActionBar">
+        
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/white</item>
+        
+        <item name="colorSecondary">@color/colorAccent</item>
+        <item name="colorSecondaryVariant">@color/colorAccent</item>
+        <item name="colorOnSecondary">@color/black</item>
+        
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <item name="android:windowBackground">@color/backgroundColor</item>
+    </style>
+    <style name="ThemeOverlay.AppCompat.DayNight" parent="ThemeOverlay.AppCompat.Dark"/>
+    <style name="ThemeOverlay.Material3.DynamicColors.DayNight" parent="ThemeOverlay.Material3.DynamicColors.Dark"/>
+    <style name="Widget.MaterialComponents.ActionBar.PrimarySurface" parent="Widget.MaterialComponents.ActionBar.Surface"/>
+    <style name="Widget.MaterialComponents.AppBarLayout.PrimarySurface" parent="Widget.MaterialComponents.AppBarLayout.Surface"/>
+    <style name="Widget.MaterialComponents.BottomAppBar.PrimarySurface" parent="Widget.MaterialComponents.BottomAppBar"/>
+    <style name="Widget.MaterialComponents.BottomNavigationView.PrimarySurface" parent="Widget.MaterialComponents.BottomNavigationView"/>
+    <style name="Widget.MaterialComponents.NavigationRailView.PrimarySurface" parent="Widget.MaterialComponents.NavigationRailView"/>
+    <style name="Widget.MaterialComponents.TabLayout.PrimarySurface" parent="Widget.MaterialComponents.TabLayout"/>
+    <style name="Widget.MaterialComponents.Toolbar.PrimarySurface" parent="Widget.MaterialComponents.Toolbar.Surface"/>
+</resources>

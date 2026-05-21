@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Schedule New Task"
+        android:textColor="@color/textPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Title input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task Title"
+        android:textColor="@color/textSecondary"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+    <EditText
+        android:id="@+id/etTaskTitle"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_input_field"
+        android:hint="e.g., Replace server fan"
+        android:textColorHint="@color/textHint"
+        android:textColor="@color/textPrimary"
+        android:textSize="14sp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:inputType="text"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- Description input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:textColor="@color/textSecondary"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+    <EditText
+        android:id="@+id/etTaskDesc"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/bg_input_field"
+        android:hint="Provide detailed task instructions..."
+        android:textColorHint="@color/textHint"
+        android:textColor="@color/textPrimary"
+        android:textSize="14sp"
+        android:padding="12dp"
+        android:gravity="top|start"
+        android:inputType="textMultiLine"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- Type and Priority row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Category Type"
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+
+            <Spinner
+                android:id="@+id/spTaskType"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@drawable/bg_input_field"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Priority Level"
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+
+            <Spinner
+                android:id="@+id/spTaskPriority"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@drawable/bg_input_field"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Due date selector -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Due Date"
+        android:textColor="@color/textSecondary"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+    <TextView
+        android:id="@+id/tvTaskDueDateSelect"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_input_field"
+        android:text="Select target date"
+        android:textColor="@color/textHint"
+        android:textSize="14sp"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btnCancelTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="@color/textSecondary"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btnSaveTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Schedule"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+</LinearLayout>

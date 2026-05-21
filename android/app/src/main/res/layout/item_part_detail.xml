@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_card"
+    android:elevation="1dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    android:padding="12dp">
+
+    <!-- Top line: Name & Status badge -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:id="@+id/tvPartName"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Intel Core i7-12700K"
+            android:textColor="@color/textPrimary"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tvPartStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ALLOCATED"
+            android:textSize="9sp"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/bg_badge_installed"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Details: Brand, Spec, Serial Number, Shelf location -->
+    <TextView
+        android:id="@+id/tvPartBrandSpec"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Brand: Intel | Spec: 12th Gen, 12-Core, 5.0 GHz"
+        android:textColor="@color/textSecondary"
+        android:textSize="12sp"
+        android:layout_marginBottom="6dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:id="@+id/tvPartSN"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="S/N: INT-928374-X"
+            android:textColor="@color/textHint"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/tvPartLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📍 Shelf #4 (Row A)"
+            android:textColor="@color/textHint"
+            android:textSize="11sp"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Bottom Actions -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btnReturnToStock"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Return to Stock"
+            android:textSize="11sp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/colorPrimary"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            style="?android:attr/borderlessButtonStyle"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -79,15 +79,14 @@
   flex-direction: row;
   align-items: center;
   gap: 14px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: none;
+  border: 1px solid var(--border-color);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: default;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .stat-icon {
@@ -445,7 +444,7 @@
   background: white;
   border-radius: 16px;
   border: 1px solid #e8edf5;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(99, 102, 241, 0.04);
+  box-shadow: none;
   overflow-y: auto;
   height: 100%;
   scroll-behavior: smooth;
@@ -584,7 +583,7 @@
   background: white;
   border-radius: 16px;
   border: 1px solid #e8edf5;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(99, 102, 241, 0.04);
+  box-shadow: none;
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -4703,4 +4702,139 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
   filter: brightness(1.1);
+}
+/* ═══ Activity Badges ═══ */
+.badge-new-modern, .badge-updated-modern {
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  animation: badgeFadeIn 0.5s ease-out;
+}
+
+.badge-new-modern {
+  color: #4338ca;
+  background: transparent;
+  box-shadow: none;
+}
+
+.badge-updated-modern {
+  color: #d97706;
+  background: transparent;
+  box-shadow: none;
+}
+
+@keyframes badgeFadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ============================================================
+   DARK MODE OVERRIDES
+   ============================================================ */
+
+:host-context(.dark-mode) .tk-list-pane,
+:host-context(.dark-mode) .tk-detail-pane,
+:host-context(.dark-mode) .tk-filter-card,
+:host-context(.dark-mode) .tk-stat-card,
+:host-context(.dark-mode) .tk-toggle-bar,
+:host-context(.dark-mode) .tk-modal-inner,
+:host-context(.dark-mode) .master-pane,
+:host-context(.dark-mode) .detail-pane,
+:host-context(.dark-mode) .tk-empty-pane {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+  box-shadow: none !important;
+}
+
+:host-context(.dark-mode) .tk-page {
+  background: var(--bg-app) !important;
+}
+
+:host-context(.dark-mode) h1,
+:host-context(.dark-mode) h2,
+:host-context(.dark-mode) h3,
+:host-context(.dark-mode) h4,
+:host-context(.dark-mode) .header-text h1 {
+  color: var(--text-main) !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+}
+
+:host-context(.dark-mode) .text-gray-900,
+:host-context(.dark-mode) .text-gray-700,
+:host-context(.dark-mode) .text-gray-600 {
+  color: var(--text-sub) !important;
+}
+
+:host-context(.dark-mode) .bg-gray-50,
+:host-context(.dark-mode) .bg-white {
+  background: var(--bg-card) !important;
+}
+
+:host-context(.dark-mode) .tk-filter-input,
+:host-context(.dark-mode) .tk-modal-input,
+:host-context(.dark-mode) .filter-group input,
+:host-context(.dark-mode) .filter-group select {
+  background: var(--bg-app) !important;
+  border-color: var(--border-strong) !important;
+  color: var(--text-main) !important;
+}
+
+:host-context(.dark-mode) .tk-stat-card h3 {
+  color: var(--text-main) !important;
+}
+
+:host-context(.dark-mode) .tk-history-header {
+  background: var(--bg-topbar) !important;
+  border-color: var(--border-color) !important;
+}
+
+:host-context(.dark-mode) .tk-meta-card,
+:host-context(.dark-mode) .tk-eq-cell,
+:host-context(.dark-mode) .tk-dropzone,
+:host-context(.dark-mode) .tk-attach-item {
+  background: var(--bg-app) !important;
+  border-color: var(--border-color) !important;
+}
+
+:host-context(.dark-mode) .tk-modal-footer {
+  background: var(--bg-app) !important;
+  border-color: var(--border-color) !important;
+}
+
+:host-context(.dark-mode) .eq-item:hover,
+:host-context(.dark-mode) .ticket-row:hover {
+  background: var(--accent-soft) !important;
+}
+
+:host-context(.dark-mode) .eq-item.selected,
+:host-context(.dark-mode) .ticket-row.selected {
+  background: var(--bg-app) !important;
+  border-left-color: var(--accent-primary) !important;
+}
+
+:host-context(.dark-mode) .eq-info h4,
+:host-context(.dark-mode) .ticket-id-code {
+  color: var(--text-main) !important;
+}
+
+:host-context(.dark-mode) .tk-toggle-pill {
+  background: var(--bg-app) !important;
+}
+
+:host-context(.dark-mode) .tk-toggle-pill button:not(.bg-white) {
+  color: var(--text-muted) !important;
+}
+
+:host-context(.dark-mode) .tk-toggle-pill button.bg-white {
+  background: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }

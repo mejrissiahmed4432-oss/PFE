@@ -46,6 +46,18 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   isCheckingSN: boolean = false;
   originalSN: string = '';
   formGenerateQr: boolean = false;  // QR code checkbox for edit form
+  installedParts: Equipment[] = [];
+  showInstallModal: boolean = false;
+  isLoadingPartsForInstall: boolean = false;
+  availablePartsForInstall: Equipment[] = [];
+  selectedPartToInstall: Equipment | null = null;
+  selectedPartId: string = '';
+  installSpecKey: string = '';
+  installFilterCategory: string = '';
+  installFilterType: string = '';
+  installSearchQuery: string = '';
+  installAvailableTypes: any[] = [];
+  filteredPartsForInstall: Equipment[] = [];
   private snSubject = new Subject<string>();
 
   equipmentTypes = [
@@ -54,7 +66,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     'ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'
   ];
   consumables = ['ram', 'hard drive', 'ssd', 'cables', 'keyboard', 'mouse', 'headset'];
-  statusOptions = ['Available', 'Broken', 'Maintenance', 'Out of Stock'];
+  statusOptions = ['Available', 'Broken', 'Maintenance', 'Out of Stock', 'Installed', 'Unrepairable'];
 
 
   constructor(
@@ -131,6 +143,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
               if (this.formData.type) {
                 this.loadAvailableShelves();
               }
+              this.loadInstalledParts();
             },
             error: (err) => {
               console.error('Error fetching full equipment detail', err);
@@ -250,12 +263,21 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   onStatusChange(): void {
     const status = this.formData.status;
+    
+    // Clear PC assignment fields if status is no longer 'Installed'
+    if (status !== 'Installed') {
+      this.formData.assignedToEquipmentId = undefined;
+      this.formData.assignedToEquipmentName = undefined;
+    }
+
     if (status === 'Maintenance') {
       this.formData.shelfId = 'MAINTENANCE_AREA';
-    } else if (status === 'Broken') {
+    } else if (status === 'Broken' || status === 'Unrepairable') {
       this.formData.shelfId = 'SCRAP_YARD';
     } else if (status === 'Out of Stock') {
       this.formData.shelfId = 'OUT_OF_STOCK';
+    } else if (status === 'Installed') {
+      this.formData.shelfId = '';
     } else if (status === 'Available' || status === 'In Stock') {
       // If switching back to Available from a virtual area, reset shelf
       if (this.formData.shelfId === 'MAINTENANCE_AREA' ||
@@ -749,6 +771,256 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   isLegacyType(): boolean {
     if (!this.formData.type || !this.availableTypes) return false;
     return !this.availableTypes.some(t => t.name === this.formData.type);
+  }
+
+  loadInstalledParts(): void {
+    if (!this.equipment || !this.equipment.id) return;
+    this.equipmentService.getAllEquipment().subscribe({
+      next: (allEq) => {
+        this.installedParts = allEq.filter(e => e.assignedToEquipmentId === this.equipment?.id);
+      },
+      error: (err) => console.error('Error loading installed parts', err)
+    });
+  }
+
+  uninstallPart(part: Equipment): void {
+    if (!part.id) return;
+    this.equipmentService.returnPart(part.id).subscribe({
+      next: () => {
+        this.toastService.success(`Part ${part.equipmentName} uninstalled and returned to stock.`);
+        this.loadInstalledParts();
+        if (this.equipment && this.equipment.id) {
+          this.equipmentService.getEquipmentById(this.equipment.id).subscribe(fullEq => {
+            this.equipment = fullEq;
+            this.formData = { ...fullEq };
+            if (this.formData.purchaseDate) {
+              this.formData.purchaseDate = this.formatDate(this.formData.purchaseDate);
+            }
+            if (this.formData.warrantyExpiration) {
+              this.formData.warrantyExpiration = this.formatDate(this.formData.warrantyExpiration);
+            }
+          });
+        }
+      },
+      error: (err: any) => {
+        console.error('Error uninstalling part', err);
+        this.toastService.error(`Failed to uninstall part: ${err.error?.message || err.message || 'Unknown error'}`);
+      }
+    });
+  }
+
+  isAsset(): boolean {
+    if (!this.equipment || !this.equipment.type) return false;
+    const currentType = this.equipment.type.toLowerCase().trim();
+    for (const cat of this.categories) {
+      const foundType = cat.types?.find(t => t.name.toLowerCase().trim() === currentType);
+      if (foundType) {
+        return foundType.nature === 'Asset';
+      }
+    }
+    // Fallback standard assets
+    const assetTypes = ['pc', 'laptop', 'server'];
+    return assetTypes.includes(currentType);
+  }
+
+  onInstallCategoryChange(): void {
+    this.installFilterType = '';
+    this.selectedPartToInstall = null;
+    this.selectedPartId = '';
+    
+    if (!this.installFilterCategory) {
+      this.installAvailableTypes = [];
+    } else {
+      const cat = this.categories.find(c => c.name === this.installFilterCategory);
+      this.installAvailableTypes = cat ? (cat.types || []) : [];
+    }
+    this.applyInstallFilters();
+  }
+
+  onInstallTypeChange(): void {
+    this.selectedPartToInstall = null;
+    this.selectedPartId = '';
+    this.applyInstallFilters();
+  }
+
+  applyInstallFilters(): void {
+    let parts = [...this.availablePartsForInstall];
+
+    // Filter by category
+    if (this.installFilterCategory) {
+      parts = parts.filter(p => p.category === this.installFilterCategory);
+    }
+
+    // Filter by type
+    if (this.installFilterType) {
+      parts = parts.filter(p => p.type?.toLowerCase().trim() === this.installFilterType.toLowerCase().trim());
+    }
+
+    // Search query filter (Brand, Model, Serial, Name)
+    if (this.installSearchQuery) {
+      const q = this.installSearchQuery.toLowerCase().trim();
+      parts = parts.filter(p => 
+        (p.equipmentName || '').toLowerCase().includes(q) ||
+        (p.brand || '').toLowerCase().includes(q) ||
+        (p.model || '').toLowerCase().includes(q) ||
+        (p.serialNumber || '').toLowerCase().includes(q)
+      );
+    }
+
+    this.filteredPartsForInstall = parts;
+  }
+
+  openInstallModal(): void {
+    this.showInstallModal = true;
+    this.isLoadingPartsForInstall = true;
+    this.availablePartsForInstall = [];
+    this.filteredPartsForInstall = [];
+    this.selectedPartToInstall = null;
+    this.selectedPartId = '';
+    this.installSpecKey = '';
+
+    // Reset filters
+    this.installFilterCategory = '';
+    this.installFilterType = '';
+    this.installSearchQuery = '';
+    this.installAvailableTypes = [];
+
+    // Ensure categories are loaded
+    if (!this.categories || this.categories.length === 0) {
+      this.categoryService.getAllCategories().subscribe(cats => {
+        this.categories = cats;
+      });
+    }
+
+    this.equipmentService.getAllEquipment().subscribe({
+      next: (allEq) => {
+        this.isLoadingPartsForInstall = false;
+        
+        // Filter parts
+        const filtered = allEq.filter(e => 
+          (e.status?.toLowerCase() === 'available' || !e.assignedToEquipmentId) && 
+          e.id !== this.equipment?.id
+        );
+
+        // Deduplicate by Serial Number (if serialNumber exists, otherwise fallback to ID)
+        const seenSerials = new Set<string>();
+        const seenIds = new Set<string>();
+        const uniqueParts: Equipment[] = [];
+        for (const p of filtered) {
+          if (!p.id || seenIds.has(p.id)) continue;
+          
+          const sn = p.serialNumber ? p.serialNumber.trim().toLowerCase() : '';
+          if (sn && seenSerials.has(sn)) {
+            continue; // Skip duplicates with same serial number
+          }
+          
+          seenIds.add(p.id);
+          if (sn) {
+            seenSerials.add(sn);
+          }
+          uniqueParts.push(p);
+        }
+
+        this.availablePartsForInstall = uniqueParts;
+        this.filteredPartsForInstall = [...uniqueParts];
+      },
+      error: (err) => {
+        this.isLoadingPartsForInstall = false;
+        console.error('Error loading available parts', err);
+        this.toastService.error('Failed to load parts from stock.');
+      }
+    });
+  }
+
+  onPartIdSelected(partId: string): void {
+    this.selectedPartId = partId;
+    const part = this.availablePartsForInstall.find(p => p.id === partId);
+    if (part) {
+      this.selectedPartToInstall = part;
+      this.installSpecKey = part.type ? part.type.toUpperCase() : '';
+    } else {
+      this.selectedPartToInstall = null;
+      this.installSpecKey = '';
+    }
+  }
+
+  onPartSelected(part: Equipment): void {
+    this.selectedPartToInstall = part;
+    if (part) {
+      this.selectedPartId = part.id || '';
+      this.installSpecKey = part.type ? part.type.toUpperCase() : '';
+    } else {
+      this.selectedPartId = '';
+      this.installSpecKey = '';
+    }
+  }
+
+  confirmInstallPart(): void {
+    if (!this.selectedPartToInstall || !this.selectedPartToInstall.id || !this.equipment || !this.equipment.id) return;
+    
+    const part = this.selectedPartToInstall;
+    const parent = this.equipment;
+
+    // 1. Update the part status and association
+    part.status = 'Installed';
+    part.assignedToEquipmentId = parent.id;
+    part.assignedToEquipmentName = parent.equipmentName;
+    part.shelfId = '';
+    if (!part.lifecycle) part.lifecycle = [];
+    part.lifecycle.push({
+      status: 'Installed',
+      timestamp: new Date().toISOString(),
+      description: `Installed inside equipment ${parent.equipmentName} (${parent.id})`,
+      actor: this.currentUserName || 'Stock Manager'
+    });
+
+    // 2. Add to parent specifications and parent lifecycle if a spec key is provided
+    if (!parent.lifecycle) parent.lifecycle = [];
+    parent.lifecycle.push({
+      status: 'Component Installed',
+      timestamp: new Date().toISOString(),
+      description: `Installed component: ${part.equipmentName} (S/N: ${part.serialNumber || 'N/A'})`,
+      actor: this.currentUserName || 'Stock Manager'
+    });
+
+    if (this.installSpecKey) {
+      if (!parent.specifications) parent.specifications = {};
+      const specValue = `${part.brand} ${part.model || ''} (S/N: ${part.serialNumber || 'N/A'})`.trim();
+      parent.specifications[this.installSpecKey] = specValue;
+    }
+
+    // 3. Save part and parent
+    this.equipmentService.updateEquipment(part.id!, part).subscribe({
+      next: () => {
+        this.equipmentService.updateEquipment(parent.id!, parent).subscribe({
+          next: (updatedParent) => {
+            this.toastService.success(`Part ${part.equipmentName} successfully installed inside ${parent.equipmentName}.`);
+            this.showInstallModal = false;
+            
+            // Refresh parent data and installed parts list!
+            this.equipment = updatedParent;
+            this.formData = { ...updatedParent };
+            if (this.formData.purchaseDate) {
+              this.formData.purchaseDate = this.formatDate(this.formData.purchaseDate);
+            }
+            if (this.formData.warrantyExpiration) {
+              this.formData.warrantyExpiration = this.formatDate(this.formData.warrantyExpiration);
+            }
+            this.loadInstalledParts();
+          },
+          error: (err) => {
+            console.error('Error updating parent specifications', err);
+            this.toastService.error('Part was assigned, but failed to update parent specifications.');
+            this.showInstallModal = false;
+            this.loadInstalledParts();
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error installing part', err);
+        this.toastService.error(`Failed to install part: ${err.error?.message || err.message}`);
+      }
+    });
   }
 
   trackByKey(index: number, item: any): string {
