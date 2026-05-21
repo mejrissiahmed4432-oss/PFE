@@ -486,67 +486,40 @@
 
                 <div class="apc-content-body" *ngIf="!action.isCollapsed">
                   <!-- Row 1: Category, Type & Priority -->
-                  <div class="apc-row-grid-three">
-                    <div class="apc-input-wrapper">
+                  <div class="apc-row-3">
+                    <div class="apc-field">
                       <label>Category</label>
-                      <div class="apc-select-container">
-                        <select [(ngModel)]="action.category"
-                          (ngModelChange)="updateAction(action.id, 'category', $event)">
-                          <option *ngFor="let cat of ALL_ACTION_CATEGORIES" [value]="cat">{{ cat }}</option>
-                        </select>
-                        <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" stroke-width="2.5">
-                          <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                      </div>
+                      <select [(ngModel)]="action.category"
+                        (ngModelChange)="updateAction(action.id, 'category', $event)">
+                        <option *ngFor="let cat of ALL_ACTION_CATEGORIES" [value]="cat">{{ cat }}</option>
+                      </select>
                     </div>
-                    <div class="apc-input-wrapper">
+                    <div class="apc-field">
                       <label>Action Type</label>
-                      <div class="apc-select-container">
-                        <select [(ngModel)]="action.type">
-                          <option *ngFor="let t of getActionTypesForCategory(action.category)" [value]="t">{{ t }}
-                          </option>
-                        </select>
-                        <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" stroke-width="2.5">
-                          <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                      </div>
+                      <select [(ngModel)]="action.type">
+                        <option *ngFor="let t of getActionTypesForCategory(action.category)" [value]="t">{{ t }}
+                        </option>
+                      </select>
                     </div>
-                    <div class="apc-input-wrapper">
+                    <div class="apc-field">
                       <label>Priority</label>
-                      <div class="apc-select-container priority-select"
-                        [class]="action.priority ? action.priority.toLowerCase() : ''">
-                        <select [(ngModel)]="action.priority">
-                          <option value="High">High Priority</option>
-                          <option value="Medium">Medium Priority</option>
-                          <option value="Low">Low Priority</option>
-                        </select>
-                        <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" stroke-width="2.5">
-                          <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                      </div>
+                      <select [(ngModel)]="action.priority">
+                        <option value="High">High Priority</option>
+                        <option value="Medium">Medium Priority</option>
+                        <option value="Low">Low Priority</option>
+                      </select>
                     </div>
                   </div>
 
                   <!-- Row 2: Target -->
-                  <div class="apc-input-wrapper">
+                  <div class="apc-field" style="margin-top: 16px;">
                     <label>Target Element</label>
-                    <div class="apc-input-container">
-                      <input type="text" [(ngModel)]="action.target"
-                        placeholder="e.g., RAM Module, OS Registry, BIOS Settings">
-                      <svg class="input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2.5">
-                        <path
-                          d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                        </path>
-                      </svg>
-                    </div>
+                    <input type="text" [(ngModel)]="action.target"
+                      placeholder="e.g., RAM Module, OS Registry, BIOS Settings">
                   </div>
 
                   <!-- Row 3: Description -->
-                  <div class="apc-input-wrapper">
+                  <div class="apc-field" style="margin-top: 16px;">
                     <label>Technical Description</label>
                     <textarea [(ngModel)]="action.description"
                       placeholder="Describe the maintenance steps in detail..."></textarea>

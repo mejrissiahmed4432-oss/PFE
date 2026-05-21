@@ -16,6 +16,7 @@ public class RouteValidator {
             "/api/users/logout",          // Allow logout even with expired token
             "/api/users/forgot-password",
             "/api/users/reset-password",
+            "/api/public/",               // Allow public procurement routes (supplier portal)
             "/eureka",
             "/ws",
             "/ws/"

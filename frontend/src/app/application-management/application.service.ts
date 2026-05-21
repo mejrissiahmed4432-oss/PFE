@@ -7,7 +7,7 @@ import { Application, EquipmentApplication, InstallApplicationRequest } from './
   providedIn: 'root'
 })
 export class ApplicationService {
-  private apiUrl = '/api/applications';
+  private apiUrl = '/api/software';
 
   constructor(private http: HttpClient) { }
 

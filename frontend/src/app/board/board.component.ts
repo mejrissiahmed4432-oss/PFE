@@ -29,7 +29,7 @@ import { TranslationService } from '../shared/translation.service';
 import { PartRequestService } from '../parts-management/part-request.service';
 import { EmployeeListComponent } from '../employee/employee-list/employee-list.component';
 import { HrDashboardComponent } from '../hr-dashboard/hr-dashboard.component';
-
+import { OsManagementComponent } from '../os-management/os-management.component';
 import { UserManagementComponent } from '../user-management/user-management.component';
 import { AdminDashboardComponent } from '../admin-dashboard/admin-dashboard.component';
 import { TechnicianDepartmentsComponent } from '../technician-departments/technician-departments.component';
@@ -44,6 +44,7 @@ import { EquipmentReturnsComponent } from '../equipment-returns/equipment-return
 
 import { TicketService } from '../tickets/ticket.service';
 import { RefreshService } from '../shared/refresh.service';
+import { ApplicationManagementComponent } from '../application-management/application-management.component';
 
 @Component({
   selector: 'app-board',
@@ -51,8 +52,6 @@ import { RefreshService } from '../shared/refresh.service';
 
 
   imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, UserManagementComponent, ToastComponent, ProcurementComponent, AdminDashboardComponent, TechnicianDepartmentsComponent, TechnicianDevicesComponent, SoftwareDashboardComponent, ItEquipmentManagementComponent, EquipmentReturnsComponent],
-
-
 
 
   providers: [MessagingService, TicketService],
