@@ -28,6 +28,12 @@ public final class FragmentPartsBinding implements ViewBinding {
   public final ImageButton btnToggleFilters;
 
   @NonNull
+  public final ImageButton btnViewCards;
+
+  @NonNull
+  public final ImageButton btnViewTable;
+
+  @NonNull
   public final EditText etSearchParts;
 
   @NonNull
@@ -49,12 +55,15 @@ public final class FragmentPartsBinding implements ViewBinding {
   public final Spinner spTypeFilter;
 
   private FragmentPartsBinding(@NonNull CoordinatorLayout rootView,
-      @NonNull ImageButton btnToggleFilters, @NonNull EditText etSearchParts,
+      @NonNull ImageButton btnToggleFilters, @NonNull ImageButton btnViewCards,
+      @NonNull ImageButton btnViewTable, @NonNull EditText etSearchParts,
       @NonNull ExtendedFloatingActionButton fabRequestPart, @NonNull LinearLayout layoutEmptyParts,
       @NonNull LinearLayout layoutFilterOptions, @NonNull RecyclerView rvParts,
       @NonNull Spinner spCategoryFilter, @NonNull Spinner spTypeFilter) {
     this.rootView = rootView;
     this.btnToggleFilters = btnToggleFilters;
+    this.btnViewCards = btnViewCards;
+    this.btnViewTable = btnViewTable;
     this.etSearchParts = etSearchParts;
     this.fabRequestPart = fabRequestPart;
     this.layoutEmptyParts = layoutEmptyParts;
@@ -94,6 +103,18 @@ public final class FragmentPartsBinding implements ViewBinding {
       id = R.id.btnToggleFilters;
       ImageButton btnToggleFilters = ViewBindings.findChildViewById(rootView, id);
       if (btnToggleFilters == null) {
+        break missingId;
+      }
+
+      id = R.id.btnViewCards;
+      ImageButton btnViewCards = ViewBindings.findChildViewById(rootView, id);
+      if (btnViewCards == null) {
+        break missingId;
+      }
+
+      id = R.id.btnViewTable;
+      ImageButton btnViewTable = ViewBindings.findChildViewById(rootView, id);
+      if (btnViewTable == null) {
         break missingId;
       }
 
@@ -139,9 +160,9 @@ public final class FragmentPartsBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentPartsBinding((CoordinatorLayout) rootView, btnToggleFilters, etSearchParts,
-          fabRequestPart, layoutEmptyParts, layoutFilterOptions, rvParts, spCategoryFilter,
-          spTypeFilter);
+      return new FragmentPartsBinding((CoordinatorLayout) rootView, btnToggleFilters, btnViewCards,
+          btnViewTable, etSearchParts, fabRequestPart, layoutEmptyParts, layoutFilterOptions,
+          rvParts, spCategoryFilter, spTypeFilter);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

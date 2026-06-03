@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/surfaceColor"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Top Header: Category and Actions (Edit/Delete) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:id="@+id/tvTicketDetailCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MAINTENANCE"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/bg_badge_installed"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <!-- Edit Button -->
+            <ImageButton
+                android:id="@+id/btnTicketDetailEdit"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_card"
+                android:src="@drawable/ic_logout"
+                app:tint="@color/textSecondary"
+                android:contentDescription="Edit Ticket"
+                android:layout_marginEnd="6dp"
+                android:padding="6dp"/>
+
+            <!-- Delete Button -->
+            <ImageButton
+                android:id="@+id/btnTicketDetailDelete"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_card"
+                android:src="@drawable/ic_logout"
+                app:tint="@color/errorText"
+                android:contentDescription="Delete Ticket"
+                android:padding="6dp"/>
+
+        </LinearLayout>
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvTicketDetailTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ticket Title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Details Grid (Priority, Status) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <!-- Priority -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:padding="12dp"
+                android:layout_marginEnd="6dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PRIORITY"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textHint"/>
+                <TextView
+                    android:id="@+id/tvTicketDetailPriority"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="High"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/errorText"
+                    android:layout_marginTop="2dp"/>
+            </LinearLayout>
+
+            <!-- Status -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:padding="12dp"
+                android:layout_marginStart="6dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="STATUS"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textHint"/>
+                <TextView
+                    android:id="@+id/tvTicketDetailStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="In Progress"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginTop="2dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Assigned Technician -->
+        <LinearLayout
+            android:id="@+id/layoutTicketDetailTech"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_card"
+            android:padding="12dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/tvTicketDetailTechAvatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_badge_installed"
+                android:textColor="@color/colorPrimary"
+                android:text="MM"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginEnd="12dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tvTicketDetailTechName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Morad Mejri"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textPrimary"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Assigned Technician"
+                    android:textSize="10sp"
+                    android:textColor="@color/textSecondary"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Deadline -->
+        <LinearLayout
+            android:id="@+id/layoutTicketDetailDeadline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_card"
+            android:padding="12dp"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_nav_tickets"
+                app:tint="@color/colorPrimary"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/tvTicketDetailDeadline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Deadline: May 24, 2026"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/textPrimary"/>
+        </LinearLayout>
+
+        <!-- Description Box -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DESCRIPTION"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:textColor="@color/textHint"
+                android:layout_marginBottom="6dp"/>
+
+            <TextView
+                android:id="@+id/tvTicketDetailDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No description provided."
+                android:textSize="13sp"
+                android:textColor="@color/textSecondary"
+                android:lineSpacingExtra="2dp"/>
+        </LinearLayout>
+
+        <!-- Attachments Section -->
+        <LinearLayout
+            android:id="@+id/layoutTicketDetailAttachments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvTicketDetailAttachmentsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ATTACHMENTS (0)"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:textColor="@color/textHint"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:id="@+id/layoutTicketDetailAttachmentsList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+        </LinearLayout>
+
+        <!-- Footer Actions -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnTicketDetailCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Close"
+                android:textColor="@color/textSecondary"
+                android:backgroundTint="@color/inputBackground"
+                android:layout_marginEnd="8dp"
+                android:textAllCaps="false"/>
+
+            <Button
+                android:id="@+id/btnTicketDetailAction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start Working"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/colorPrimary"
+                android:textAllCaps="false"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

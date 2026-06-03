@@ -1,322 +1,446 @@
 [
     {
-        "merged": "com.medina.app-merged_res-31:/layout_fragment_schedule.xml.flat",
-        "source": "com.medina.app-main-33:/layout/fragment_schedule.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_login_bg.png.flat",
+        "source": "com.medina.app-main-35:/drawable/login_bg.png"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_notification.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_notification.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_view_list.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_view_list.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_fragment_alerts.xml.flat",
-        "source": "com.medina.app-main-33:/layout/fragment_alerts.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_dialog_ticket_detail.xml.flat",
+        "source": "com.medina.app-main-35:/layout/dialog_ticket_detail.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_item_part_group_header.xml.flat",
-        "source": "com.medina.app-main-33:/layout/item_part_group_header.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_fragment_reports.xml.flat",
+        "source": "com.medina.app-main-35:/layout/fragment_reports.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_activity_dashboard.xml.flat",
-        "source": "com.medina.app-main-33:/layout/activity_dashboard.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_card.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_card.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_eye_off.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_eye_off.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_login_page.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_login_page.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_fragment_tickets.xml.flat",
-        "source": "com.medina.app-main-33:/layout/fragment_tickets.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_badge.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_badge.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_edit.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_edit.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_arrow_right.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_arrow_right.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_avatar.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_avatar.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_phone.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_phone.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_hero_overlay.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_hero_overlay.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_error_box.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_error_box.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_success_box.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_success_box.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_layout_ai_assistant.xml.flat",
+        "source": "com.medina.app-main-35:/layout/layout_ai_assistant.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_form_card.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_form_card.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_logout.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_logout.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_logo.png.flat",
-        "source": "com.medina.app-main-33:/drawable/logo.png"
+        "merged": "com.medina.app-merged_res-33:/layout_activity_live_workbench.xml.flat",
+        "source": "com.medina.app-main-35:/layout/activity_live_workbench.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_nav_requests.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_nav_requests.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_form_card.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_form_card.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_nav_reports.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_nav_reports.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_app_icon.png.flat",
+        "source": "com.medina.app-main-35:/drawable/app_icon.png"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_error_box.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_error_box.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_item_part_group_header.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_part_group_header.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_alert.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_alert.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_fragment_requests.xml.flat",
+        "source": "com.medina.app-main-35:/layout/fragment_requests.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_item_dropdown_notification.xml.flat",
-        "source": "com.medina.app-main-33:/layout/item_dropdown_notification.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_medinaflux_logo.png.flat",
+        "source": "com.medina.app-main-35:/drawable/medinaflux_logo.png"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_badge_red.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_badge_red.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_nav_schedule.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_nav_schedule.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_badge_available.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_badge_available.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_avatar.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_avatar.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_animated_orbs.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_animated_orbs.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_filter.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_filter.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_ai.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_ai.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_dialog_confirm_return.xml.flat",
+        "source": "com.medina.app-main-35:/layout/dialog_confirm_return.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_login_bg.png.flat",
-        "source": "com.medina.app-main-33:/drawable/login_bg.png"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_badge_red.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_badge_red.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_mode_toggle.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_mode_toggle.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_ai_fab.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_ai_fab.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_button_gradient.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_button_gradient.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_alert.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_alert.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_app_icon.png.flat",
-        "source": "com.medina.app-main-33:/drawable/app_icon.png"
+        "merged": "com.medina.app-merged_res-33:/layout_activity_dashboard.xml.flat",
+        "source": "com.medina.app-main-35:/layout/activity_dashboard.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_nav_parts.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_nav_parts.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_delete.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_delete.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_dialog_add_task.xml.flat",
-        "source": "com.medina.app-main-33:/layout/dialog_add_task.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_button_gradient.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_button_gradient.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_nav_item_hover.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_nav_item_hover.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_activity_login.xml.flat",
+        "source": "com.medina.app-main-35:/layout/activity_login.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_nav_settings.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_nav_settings.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_icon_service_desk.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_icon_service_desk.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_calendar.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_calendar.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_dialog_task_detail.xml.flat",
+        "source": "com.medina.app-main-35:/layout/dialog_task_detail.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_card.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_card.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_item_wb_assigned.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_wb_assigned.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_title_accent.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_title_accent.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_banner_gradient.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_banner_gradient.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_nav_item_default.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_nav_item_default.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_nav_requests.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_nav_requests.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_item_part_detail.xml.flat",
-        "source": "com.medina.app-main-33:/layout/item_part_detail.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_dialog_add_task.xml.flat",
+        "source": "com.medina.app-main-35:/layout/dialog_add_task.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_menu.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_menu.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_stat_card_open.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_stat_card_open.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_input_field.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_input_field.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_fragment_tickets.xml.flat",
+        "source": "com.medina.app-main-35:/layout/fragment_tickets.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_department.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_department.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_eye.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_eye.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_activity_login.xml.flat",
-        "source": "com.medina.app-main-33:/layout/activity_login.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_check.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_check.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_lock.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_lock.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_dot_done.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_dot_done.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_badge.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_badge.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_activity_reset_password.xml.flat",
+        "source": "com.medina.app-main-35:/layout/activity_reset_password.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_item_alert.xml.flat",
-        "source": "com.medina.app-main-33:/layout/item_alert.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_badge_maintenance.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_badge_maintenance.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_nav_tickets.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_nav_tickets.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_add.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_add.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_stat_card_open.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_stat_card_open.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_nav_item_hover.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_nav_item_hover.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_icon_service_desk.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_icon_service_desk.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_nav_reports.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_nav_reports.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_nav_dashboard.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_nav_dashboard.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_lock.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_lock.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_banner_gradient.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_banner_gradient.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_badge_available.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_badge_available.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_fragment_settings.xml.flat",
-        "source": "com.medina.app-main-33:/layout/fragment_settings.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_dot_green.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_dot_green.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_fragment_reports.xml.flat",
-        "source": "com.medina.app-main-33:/layout/fragment_reports.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_dialog_request_part.xml.flat",
+        "source": "com.medina.app-main-35:/layout/dialog_request_part.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_login_page.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_login_page.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_badge_rejected.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_badge_rejected.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_dialog_task_detail.xml.flat",
-        "source": "com.medina.app-main-33:/layout/dialog_task_detail.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_fragment_chat.xml.flat",
+        "source": "com.medina.app-main-35:/layout/fragment_chat.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_check.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_check.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_item_chat_contact.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_chat_contact.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_activity_forgot_password.xml.flat",
-        "source": "com.medina.app-main-33:/layout/activity_forgot_password.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_department.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_department.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_dialog_request_part.xml.flat",
-        "source": "com.medina.app-main-33:/layout/dialog_request_part.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_nav_item_default.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_nav_item_default.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_dot_green.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_dot_green.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_input_field.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_input_field.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_badge_maintenance.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_badge_maintenance.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_fragment_parts.xml.flat",
+        "source": "com.medina.app-main-35:/layout/fragment_parts.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_fragment_profile.xml.flat",
-        "source": "com.medina.app-main-33:/layout/fragment_profile.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_view_module.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_view_module.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_badge_installed.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_badge_installed.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_calendar.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_calendar.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_nav_item_active.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_nav_item_active.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_badge_installed.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_badge_installed.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_mail.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_mail.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_mail.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_mail.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_topbar.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_topbar.xml"
+        "merged": "com.medina.app-merged_res-33:/anim_fade_in_up.xml.flat",
+        "source": "com.medina.app-main-35:/anim/fade_in_up.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_eye.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_eye.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_badge_dot.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_badge_dot.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/anim_fade_in_up.xml.flat",
-        "source": "com.medina.app-main-33:/anim/fade_in_up.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_item_chat_message.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_chat_message.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_fragment_dashboard.xml.flat",
-        "source": "com.medina.app-main-33:/layout/fragment_dashboard.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_logo.png.flat",
+        "source": "com.medina.app-main-35:/drawable/logo.png"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_sidebar.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_sidebar.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_item_ticket.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_ticket.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_activity_reset_password.xml.flat",
-        "source": "com.medina.app-main-33:/layout/activity_reset_password.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_attachment.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_attachment.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_badge_rejected.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_badge_rejected.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_dialog_request_part_wizard.xml.flat",
+        "source": "com.medina.app-main-35:/layout/dialog_request_part_wizard.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_arrow_right.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_arrow_right.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_item_alert.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_alert.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_logo_box.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_logo_box.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_topbar.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_topbar.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_language.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_language.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_fragment_dashboard.xml.flat",
+        "source": "com.medina.app-main-35:/layout/fragment_dashboard.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_tab_active.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_tab_active.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_nav_settings.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_nav_settings.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_medinaflux_logo.png.flat",
-        "source": "com.medina.app-main-33:/drawable/medinaflux_logo.png"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_profile.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_profile.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_nav_schedule.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_nav_schedule.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_menu.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_menu.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_fragment_parts.xml.flat",
-        "source": "com.medina.app-main-33:/layout/fragment_parts.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_item_eq_timeline.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_eq_timeline.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_phone.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_phone.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_nav_tickets.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_nav_tickets.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_bg_badge_dot.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/bg_badge_dot.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_item_wb_action.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_wb_action.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_profile.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_profile.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_item_task.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_task.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/drawable_ic_laptop.xml.flat",
-        "source": "com.medina.app-main-33:/drawable/ic_laptop.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_logo_box.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_logo_box.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_fragment_requests.xml.flat",
-        "source": "com.medina.app-main-33:/layout/fragment_requests.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_fragment_profile.xml.flat",
+        "source": "com.medina.app-main-35:/layout/fragment_profile.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-31:/layout_item_task.xml.flat",
-        "source": "com.medina.app-main-33:/layout/item_task.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_laptop.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_laptop.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_item_equipment.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_equipment.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_eye_off.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_eye_off.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_tab_active.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_tab_active.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_nav_parts.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_nav_parts.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_fragment_settings.xml.flat",
+        "source": "com.medina.app-main-35:/layout/fragment_settings.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_fragment_alerts.xml.flat",
+        "source": "com.medina.app-main-35:/layout/fragment_alerts.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_dialog_ticket_detail_premium.xml.flat",
+        "source": "com.medina.app-main-35:/layout/dialog_ticket_detail_premium.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_dot_progress.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_dot_progress.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_dialog_equipment_detail.xml.flat",
+        "source": "com.medina.app-main-35:/layout/dialog_equipment_detail.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_item_wb_resource.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_wb_resource.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_language.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_language.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_hero_overlay.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_hero_overlay.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_animated_orbs.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_animated_orbs.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_item_wb_execution_action.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_wb_execution_action.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_item_dropdown_notification.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_dropdown_notification.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_ai.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_ai.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_nav_dashboard.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_nav_dashboard.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_nav_chat.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_nav_chat.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_sidebar.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_sidebar.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_success_box.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_success_box.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_fragment_schedule.xml.flat",
+        "source": "com.medina.app-main-35:/layout/fragment_schedule.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_notification.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_notification.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_dialog_part_detail.xml.flat",
+        "source": "com.medina.app-main-35:/layout/dialog_part_detail.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_mode_toggle.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_mode_toggle.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_dot_todo.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_dot_todo.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_nav_item_active.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_nav_item_active.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_activity_forgot_password.xml.flat",
+        "source": "com.medina.app-main-35:/layout/activity_forgot_password.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_dialog_new_ticket.xml.flat",
+        "source": "com.medina.app-main-35:/layout/dialog_new_ticket.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_item_part_detail.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_part_detail.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_title_accent.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_title_accent.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_ic_edit.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/ic_edit.xml"
     }
 ]

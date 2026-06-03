@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/surfaceColor"
+    android:padding="20dp">
+
+    <!-- ══ Header ═════════════════════════════════════════════════════════════ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvWizardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Request Parts"
+                android:textColor="@color/textPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvWizardSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Step 1 of 2 · Request Details"
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"/>
+        </LinearLayout>
+
+        <!-- Step indicator dots -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <View
+                android:id="@+id/dotStep1"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@color/colorPrimary"
+                android:layout_marginEnd="4dp"/>
+
+            <View
+                android:id="@+id/dotStep2"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@color/textHint"
+                android:layout_marginEnd="4dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ══ STEP 1 CONTENT ═══════════════════════════════════════════════════════ -->
+    <ScrollView
+        android:id="@+id/scrollStep1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbarStyle="outsideOverlay">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Description -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+            <EditText
+                android:id="@+id/etWizardDescription"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="Explain what parts are needed and why..."
+                android:textColorHint="@color/textHint"
+                android:textColor="@color/textPrimary"
+                android:textSize="13sp"
+                android:padding="10dp"
+                android:gravity="top|start"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Priority -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Priority"
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+            <Spinner
+                android:id="@+id/spWizardPriority"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Target Equipment label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Target Equipment (optional)"
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+
+            <!-- Selected equipment card (shown once chosen) -->
+            <LinearLayout
+                android:id="@+id/layoutWizardEqCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_card"
+                android:padding="12dp"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvWizardEqName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="13sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tvWizardEqSerial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/textSecondary"
+                        android:textSize="11sp"
+                        android:layout_marginTop="2dp"/>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnWizardChangeEq"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="Change"
+                    android:textSize="11sp"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:textColor="@color/colorPrimary"
+                    android:textAllCaps="false"/>
+            </LinearLayout>
+
+            <!-- Equipment search input (shown when none selected) -->
+            <LinearLayout
+                android:id="@+id/layoutWizardEqSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="8dp">
+
+                <EditText
+                    android:id="@+id/etWizardEqSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Search or leave blank for general stock"
+                    android:textColorHint="@color/textHint"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="13sp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:singleLine="true"
+                    android:layout_marginBottom="6dp"/>
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="140dp"
+                    android:background="@drawable/bg_input_field"
+                    android:padding="4dp">
+
+                    <LinearLayout
+                        android:id="@+id/layoutWizardEqList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+                </ScrollView>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ══ STEP 2 CONTENT ═══════════════════════════════════════════════════════ -->
+    <ScrollView
+        android:id="@+id/scrollStep2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Part entry form -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:padding="12dp"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add a Part"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp"/>
+
+                <!-- Part Name -->
+                <EditText
+                    android:id="@+id/etWizardPartName"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Part name *"
+                    android:textColorHint="@color/textHint"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="13sp"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginBottom="8dp"/>
+
+                <!-- Brand & Qty row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+
+                    <EditText
+                        android:id="@+id/etWizardBrand"
+                        android:layout_width="0dp"
+                        android:layout_height="42dp"
+                        android:layout_weight="2"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="Brand"
+                        android:textColorHint="@color/textHint"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="13sp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:layout_marginEnd="8dp"/>
+
+                    <EditText
+                        android:id="@+id/etWizardQty"
+                        android:layout_width="0dp"
+                        android:layout_height="42dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="Qty"
+                        android:textColorHint="@color/textHint"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="13sp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:inputType="number"/>
+                </LinearLayout>
+
+                <!-- Category spinner -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Category"
+                    android:textColor="@color/textSecondary"
+                    android:textSize="11sp"
+                    android:layout_marginBottom="4dp"/>
+                <Spinner
+                    android:id="@+id/spWizardItemCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:background="@drawable/bg_input_field"
+                    android:layout_marginBottom="8dp"/>
+
+                <!-- Specifications -->
+                <EditText
+                    android:id="@+id/etWizardSpecs"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="Specifications (optional)"
+                    android:textColorHint="@color/textHint"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="13sp"
+                    android:padding="10dp"
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine"
+                    android:layout_marginBottom="10dp"/>
+
+                <Button
+                    android:id="@+id/btnWizardAddItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="+ Add to Cart"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorPrimary"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@drawable/bg_input_field"/>
+            </LinearLayout>
+
+            <!-- Cart / Items list -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Items in Request"
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp"/>
+
+            <LinearLayout
+                android:id="@+id/layoutWizardCart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_input_field"
+                android:padding="8dp"
+                android:minHeight="40dp"
+                android:layout_marginBottom="8dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ══ Bottom navigation buttons ═══════════════════════════════════════════ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="12dp">
+
+        <Button
+            android:id="@+id/btnWizardCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="@color/textSecondary"
+            android:textAllCaps="false"
+            android:layout_marginEnd="4dp"/>
+
+        <Button
+            android:id="@+id/btnWizardBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="← Back"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="@color/textSecondary"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            android:layout_marginEnd="4dp"/>
+
+        <Button
+            android:id="@+id/btnWizardNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next →"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/white"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+
+</LinearLayout>

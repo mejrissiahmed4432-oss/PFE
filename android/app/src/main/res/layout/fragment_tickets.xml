@@ -1,243 +1,434 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/surfaceColor"
-    android:padding="16dp">
+    android:background="@color/surfaceColor">
 
-    <!-- Header Section -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Assigned Tickets"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/textPrimary"
-        android:layout_marginBottom="4dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View and update your active maintenance tasks"
-        android:textSize="12sp"
-        android:textColor="@color/textSecondary"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- Scrollable Ticket List -->
-    <ScrollView
+    <!-- Main content column -->
+    <LinearLayout
+        android:id="@+id/mainContent"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbars="none">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
+        <!-- ===== HEADER ===== -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/bg_sidebar"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="18dp"
+            android:paddingBottom="14dp">
 
-            <!-- Ticket Card 1 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Service Desk"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manage tickets and equipment"
+                android:textSize="12sp"
+                android:textColor="#B0C4DE"
+                android:layout_marginTop="2dp"/>
+
+            <!-- Stats Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_card"
-                android:padding="16dp"
-                android:layout_marginBottom="12dp">
+                android:orientation="horizontal"
+                android:layout_marginTop="14dp">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
-
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_stat_card_open"
+                    android:padding="10dp"
+                    android:layout_marginEnd="6dp">
                     <TextView
+                        android:id="@+id/tvStatOpen"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TKT-1002"
-                        android:textSize="14sp"
+                        android:text="0"
+                        android:textSize="20sp"
                         android:textStyle="bold"
-                        android:textColor="@color/colorPrimaryVariant"/>
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"/>
-
+                        android:textColor="#ef4444"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="IN PROGRESS"
+                        android:text="Open"
                         android:textSize="10sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/statInProgress"
-                        android:background="@drawable/bg_badge_maintenance"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp"/>
+                        android:textColor="#B0C4DE"/>
                 </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Laptop screen flickering issue"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/textPrimary"
-                    android:layout_marginBottom="6dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Equipment: DELL44001 (S/N: Dell Latitude 5420)"
-                    android:textSize="12sp"
-                    android:textColor="@color/textSecondary"
-                    android:layout_marginBottom="12dp"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/divider"
-                    android:layout_marginBottom="12dp"/>
 
                 <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_stat_card_open"
+                    android:padding="10dp"
+                    android:layout_marginEnd="6dp">
+                    <TextView
+                        android:id="@+id/tvStatInProgress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#f59e0b"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="In Progress"
+                        android:textSize="10sp"
+                        android:textColor="#B0C4DE"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_stat_card_open"
+                    android:padding="10dp">
+                    <TextView
+                        android:id="@+id/tvStatResolved"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#22c55e"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Resolved"
+                        android:textSize="10sp"
+                        android:textColor="#B0C4DE"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ===== TAB BAR ===== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="0dp">
+
+            <TextView
+                android:id="@+id/tabTickets"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:text="Tickets"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="@drawable/bg_tab_active"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginEnd="6dp"/>
+
+            <TextView
+                android:id="@+id/tabEquipment"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:text="Equipment"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:background="@drawable/bg_card"
+                android:textColor="@color/textSecondary"/>
+
+        </LinearLayout>
+
+        <!-- ===== SEARCH + FILTER ===== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="6dp"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center_vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_marginEnd="8dp">
+
+                <EditText
+                    android:id="@+id/etSearch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Priority: "
-                        android:textSize="11sp"
-                        android:textColor="@color/textHint"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="HIGH"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/errorText"/>
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Today, 09:15 AM"
-                        android:textSize="11sp"
-                        android:textColor="@color/textHint"/>
-                </LinearLayout>
+                    android:hint="Search..."
+                    android:textSize="13sp"
+                    android:textColor="@color/textPrimary"
+                    android:textColorHint="@color/textHint"
+                    android:background="@null"
+                    android:singleLine="true"
+                    android:imeOptions="actionSearch"/>
             </LinearLayout>
 
-            <!-- Ticket Card 2 -->
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_card"
-                android:padding="16dp"
-                android:layout_marginBottom="12dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TKT-1003"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorPrimaryVariant"/>
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="OPEN"
-                        android:textSize="10sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/errorText"
-                        android:background="@color/errorBackground"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp"/>
-                </LinearLayout>
+                android:id="@+id/btnToggleFilters"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_input_field"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
 
                 <TextView
+                    android:id="@+id/tvToggleFiltersLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Unable to connect to Wi-Fi"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/textPrimary"
-                    android:layout_marginBottom="6dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Equipment: HYVREJZTHO (S/N: Lenovo ThinkPad L14)"
+                    android:text="Filters ▾"
                     android:textSize="12sp"
                     android:textColor="@color/textSecondary"
-                    android:layout_marginBottom="12dp"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/divider"
-                    android:layout_marginBottom="12dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Priority: "
-                        android:textSize="11sp"
-                        android:textColor="@color/textHint"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="MEDIUM"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorPrimaryVariant"/>
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Yesterday, 04:30 PM"
-                        android:textSize="11sp"
-                        android:textColor="@color/textHint"/>
-                </LinearLayout>
+                    android:textStyle="bold"/>
             </LinearLayout>
 
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+
+        <!-- ===== FILTER PANEL (EXPANDABLE) ===== -->
+        <LinearLayout
+            android:id="@+id/layoutFilterPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="10dp"
+            android:background="@color/surfaceColor"
+            android:visibility="gone">
+
+            <!-- Ticket Filters Container -->
+            <LinearLayout
+                android:id="@+id/layoutTicketFilters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status: "
+                    android:textSize="12sp"
+                    android:textColor="@color/textSecondary"
+                    android:layout_marginEnd="8dp"/>
+
+                <Spinner
+                    android:id="@+id/spTicketStatus"
+                    android:layout_width="160dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_input_field"/>
+
+            </LinearLayout>
+
+            <!-- Equipment Filters Container -->
+            <LinearLayout
+                android:id="@+id/layoutEquipmentFilters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="8dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Category"
+                            android:textSize="10sp"
+                            android:textColor="@color/textSecondary"
+                            android:layout_marginBottom="4dp"/>
+                        <Spinner
+                            android:id="@+id/spEqCategory"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_input_field"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Type"
+                            android:textSize="10sp"
+                            android:textColor="@color/textSecondary"
+                            android:layout_marginBottom="4dp"/>
+                        <Spinner
+                            android:id="@+id/spEqType"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_input_field"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="bottom">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="8dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Serial Number"
+                            android:textSize="10sp"
+                            android:textColor="@color/textSecondary"
+                            android:layout_marginBottom="4dp"/>
+                        <EditText
+                            android:id="@+id/etEqSerial"
+                            android:layout_width="match_parent"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_input_field"
+                            android:hint="e.g. SN-XYZ"
+                            android:textColorHint="@color/textHint"
+                            android:textColor="@color/textPrimary"
+                            android:textSize="12sp"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:singleLine="true"/>
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btnScanQR"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Scan QR"
+                        android:textSize="11sp"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:textAllCaps="false"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- ===== CONTENT AREA ===== -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTickets"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="80dp"
+                android:clipToPadding="false"
+                android:scrollbars="none"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvEquipment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="80dp"
+                android:clipToPadding="false"
+                android:scrollbars="none"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/layoutEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_nav_tickets"
+                    android:alpha="0.3"/>
+
+                <TextView
+                    android:id="@+id/tvEmpty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No tickets found"
+                    android:textSize="14sp"
+                    android:textColor="@color/textHint"
+                    android:layout_marginTop="12dp"/>
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progressTickets"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- ===== FAB overlaid ===== -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabNewTicket"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        android:contentDescription="New Ticket"/>
+
+</RelativeLayout>

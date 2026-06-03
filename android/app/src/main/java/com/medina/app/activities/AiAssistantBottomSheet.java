@@ -25,6 +25,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.medina.app.R;
 import com.medina.app.api.ApiClient;
 import com.medina.app.model.Task;
+import com.medina.app.model.User;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -190,8 +191,26 @@ public class AiAssistantBottomSheet extends BottomSheetDialogFragment {
         ApiClient.authToken = prefs.getString("auth_token", null);
         String userId = prefs.getString("user_id", null);
 
-        if (userId == null) {
-            addBubble("📋 Could not retrieve tasks — please log in again.", false);
+        if (userId == null || userId.isEmpty()) {
+            ApiClient.getApiService().getCurrentUser().enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String newUserId = response.body().getId();
+                        prefs.edit().putString("user_id", newUserId).apply();
+                        fetchTasksResponse();
+                    } else {
+                        addBubble("📋 Could not retrieve tasks — please log in again.", false);
+                        scrollToBottom();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    addBubble("📋 Unable to connect to the server. Please check your network.", false);
+                    scrollToBottom();
+                }
+            });
             return;
         }
 

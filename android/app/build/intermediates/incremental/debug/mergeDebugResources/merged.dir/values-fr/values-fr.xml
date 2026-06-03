@@ -152,4 +152,8 @@
     <string name="tagline">Gérez votre écosystème informatique avec efficacité</string>
     <string name="update_password">METTRE À JOUR LE MOT DE PASSE</string>
     <string name="welcome">Bienvenue sur MedinaFlux</string>
+    <string name="zxing_app_name">Barcode Scanner</string>
+    <string name="zxing_button_ok">OK</string>
+    <string name="zxing_msg_camera_framework_bug">Désolé, la caméra Android a rencontré un problème. Un redémarrage de l\'appareil est peut-être nécessaire.</string>
+    <string name="zxing_msg_default_status">Encadrez un code-barres avec le viseur pour le balayer.</string>
 </resources>

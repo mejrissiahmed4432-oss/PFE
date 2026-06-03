@@ -125,6 +125,7 @@ public class ProfileFragment extends Fragment {
                     
                     // Update locally cached SharedPreferences
                     prefs.edit()
+                            .putString("user_id", currentUser.getId())
                             .putString("user_name", currentUser.getFirstName() + " " + currentUser.getLastName())
                             .putString("user_email", currentUser.getEmail())
                             .putString("user_role", currentUser.getRole())

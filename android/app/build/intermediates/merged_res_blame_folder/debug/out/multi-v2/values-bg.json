@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.medina.app-mergeDebugResources-29:/values-bg/values-bg.xml",
+            "outputFile": "com.medina.app-mergeDebugResources-31:/values-bg/values-bg.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Asus\\.gradle\\caches\\transforms-3\\325647bcc56b267234c89550169b04cc\\transformed\\appcompat-1.6.1\\res\\values-bg\\values-bg.xml",
@@ -35,6 +35,23 @@
                         "startOffsets": "3537,3634,3744,3846,3947,4054,4159,8983",
                         "endColumns": "96,109,101,100,106,104,118,100",
                         "endOffsets": "3629,3739,3841,3942,4049,4154,4273,9079"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Asus\\.gradle\\caches\\transforms-3\\eac213456d067fa144ff0077aab741ef\\transformed\\jetified-zxing-android-embedded-4.3.0\\res\\values-bg\\values-bg.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,112,159,311",
+                        "endColumns": "56,46,151,110",
+                        "endOffsets": "107,154,306,417"
+                    },
+                    "to": {
+                        "startLines": "104,105,106,107",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "9084,9141,9188,9340",
+                        "endColumns": "56,46,151,110",
+                        "endOffsets": "9136,9183,9335,9446"
                     }
                 },
                 {
