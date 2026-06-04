@@ -7,87 +7,139 @@
     android:background="@color/white"
     android:padding="20dp">
 
-    <!-- Header layout -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- Header layout: "Edit Task" / "Task Details (Locked)" -->
+    <TextView
+        android:id="@+id/tvDetailHeader"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="12dp">
+        android:text="Edit Task"
+        android:textColor="@color/textPrimary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
 
-        <TextView
-            android:id="@+id/tvDetailTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Task Details"
-            android:textColor="@color/textPrimary"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvDetailPriority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="HIGH"
-            android:textSize="9sp"
-            android:textStyle="bold"
-            android:textColor="@color/badgeOpen"
-            android:background="@drawable/bg_badge_rejected"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"/>
-    </LinearLayout>
-
-    <!-- Category tag and Due Date info -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- Title input -->
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:text="Task Title"
+        android:textColor="@color/textSecondary"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+    <EditText
+        android:id="@+id/etDetailTitle"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_input_field"
+        android:hint="Task title"
+        android:textColorHint="@color/textHint"
+        android:textColor="@color/textPrimary"
+        android:textSize="14sp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:inputType="text"
+        android:layout_marginBottom="12dp"/>
 
-        <TextView
-            android:id="@+id/tvDetailCategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Equipment"
-            android:textSize="10sp"
-            android:textColor="@color/colorPrimary"
-            android:background="@drawable/bg_badge_installed"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:layout_marginEnd="12dp"/>
-
-        <TextView
-            android:id="@+id/tvDetailDueDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📅 2026-05-25"
-            android:textColor="@color/textSecondary"
-            android:textSize="12sp" />
-    </LinearLayout>
-
-    <!-- Description view -->
+    <!-- Description input -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Description"
         android:textColor="@color/textSecondary"
-        android:textSize="11sp"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+    <EditText
+        android:id="@+id/etDetailDesc"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="@drawable/bg_input_field"
+        android:hint="Description..."
+        android:textColorHint="@color/textHint"
+        android:textColor="@color/textPrimary"
+        android:textSize="14sp"
+        android:padding="12dp"
+        android:gravity="top|start"
+        android:inputType="textMultiLine"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- Type and Priority row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Category Type"
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+
+            <Spinner
+                android:id="@+id/spDetailType"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@drawable/bg_input_field"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Priority Level"
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+
+            <Spinner
+                android:id="@+id/spDetailPriority"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@drawable/bg_input_field"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Due date selector -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Due Date"
+        android:textColor="@color/textSecondary"
+        android:textSize="12sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp"/>
     <TextView
-        android:id="@+id/tvDetailDesc"
+        android:id="@+id/tvDetailDueDateSelect"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="No details provided."
-        android:textColor="@color/textPrimary"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_input_field"
+        android:text="Select target date"
+        android:textColor="@color/textHint"
         android:textSize="14sp"
-        android:layout_marginBottom="16dp"/>
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginBottom="12dp"/>
 
     <!-- Status Selection Dropdown -->
     <TextView
@@ -95,7 +147,7 @@
         android:layout_height="wrap_content"
         android:text="Task Status"
         android:textColor="@color/textSecondary"
-        android:textSize="11sp"
+        android:textSize="12sp"
         android:textStyle="bold"
         android:layout_marginBottom="4dp"/>
     <Spinner
@@ -113,11 +165,12 @@
         android:gravity="center_vertical">
 
         <!-- Delete button -->
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btnDeleteTask"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:src="@drawable/ic_alert"
+            android:src="@drawable/ic_delete"
+            android:tint="@color/errorText"
             app:tint="@color/errorText"
             android:background="@drawable/bg_error_box"
             android:contentDescription="Delete Task"
@@ -132,7 +185,7 @@
             android:id="@+id/btnDetailClose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Close"
+            android:text="Cancel"
             style="?android:attr/borderlessButtonStyle"
             android:textColor="@color/textSecondary"
             android:layout_marginEnd="8dp"/>
@@ -141,7 +194,7 @@
             android:id="@+id/btnDetailSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save Status"
+            android:text="Save Changes"
             android:backgroundTint="@color/colorPrimary"
             android:textColor="@color/white"/>
     </LinearLayout>

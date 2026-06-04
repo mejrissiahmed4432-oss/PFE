@@ -38,81 +38,171 @@ spring:
           uri: lb://user-microservice
           predicates:
             - Path=/api/users/**, /api/users, /api/messages/**, /api/tickets/**, /api/tickets, /api/alerts/**, /api/alerts, /api/notifications/**, /api/notifications
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userServiceCB
+                fallbackUri: forward:/fallback/user
+
         - id: equipment-route
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/equipment/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: stockServiceCB
+                fallbackUri: forward:/fallback/stock
+
         - id: supplier-route
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/suppliers/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: stockServiceCB
+                fallbackUri: forward:/fallback/stock
+
         - id: shelf-route
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/shelves/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: stockServiceCB
+                fallbackUri: forward:/fallback/stock
+
         - id: dashboard-route
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/dashboard/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: stockServiceCB
+                fallbackUri: forward:/fallback/stock
+
         - id: categories-route
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/equipment-categories/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: stockServiceCB
+                fallbackUri: forward:/fallback/stock
+
         - id: software-route
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/software/**, /api/software
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: stockServiceCB
+                fallbackUri: forward:/fallback/stock
+
         - id: user-ws-route
           uri: lb://user-microservice
           predicates:
             - Path=/ws/**
+          # No circuit breaker on WebSocket routes — CB doesn't support WS protocol
 
+        - id: monitoring-ws-route
+          uri: lb://stock-manager-microservice
+          predicates:
+            - Path=/ws-monitoring/**
         - id: procurement-route
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/procurement/**, /api/procurement/catalog, /api/procurement/requests, /api/public/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: stockServiceCB
+                fallbackUri: forward:/fallback/stock
 
         - id: application-route
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/applications/**, /api/applications
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: stockServiceCB
+                fallbackUri: forward:/fallback/stock
 
         - id: os-route
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/os/**, /api/os
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: stockServiceCB
+                fallbackUri: forward:/fallback/stock
 
         - id: monitoring-route
           uri: lb://stock-manager-microservice
           predicates:
             - Path=/api/monitoring/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: stockServiceCB
+                fallbackUri: forward:/fallback/stock
 
         - id: technician-route
           uri: lb://technician-microservice
           predicates:
             - Path=/api/part-requests/**, /api/part-requests, /api/capabilities/**, /api/capabilities
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: technicianServiceCB
+                fallbackUri: forward:/fallback/technician
 
         - id: ai-service-route
           uri: lb://ai-service
           predicates:
             - Path=/api/ai/**, /api/ai
-
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: aiServiceCB
+                fallbackUri: forward:/fallback/ai
 
         - id: employee-route
           uri: lb://employee-microservice
           predicates:
-            - Path=/api/employees/**, /api/employees
+            - Path=/api/employees/**, /api/employees, /api/employees/audit/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: employeeServiceCB
+                fallbackUri: forward:/fallback/employee
 
         - id: department-route
           uri: lb://employee-microservice
           predicates:
             - Path=/api/departments/**, /api/departments
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: employeeServiceCB
+                fallbackUri: forward:/fallback/employee
 
         - id: it-manager-route
           uri: lb://it-manager-microservice
           predicates:
             - Path=/api/it-manager/**
-
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: itManagerServiceCB
+                fallbackUri: forward:/fallback/it-manager
 
 eureka:
   client:
@@ -121,3 +211,83 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: true
+
+# ── Resilience4j Circuit Breaker Configuration ─────────────────────────────────
+resilience4j:
+  circuitbreaker:
+    instances:
+      # Stock Manager — critical service for the main UI
+      stockServiceCB:
+        slidingWindowSize: 10               # Evaluate over 10 requests
+        failureRateThreshold: 50            # Open circuit if 50% fail
+        waitDurationInOpenState: 10s        # Stay open for 10s before retrying
+        permittedNumberOfCallsInHalfOpenState: 3
+        registerHealthIndicator: true
+
+      # User Microservice — handles auth + notifications
+      userServiceCB:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        registerHealthIndicator: true
+
+      # Technician Microservice
+      technicianServiceCB:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        registerHealthIndicator: true
+
+      # Employee Microservice
+      employeeServiceCB:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 15s
+        permittedNumberOfCallsInHalfOpenState: 1
+        registerHealthIndicator: true
+
+      # IT Manager Microservice
+      itManagerServiceCB:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        registerHealthIndicator: true
+
+      # AI Service — longer window since inference is naturally slow
+      aiServiceCB:
+        slidingWindowSize: 10
+        failureRateThreshold: 60
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 1
+        registerHealthIndicator: true
+
+  # Timeout per service (max time to wait for a downstream response)
+  timelimiter:
+    instances:
+      stockServiceCB:
+        timeoutDuration: 500s
+      userServiceCB:
+        timeoutDuration: 15s
+      technicianServiceCB:
+        timeoutDuration: 15s
+      employeeServiceCB:
+        timeoutDuration: 15s
+      itManagerServiceCB:
+        timeoutDuration: 15s
+      aiServiceCB:
+        timeoutDuration: 500s    # AI inference takes longer
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,circuitbreakers
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true

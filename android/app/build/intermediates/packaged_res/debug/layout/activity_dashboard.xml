@@ -107,18 +107,7 @@
                         android:contentDescription="Change Language"
                         android:layout_marginEnd="2dp" />
 
-                    <!-- Dark Mode Toggle -->
-                    <ImageButton
-                        android:id="@+id/btnModeToggle"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_mode_toggle"
-                        android:tint="@color/textSecondary"
-                        android:scaleType="fitCenter"
-                        android:padding="6dp"
-                        android:contentDescription="Toggle Dark Mode"
-                        android:layout_marginEnd="2dp" />
+
 
                     <!-- Alert Indicator with badge -->
                     <FrameLayout
@@ -138,6 +127,38 @@
                             android:contentDescription="Alerts" />
                         <TextView
                             android:id="@+id/tvAlertBadge"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:gravity="center"
+                            android:background="@drawable/bg_badge_red"
+                            android:textColor="@color/white"
+                            android:textSize="9sp"
+                            android:textStyle="bold"
+                            android:text="0"
+                            android:layout_gravity="top|end"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <!-- Chat Messages button with badge -->
+                    <FrameLayout
+                        android:id="@+id/btnChatContainer"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="2dp">
+                        <ImageButton
+                            android:id="@+id/btnChat"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_nav_chat"
+                            android:tint="@color/textSecondary"
+                            android:scaleType="fitCenter"
+                            android:padding="6dp"
+                            android:contentDescription="Messages" />
+                        <TextView
+                            android:id="@+id/tvChatBadge"
                             android:layout_width="16dp"
                             android:layout_height="16dp"
                             android:gravity="center"
@@ -461,6 +482,34 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- GLOBAL AI ASSISTANT FLOATING ACTION BUTTON (FAB) -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btnAiFab"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="90dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless">
+            
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_ai_fab">
+                
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/ic_ai"
+                    android:tint="@color/white" />
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
     </FrameLayout>
 
     <!-- ═══════════════════════════════════════════════
@@ -493,7 +542,7 @@
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:src="@drawable/logo"
+                    android:src="@drawable/medinaflux_logo"
                     android:scaleType="fitCenter"/>
             </LinearLayout>
 
@@ -580,6 +629,51 @@
                         android:fontFamily="sans-serif-medium"/>
                 </LinearLayout>
 
+                <!-- Section Label: INVENTORY -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="INVENTORY"
+                    android:textSize="10sp"
+                    android:textColor="@color/sidebarSection"
+                    android:letterSpacing="0.1"
+                    android:textAllCaps="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="6dp"/>
+
+                <!-- Parts -->
+                <LinearLayout
+                    android:id="@+id/navParts"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:background="@drawable/bg_nav_item_default"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginBottom="4dp">
+                    <ImageView
+                        android:id="@+id/iconParts"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_nav_parts"
+                        android:tint="@color/sidebarText"/>
+                    <TextView
+                        android:id="@+id/labelParts"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/nav_parts"
+                        android:textSize="14sp"
+                        android:textColor="@color/sidebarText"
+                        android:fontFamily="sans-serif-medium"/>
+                </LinearLayout>
+
                 <!-- Section Label: MANAGEMENT -->
                 <TextView
                     android:layout_width="wrap_content"
@@ -651,37 +745,6 @@
                         android:layout_weight="1"
                         android:layout_marginStart="12dp"
                         android:text="@string/nav_reports"
-                        android:textSize="14sp"
-                        android:textColor="@color/sidebarText"
-                        android:fontFamily="sans-serif-medium"/>
-                </LinearLayout>
-
-                <!-- Parts -->
-                <LinearLayout
-                    android:id="@+id/navParts"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:background="@drawable/bg_nav_item_default"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_marginBottom="4dp">
-                    <ImageView
-                        android:id="@+id/iconParts"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_nav_parts"
-                        android:tint="@color/sidebarText"/>
-                    <TextView
-                        android:id="@+id/labelParts"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="12dp"
-                        android:text="@string/nav_parts"
                         android:textSize="14sp"
                         android:textColor="@color/sidebarText"
                         android:fontFamily="sans-serif-medium"/>
@@ -772,53 +835,72 @@
             android:background="@color/sidebarBorder"
             android:alpha="0.4"/>
 
-        <!-- ── Footer: Account Settings ── -->
+        <!-- ── Footer: Account Settings & Logout side-by-side ── -->
         <LinearLayout
-            android:id="@+id/navSettings"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingStart="24dp"
-            android:paddingEnd="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground">
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:src="@drawable/ic_nav_settings"
-                android:tint="@color/sidebarText"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="12dp"
-                android:text="@string/nav_settings"
-                android:textSize="13sp"
-                android:textColor="@color/sidebarText"
-                android:fontFamily="sans-serif-medium"/>
-        </LinearLayout>
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
 
-        <!-- Logout -->
-        <LinearLayout
-            android:id="@+id/navLogout"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="24dp"
-            android:paddingEnd="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/logout"
-                android:textSize="13sp"
-                android:textColor="#ef4444"
-                android:fontFamily="sans-serif-medium"/>
+            <LinearLayout
+                android:id="@+id/navSettings"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/bg_nav_item_default">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_nav_settings"
+                    android:tint="@color/sidebarText"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/nav_settings"
+                    android:textSize="12sp"
+                    android:textColor="@color/sidebarText"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:fontFamily="sans-serif-medium"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/navLogout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/bg_nav_item_default">
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_logout"
+                    android:tint="#ef4444"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/logout"
+                    android:textSize="12sp"
+                    android:textColor="#ef4444"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:fontFamily="sans-serif-medium"/>
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

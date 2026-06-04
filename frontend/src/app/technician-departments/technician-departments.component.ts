@@ -24,12 +24,13 @@ export interface LaptopStatus {
   networkSpeed: string;
   netInSpeed: number;
   netOutSpeed: number;
-  topProcesses: { name: string; ramUsageMb: number }[];
+  topProcesses: { name: string; ramUsageMb: number; pid: number }[];
   os: string;
   macAddress: string;
   lastSeen: string;
   uptime: string;
   temperature: number;
+  totalProcesses: number;
 }
 
 export interface DeptPcSummary {
@@ -61,7 +62,7 @@ export class TechnicianDepartmentsComponent implements OnInit, OnDestroy {
   deptSearch = '';
 
   private stompClient!: Client;
-  private readonly WS_URL = 'http://localhost:8081/ws-monitoring';
+  private readonly WS_URL = 'http://localhost:8000/ws-monitoring';
 
   ngOnInit(): void { this.connect(); }
   ngOnDestroy(): void { this.stompClient?.deactivate(); }

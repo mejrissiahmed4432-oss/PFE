@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "stock-manager-microservice")
+@FeignClient(name = "stock-manager-microservice", fallback = StockManagerClientFallback.class)
 public interface StockManagerClient {
 
     @PostMapping("/api/equipment/allocate-parts")
-    void allocateParts(@RequestBody List<Map<String, Object>> requestedParts);
+    void allocateParts(@RequestBody Map<String, Object> requestedParts);
 
     @PostMapping("/api/equipment/consume-parts/{requesterId}")
-    void consumeParts(@PathVariable("requesterId") String requesterId, @RequestBody List<Map<String, Object>> consumedParts);
+    void consumeParts(@PathVariable("requesterId") String requesterId, @RequestBody Object consumedParts);
 }

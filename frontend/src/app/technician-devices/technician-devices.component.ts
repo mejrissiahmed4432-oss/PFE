@@ -48,7 +48,7 @@ export class TechnicianDevicesComponent implements OnInit, OnDestroy, OnChanges 
   private historyMap = new Map<string, MetricPoint[]>();
 
   private stompClient!: Client;
-  private readonly WS_URL = 'http://localhost:8081/ws-monitoring';
+  private readonly WS_URL = 'http://localhost:8000/ws-monitoring';
 
   ngOnInit(): void {
     this.syncInputFilter();
@@ -89,7 +89,7 @@ export class TechnicianDevicesComponent implements OnInit, OnDestroy, OnChanges 
                 cpu: isUp ? (l.cpuPercent ?? 0) : 0,
                 ram: isUp ? (l.ramPercent ?? 0) : 0,
                 disk: isUp ? (l.diskPercent ?? 0) : 0,
-                processes: isUp ? this.simulateProcesses(key, hist) : 0,
+                processes: isUp ? (l.totalProcesses || 0) : 0,
                 netIn: isUp ? (l.netInSpeed ?? 0) : 0,
                 netOut: isUp ? (l.netOutSpeed ?? 0) : 0,
                 temperature: isUp ? (l.temperature ?? 0) : 0
@@ -115,12 +115,7 @@ export class TechnicianDevicesComponent implements OnInit, OnDestroy, OnChanges 
     this.stompClient.activate();
   }
 
-  /** Simulate a realistic process count that drifts over time */
-  private simulateProcesses(key: string, hist: MetricPoint[]): number {
-    const prev = hist.length > 0 ? hist[hist.length - 1].processes : 280 + (key.charCodeAt(0) % 40);
-    const delta = Math.floor(Math.random() * 7) - 3;
-    return Math.max(200, Math.min(350, prev + delta));
-  }
+
 
   // ── Device list data ─────────────────────────────────────
   get allDevices(): LaptopStatus[] {

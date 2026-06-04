@@ -435,6 +435,20 @@
               </div>
             </div>
             <div class="chart-legend"><span class="mc-dot" style="background:#0ea5e9"></span> Processes</div>
+            
+            <div class="top-processes-container" *ngIf="dev.topProcesses && dev.topProcesses.length > 0">
+              <h4 style="margin-top: 20px; margin-bottom: 10px; font-size: 14px; color: #475569; font-weight: 600;">Top RAM Consuming Processes</h4>
+              <div class="process-list" style="display: flex; flex-direction: column; gap: 8px;">
+                <div class="process-item" *ngFor="let p of dev.topProcesses" style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                  <div style="display: flex; flex-direction: column; gap: 2px;">
+                    <span style="font-weight: 500; color: #1e293b;">{{ p.name }}</span>
+                    <span style="font-size: 11px; color: #94a3b8;">PID: {{ p.pid || 'N/A' }}</span>
+                  </div>
+                  <span style="color: #64748b; font-size: 13px; font-weight: 500;">{{ p.ramUsageMb | number:'1.0-1' }} MB</span>
+                </div>
+              </div>
+            </div>
+
           </ng-container>
           <ng-template #loading3><div class="no-history"><div class="spinner"></div> Collecting live data…</div></ng-template>
         </div>

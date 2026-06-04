@@ -15,8 +15,14 @@ public class Message {
     private boolean isDeletedForEveryone;
     private boolean isEdited;
 
-    // Transient helper field
     private boolean isOwn;
+
+    // Additional fields for file attachments
+    private String attachmentName; // Display name for the attached file
+    private String attachmentUrl;  // URL returned by the upload endpoint
+
+    // Populated client-side from the user list for display in bubbles
+    private transient String senderName;
 
     public Message() {}
 
@@ -68,4 +74,13 @@ public class Message {
 
     public boolean isOwn() { return isOwn; }
     public void setOwn(boolean own) { isOwn = own; }
+
+    public String getAttachmentName() { return attachmentName; }
+    public void setAttachmentName(String attachmentName) { this.attachmentName = attachmentName; }
+
+    public String getAttachmentUrl() { return attachmentUrl; }
+    public void setAttachmentUrl(String attachmentUrl) { this.attachmentUrl = attachmentUrl; }
+
+    public String getSenderName() { return senderName; }
+    public void setSenderName(String senderName) { this.senderName = senderName; }
 }

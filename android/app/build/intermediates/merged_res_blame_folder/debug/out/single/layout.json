@@ -1,86 +1,162 @@
 [
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/item_dropdown_notification.xml",
-        "source": "com.medina.app-main-33:/layout/item_dropdown_notification.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_part_group_header.xml",
+        "source": "com.medina.app-main-35:/layout/item_part_group_header.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/fragment_dashboard.xml",
-        "source": "com.medina.app-main-33:/layout/fragment_dashboard.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_part_detail.xml",
+        "source": "com.medina.app-main-35:/layout/dialog_part_detail.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/item_task.xml",
-        "source": "com.medina.app-main-33:/layout/item_task.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_chat_message.xml",
+        "source": "com.medina.app-main-35:/layout/item_chat_message.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/fragment_parts.xml",
-        "source": "com.medina.app-main-33:/layout/fragment_parts.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_ticket.xml",
+        "source": "com.medina.app-main-35:/layout/item_ticket.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/fragment_schedule.xml",
-        "source": "com.medina.app-main-33:/layout/fragment_schedule.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_alerts.xml",
+        "source": "com.medina.app-main-35:/layout/fragment_alerts.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/activity_reset_password.xml",
-        "source": "com.medina.app-main-33:/layout/activity_reset_password.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_dropdown_notification.xml",
+        "source": "com.medina.app-main-35:/layout/item_dropdown_notification.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/fragment_reports.xml",
-        "source": "com.medina.app-main-33:/layout/fragment_reports.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_ticket_detail_premium.xml",
+        "source": "com.medina.app-main-35:/layout/dialog_ticket_detail_premium.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/dialog_task_detail.xml",
-        "source": "com.medina.app-main-33:/layout/dialog_task_detail.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_tickets.xml",
+        "source": "com.medina.app-main-35:/layout/fragment_tickets.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/fragment_profile.xml",
-        "source": "com.medina.app-main-33:/layout/fragment_profile.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_parts.xml",
+        "source": "com.medina.app-main-35:/layout/fragment_parts.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/fragment_alerts.xml",
-        "source": "com.medina.app-main-33:/layout/fragment_alerts.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_chat_contact.xml",
+        "source": "com.medina.app-main-35:/layout/item_chat_contact.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/activity_dashboard.xml",
-        "source": "com.medina.app-main-33:/layout/activity_dashboard.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_wb_action.xml",
+        "source": "com.medina.app-main-35:/layout/item_wb_action.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/fragment_settings.xml",
-        "source": "com.medina.app-main-33:/layout/fragment_settings.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_add_task.xml",
+        "source": "com.medina.app-main-35:/layout/dialog_add_task.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/item_part_group_header.xml",
-        "source": "com.medina.app-main-33:/layout/item_part_group_header.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_ticket_detail.xml",
+        "source": "com.medina.app-main-35:/layout/dialog_ticket_detail.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/fragment_tickets.xml",
-        "source": "com.medina.app-main-33:/layout/fragment_tickets.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_profile.xml",
+        "source": "com.medina.app-main-35:/layout/fragment_profile.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/item_alert.xml",
-        "source": "com.medina.app-main-33:/layout/item_alert.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_equipment.xml",
+        "source": "com.medina.app-main-35:/layout/item_equipment.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/item_part_detail.xml",
-        "source": "com.medina.app-main-33:/layout/item_part_detail.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_task_detail.xml",
+        "source": "com.medina.app-main-35:/layout/dialog_task_detail.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/activity_forgot_password.xml",
-        "source": "com.medina.app-main-33:/layout/activity_forgot_password.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_wb_assigned.xml",
+        "source": "com.medina.app-main-35:/layout/item_wb_assigned.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/dialog_add_task.xml",
-        "source": "com.medina.app-main-33:/layout/dialog_add_task.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_settings.xml",
+        "source": "com.medina.app-main-35:/layout/fragment_settings.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/dialog_request_part.xml",
-        "source": "com.medina.app-main-33:/layout/dialog_request_part.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_chat.xml",
+        "source": "com.medina.app-main-35:/layout/fragment_chat.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/activity_login.xml",
-        "source": "com.medina.app-main-33:/layout/activity_login.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_confirm_return.xml",
+        "source": "com.medina.app-main-35:/layout/dialog_confirm_return.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-30:/layout/fragment_requests.xml",
-        "source": "com.medina.app-main-33:/layout/fragment_requests.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_wb_execution_action.xml",
+        "source": "com.medina.app-main-35:/layout/item_wb_execution_action.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_request_part.xml",
+        "source": "com.medina.app-main-35:/layout/dialog_request_part.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_reports.xml",
+        "source": "com.medina.app-main-35:/layout/fragment_reports.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_part_detail.xml",
+        "source": "com.medina.app-main-35:/layout/item_part_detail.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/activity_forgot_password.xml",
+        "source": "com.medina.app-main-35:/layout/activity_forgot_password.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_equipment_detail.xml",
+        "source": "com.medina.app-main-35:/layout/dialog_equipment_detail.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_request_part_wizard.xml",
+        "source": "com.medina.app-main-35:/layout/dialog_request_part_wizard.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_schedule.xml",
+        "source": "com.medina.app-main-35:/layout/fragment_schedule.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_dashboard.xml",
+        "source": "com.medina.app-main-35:/layout/fragment_dashboard.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/activity_reset_password.xml",
+        "source": "com.medina.app-main-35:/layout/activity_reset_password.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/layout_ai_assistant.xml",
+        "source": "com.medina.app-main-35:/layout/layout_ai_assistant.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_requests.xml",
+        "source": "com.medina.app-main-35:/layout/fragment_requests.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/activity_live_workbench.xml",
+        "source": "com.medina.app-main-35:/layout/activity_live_workbench.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_new_ticket.xml",
+        "source": "com.medina.app-main-35:/layout/dialog_new_ticket.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_alert.xml",
+        "source": "com.medina.app-main-35:/layout/item_alert.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_eq_timeline.xml",
+        "source": "com.medina.app-main-35:/layout/item_eq_timeline.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/activity_dashboard.xml",
+        "source": "com.medina.app-main-35:/layout/activity_dashboard.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_task.xml",
+        "source": "com.medina.app-main-35:/layout/item_task.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_wb_resource.xml",
+        "source": "com.medina.app-main-35:/layout/item_wb_resource.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/activity_login.xml",
+        "source": "com.medina.app-main-35:/layout/activity_login.xml"
     }
 ]

@@ -11,6 +11,11 @@ public class User {
     private String joinedDate;
     private boolean online;
 
+    // Transient fields populated from ConversationSummary (not from server User JSON)
+    private transient String lastMessage;
+    private transient String lastMessageTime;
+    private transient int unreadCount;
+
     public User() {}
 
     public User(String id, String firstName, String lastName, String email, String role, String phoneNumber, String department, String joinedDate) {
@@ -50,6 +55,15 @@ public class User {
 
     public boolean isOnline() { return online; }
     public void setOnline(boolean online) { this.online = online; }
+
+    public String getLastMessage() { return lastMessage; }
+    public void setLastMessage(String lastMessage) { this.lastMessage = lastMessage; }
+
+    public String getLastMessageTime() { return lastMessageTime; }
+    public void setLastMessageTime(String lastMessageTime) { this.lastMessageTime = lastMessageTime; }
+
+    public int getUnreadCount() { return unreadCount; }
+    public void setUnreadCount(int unreadCount) { this.unreadCount = unreadCount; }
 
     /** Convenience: returns "firstName lastName" or just one of them, never null */
     public String getName() {

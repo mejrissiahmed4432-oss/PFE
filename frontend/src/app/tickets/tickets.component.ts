@@ -436,7 +436,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   private calculateEquipmentHistory(eq: EquipmentWithHistory): void {
     // Filter tickets that belong to this equipment and are NOT cancelled
     const relatedTickets = this.ticketsList.filter(t => 
-      (t.equipmentName === eq.name || t.equipmentName === eq.equipmentName) && 
+      (t.equipmentId === eq.id ) && 
       (t.status || '').toLowerCase() !== 'cancelled'
     );
 
@@ -478,7 +478,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
   selectTicket(ticket: Ticket): void {
     this.selectedTicket = ticket;
     // Map ticket to equipment for the detail pane
-    const eq = this.equipments.find(e => e.name === ticket.equipmentName || e.equipmentName === ticket.equipmentName);
+    const eq = this.equipments.find(e => e.id === ticket.equipmentId);
     
     if (eq) {
       this.selectedEquipment = eq;
@@ -570,16 +570,16 @@ export class TicketsComponent implements OnInit, OnDestroy {
     }
   }
 
-  hasActiveTicket(equipmentName: string | undefined): boolean {
-    return !!this.getActiveTicketForEquipment(equipmentName);
+  hasActiveTicket(equipmentId: string | undefined): boolean {
+    return !!this.getActiveTicketForEquipment(equipmentId);
   }
 
-  getActiveTicketForEquipment(equipmentName: string | undefined): Ticket | null {
-    if (!equipmentName) return null;
+  getActiveTicketForEquipment(equipmentId: string | undefined): Ticket | null {
+    if (!equipmentId) return null;
     // Block if there is any ticket that is NOT Resolved, Closed, or Completed
     const inactiveStatuses = ['Resolved', 'Closed', 'Completed', 'Cancelled'];
     return this.ticketsList.find(t =>
-      (t.equipmentName === equipmentName) &&
+      (t.equipmentId === equipmentId) &&
       !inactiveStatuses.includes(t.status || '')
     ) || null;
   }

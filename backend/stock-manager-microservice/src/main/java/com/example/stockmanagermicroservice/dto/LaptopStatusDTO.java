@@ -30,6 +30,7 @@ public class LaptopStatusDTO {
     private java.util.List<ProcessInfoDTO> topProcesses;
     private String uptime;
     private double temperature;
+    private int totalProcesses;
 
     public LaptopStatusDTO() {}
 
@@ -122,4 +123,7 @@ public class LaptopStatusDTO {
 
     public double getTemperature() { return temperature; }
     public void setTemperature(double temperature) { this.temperature = temperature; }
+
+    public int getTotalProcesses() { return totalProcesses; }
+    public void setTotalProcesses(int totalProcesses) { this.totalProcesses = totalProcesses; }
 }

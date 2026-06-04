@@ -1,0 +1,58 @@
+<div class="audit-container">
+
+  <!-- En-tête -->
+  <div class="header-section">
+    <div class="title-area">
+      <h1><i class="fas fa-cube"></i> Explorateur de Blocs</h1>
+      <p>Source de Vérité Absolue. Les journaux d'audit lus directement depuis la Blockchain Ganache.</p>
+    </div>
+  </div>
+
+  <!-- Barre de recherche -->
+  <div class="action-bar">
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" [(ngModel)]="searchTerm" (input)="filterLogs()" placeholder="Rechercher par action, utilisateur, CIN...">
+    </div>
+    <div class="network-badge">
+      <i class="fas fa-link"></i> Réseau: Ganache Local (100% Sécurisé)
+    </div>
+  </div>
+
+  <!-- Tableau des Logs -->
+  <div class="table-container">
+    <table class="blockchain-table">
+      <thead>
+        <tr>
+          <th>Horodatage (UTC)</th>
+          <th>Action Exécutée</th>
+          <th>Détails</th>
+          <th>Utilisateur (CIN)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of filteredLogs" class="block-row">
+          <td class="time-col">
+            <div class="time-container">
+              <i class="far fa-clock"></i> {{ log.timestamp | date:'medium' }}
+            </div>
+          </td>
+          <td class="action-col"><strong>{{ log.action }}</strong></td>
+          <td class="details-col">{{ log.details }}</td>
+          <td>
+            <div class="user-info">
+              <span class="user-name">{{ log.userName }}</span>
+              <span class="cin-badge">{{ log.userId }}</span>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="filteredLogs.length === 0">
+          <td colspan="4" class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <p>Aucun bloc trouvé sur la blockchain.</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

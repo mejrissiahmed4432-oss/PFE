@@ -53,6 +53,9 @@ public final class DialogRequestPartBinding implements ViewBinding {
   public final Spinner spItemCategory;
 
   @NonNull
+  public final Spinner spReqEquipment;
+
+  @NonNull
   public final Spinner spReqPriority;
 
   private DialogRequestPartBinding(@NonNull NestedScrollView rootView,
@@ -60,7 +63,7 @@ public final class DialogRequestPartBinding implements ViewBinding {
       @NonNull EditText etItemBrand, @NonNull EditText etItemPartName, @NonNull EditText etItemQty,
       @NonNull EditText etItemSpecs, @NonNull EditText etReqDescription,
       @NonNull LinearLayout layoutAddedItemsContainer, @NonNull Spinner spItemCategory,
-      @NonNull Spinner spReqPriority) {
+      @NonNull Spinner spReqEquipment, @NonNull Spinner spReqPriority) {
     this.rootView = rootView;
     this.btnAddItemToList = btnAddItemToList;
     this.btnCancelReq = btnCancelReq;
@@ -72,6 +75,7 @@ public final class DialogRequestPartBinding implements ViewBinding {
     this.etReqDescription = etReqDescription;
     this.layoutAddedItemsContainer = layoutAddedItemsContainer;
     this.spItemCategory = spItemCategory;
+    this.spReqEquipment = spReqEquipment;
     this.spReqPriority = spReqPriority;
   }
 
@@ -162,6 +166,12 @@ public final class DialogRequestPartBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.spReqEquipment;
+      Spinner spReqEquipment = ViewBindings.findChildViewById(rootView, id);
+      if (spReqEquipment == null) {
+        break missingId;
+      }
+
       id = R.id.spReqPriority;
       Spinner spReqPriority = ViewBindings.findChildViewById(rootView, id);
       if (spReqPriority == null) {
@@ -170,7 +180,8 @@ public final class DialogRequestPartBinding implements ViewBinding {
 
       return new DialogRequestPartBinding((NestedScrollView) rootView, btnAddItemToList,
           btnCancelReq, btnSubmitReq, etItemBrand, etItemPartName, etItemQty, etItemSpecs,
-          etReqDescription, layoutAddedItemsContainer, spItemCategory, spReqPriority);
+          etReqDescription, layoutAddedItemsContainer, spItemCategory, spReqEquipment,
+          spReqPriority);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

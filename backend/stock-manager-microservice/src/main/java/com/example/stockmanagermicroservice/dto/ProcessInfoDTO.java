@@ -3,12 +3,14 @@ package com.example.stockmanagermicroservice.dto;
 public class ProcessInfoDTO {
     private String name;
     private double ramUsageMb;
+    private int pid;
 
     public ProcessInfoDTO() {}
 
-    public ProcessInfoDTO(String name, double ramUsageMb) {
+    public ProcessInfoDTO(String name, double ramUsageMb, int pid) {
         this.name = name;
         this.ramUsageMb = ramUsageMb;
+        this.pid = pid;
     }
 
     public String getName() {
@@ -25,5 +27,13 @@ public class ProcessInfoDTO {
 
     public void setRamUsageMb(double ramUsageMb) {
         this.ramUsageMb = ramUsageMb;
+    }
+
+    public int getPid() {
+        return pid;
+    }
+
+    public void setPid(int pid) {
+        this.pid = pid;
     }
 }

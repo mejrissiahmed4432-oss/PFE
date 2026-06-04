@@ -4,16 +4,16 @@ package com.medina.app.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.widget.NestedScrollView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.medina.app.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -24,16 +24,7 @@ public final class FragmentScheduleBinding implements ViewBinding {
   private final CoordinatorLayout rootView;
 
   @NonNull
-  public final TextView btnFilterAll;
-
-  @NonNull
-  public final TextView btnFilterCompleted;
-
-  @NonNull
-  public final TextView btnFilterToday;
-
-  @NonNull
-  public final TextView btnFilterUpcoming;
+  public final Button btnAddTask;
 
   @NonNull
   public final ImageButton btnNextMonth;
@@ -42,19 +33,61 @@ public final class FragmentScheduleBinding implements ViewBinding {
   public final ImageButton btnPrevMonth;
 
   @NonNull
-  public final FloatingActionButton fabAddTask;
+  public final LinearLayout colDone;
+
+  @NonNull
+  public final LinearLayout colProgress;
+
+  @NonNull
+  public final LinearLayout colTodo;
 
   @NonNull
   public final LinearLayout layoutCalendarGrid;
 
   @NonNull
-  public final LinearLayout layoutEmptyTasks;
+  public final LinearLayout layoutDoneTasks;
 
   @NonNull
-  public final RecyclerView rvTasks;
+  public final LinearLayout layoutHistoryEmpty;
+
+  @NonNull
+  public final LinearLayout layoutHistoryTasks;
+
+  @NonNull
+  public final NestedScrollView layoutKanban;
+
+  @NonNull
+  public final LinearLayout layoutNoSelection;
+
+  @NonNull
+  public final LinearLayout layoutProgressTasks;
+
+  @NonNull
+  public final LinearLayout layoutTodoTasks;
+
+  @NonNull
+  public final NestedScrollView scrollHistory;
+
+  @NonNull
+  public final NestedScrollView scrollParent;
+
+  @NonNull
+  public final TextView tvDoneCount;
+
+  @NonNull
+  public final TextView tvDoneEmpty;
+
+  @NonNull
+  public final TextView tvHistoryCount;
 
   @NonNull
   public final TextView tvMonthLabel;
+
+  @NonNull
+  public final TextView tvProgressCount;
+
+  @NonNull
+  public final TextView tvProgressEmpty;
 
   @NonNull
   public final TextView tvStatCompletedCount;
@@ -69,34 +102,59 @@ public final class FragmentScheduleBinding implements ViewBinding {
   public final TextView tvStatTotalCount;
 
   @NonNull
-  public final TextView tvTaskHeaderLabel;
+  public final TextView tvTasksCountBadge;
 
-  private FragmentScheduleBinding(@NonNull CoordinatorLayout rootView,
-      @NonNull TextView btnFilterAll, @NonNull TextView btnFilterCompleted,
-      @NonNull TextView btnFilterToday, @NonNull TextView btnFilterUpcoming,
+  @NonNull
+  public final TextView tvTodoCount;
+
+  @NonNull
+  public final TextView tvTodoEmpty;
+
+  private FragmentScheduleBinding(@NonNull CoordinatorLayout rootView, @NonNull Button btnAddTask,
       @NonNull ImageButton btnNextMonth, @NonNull ImageButton btnPrevMonth,
-      @NonNull FloatingActionButton fabAddTask, @NonNull LinearLayout layoutCalendarGrid,
-      @NonNull LinearLayout layoutEmptyTasks, @NonNull RecyclerView rvTasks,
-      @NonNull TextView tvMonthLabel, @NonNull TextView tvStatCompletedCount,
+      @NonNull LinearLayout colDone, @NonNull LinearLayout colProgress,
+      @NonNull LinearLayout colTodo, @NonNull LinearLayout layoutCalendarGrid,
+      @NonNull LinearLayout layoutDoneTasks, @NonNull LinearLayout layoutHistoryEmpty,
+      @NonNull LinearLayout layoutHistoryTasks, @NonNull NestedScrollView layoutKanban,
+      @NonNull LinearLayout layoutNoSelection, @NonNull LinearLayout layoutProgressTasks,
+      @NonNull LinearLayout layoutTodoTasks, @NonNull NestedScrollView scrollHistory,
+      @NonNull NestedScrollView scrollParent, @NonNull TextView tvDoneCount,
+      @NonNull TextView tvDoneEmpty, @NonNull TextView tvHistoryCount,
+      @NonNull TextView tvMonthLabel, @NonNull TextView tvProgressCount,
+      @NonNull TextView tvProgressEmpty, @NonNull TextView tvStatCompletedCount,
       @NonNull TextView tvStatPendingCount, @NonNull TextView tvStatProgressCount,
-      @NonNull TextView tvStatTotalCount, @NonNull TextView tvTaskHeaderLabel) {
+      @NonNull TextView tvStatTotalCount, @NonNull TextView tvTasksCountBadge,
+      @NonNull TextView tvTodoCount, @NonNull TextView tvTodoEmpty) {
     this.rootView = rootView;
-    this.btnFilterAll = btnFilterAll;
-    this.btnFilterCompleted = btnFilterCompleted;
-    this.btnFilterToday = btnFilterToday;
-    this.btnFilterUpcoming = btnFilterUpcoming;
+    this.btnAddTask = btnAddTask;
     this.btnNextMonth = btnNextMonth;
     this.btnPrevMonth = btnPrevMonth;
-    this.fabAddTask = fabAddTask;
+    this.colDone = colDone;
+    this.colProgress = colProgress;
+    this.colTodo = colTodo;
     this.layoutCalendarGrid = layoutCalendarGrid;
-    this.layoutEmptyTasks = layoutEmptyTasks;
-    this.rvTasks = rvTasks;
+    this.layoutDoneTasks = layoutDoneTasks;
+    this.layoutHistoryEmpty = layoutHistoryEmpty;
+    this.layoutHistoryTasks = layoutHistoryTasks;
+    this.layoutKanban = layoutKanban;
+    this.layoutNoSelection = layoutNoSelection;
+    this.layoutProgressTasks = layoutProgressTasks;
+    this.layoutTodoTasks = layoutTodoTasks;
+    this.scrollHistory = scrollHistory;
+    this.scrollParent = scrollParent;
+    this.tvDoneCount = tvDoneCount;
+    this.tvDoneEmpty = tvDoneEmpty;
+    this.tvHistoryCount = tvHistoryCount;
     this.tvMonthLabel = tvMonthLabel;
+    this.tvProgressCount = tvProgressCount;
+    this.tvProgressEmpty = tvProgressEmpty;
     this.tvStatCompletedCount = tvStatCompletedCount;
     this.tvStatPendingCount = tvStatPendingCount;
     this.tvStatProgressCount = tvStatProgressCount;
     this.tvStatTotalCount = tvStatTotalCount;
-    this.tvTaskHeaderLabel = tvTaskHeaderLabel;
+    this.tvTasksCountBadge = tvTasksCountBadge;
+    this.tvTodoCount = tvTodoCount;
+    this.tvTodoEmpty = tvTodoEmpty;
   }
 
   @Override
@@ -126,27 +184,9 @@ public final class FragmentScheduleBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.btnFilterAll;
-      TextView btnFilterAll = ViewBindings.findChildViewById(rootView, id);
-      if (btnFilterAll == null) {
-        break missingId;
-      }
-
-      id = R.id.btnFilterCompleted;
-      TextView btnFilterCompleted = ViewBindings.findChildViewById(rootView, id);
-      if (btnFilterCompleted == null) {
-        break missingId;
-      }
-
-      id = R.id.btnFilterToday;
-      TextView btnFilterToday = ViewBindings.findChildViewById(rootView, id);
-      if (btnFilterToday == null) {
-        break missingId;
-      }
-
-      id = R.id.btnFilterUpcoming;
-      TextView btnFilterUpcoming = ViewBindings.findChildViewById(rootView, id);
-      if (btnFilterUpcoming == null) {
+      id = R.id.btnAddTask;
+      Button btnAddTask = ViewBindings.findChildViewById(rootView, id);
+      if (btnAddTask == null) {
         break missingId;
       }
 
@@ -162,9 +202,21 @@ public final class FragmentScheduleBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.fabAddTask;
-      FloatingActionButton fabAddTask = ViewBindings.findChildViewById(rootView, id);
-      if (fabAddTask == null) {
+      id = R.id.colDone;
+      LinearLayout colDone = ViewBindings.findChildViewById(rootView, id);
+      if (colDone == null) {
+        break missingId;
+      }
+
+      id = R.id.colProgress;
+      LinearLayout colProgress = ViewBindings.findChildViewById(rootView, id);
+      if (colProgress == null) {
+        break missingId;
+      }
+
+      id = R.id.colTodo;
+      LinearLayout colTodo = ViewBindings.findChildViewById(rootView, id);
+      if (colTodo == null) {
         break missingId;
       }
 
@@ -174,21 +226,93 @@ public final class FragmentScheduleBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.layoutEmptyTasks;
-      LinearLayout layoutEmptyTasks = ViewBindings.findChildViewById(rootView, id);
-      if (layoutEmptyTasks == null) {
+      id = R.id.layoutDoneTasks;
+      LinearLayout layoutDoneTasks = ViewBindings.findChildViewById(rootView, id);
+      if (layoutDoneTasks == null) {
         break missingId;
       }
 
-      id = R.id.rvTasks;
-      RecyclerView rvTasks = ViewBindings.findChildViewById(rootView, id);
-      if (rvTasks == null) {
+      id = R.id.layoutHistoryEmpty;
+      LinearLayout layoutHistoryEmpty = ViewBindings.findChildViewById(rootView, id);
+      if (layoutHistoryEmpty == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutHistoryTasks;
+      LinearLayout layoutHistoryTasks = ViewBindings.findChildViewById(rootView, id);
+      if (layoutHistoryTasks == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutKanban;
+      NestedScrollView layoutKanban = ViewBindings.findChildViewById(rootView, id);
+      if (layoutKanban == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutNoSelection;
+      LinearLayout layoutNoSelection = ViewBindings.findChildViewById(rootView, id);
+      if (layoutNoSelection == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutProgressTasks;
+      LinearLayout layoutProgressTasks = ViewBindings.findChildViewById(rootView, id);
+      if (layoutProgressTasks == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutTodoTasks;
+      LinearLayout layoutTodoTasks = ViewBindings.findChildViewById(rootView, id);
+      if (layoutTodoTasks == null) {
+        break missingId;
+      }
+
+      id = R.id.scrollHistory;
+      NestedScrollView scrollHistory = ViewBindings.findChildViewById(rootView, id);
+      if (scrollHistory == null) {
+        break missingId;
+      }
+
+      id = R.id.scrollParent;
+      NestedScrollView scrollParent = ViewBindings.findChildViewById(rootView, id);
+      if (scrollParent == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDoneCount;
+      TextView tvDoneCount = ViewBindings.findChildViewById(rootView, id);
+      if (tvDoneCount == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDoneEmpty;
+      TextView tvDoneEmpty = ViewBindings.findChildViewById(rootView, id);
+      if (tvDoneEmpty == null) {
+        break missingId;
+      }
+
+      id = R.id.tvHistoryCount;
+      TextView tvHistoryCount = ViewBindings.findChildViewById(rootView, id);
+      if (tvHistoryCount == null) {
         break missingId;
       }
 
       id = R.id.tvMonthLabel;
       TextView tvMonthLabel = ViewBindings.findChildViewById(rootView, id);
       if (tvMonthLabel == null) {
+        break missingId;
+      }
+
+      id = R.id.tvProgressCount;
+      TextView tvProgressCount = ViewBindings.findChildViewById(rootView, id);
+      if (tvProgressCount == null) {
+        break missingId;
+      }
+
+      id = R.id.tvProgressEmpty;
+      TextView tvProgressEmpty = ViewBindings.findChildViewById(rootView, id);
+      if (tvProgressEmpty == null) {
         break missingId;
       }
 
@@ -216,17 +340,31 @@ public final class FragmentScheduleBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.tvTaskHeaderLabel;
-      TextView tvTaskHeaderLabel = ViewBindings.findChildViewById(rootView, id);
-      if (tvTaskHeaderLabel == null) {
+      id = R.id.tvTasksCountBadge;
+      TextView tvTasksCountBadge = ViewBindings.findChildViewById(rootView, id);
+      if (tvTasksCountBadge == null) {
         break missingId;
       }
 
-      return new FragmentScheduleBinding((CoordinatorLayout) rootView, btnFilterAll,
-          btnFilterCompleted, btnFilterToday, btnFilterUpcoming, btnNextMonth, btnPrevMonth,
-          fabAddTask, layoutCalendarGrid, layoutEmptyTasks, rvTasks, tvMonthLabel,
+      id = R.id.tvTodoCount;
+      TextView tvTodoCount = ViewBindings.findChildViewById(rootView, id);
+      if (tvTodoCount == null) {
+        break missingId;
+      }
+
+      id = R.id.tvTodoEmpty;
+      TextView tvTodoEmpty = ViewBindings.findChildViewById(rootView, id);
+      if (tvTodoEmpty == null) {
+        break missingId;
+      }
+
+      return new FragmentScheduleBinding((CoordinatorLayout) rootView, btnAddTask, btnNextMonth,
+          btnPrevMonth, colDone, colProgress, colTodo, layoutCalendarGrid, layoutDoneTasks,
+          layoutHistoryEmpty, layoutHistoryTasks, layoutKanban, layoutNoSelection,
+          layoutProgressTasks, layoutTodoTasks, scrollHistory, scrollParent, tvDoneCount,
+          tvDoneEmpty, tvHistoryCount, tvMonthLabel, tvProgressCount, tvProgressEmpty,
           tvStatCompletedCount, tvStatPendingCount, tvStatProgressCount, tvStatTotalCount,
-          tvTaskHeaderLabel);
+          tvTasksCountBadge, tvTodoCount, tvTodoEmpty);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -40,6 +40,14 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         android.content.SharedPreferences prefs = getSharedPreferences("medina_prefs", MODE_PRIVATE);
+        String token = prefs.getString("auth_token", null);
+        if (token != null) {
+            com.medina.app.api.ApiClient.authToken = token;
+            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+            finish();
+            return;
+        }
+
         boolean isDark = prefs.getBoolean("dark_mode", false);
         androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
             isDark ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES 
@@ -112,15 +120,17 @@ public class LoginActivity extends AppCompatActivity {
                     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                         setLoading(false);
                         if (response.isSuccessful() && response.body() != null) {
-                            LoginResponse user = response.body();
-                            // Save token and user data to SharedPreferences
-                            getSharedPreferences("medina_prefs", MODE_PRIVATE)
-                                    .edit()
-                                    .putString("auth_token", user.getToken())
-                                    .putString("user_email", user.getEmail())
-                                    .putString("user_name", user.getFirstName() + " " + user.getLastName())
-                                    .putString("user_role", user.getRole())
-                                    .apply();
+                             LoginResponse user = response.body();
+                             com.medina.app.api.ApiClient.authToken = user.getToken();
+                             // Save token and user data to SharedPreferences
+                             getSharedPreferences("medina_prefs", MODE_PRIVATE)
+                                     .edit()
+                                     .putString("auth_token", user.getToken())
+                                     .putString("user_id", user.getId())
+                                     .putString("user_email", user.getEmail())
+                                     .putString("user_name", user.getFirstName() + " " + user.getLastName())
+                                     .putString("user_role", user.getRole())
+                                     .apply();
                             // Navigate to dashboard
                             startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
                             finish();

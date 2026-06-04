@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/bg_card"
+    android:padding="14dp"
+    android:layout_marginBottom="10dp"
+    android:gravity="center_vertical">
+
+    <ImageView
+        android:id="@+id/ivEquipmentIcon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="4dp"
+        android:src="@drawable/ic_laptop"
+        android:layout_marginEnd="12dp"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvEquipmentName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Equipment Name"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary"/>
+
+        <TextView
+            android:id="@+id/tvEquipmentSerialType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SN-001 • Laptop"
+            android:textSize="11sp"
+            android:textColor="@color/textSecondary"
+            android:layout_marginTop="2dp"/>
+
+        <TextView
+            android:id="@+id/tvEquipmentAssignedUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="👤 Unassigned"
+            android:textSize="11sp"
+            android:textColor="@color/textHint"
+            android:layout_marginTop="2dp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvEquipmentStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AVAILABLE"
+        android:textSize="9sp"
+        android:textStyle="bold"
+        android:paddingStart="7dp"
+        android:paddingEnd="7dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"/>
+
+</LinearLayout>

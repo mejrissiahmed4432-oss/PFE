@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "user-microservice")
+@FeignClient(name = "user-microservice", fallback = UserClientFallback.class)
 public interface UserClient {
 
     @PostMapping("/api/notifications")

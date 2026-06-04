@@ -45,7 +45,7 @@ public class DashboardActivity extends AppCompatActivity {
     private View layoutUserAvatar;
     private CardView profileDropdownCard;
     private TextView tvDropdownAvatar, tvDropdownName, tvDropdownEmail;
-    private View btnAI, btnLanguage, btnModeToggle, btnAlert, btnNotification;
+    private View btnAI, btnLanguage, btnAlert, btnNotification;
     private View menuProfile, menuSettings, menuLogout;
 
     // Badge Views
@@ -55,10 +55,13 @@ public class DashboardActivity extends AppCompatActivity {
     private View btnMarkAllRead, btnClearAllNotifications;
 
     // Sidebar items and layouts
-    private LinearLayout navDashboard, navSchedule, navReports, navParts, navRequests, navTickets, navChat, navSettings, navLogout;
-    private ImageView iconDashboard, iconSchedule, iconReports, iconParts, iconRequests, iconTickets, iconChat;
-    private TextView labelDashboard, labelSchedule, labelReports, labelParts, labelRequests, labelTickets, labelChat;
-    private TextView badgeTickets, badgeChat;
+    private LinearLayout navDashboard, navSchedule, navReports, navParts, navRequests, navTickets, navSettings, navLogout;
+    private ImageView iconDashboard, iconSchedule, iconReports, iconParts, iconRequests, iconTickets;
+    private TextView labelDashboard, labelSchedule, labelReports, labelParts, labelRequests, labelTickets;
+    private TextView badgeTickets;
+    // Topbar chat
+    private View btnChat;
+    private TextView tvChatBadge;
     private View btnAiFab;
 
     private SharedPreferences prefs;
@@ -75,13 +78,6 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        android.content.SharedPreferences tempPrefs = getSharedPreferences("medina_prefs", MODE_PRIVATE);
-        boolean isDark = tempPrefs.getBoolean("dark_mode", false);
-        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
-            isDark ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES 
-                   : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
-        );
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
@@ -102,7 +98,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         btnAI = findViewById(R.id.btnAI);
         btnLanguage = findViewById(R.id.btnLanguage);
-        btnModeToggle = findViewById(R.id.btnModeToggle);
+
         btnAlert = findViewById(R.id.btnAlert);
         btnNotification = findViewById(R.id.btnNotification);
 
@@ -126,7 +122,6 @@ public class DashboardActivity extends AppCompatActivity {
         navParts = findViewById(R.id.navParts);
         navRequests = findViewById(R.id.navRequests);
         navTickets = findViewById(R.id.navTickets);
-        navChat = findViewById(R.id.navChat);
         navSettings = findViewById(R.id.navSettings);
         navLogout = findViewById(R.id.navLogout);
  
@@ -137,7 +132,6 @@ public class DashboardActivity extends AppCompatActivity {
         iconParts = findViewById(R.id.iconParts);
         iconRequests = findViewById(R.id.iconRequests);
         iconTickets = findViewById(R.id.iconTickets);
-        iconChat = findViewById(R.id.iconChat);
  
         // Sidebar Labels
         labelDashboard = findViewById(R.id.labelDashboard);
@@ -146,14 +140,29 @@ public class DashboardActivity extends AppCompatActivity {
         labelParts = findViewById(R.id.labelParts);
         labelRequests = findViewById(R.id.labelRequests);
         labelTickets = findViewById(R.id.labelTickets);
-        labelChat = findViewById(R.id.labelChat);
         badgeTickets = findViewById(R.id.badgeTickets);
-        badgeChat = findViewById(R.id.badgeChat);
+
+        // Topbar Chat button (replaces sidebar chat)
+        btnChat = findViewById(R.id.btnChat);
+        tvChatBadge = findViewById(R.id.tvChatBadge);
         btnAiFab = findViewById(R.id.btnAiFab);
 
         // Display user info in topbar and dropdown
         String userName = prefs.getString("user_name", "Morad Mejri");
         updateUserAvatarInitials(userName);
+
+        if (prefs.getString("user_id", "").isEmpty()) {
+            ApiClient.getApiService().getCurrentUser().enqueue(new Callback<com.medina.app.model.User>() {
+                @Override
+                public void onResponse(Call<com.medina.app.model.User> call, Response<com.medina.app.model.User> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        prefs.edit().putString("user_id", response.body().getId()).apply();
+                    }
+                }
+                @Override
+                public void onFailure(Call<com.medina.app.model.User> call, Throwable t) {}
+            });
+        }
 
         // Set Click listeners for Sidebar Navigation
         btnOpenDrawer.setOnClickListener(v -> {
@@ -167,7 +176,14 @@ public class DashboardActivity extends AppCompatActivity {
         navParts.setOnClickListener(v -> selectMenuItem(3));
         navRequests.setOnClickListener(v -> selectMenuItem(4));
         navTickets.setOnClickListener(v -> selectMenuItem(5));
-        navChat.setOnClickListener(v -> selectMenuItem(9));
+
+        // Topbar Chat button navigates to Chat page
+        if (btnChat != null) {
+            btnChat.setOnClickListener(v -> {
+                closeDropdowns();
+                selectMenuItem(9);
+            });
+        }
 
         navSettings.setOnClickListener(v -> {
             closeDropdowns();
@@ -242,17 +258,7 @@ public class DashboardActivity extends AppCompatActivity {
             });
             popup.show();
         });
-        btnModeToggle.setOnClickListener(v -> {
-            boolean isDarkTheme = prefs.getBoolean("dark_mode", false);
-            boolean newDarkTheme = !isDarkTheme;
-            prefs.edit().putBoolean("dark_mode", newDarkTheme).apply();
-            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
-                newDarkTheme ? androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES 
-                             : androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
-            );
-            Toast.makeText(this, newDarkTheme ? "Dark mode activated" : "Light mode activated", Toast.LENGTH_SHORT).show();
-            recreate();
-        });
+
 
         // Notifications action buttons
         btnMarkAllRead.setOnClickListener(v -> handleMarkAllNotificationsRead());
@@ -359,6 +365,26 @@ public class DashboardActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Notification>> call, Throwable t) {}
         });
+
+        // Fetch chat unread count only if we are not currently viewing the ChatFragment
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        if (!(currentFragment instanceof ChatFragment)) {
+            ApiClient.getApiService().getConversations().enqueue(new Callback<List<ConversationSummary>>() {
+                @Override
+                public void onResponse(Call<List<ConversationSummary>> call, Response<List<ConversationSummary>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        int totalUnread = 0;
+                        for (ConversationSummary cs : response.body()) {
+                            totalUnread += cs.getUnreadCount();
+                        }
+                        updateChatBadge(totalUnread);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<ConversationSummary>> call, Throwable t) {}
+            });
+        }
     }
 
     public void updateAlertBadgeCount(int count) {
@@ -376,6 +402,17 @@ public class DashboardActivity extends AppCompatActivity {
             tvNotificationBadge.setVisibility(View.VISIBLE);
         } else {
             tvNotificationBadge.setVisibility(View.GONE);
+        }
+    }
+
+    public void updateChatBadge(int count) {
+        if (tvChatBadge != null) {
+            if (count > 0) {
+                tvChatBadge.setText(String.valueOf(count));
+                tvChatBadge.setVisibility(View.VISIBLE);
+            } else {
+                tvChatBadge.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -603,10 +640,8 @@ public class DashboardActivity extends AppCompatActivity {
             case 9:
                 fragment = new ChatFragment();
                 title = getString(R.string.nav_chat);
-                navChat.setBackgroundResource(R.drawable.bg_nav_item_active);
-                iconChat.setColorFilter(Color.WHITE);
-                labelChat.setTextColor(Color.WHITE);
-                if (badgeChat != null) badgeChat.setVisibility(View.GONE);
+                // No sidebar item to highlight for chat (it's a topbar button now)
+                if (tvChatBadge != null) tvChatBadge.setVisibility(View.GONE);
                 break;
         }
 
@@ -647,10 +682,6 @@ public class DashboardActivity extends AppCompatActivity {
         navTickets.setBackgroundResource(R.drawable.bg_nav_item_default);
         iconTickets.setColorFilter(defaultColor);
         labelTickets.setTextColor(defaultColor);
-
-        navChat.setBackgroundResource(R.drawable.bg_nav_item_default);
-        iconChat.setColorFilter(defaultColor);
-        labelChat.setTextColor(defaultColor);
 
         navSettings.setBackgroundResource(android.R.color.transparent);
     }

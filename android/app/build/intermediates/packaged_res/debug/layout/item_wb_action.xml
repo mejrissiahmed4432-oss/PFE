@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_card"
+    android:padding="12dp"
+    android:layout_marginBottom="12dp">
+
+    <!-- Card Header Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/tvWbActionIndex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Action #1"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary"
+            android:textSize="12sp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/btnWbActionDelete"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_logout"
+            android:padding="2dp"
+            android:contentDescription="Delete Action"/>
+    </LinearLayout>
+
+    <!-- Category Selector -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Category"
+        android:textSize="10sp"
+        android:textColor="@color/textSecondary"
+        android:layout_marginBottom="4dp"/>
+    <Spinner
+        android:id="@+id/spWbActionCategory"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_input_field"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Action Type Selector -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Action Type"
+        android:textSize="10sp"
+        android:textColor="@color/textSecondary"
+        android:layout_marginBottom="4dp"/>
+    <Spinner
+        android:id="@+id/spWbActionType"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_input_field"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Target Element -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Target Element"
+        android:textSize="10sp"
+        android:textColor="@color/textSecondary"
+        android:layout_marginBottom="4dp"/>
+    <EditText
+        android:id="@+id/etWbActionTarget"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_input_field"
+        android:hint="e.g. RAM, CPU, OS Registry"
+        android:textColorHint="@color/textHint"
+        android:textColor="@color/textPrimary"
+        android:textSize="12sp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:singleLine="true"/>
+
+    <!-- Priority Spinner -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Priority"
+        android:textSize="10sp"
+        android:textColor="@color/textSecondary"
+        android:layout_marginBottom="4dp"/>
+    <Spinner
+        android:id="@+id/spWbActionPriority"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@drawable/bg_input_field"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Description -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Technical Description"
+        android:textSize="10sp"
+        android:textColor="@color/textSecondary"
+        android:layout_marginBottom="4dp"/>
+    <EditText
+        android:id="@+id/etWbActionDesc"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/bg_input_field"
+        android:hint="Describe action steps..."
+        android:textColorHint="@color/textHint"
+        android:textColor="@color/textPrimary"
+        android:textSize="12sp"
+        android:padding="8dp"
+        android:gravity="top|start"/>
+
+</LinearLayout>

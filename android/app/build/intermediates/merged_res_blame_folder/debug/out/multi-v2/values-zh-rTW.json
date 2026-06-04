@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.medina.app-mergeDebugResources-29:/values-zh-rTW/values-zh-rTW.xml",
+            "outputFile": "com.medina.app-mergeDebugResources-31:/values-zh-rTW/values-zh-rTW.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Asus\\.gradle\\caches\\transforms-3\\561fae3abf6629bcc3d5047ed2cf44b0\\transformed\\core-1.10.1\\res\\values-zh-rTW\\values-zh-rTW.xml",
@@ -37,6 +37,23 @@
                         "endLines": "5,33,34,35,36,37,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101",
                         "endColumns": "12,63,61,66,69,76,93,106,72,61,77,59,59,77,60,57,55,59,57,53,84,55,57,53,64,91,73,76,119,62,62,76,49,50,65,62,67,77,60,70,66,61,78,64,82,84,73,63,75,47,63,75,77,61,63,62,79,76,75,76,53,54,68",
                         "endOffsets": "292,2922,2984,3051,3121,3198,3953,4060,4133,4195,4273,4333,4393,4471,4532,4590,4646,4706,4764,4818,4903,4959,5017,5071,5136,5228,5302,5379,5499,5562,5625,5702,5752,5803,5869,5932,6000,6078,6139,6210,6277,6339,6418,6483,6566,6651,6725,6789,6865,6913,6977,7053,7131,7193,7257,7320,7400,7477,7553,7630,7684,7739,7808"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Asus\\.gradle\\caches\\transforms-3\\eac213456d067fa144ff0077aab741ef\\transformed\\jetified-zxing-android-embedded-4.3.0\\res\\values-zh-rTW\\values-zh-rTW.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,104,151,244",
+                        "endColumns": "48,46,92,69",
+                        "endOffsets": "99,146,239,309"
+                    },
+                    "to": {
+                        "startLines": "104,105,106,107",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "7993,8042,8089,8182",
+                        "endColumns": "48,46,92,69",
+                        "endOffsets": "8037,8084,8177,8247"
                     }
                 },
                 {

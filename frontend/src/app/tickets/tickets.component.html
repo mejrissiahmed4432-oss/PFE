@@ -464,7 +464,7 @@
           </div>
 
           <!-- Active Ticket Warning -->
-          <div class="flex items-center gap-3 p-4 bg-amber-50 text-amber-700 rounded-2xl border border-amber-200 shadow-sm" *ngIf="hasActiveTicket(selectedEquipment.name || selectedEquipment.equipmentName)">
+          <div class="flex items-center gap-3 p-4 bg-amber-50 text-amber-700 rounded-2xl border border-amber-200 shadow-sm" *ngIf="hasActiveTicket(selectedEquipment.id)">
             <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-500 flex-shrink-0">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
             </div>
@@ -500,7 +500,7 @@
 
       <!-- Action Buttons Footer -->
       <div class="tk-action-footer mt-6 pt-6 border-t border-[var(--border-color)] flex gap-4 z-10 bg-[var(--bg-card)] flex-shrink-0" *ngIf="selectedEquipment && viewMode === 'equipment'">
-        <ng-container *ngIf="getActiveTicketForEquipment(selectedEquipment.name || selectedEquipment.equipmentName) as activeTicket; else noActiveTicket">
+        <ng-container *ngIf="getActiveTicketForEquipment(selectedEquipment.id ) as activeTicket; else noActiveTicket">
           <!-- Technician: Start working on active ticket -->
           <button *ngIf="currentUser?.role === 'TECHNICIAN'" class="flex-[2] flex items-center justify-center gap-2 px-6 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-sm font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-200" (click)="startWorkbench(activeTicket)">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>

@@ -12,6 +12,8 @@ import com.medina.app.model.PartRequest;
 import com.medina.app.model.Shelf;
 import com.medina.app.model.Message;
 import com.medina.app.model.ConversationSummary;
+import com.medina.app.model.Ticket;
+import com.medina.app.model.Equipment;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,9 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.PATCH;
+import retrofit2.http.Multipart;
+import retrofit2.http.Part;
+import okhttp3.MultipartBody;
 
 public interface ApiService {
 
@@ -107,6 +112,9 @@ public interface ApiService {
     @PUT("api/part-requests/{id}")
     Call<PartRequest> updatePartRequest(@Path("id") String id, @Body PartRequest request);
 
+    @POST("api/part-requests/consume-parts/{requesterId}")
+    Call<Void> consumeParts(@Path("requesterId") String requesterId, @Body List<Map<String, Object>> parts);
+
     @GET("api/shelves")
     Call<List<Shelf>> getAllShelves();
 
@@ -122,6 +130,48 @@ public interface ApiService {
     @PUT("api/messages/read/{senderId}")
     Call<Map<String, String>> markAsRead(@Path("senderId") String senderId);
 
+    @PUT("api/messages/{id}")
+    Call<Message> editMessage(@Path("id") String id, @Body Map<String, String> body);
+
+    @DELETE("api/messages/{id}")
+    Call<Void> deleteMessage(@Path("id") String id, @Query("forEveryone") boolean forEveryone);
+
+    @Multipart
+    @POST("api/messages/upload")
+    Call<Map<String, String>> uploadAttachment(@Part MultipartBody.Part file);
+
     @GET("api/users")
     Call<List<User>> getAllUsers();
+
+    // --- Ticket endpoints ---
+    @GET("api/tickets")
+    Call<List<Ticket>> getAllTickets();
+
+    @GET("api/tickets/user/{userId}")
+    Call<List<Ticket>> getTicketsByUser(@Path("userId") String userId);
+
+    @GET("api/tickets/technician/{techId}")
+    Call<List<Ticket>> getTicketsForTechnician(@Path("techId") String techId);
+
+    @GET("api/tickets/{id}")
+    Call<Ticket> getTicketById(@Path("id") String id);
+
+    @POST("api/tickets")
+    Call<Ticket> createTicket(@Body Ticket ticket);
+
+    @PUT("api/tickets/{id}")
+    Call<Ticket> updateTicket(@Path("id") String id, @Body Ticket ticket);
+
+    @DELETE("api/tickets/{id}")
+    Call<Void> deleteTicket(@Path("id") String id);
+
+    // --- Equipment endpoints ---
+    @GET("api/equipment")
+    Call<List<Equipment>> getAllEquipment();
+
+    @GET("api/equipment/{id}")
+    Call<Equipment> getEquipmentById(@Path("id") String id);
+
+    @PUT("api/equipment/{id}")
+    Call<Equipment> updateEquipment(@Path("id") String id, @Body Equipment equipment);
 }

@@ -33,7 +33,8 @@ public class LaptopMonitoringService {
     private static final String QUERY_DISK = "100 - (100 * windows_logical_disk_free_bytes{volume=~\"[A-Z]:\"} / windows_logical_disk_size_bytes{volume=~\"[A-Z]:\"})";
     private static final String QUERY_NET_IN = "sum by (instance) (irate(windows_net_bytes_received_total[1m]))";
     private static final String QUERY_NET_OUT = "sum by (instance) (irate(windows_net_bytes_sent_total[1m]))";
-    private static final String QUERY_TOP_PROC = "topk by (instance) (3, windows_process_working_set_bytes{process!=\"Idle\", process!=\"_Total\"})";
+    private static final String QUERY_TOP_PROC = "topk by (instance) (3, windows_process_working_set_bytes)";
+    private static final String QUERY_TOTAL_PROC = "sum by (instance) (windows_os_processes)";
     private static final String QUERY_OS = "windows_os_info";
     private static final String QUERY_UPTIME = "time() - windows_system_system_up_time";
     private static final String QUERY_RAM_TOTAL = "windows_cs_physical_memory_bytes";
@@ -48,6 +49,8 @@ public class LaptopMonitoringService {
     private MachineRepository machineRepository;
     @Autowired
     private DepartmentRepository departmentRepository;
+    @Autowired
+    private com.example.stockmanagermicroservice.repository.EquipmentMetricsSnapshotRepository snapshotRepository;
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -103,6 +106,8 @@ public class LaptopMonitoringService {
                 .supplyAsync(() -> fetchDoubleMap(QUERY_NET_OUT));
         java.util.concurrent.CompletableFuture<Map<String, List<com.example.stockmanagermicroservice.dto.ProcessInfoDTO>>> topProcsFuture = java.util.concurrent.CompletableFuture
                 .supplyAsync(() -> fetchTopProcesses(QUERY_TOP_PROC));
+        java.util.concurrent.CompletableFuture<Map<String, Double>> totalProcsFuture = java.util.concurrent.CompletableFuture
+                .supplyAsync(() -> fetchDoubleMap(QUERY_TOTAL_PROC));
         java.util.concurrent.CompletableFuture<Map<String, String>> osFuture = java.util.concurrent.CompletableFuture
                 .supplyAsync(() -> fetchOSMap(QUERY_OS));
         java.util.concurrent.CompletableFuture<Map<String, Double>> uptimeFuture = java.util.concurrent.CompletableFuture
@@ -121,7 +126,7 @@ public class LaptopMonitoringService {
         // Wait for all queries to complete
         java.util.concurrent.CompletableFuture.allOf(
                 statusFuture, cpuFuture, ramFuture, disksFuture, netInFuture, netOutFuture,
-                topProcsFuture, osFuture, uptimeFuture, ramTotalFuture, ramFreeFuture,
+                topProcsFuture, totalProcsFuture, osFuture, uptimeFuture, ramTotalFuture, ramFreeFuture,
                 diskTotalFuture, diskFreeFuture, tempFuture).join();
 
         // Retrieve results from futures
@@ -133,6 +138,7 @@ public class LaptopMonitoringService {
         Map<String, Double> instanceNetOut = netOutFuture.join();
         Map<String, List<com.example.stockmanagermicroservice.dto.ProcessInfoDTO>> instanceTopProcs = topProcsFuture
                 .join();
+        Map<String, Double> instanceTotalProcs = totalProcsFuture.join();
         Map<String, String> instanceOS = osFuture.join();
         Map<String, Double> instanceUptime = uptimeFuture.join();
         Map<String, Double> instanceRamTotal = ramTotalFuture.join();
@@ -146,6 +152,7 @@ public class LaptopMonitoringService {
             String ip = null;
             String status;
             double cpu = 0, ram = 0, diskPercent = 0, temperature = 0;
+            int totalProcesses = 0;
             double totalRamGB = 0, freeRamGB = 0, totalDiskGB = 0, freeDiskGB = 0;
             Map<String, Double> disks = new HashMap<>();
             double netIn = 0, netOut = 0;
@@ -183,6 +190,7 @@ public class LaptopMonitoringService {
 
                     cpu = instanceCpu.getOrDefault(fullInstance, 0.0);
                     ram = instanceRam.getOrDefault(fullInstance, 0.0);
+                    totalProcesses = instanceTotalProcs.getOrDefault(fullInstance, 0.0).intValue();
                     os = instanceOS.getOrDefault(fullInstance, "Not Found");
                     temperature = instanceTemp.getOrDefault(fullInstance, 0.0);
 
@@ -238,6 +246,7 @@ public class LaptopMonitoringService {
                     eq.getDepartment(), ip, status);
             dto.setCpuPercent(cpu);
             dto.setRamPercent(ram);
+            dto.setTotalProcesses(totalProcesses);
             dto.setDiskPercent(diskPercent);
             dto.setTotalRam(totalRamGB);
             dto.setFreeRam(freeRamGB);
@@ -312,6 +321,11 @@ public class LaptopMonitoringService {
         for (JsonNode res : results) {
             String instance = res.path("metric").path("instance").asText(null);
             String processName = res.path("metric").path("process").asText("Unknown");
+            int pid = 0;
+            try {
+                pid = Integer.parseInt(res.path("metric").path("process_id").asText("0"));
+            } catch (Exception ignored) {
+            }
             if (instance == null)
                 continue;
             JsonNode val = res.path("value");
@@ -320,7 +334,7 @@ public class LaptopMonitoringService {
                     double bytes = Double.parseDouble(val.get(1).asText("0"));
                     double mb = Math.round((bytes / (1024 * 1024)) * 10.0) / 10.0;
                     map.computeIfAbsent(instance, k -> new ArrayList<>())
-                            .add(new com.example.stockmanagermicroservice.dto.ProcessInfoDTO(processName, mb));
+                            .add(new com.example.stockmanagermicroservice.dto.ProcessInfoDTO(processName, mb, pid));
                 } catch (Exception ignored) {
                 }
             }
@@ -375,6 +389,35 @@ public class LaptopMonitoringService {
             return mapper.readTree(response).path("data").path("result");
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    @org.springframework.scheduling.annotation.Scheduled(cron = "0 0 * * * *") // Every hour
+    public void takeHourlySnapshot() {
+        System.out.println("[LaptopMonitoringService] Taking hourly metrics snapshot...");
+        try {
+            List<com.example.stockmanagermicroservice.dto.DeptPcSummaryDTO> summary = getDeptPcStatus();
+            java.time.LocalDateTime now = java.time.LocalDateTime.now();
+
+            for (com.example.stockmanagermicroservice.dto.DeptPcSummaryDTO dept : summary) {
+                for (com.example.stockmanagermicroservice.dto.LaptopStatusDTO laptop : dept.getLaptops()) {
+                    if ("UP".equals(laptop.getUpStatus())) {
+                        com.example.stockmanagermicroservice.model.EquipmentMetricsSnapshot snap = new com.example.stockmanagermicroservice.model.EquipmentMetricsSnapshot();
+                        snap.setEquipmentId(laptop.getEquipmentId());
+                        snap.setSerialNumber(laptop.getSerialNumber());
+                        snap.setTimestamp(now);
+                        snap.setCpuPercent(laptop.getCpuPercent());
+                        snap.setRamPercent(laptop.getRamPercent());
+                        snap.setDiskPercent(laptop.getDiskPercent());
+                        snap.setTemperature(laptop.getTemperature());
+
+                        snapshotRepository.save(snap);
+                    }
+                }
+            }
+            System.out.println("[LaptopMonitoringService] Hourly metrics snapshot completed.");
+        } catch (Exception e) {
+            System.err.println("[LaptopMonitoringService] Failed to take hourly snapshot: " + e.getMessage());
         }
     }
 }

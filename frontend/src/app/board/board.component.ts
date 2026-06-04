@@ -45,13 +45,15 @@ import { EquipmentReturnsComponent } from '../equipment-returns/equipment-return
 import { TicketService } from '../tickets/ticket.service';
 import { RefreshService } from '../shared/refresh.service';
 import { ApplicationManagementComponent } from '../application-management/application-management.component';
+import { AuditDashboardComponent } from '../audit/audit-dashboard.component';
+import { PredictiveMaintenanceComponent } from '../predictive-maintenance/predictive-maintenance.component';
 
 @Component({
   selector: 'app-board',
   standalone: true,
 
 
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, UserManagementComponent, ToastComponent, ProcurementComponent, AdminDashboardComponent, TechnicianDepartmentsComponent, TechnicianDevicesComponent, SoftwareDashboardComponent, ItEquipmentManagementComponent, EquipmentReturnsComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, UserManagementComponent, ToastComponent, ProcurementComponent, AdminDashboardComponent, TechnicianDepartmentsComponent, TechnicianDevicesComponent, SoftwareDashboardComponent, ItEquipmentManagementComponent, EquipmentReturnsComponent, AuditDashboardComponent, PredictiveMaintenanceComponent],
 
 
   providers: [MessagingService, TicketService],
@@ -377,12 +379,13 @@ export class BoardComponent implements OnInit {
 
       case 'eq-management': return 'Equipment Management';
       case 'eq-returns': return 'Equipment Returns';
+      case 'predictions': return 'Predictive Maintenance';
 
 
       case 'tickets': return this.t('Tickets');
 
       case 'employees': return this.t('Employee Directory');
-
+      case 'audit': return 'Audit & Blockchain Traceability';
       case 'admin-dashboard': return 'Admin Management Console';
 
       default: return 'Medina It Manage';

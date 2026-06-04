@@ -23,7 +23,12 @@ public class RouteValidator {
     );
 
     public Predicate<ServerHttpRequest> isSecured =
-            request -> openApiEndpoints
-                    .stream()
-                    .noneMatch(uri -> request.getURI().getPath().contains(uri));
+            request -> {
+                String path = request.getURI().getPath();
+                // Allow specific procurement endpoints ending with /view or /download
+                if (path.matches("^/api/procurement/responses/[a-zA-Z0-9]+/(view|download)$")) {
+                    return false;
+                }
+                return openApiEndpoints.stream().noneMatch(path::contains);
+            };
 }

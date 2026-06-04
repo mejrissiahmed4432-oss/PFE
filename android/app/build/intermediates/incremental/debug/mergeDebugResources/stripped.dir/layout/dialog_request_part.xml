@@ -82,47 +82,105 @@
             android:padding="12dp"
             android:layout_marginBottom="12dp">
 
+            <!-- Target Equipment spinner -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Target Equipment"
+                android:textColor="@color/textSecondary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"
+                android:textAllCaps="true"/>
+            <Spinner
+                android:id="@+id/spReqEquipment"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginBottom="10dp"/>
+
             <!-- Part name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Part Name"
+                android:textColor="@color/textSecondary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"
+                android:textAllCaps="true"/>
             <EditText
                 android:id="@+id/etItemPartName"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:background="@drawable/bg_input_field"
-                android:hint="Part Name (e.g. DDR4 RAM)"
+                android:hint="e.g. DDR4 RAM"
                 android:textColorHint="@color/textHint"
                 android:textColor="@color/textPrimary"
                 android:textSize="13sp"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="10dp"/>
 
             <!-- Brand and Category -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="10dp">
 
-                <EditText
-                    android:id="@+id/etItemBrand"
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_input_field"
-                    android:hint="Brand (e.g. Corsair)"
-                    android:textColorHint="@color/textHint"
-                    android:textColor="@color/textPrimary"
-                    android:textSize="13sp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:layout_marginEnd="8dp"/>
+                    android:orientation="vertical"
+                    android:layout_marginEnd="8dp">
 
-                <Spinner
-                    android:id="@+id/spItemCategory"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Brand"
+                        android:textColor="@color/textSecondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"
+                        android:textAllCaps="true"/>
+
+                    <EditText
+                        android:id="@+id/etItemBrand"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="e.g. Corsair"
+                        android:textColorHint="@color/textHint"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="13sp"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"/>
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_input_field"/>
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Category"
+                        android:textColor="@color/textSecondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"
+                        android:textAllCaps="true"/>
+
+                    <Spinner
+                        android:id="@+id/spItemCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_input_field"/>
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Specs and Quantity -->
@@ -130,35 +188,67 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:layout_marginBottom="10dp">
 
-                <EditText
-                    android:id="@+id/etItemSpecs"
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:background="@drawable/bg_input_field"
-                    android:hint="Specs (e.g. 16GB 3200MHz)"
-                    android:textColorHint="@color/textHint"
-                    android:textColor="@color/textPrimary"
-                    android:textSize="13sp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:layout_marginEnd="8dp"/>
+                    android:orientation="vertical"
+                    android:layout_marginEnd="8dp">
 
-                <EditText
-                    android:id="@+id/etItemQty"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Specifications"
+                        android:textColor="@color/textSecondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"
+                        android:textAllCaps="true"/>
+
+                    <EditText
+                        android:id="@+id/etItemSpecs"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="e.g. 16GB 3200MHz"
+                        android:textColorHint="@color/textHint"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="13sp"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"/>
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_input_field"
-                    android:hint="Qty"
-                    android:textColorHint="@color/textHint"
-                    android:textColor="@color/textPrimary"
-                    android:textSize="13sp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:inputType="number"/>
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Qty"
+                        android:textColor="@color/textSecondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"
+                        android:textAllCaps="true"/>
+
+                    <EditText
+                        android:id="@+id/etItemQty"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="Qty"
+                        android:textColorHint="@color/textHint"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="13sp"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:inputType="number"/>
+                </LinearLayout>
             </LinearLayout>
 
             <Button

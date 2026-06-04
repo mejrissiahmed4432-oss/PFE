@@ -4,25 +4,137 @@ package com.medina.app.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
+import androidx.viewbinding.ViewBindings;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.medina.app.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
+import java.lang.String;
 
 public final class FragmentTicketsBinding implements ViewBinding {
   @NonNull
-  private final LinearLayout rootView;
+  private final RelativeLayout rootView;
 
-  private FragmentTicketsBinding(@NonNull LinearLayout rootView) {
+  @NonNull
+  public final Button btnScanQR;
+
+  @NonNull
+  public final LinearLayout btnToggleFilters;
+
+  @NonNull
+  public final EditText etEqSerial;
+
+  @NonNull
+  public final EditText etSearch;
+
+  @NonNull
+  public final FloatingActionButton fabNewTicket;
+
+  @NonNull
+  public final LinearLayout layoutEmpty;
+
+  @NonNull
+  public final LinearLayout layoutEquipmentFilters;
+
+  @NonNull
+  public final LinearLayout layoutFilterPanel;
+
+  @NonNull
+  public final LinearLayout layoutTicketFilters;
+
+  @NonNull
+  public final LinearLayout mainContent;
+
+  @NonNull
+  public final ProgressBar progressTickets;
+
+  @NonNull
+  public final RecyclerView rvEquipment;
+
+  @NonNull
+  public final RecyclerView rvTickets;
+
+  @NonNull
+  public final Spinner spEqCategory;
+
+  @NonNull
+  public final Spinner spEqType;
+
+  @NonNull
+  public final Spinner spTicketStatus;
+
+  @NonNull
+  public final TextView tabEquipment;
+
+  @NonNull
+  public final TextView tabTickets;
+
+  @NonNull
+  public final TextView tvEmpty;
+
+  @NonNull
+  public final TextView tvStatInProgress;
+
+  @NonNull
+  public final TextView tvStatOpen;
+
+  @NonNull
+  public final TextView tvStatResolved;
+
+  @NonNull
+  public final TextView tvToggleFiltersLabel;
+
+  private FragmentTicketsBinding(@NonNull RelativeLayout rootView, @NonNull Button btnScanQR,
+      @NonNull LinearLayout btnToggleFilters, @NonNull EditText etEqSerial,
+      @NonNull EditText etSearch, @NonNull FloatingActionButton fabNewTicket,
+      @NonNull LinearLayout layoutEmpty, @NonNull LinearLayout layoutEquipmentFilters,
+      @NonNull LinearLayout layoutFilterPanel, @NonNull LinearLayout layoutTicketFilters,
+      @NonNull LinearLayout mainContent, @NonNull ProgressBar progressTickets,
+      @NonNull RecyclerView rvEquipment, @NonNull RecyclerView rvTickets,
+      @NonNull Spinner spEqCategory, @NonNull Spinner spEqType, @NonNull Spinner spTicketStatus,
+      @NonNull TextView tabEquipment, @NonNull TextView tabTickets, @NonNull TextView tvEmpty,
+      @NonNull TextView tvStatInProgress, @NonNull TextView tvStatOpen,
+      @NonNull TextView tvStatResolved, @NonNull TextView tvToggleFiltersLabel) {
     this.rootView = rootView;
+    this.btnScanQR = btnScanQR;
+    this.btnToggleFilters = btnToggleFilters;
+    this.etEqSerial = etEqSerial;
+    this.etSearch = etSearch;
+    this.fabNewTicket = fabNewTicket;
+    this.layoutEmpty = layoutEmpty;
+    this.layoutEquipmentFilters = layoutEquipmentFilters;
+    this.layoutFilterPanel = layoutFilterPanel;
+    this.layoutTicketFilters = layoutTicketFilters;
+    this.mainContent = mainContent;
+    this.progressTickets = progressTickets;
+    this.rvEquipment = rvEquipment;
+    this.rvTickets = rvTickets;
+    this.spEqCategory = spEqCategory;
+    this.spEqType = spEqType;
+    this.spTicketStatus = spTicketStatus;
+    this.tabEquipment = tabEquipment;
+    this.tabTickets = tabTickets;
+    this.tvEmpty = tvEmpty;
+    this.tvStatInProgress = tvStatInProgress;
+    this.tvStatOpen = tvStatOpen;
+    this.tvStatResolved = tvStatResolved;
+    this.tvToggleFiltersLabel = tvToggleFiltersLabel;
   }
 
   @Override
   @NonNull
-  public LinearLayout getRoot() {
+  public RelativeLayout getRoot() {
     return rootView;
   }
 
@@ -43,10 +155,155 @@ public final class FragmentTicketsBinding implements ViewBinding {
 
   @NonNull
   public static FragmentTicketsBinding bind(@NonNull View rootView) {
-    if (rootView == null) {
-      throw new NullPointerException("rootView");
-    }
+    // The body of this method is generated in a way you would not otherwise write.
+    // This is done to optimize the compiled bytecode for size and performance.
+    int id;
+    missingId: {
+      id = R.id.btnScanQR;
+      Button btnScanQR = ViewBindings.findChildViewById(rootView, id);
+      if (btnScanQR == null) {
+        break missingId;
+      }
 
-    return new FragmentTicketsBinding((LinearLayout) rootView);
+      id = R.id.btnToggleFilters;
+      LinearLayout btnToggleFilters = ViewBindings.findChildViewById(rootView, id);
+      if (btnToggleFilters == null) {
+        break missingId;
+      }
+
+      id = R.id.etEqSerial;
+      EditText etEqSerial = ViewBindings.findChildViewById(rootView, id);
+      if (etEqSerial == null) {
+        break missingId;
+      }
+
+      id = R.id.etSearch;
+      EditText etSearch = ViewBindings.findChildViewById(rootView, id);
+      if (etSearch == null) {
+        break missingId;
+      }
+
+      id = R.id.fabNewTicket;
+      FloatingActionButton fabNewTicket = ViewBindings.findChildViewById(rootView, id);
+      if (fabNewTicket == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutEmpty;
+      LinearLayout layoutEmpty = ViewBindings.findChildViewById(rootView, id);
+      if (layoutEmpty == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutEquipmentFilters;
+      LinearLayout layoutEquipmentFilters = ViewBindings.findChildViewById(rootView, id);
+      if (layoutEquipmentFilters == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutFilterPanel;
+      LinearLayout layoutFilterPanel = ViewBindings.findChildViewById(rootView, id);
+      if (layoutFilterPanel == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutTicketFilters;
+      LinearLayout layoutTicketFilters = ViewBindings.findChildViewById(rootView, id);
+      if (layoutTicketFilters == null) {
+        break missingId;
+      }
+
+      id = R.id.mainContent;
+      LinearLayout mainContent = ViewBindings.findChildViewById(rootView, id);
+      if (mainContent == null) {
+        break missingId;
+      }
+
+      id = R.id.progressTickets;
+      ProgressBar progressTickets = ViewBindings.findChildViewById(rootView, id);
+      if (progressTickets == null) {
+        break missingId;
+      }
+
+      id = R.id.rvEquipment;
+      RecyclerView rvEquipment = ViewBindings.findChildViewById(rootView, id);
+      if (rvEquipment == null) {
+        break missingId;
+      }
+
+      id = R.id.rvTickets;
+      RecyclerView rvTickets = ViewBindings.findChildViewById(rootView, id);
+      if (rvTickets == null) {
+        break missingId;
+      }
+
+      id = R.id.spEqCategory;
+      Spinner spEqCategory = ViewBindings.findChildViewById(rootView, id);
+      if (spEqCategory == null) {
+        break missingId;
+      }
+
+      id = R.id.spEqType;
+      Spinner spEqType = ViewBindings.findChildViewById(rootView, id);
+      if (spEqType == null) {
+        break missingId;
+      }
+
+      id = R.id.spTicketStatus;
+      Spinner spTicketStatus = ViewBindings.findChildViewById(rootView, id);
+      if (spTicketStatus == null) {
+        break missingId;
+      }
+
+      id = R.id.tabEquipment;
+      TextView tabEquipment = ViewBindings.findChildViewById(rootView, id);
+      if (tabEquipment == null) {
+        break missingId;
+      }
+
+      id = R.id.tabTickets;
+      TextView tabTickets = ViewBindings.findChildViewById(rootView, id);
+      if (tabTickets == null) {
+        break missingId;
+      }
+
+      id = R.id.tvEmpty;
+      TextView tvEmpty = ViewBindings.findChildViewById(rootView, id);
+      if (tvEmpty == null) {
+        break missingId;
+      }
+
+      id = R.id.tvStatInProgress;
+      TextView tvStatInProgress = ViewBindings.findChildViewById(rootView, id);
+      if (tvStatInProgress == null) {
+        break missingId;
+      }
+
+      id = R.id.tvStatOpen;
+      TextView tvStatOpen = ViewBindings.findChildViewById(rootView, id);
+      if (tvStatOpen == null) {
+        break missingId;
+      }
+
+      id = R.id.tvStatResolved;
+      TextView tvStatResolved = ViewBindings.findChildViewById(rootView, id);
+      if (tvStatResolved == null) {
+        break missingId;
+      }
+
+      id = R.id.tvToggleFiltersLabel;
+      TextView tvToggleFiltersLabel = ViewBindings.findChildViewById(rootView, id);
+      if (tvToggleFiltersLabel == null) {
+        break missingId;
+      }
+
+      return new FragmentTicketsBinding((RelativeLayout) rootView, btnScanQR, btnToggleFilters,
+          etEqSerial, etSearch, fabNewTicket, layoutEmpty, layoutEquipmentFilters,
+          layoutFilterPanel, layoutTicketFilters, mainContent, progressTickets, rvEquipment,
+          rvTickets, spEqCategory, spEqType, spTicketStatus, tabEquipment, tabTickets, tvEmpty,
+          tvStatInProgress, tvStatOpen, tvStatResolved, tvToggleFiltersLabel);
+    }
+    String missingId = rootView.getResources().getResourceName(id);
+    throw new NullPointerException("Missing required view with ID: ".concat(missingId));
   }
 }

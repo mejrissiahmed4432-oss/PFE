@@ -5,12 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.medina.app.R;
@@ -23,7 +24,7 @@ public final class DialogTaskDetailBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
-  public final ImageButton btnDeleteTask;
+  public final AppCompatImageButton btnDeleteTask;
 
   @NonNull
   public final Button btnDetailClose;
@@ -32,39 +33,43 @@ public final class DialogTaskDetailBinding implements ViewBinding {
   public final Button btnDetailSave;
 
   @NonNull
+  public final EditText etDetailDesc;
+
+  @NonNull
+  public final EditText etDetailTitle;
+
+  @NonNull
+  public final Spinner spDetailPriority;
+
+  @NonNull
   public final Spinner spDetailStatus;
 
   @NonNull
-  public final TextView tvDetailCategory;
+  public final Spinner spDetailType;
 
   @NonNull
-  public final TextView tvDetailDesc;
+  public final TextView tvDetailDueDateSelect;
 
   @NonNull
-  public final TextView tvDetailDueDate;
-
-  @NonNull
-  public final TextView tvDetailPriority;
-
-  @NonNull
-  public final TextView tvDetailTitle;
+  public final TextView tvDetailHeader;
 
   private DialogTaskDetailBinding(@NonNull LinearLayout rootView,
-      @NonNull ImageButton btnDeleteTask, @NonNull Button btnDetailClose,
-      @NonNull Button btnDetailSave, @NonNull Spinner spDetailStatus,
-      @NonNull TextView tvDetailCategory, @NonNull TextView tvDetailDesc,
-      @NonNull TextView tvDetailDueDate, @NonNull TextView tvDetailPriority,
-      @NonNull TextView tvDetailTitle) {
+      @NonNull AppCompatImageButton btnDeleteTask, @NonNull Button btnDetailClose,
+      @NonNull Button btnDetailSave, @NonNull EditText etDetailDesc,
+      @NonNull EditText etDetailTitle, @NonNull Spinner spDetailPriority,
+      @NonNull Spinner spDetailStatus, @NonNull Spinner spDetailType,
+      @NonNull TextView tvDetailDueDateSelect, @NonNull TextView tvDetailHeader) {
     this.rootView = rootView;
     this.btnDeleteTask = btnDeleteTask;
     this.btnDetailClose = btnDetailClose;
     this.btnDetailSave = btnDetailSave;
+    this.etDetailDesc = etDetailDesc;
+    this.etDetailTitle = etDetailTitle;
+    this.spDetailPriority = spDetailPriority;
     this.spDetailStatus = spDetailStatus;
-    this.tvDetailCategory = tvDetailCategory;
-    this.tvDetailDesc = tvDetailDesc;
-    this.tvDetailDueDate = tvDetailDueDate;
-    this.tvDetailPriority = tvDetailPriority;
-    this.tvDetailTitle = tvDetailTitle;
+    this.spDetailType = spDetailType;
+    this.tvDetailDueDateSelect = tvDetailDueDateSelect;
+    this.tvDetailHeader = tvDetailHeader;
   }
 
   @Override
@@ -95,7 +100,7 @@ public final class DialogTaskDetailBinding implements ViewBinding {
     int id;
     missingId: {
       id = R.id.btnDeleteTask;
-      ImageButton btnDeleteTask = ViewBindings.findChildViewById(rootView, id);
+      AppCompatImageButton btnDeleteTask = ViewBindings.findChildViewById(rootView, id);
       if (btnDeleteTask == null) {
         break missingId;
       }
@@ -112,45 +117,51 @@ public final class DialogTaskDetailBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.etDetailDesc;
+      EditText etDetailDesc = ViewBindings.findChildViewById(rootView, id);
+      if (etDetailDesc == null) {
+        break missingId;
+      }
+
+      id = R.id.etDetailTitle;
+      EditText etDetailTitle = ViewBindings.findChildViewById(rootView, id);
+      if (etDetailTitle == null) {
+        break missingId;
+      }
+
+      id = R.id.spDetailPriority;
+      Spinner spDetailPriority = ViewBindings.findChildViewById(rootView, id);
+      if (spDetailPriority == null) {
+        break missingId;
+      }
+
       id = R.id.spDetailStatus;
       Spinner spDetailStatus = ViewBindings.findChildViewById(rootView, id);
       if (spDetailStatus == null) {
         break missingId;
       }
 
-      id = R.id.tvDetailCategory;
-      TextView tvDetailCategory = ViewBindings.findChildViewById(rootView, id);
-      if (tvDetailCategory == null) {
+      id = R.id.spDetailType;
+      Spinner spDetailType = ViewBindings.findChildViewById(rootView, id);
+      if (spDetailType == null) {
         break missingId;
       }
 
-      id = R.id.tvDetailDesc;
-      TextView tvDetailDesc = ViewBindings.findChildViewById(rootView, id);
-      if (tvDetailDesc == null) {
+      id = R.id.tvDetailDueDateSelect;
+      TextView tvDetailDueDateSelect = ViewBindings.findChildViewById(rootView, id);
+      if (tvDetailDueDateSelect == null) {
         break missingId;
       }
 
-      id = R.id.tvDetailDueDate;
-      TextView tvDetailDueDate = ViewBindings.findChildViewById(rootView, id);
-      if (tvDetailDueDate == null) {
-        break missingId;
-      }
-
-      id = R.id.tvDetailPriority;
-      TextView tvDetailPriority = ViewBindings.findChildViewById(rootView, id);
-      if (tvDetailPriority == null) {
-        break missingId;
-      }
-
-      id = R.id.tvDetailTitle;
-      TextView tvDetailTitle = ViewBindings.findChildViewById(rootView, id);
-      if (tvDetailTitle == null) {
+      id = R.id.tvDetailHeader;
+      TextView tvDetailHeader = ViewBindings.findChildViewById(rootView, id);
+      if (tvDetailHeader == null) {
         break missingId;
       }
 
       return new DialogTaskDetailBinding((LinearLayout) rootView, btnDeleteTask, btnDetailClose,
-          btnDetailSave, spDetailStatus, tvDetailCategory, tvDetailDesc, tvDetailDueDate,
-          tvDetailPriority, tvDetailTitle);
+          btnDetailSave, etDetailDesc, etDetailTitle, spDetailPriority, spDetailStatus,
+          spDetailType, tvDetailDueDateSelect, tvDetailHeader);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

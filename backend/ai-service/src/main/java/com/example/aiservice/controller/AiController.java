@@ -64,6 +64,7 @@ public class AiController {
 
     private final ActionDetectorService actionDetector;
     private final EquipmentParsingService equipmentParsingService;
+    private final PredictiveMaintenanceService predictiveMaintenanceService;
 
     public AiController(ChatModel chatModel,
             IntentService intentService,
@@ -74,7 +75,8 @@ public class AiController {
 
             VectorStoreService vectorStore,
             ActionDetectorService actionDetector,
-            EquipmentParsingService equipmentParsingService) {
+            EquipmentParsingService equipmentParsingService,
+            PredictiveMaintenanceService predictiveMaintenanceService) {
 
         this.chatModel = chatModel;
         this.intentService = intentService;
@@ -86,6 +88,7 @@ public class AiController {
 
         this.actionDetector = actionDetector;
         this.equipmentParsingService = equipmentParsingService;
+        this.predictiveMaintenanceService = predictiveMaintenanceService;
 
     }
 
@@ -262,6 +265,12 @@ public class AiController {
         
         List<String> completions = equipmentParsingService.autocompleteSpecsWithAI(request.getText());
         return ResponseEntity.ok(completions);
+    }
+
+    @PostMapping("/predict-maintenance")
+    public ResponseEntity<com.example.aiservice.model.PredictiveMaintenanceResponse> predictMaintenance(@RequestBody com.example.aiservice.model.PredictiveMaintenanceRequest request) {
+        log.info("Generating predictive maintenance report for equipment: {}", request.getEquipmentId());
+        return ResponseEntity.ok(predictiveMaintenanceService.predict(request));
     }
 
     @PostMapping("/compare-quotations")

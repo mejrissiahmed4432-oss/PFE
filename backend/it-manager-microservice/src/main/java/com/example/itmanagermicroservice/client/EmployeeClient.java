@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
-@FeignClient(name = "employee-microservice")
+@FeignClient(name = "employee-microservice", fallback = EmployeeClientFallback.class)
 public interface EmployeeClient {
     @GetMapping("/api/employees")
     List<EmployeeDTO> getAllEmployees();

@@ -1,0 +1,60 @@
+<div class="pm-container">
+  <div class="pm-header">
+    <div class="header-title">
+      <h1>AI Predictive Maintenance</h1>
+      <p>Intelligent insights powered by continuous monitoring data</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-refresh" (click)="fetchPredictions()">
+        <span class="icon">↻</span> Refresh
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Analyzing equipment metrics...</p>
+  </div>
+
+  <div *ngIf="!loading && predictions.length === 0" class="empty-state">
+    <div class="icon">✨</div>
+    <h3>No predictions available</h3>
+    <p>The AI is still gathering metrics to generate its first insights.</p>
+  </div>
+
+  <div *ngIf="!loading && predictions.length > 0" class="cards-grid">
+    <div class="pm-card" *ngFor="let pred of predictions" [ngClass]="(pred.riskLevel || 'low').toLowerCase()">
+      <div class="card-header">
+        <div class="machine-info">
+          <h3>{{ pred.equipmentName || 'Unknown Device' }}</h3>
+          <span class="serial">{{ pred.serialNumber }}</span>
+          <span class="dept-badge">{{ pred.department || 'N/A' }}</span>
+        </div>
+        <div class="risk-badge">
+          <span class="risk-text">{{ pred.riskLevel }}</span>
+          <span class="risk-score">{{ pred.riskScore }}/100</span>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <div class="section">
+          <h4><span class="icon">⚠️</span> Predicted Issues</h4>
+          <ul class="issues-list">
+            <li *ngFor="let issue of pred.predictedIssues">{{ issue }}</li>
+          </ul>
+        </div>
+        
+        <div class="section">
+          <h4><span class="icon">💡</span> Suggested Actions</h4>
+          <ul class="actions-list">
+            <li *ngFor="let action of pred.recommendedActions">{{ action }}</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="card-footer">
+        <small>Last analyzed: {{ pred.lastAnalyzedAt | date:'medium' }}</small>
+      </div>
+    </div>
+  </div>
+</div>

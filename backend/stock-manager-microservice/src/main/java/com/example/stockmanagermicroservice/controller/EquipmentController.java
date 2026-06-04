@@ -2,6 +2,7 @@ package com.example.stockmanagermicroservice.controller;
 
 import com.example.stockmanagermicroservice.model.Equipment;
 import com.example.stockmanagermicroservice.service.EquipmentService;
+import com.example.stockmanagermicroservice.config.BlockchainTraceable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,9 +48,10 @@ public class EquipmentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @BlockchainTraceable(action = "Création d'un Équipement")
     @PostMapping
-    public Equipment createEquipment(@RequestBody Equipment equipment) {
-        return equipmentService.createEquipment(equipment);
+    public ResponseEntity<Equipment> createEquipment(@RequestBody Equipment equipment) {
+        return ResponseEntity.ok(equipmentService.createEquipment(equipment));
     }
 
     @PostMapping("/bulk")
@@ -71,6 +73,7 @@ public class EquipmentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @BlockchainTraceable(action = "Mise à jour d'un Équipement")
     @PutMapping("/{id}")
     public ResponseEntity<Equipment> updateEquipment(@PathVariable String id, @RequestBody Equipment equipment) {
         try {
@@ -80,6 +83,7 @@ public class EquipmentController {
         }
     }
 
+    @BlockchainTraceable(action = "Suppression d'un Équipement")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEquipment(@PathVariable String id) {
         equipmentService.deleteEquipment(id);

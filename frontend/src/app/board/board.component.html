@@ -321,6 +321,20 @@
           [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Devices</span>
       </a>
 
+      <!-- Predictive Maintenance -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'TECHNICIAN' || user?.role === 'IT_MANAGER'"
+        [ngClass]="activeTab === 'predictions' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'predictions'"
+        title="Predictive Maintenance">
+        <span *ngIf="activeTab === 'predictions'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v20"></path>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+        <span class="nav-item-label"
+          [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">AI Maintenance</span>
+      </a>
+
       <!-- My Requests (for technicians) -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'TECHNICIAN'"
         [ngClass]="activeTab === 'requests' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'requests'"
@@ -425,6 +439,19 @@
           <path d="M7 20c0-3.3 2.7-6 6-6"></path>
         </svg>
         <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Admin Console</span>
+      </a>
+
+      <!-- Blockchain Audit (Admin only) -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'ADMIN'"
+        [ngClass]="activeTab === 'audit' ? 'nav-item-active' : 'nav-item-default'"
+        (click)="activeTab = 'audit'" title="Blockchain Audit">
+        <span *ngIf="activeTab === 'audit'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Blockchain Audit</span>
       </a>
 
       <!-- Equipment Returns (Stock Manager only) -->
@@ -813,11 +840,17 @@
       <!-- Admin Dashboard Component View (Admin) -->
       <app-admin-dashboard *ngIf="activeTab === 'admin-dashboard'"></app-admin-dashboard>
 
+      <!-- Blockchain Audit Dashboard Component View (Admin) -->
+      <app-audit-dashboard *ngIf="activeTab === 'audit'"></app-audit-dashboard>
+
       <!-- IT Equipment Management Component View (IT Manager) -->
       <app-it-equipment-management *ngIf="activeTab === 'eq-management'" [activeTab]="selectedEqTab"></app-it-equipment-management>
 
       <!-- Equipment Returns Component View (Stock Manager) -->
       <app-equipment-returns *ngIf="activeTab === 'eq-returns'"></app-equipment-returns>
+
+      <!-- AI Predictive Maintenance Component View (Technician / IT Manager) -->
+      <app-predictive-maintenance *ngIf="activeTab === 'predictions'"></app-predictive-maintenance>
     </main>
 
 

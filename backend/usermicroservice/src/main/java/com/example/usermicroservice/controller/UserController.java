@@ -133,7 +133,13 @@ public class UserController {
                             .body(Map.of("message", "Refresh token expired. Please log in again."));
                 }
                 String newAccessToken = jwtUtils.generateToken(rt.getUserEmail());
-                return ResponseEntity.ok(Map.of("token", newAccessToken));
+                // Refresh Token Rotation: create a new one, which automatically deletes the old one in createRefreshToken
+                RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(rt.getUserEmail());
+                
+                return ResponseEntity.ok(Map.of(
+                    "token", newAccessToken,
+                    "refreshToken", newRefreshToken.getToken()
+                ));
             })
             .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Invalid refresh token")));
