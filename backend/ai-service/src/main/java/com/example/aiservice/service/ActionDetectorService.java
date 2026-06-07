@@ -12,6 +12,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ActionDetectorService {
+
+    @Value("${spring.ai.openai.chat.options.model}")
+    private String modelName;
 
     private static final Logger log = LoggerFactory.getLogger(ActionDetectorService.class);
     private final ChatModel chatModel;
@@ -535,7 +539,7 @@ public class ActionDetectorService {
 
         try {
             OpenAiChatOptions options = OpenAiChatOptions.builder()
-                    .model("google/gemini-2.0-flash-001")
+                    .model(modelName)
                     .build();
 
             ChatResponse chatResponse = chatModel.call(new Prompt(systemPrompt + "\n\nUser Message: " + message, options));

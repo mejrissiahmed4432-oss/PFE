@@ -23,6 +23,7 @@ import org.springframework.ai.chat.messages.UserMessage;
 
 import org.springframework.ai.model.Media;
 import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeTypeUtils;
@@ -43,6 +44,9 @@ import java.util.*;
 @RequestMapping("/ai")
 @CrossOrigin(origins = "*")
 public class AiController {
+
+    @Value("${spring.ai.openai.chat.options.model}")
+    private String modelName;
 
     private static final Logger log = LoggerFactory.getLogger(AiController.class);
 
@@ -329,9 +333,9 @@ public class AiController {
                 finalUserMessage = new UserMessage(userPart, List.of(media));
 
                 options = OpenAiChatOptions.builder()
-                        .model("google/gemini-2.0-flash-001")
+                        .model(modelName)
                         .build();
-                log.info("Image detected. Routing to vision model: google/gemini-2.0-flash-001");
+                log.info("Image detected. Routing to vision model: {}", modelName);
             } else {
                 finalUserMessage = new UserMessage(userPart);
             }

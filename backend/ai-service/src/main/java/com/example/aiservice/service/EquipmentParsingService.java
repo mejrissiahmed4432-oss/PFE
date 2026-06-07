@@ -17,12 +17,16 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class EquipmentParsingService {
+
+    @Value("${spring.ai.openai.chat.options.model}")
+    private String modelName;
 
     private static final Logger log = LoggerFactory.getLogger(EquipmentParsingService.class);
 
@@ -189,9 +193,9 @@ public class EquipmentParsingService {
             messages.add(0, new SystemMessage(comparePrompt));
             messages.add(new UserMessage(sb.toString()));
 
-            // Use Gemini 2.0 Flash for multi-modal (PDF) support
+            // Use configured model for multi-modal (PDF) support
             OpenAiChatOptions options = OpenAiChatOptions.builder()
-                    .model("google/gemini-2.0-flash-001")
+                    .model(modelName)
                     .build();
 
             Prompt prompt = new Prompt(messages, options);

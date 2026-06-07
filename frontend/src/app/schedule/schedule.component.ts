@@ -8,6 +8,7 @@ import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from 
 import { Task } from './task.model';
 import { RefreshService } from '../shared/refresh.service';
 import { Subscription } from 'rxjs';
+import { UserService, SystemUser } from '../user-management/user.service';
 
 @Component({
   selector: 'app-schedule',
@@ -46,13 +47,15 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   };
 
   tasks: Task[] = [];
+  usersMap = new Map<string, string>();
   private refreshSubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
     private taskService: TaskService,
     private alertService: AlertService,
-    private refreshService: RefreshService
+    private refreshService: RefreshService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +63,7 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     this.newTask = this.emptyTask();
     this.buildCalendar();
     this.loadTasks();
+    this.loadUsers();
 
     // Listen for global refresh events (e.g., from AI Assistant)
     this.refreshSubscription = this.refreshService.refresh$.subscribe(actionType => {
@@ -91,6 +95,25 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   showToast(message: string, type: 'success' | 'info' | 'error' = 'success') {
     this.toast = { message, type };
     setTimeout(() => this.toast = null, 3500);
+  }
+
+  loadUsers(): void {
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        users.forEach(u => this.usersMap.set(u.id, `${u.firstName} ${u.lastName}`));
+      },
+      error: (err) => console.error('Failed to load users', err)
+    });
+  }
+
+  getAssignerName(task: Task | null): string | null {
+    if (!task) return null;
+    if (!task.assignedByUserId) {
+      if (task.userId === this.currentUser?.id) return null;
+      return 'Unknown';
+    }
+    if (task.assignedByUserId === this.currentUser?.id) return null;
+    return this.usersMap.get(task.assignedByUserId) || 'Loading...';
   }
 
   loadTasks(): void {
@@ -246,6 +269,19 @@ export class ScheduleComponent implements OnInit, OnDestroy {
     // Deep clone so changes don't reflect immediately in list
     this.selectedTask = { ...task };
     this.showDetailPanel = true;
+  }
+
+  isReadOnly(task: Task | null): boolean {
+    if (!task) return false;
+    if (task.status === 'Completed' || task.status === 'History') return true;
+    
+    // Read-only if assigned by someone else (e.g., IT Manager)
+    if (task.assignedByUserId && task.assignedByUserId !== this.currentUser?.id) return true;
+    
+    // Read-only if created by someone else (legacy check)
+    if (task.userId && task.userId !== this.currentUser?.id) return true;
+
+    return false;
   }
 
   onDrop(event: CdkDragDrop<Task[]>): void {

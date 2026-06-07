@@ -47,13 +47,14 @@ import { RefreshService } from '../shared/refresh.service';
 import { ApplicationManagementComponent } from '../application-management/application-management.component';
 import { AuditDashboardComponent } from '../audit/audit-dashboard.component';
 import { PredictiveMaintenanceComponent } from '../predictive-maintenance/predictive-maintenance.component';
+import { TaskManagementComponent } from '../task-management/task-management.component';
 
 @Component({
   selector: 'app-board',
   standalone: true,
 
 
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, UserManagementComponent, ToastComponent, ProcurementComponent, AdminDashboardComponent, TechnicianDepartmentsComponent, TechnicianDevicesComponent, SoftwareDashboardComponent, ItEquipmentManagementComponent, EquipmentReturnsComponent, AuditDashboardComponent, PredictiveMaintenanceComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, UserManagementComponent, ToastComponent, ProcurementComponent, AdminDashboardComponent, TechnicianDepartmentsComponent, TechnicianDevicesComponent, SoftwareDashboardComponent, ItEquipmentManagementComponent, EquipmentReturnsComponent, AuditDashboardComponent, PredictiveMaintenanceComponent, TaskManagementComponent],
 
 
   providers: [MessagingService, TicketService],
@@ -374,6 +375,7 @@ export class BoardComponent implements OnInit {
       case 'manager-requests': return 'Incoming Part Requests';
 
       case 'user-management': return 'User Access Management';
+      case 'task-management': return 'Task Management';
 
       case 'procurement': return 'Procurement & Orders';
 

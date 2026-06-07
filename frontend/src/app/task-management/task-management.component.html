@@ -1,0 +1,593 @@
+<div class="tm-container">
+
+  <!-- ─── Header ──────────────────────────────────────────────────────────── -->
+  <div class="tm-header">
+    <div class="tm-header-left">
+      <div class="tm-title-group">
+        <div class="tm-title-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 11l3 3L22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="tm-title">Task Management</h1>
+          <p class="tm-subtitle">Assign and track tasks for your team</p>
+        </div>
+      </div>
+    </div>
+    <button class="btn-assign-new" (click)="openWizard()" id="assign-new-task-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14"/><path d="M12 5v14"/>
+      </svg>
+      Assign New Task
+    </button>
+  </div>
+
+  <!-- ─── Stats Cards ──────────────────────────────────────────────────────── -->
+  <div class="tm-stats-row" *ngIf="tasks.length > 0">
+    <div class="tm-stat-card">
+      <div class="stat-number">{{ getTaskStats().total }}</div>
+      <div class="stat-label">Total Tasks</div>
+    </div>
+    <div class="tm-stat-card stat-todo">
+      <div class="stat-number">{{ getTaskStats().todo }}</div>
+      <div class="stat-label">To Do</div>
+    </div>
+    <div class="tm-stat-card stat-progress">
+      <div class="stat-number">{{ getTaskStats().inProgress }}</div>
+      <div class="stat-label">In Progress</div>
+    </div>
+    <div class="tm-stat-card stat-done">
+      <div class="stat-number">{{ getTaskStats().done }}</div>
+      <div class="stat-label">Completed</div>
+    </div>
+  </div>
+
+  <!-- ─── Filters ─────────────────────────────────────────────────────────── -->
+  <div class="tm-filters">
+    <div class="tm-search-wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="15" height="15" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input class="tm-search" type="text" placeholder="Search tasks..." [(ngModel)]="searchQuery"
+        (ngModelChange)="applyFilters()" id="task-search-input">
+    </div>
+    <select class="tm-select" [(ngModel)]="statusFilter" (change)="applyFilters()" id="task-status-filter">
+      <option value="all">All Statuses</option>
+      <option value="To Do">To Do</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Done">Done</option>
+    </select>
+    <select class="tm-select" [(ngModel)]="priorityFilter" (change)="applyFilters()" id="task-priority-filter">
+      <option value="all">All Priorities</option>
+      <option value="Low">Low</option>
+      <option value="Medium">Medium</option>
+      <option value="High">High</option>
+    </select>
+  </div>
+
+  <!-- ─── Task List ────────────────────────────────────────────────────────── -->
+  <div class="tm-task-list" *ngIf="filteredTasks.length > 0">
+    <div class="tm-task-card" *ngFor="let task of filteredTasks">
+      <div class="task-card-left">
+        <div class="task-priority-bar" [style.background]="getPriorityColor(task.priority)"></div>
+        <div class="task-card-body">
+          <div class="task-card-top">
+            <h3 class="task-title">{{ task.title }}</h3>
+            <span class="task-status-badge" [ngClass]="getStatusClass(task.status)">{{ task.status === 'History' ? 'ARCHIVED' : task.status }}</span>
+          </div>
+          <p class="task-description">{{ task.description }}</p>
+          <div class="task-meta">
+            <span class="task-meta-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 7H4a2 2 0 0 0-2 2v.5"/><path d="M20 7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9"/>
+                <path d="M12 12v4"/><path d="M8 12v4"/><path d="M16 12v2"/>
+              </svg>
+              {{ task.type || '—' }}
+            </span>
+            <span class="task-meta-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              Due: {{ formatDate(task.dueDate) }}
+            </span>
+            <span class="task-priority-chip" [style.background]="getPriorityColor(task.priority) + '22'"
+              [style.color]="getPriorityColor(task.priority)">
+              {{ task.priority }}
+            </span>
+            <span class="task-meta-item assignees-chip" title="{{ getAssigneeNames(task) }}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              {{ task.assignedUserIds.length || 0 }} assigned
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="task-card-actions">
+        <button class="task-action-btn btn-view" (click)="openViewModal(task)" title="View Details">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          View Details
+        </button>
+       
+        <button class="task-action-btn btn-delete" *ngIf="task.status !== 'History'" (click)="openDeleteModal(task)" title="Delete Task">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/><path d="m19 6-.867 12.142A2 2 0 0 1 16.138 20H7.862a2 2 0 0 1-1.995-1.858L5 6"/>
+            <path d="M10 11v6"/><path d="M14 11v6"/>
+            <path d="M9 6V4h6v2"/>
+          </svg>
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Empty State ──────────────────────────────────────────────────────── -->
+  <div class="tm-empty" *ngIf="filteredTasks.length === 0">
+    <div class="tm-empty-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+      </svg>
+    </div>
+    <h3 class="tm-empty-title">No tasks found</h3>
+    <p class="tm-empty-sub">Click "Assign New Task" to create your first task assignment.</p>
+    <button class="btn-assign-new" (click)="openWizard()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14"/><path d="M12 5v14"/>
+      </svg>
+      Assign New Task
+    </button>
+  </div>
+
+</div>
+
+    <!-- ── View Details Modal (Read-Only Design) ─────────────────────────────── -->
+    <div class="modal-overlay" *ngIf="showViewModal" (click)="closeViewModal()">
+      <div class="wizard-modal" (click)="$event.stopPropagation()" style="max-width: 640px; padding: 0;">
+        
+        <!-- Header -->
+        <div class="view-details-header">
+          <div class="view-details-header-left">
+            <div class="view-details-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="view-details-title">Task Details (Read-Only)</h2>
+              <p class="view-details-sub">Created {{ formatDateTime(selectedTaskForView?.createdAt) }}</p>
+            </div>
+          </div>
+          <button class="view-details-close-btn" (click)="closeViewModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="wizard-body" style="padding-top: 1.5rem;">
+          
+          <!-- Task Title -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">TASK TITLE <span class="required">*</span></label>
+              <input type="text" class="form-input" [value]="selectedTaskForView?.title || ''" disabled>
+            </div>
+          </div>
+
+          <!-- Assigned Users -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">ASSIGNED USERS</label>
+              <input type="text" class="form-input" [value]="getAssigneeNames(selectedTaskForView)" disabled>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">DESCRIPTION</label>
+              <textarea class="form-textarea" rows="3" disabled>{{ selectedTaskForView?.description || '' }}</textarea>
+            </div>
+          </div>
+
+          <!-- Type / Priority / Status -->
+          <div class="form-row three-col">
+            <div class="form-group">
+              <label class="form-label">TYPE</label>
+              <input type="text" class="form-input" [value]="selectedTaskForView?.type || ''" disabled>
+            </div>
+            <div class="form-group">
+              <label class="form-label">PRIORITY</label>
+              <input type="text" class="form-input" [value]="selectedTaskForView?.priority || ''" disabled>
+            </div>
+            <div class="form-group">
+              <label class="form-label">STATUS</label>
+              <input type="text" class="form-input" [value]="selectedTaskForView?.status || ''" disabled>
+            </div>
+          </div>
+
+          <!-- Due Date / Original Date -->
+          <div class="form-row" [ngClass]="isTaskPastDue(selectedTaskForView) ? 'two-col' : ''">
+            <div class="form-group" *ngIf="isTaskPastDue(selectedTaskForView)">
+              <label class="form-label">ORIGINAL DATE</label>
+              <input type="text" class="form-input" [value]="formatDate(selectedTaskForView?.originalDueDate || selectedTaskForView?.dueDate || '')" disabled>
+            </div>
+            <div class="form-group">
+              <label class="form-label">DUE DATE <span class="required">*</span></label>
+              <input type="text" class="form-input" [value]="formatDate(selectedTaskForView?.dueDate || '')" disabled>
+            </div>
+          </div>
+
+          <!-- Timestamps Bar -->
+          <div class="timestamps-bar">
+            <div class="ts-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="ts-label">CREATED:</span>
+              <span class="ts-value">{{ formatDateTime(selectedTaskForView?.createdAt) }}</span>
+            </div>
+            <div class="ts-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              <span class="ts-label">UPDATED:</span>
+              <span class="ts-value">{{ formatDateTime(selectedTaskForView?.updatedAt) }}</span>
+            </div>
+          </div>
+
+        </div>
+        
+        <!-- Footer for Edit Action -->
+        <div class="wizard-footer" style="padding: 1rem 1.5rem; justify-content: flex-end; gap: 1rem; border-top: 1px solid #e2e8f0;">
+          <button class="btn-back" (click)="closeViewModal()">Close</button>
+          <button class="btn-assign" *ngIf="selectedTaskForView?.status !== 'History'" (click)="editTask(selectedTaskForView)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+            </svg>
+            Edit Task
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════ -->
+    <!-- ─── Assign Task Wizard Modal ─────────────────────────────────────────── -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showWizard" (click)="closeWizard()">
+  <div class="wizard-modal" (click)="$event.stopPropagation()">
+
+    <!-- ── CUSTOM ALERT OVERLAY ──────────────────── -->
+    <div class="custom-alert-overlay" *ngIf="customAlert" (click)="$event.stopPropagation()">
+      <!-- MODAL ALERT (USED FOR BOTH ERROR AND WARNING) -->
+      <div class="custom-alert-box" (click)="$event.stopPropagation()">
+        <div class="alert-icon-circle">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </div>
+        <h3 class="alert-title">{{ customAlert.title }}</h3>
+        <p class="alert-message">{{ customAlert.message }}</p>
+
+        <!-- If no onConfirm exists (e.g. Validation Error) -->
+        <div class="alert-actions" *ngIf="!customAlert.onConfirm">
+          <button class="btn-alert-confirm" (click)="closeAlert($event)">OK</button>
+        </div>
+
+        <!-- If onConfirm exists (e.g. Inactive User Warning) -->
+        <div class="alert-actions row-actions" *ngIf="customAlert.onConfirm">
+          <button class="btn-alert-cancel" (click)="customAlert.onCancel ? customAlert.onCancel() : closeAlert($event)">Cancel</button>
+          <button class="btn-alert-confirm" (click)="customAlert.onConfirm()">Yes, include</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wizard Header -->
+    <div class="wizard-header">
+      <div class="wizard-header-info">
+        <h2 class="wizard-title">{{ isEditing ? 'Edit Task' : 'Assign New Task' }}</h2>
+        <p class="wizard-sub">Step {{ wizardStep === 'task-info' ? '1' : '2' }} of 2 —
+          {{ wizardStep === 'task-info' ? 'Task Information' : 'Select Users' }}</p>
+      </div>
+      <button class="wizard-close-btn" (click)="closeWizard()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="wizard-steps">
+      <div class="wizard-step" [class.active]="wizardStep === 'task-info'" [class.completed]="wizardStep === 'select-users'">
+        <div class="step-circle">
+          <svg *ngIf="wizardStep === 'select-users'" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+            stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          <span *ngIf="wizardStep === 'task-info'">1</span>
+        </div>
+        <span class="step-label">Task Info</span>
+      </div>
+      <div class="wizard-step-line" [class.active]="wizardStep === 'select-users'"></div>
+      <div class="wizard-step" [class.active]="wizardStep === 'select-users'">
+        <div class="step-circle">2</div>
+        <span class="step-label">Select Users</span>
+      </div>
+    </div>
+
+    <!-- ─── Step 1: Task Information ────────────────────────────────────── -->
+    <div class="wizard-body" *ngIf="wizardStep === 'task-info'">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">
+            TASK TITLE <span class="required">*</span>
+          </label>
+          <input type="text" class="form-input" [(ngModel)]="taskForm.title" placeholder="e.g. Replace keyboard on laptop-4"
+            id="task-title-input" [class.input-error]="!taskForm.title.trim()">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">DESCRIPTION</label>
+          <textarea class="form-textarea" [(ngModel)]="taskForm.description" rows="3"
+            placeholder="Add task details..." id="task-description-input"></textarea>
+        </div>
+      </div>
+
+      <div class="form-row three-col">
+        <div class="form-group">
+          <label class="form-label">TYPE</label>
+          <select class="form-select" [(ngModel)]="taskForm.type" id="task-type-select">
+            <option *ngFor="let t of TASK_TYPES" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">PRIORITY</label>
+          <select class="form-select" [(ngModel)]="taskForm.priority" id="task-priority-select">
+            <option *ngFor="let p of PRIORITIES" [value]="p.value">{{ p.label }}</option>
+          </select>
+        </div>
+        <div class="form-group" *ngIf="isEditing">
+          <label class="form-label">STATUS</label>
+          <select class="form-select" [(ngModel)]="taskForm.status" id="task-status-select">
+            <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+        <div class="form-group" *ngIf="!isEditing">
+          <label class="form-label">STATUS</label>
+          <input type="text" class="form-input" disabled value="Pending" style="background: #e2e8f0;">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">DUE DATE <span class="required">*</span></label>
+          <input type="date" class="form-input" [(ngModel)]="taskForm.dueDate" id="task-due-date-input"
+            [class.input-error]="!taskForm.dueDate">
+        </div>
+      </div>
+
+      <!-- Validation hint -->
+      <p class="validation-hint" *ngIf="!isStep1Valid()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+        </svg>
+        Please fill in all required fields to continue.
+      </p>
+    </div>
+
+    <!-- ─── Step 2: Select Users ─────────────────────────────────────────── -->
+    <div class="wizard-body" *ngIf="wizardStep === 'select-users'">
+
+
+      <!-- Selected Count -->
+      <div class="selected-count" *ngIf="selectedUserIds.size > 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"/>
+        </svg>
+        {{ selectedUserIds.size }} user(s) selected
+      </div>
+
+      <!-- User Search -->
+      <div class="user-search-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="15" height="15" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" class="form-input" placeholder="Search users by name, email or role…"
+          [(ngModel)]="userSearchQuery" id="user-search-input">
+      </div>
+
+      <!-- User Cards -->
+      <div class="user-select-list">
+        <div class="user-select-card" *ngFor="let user of filteredUsers"
+          [class.selected]="isUserSelected(user.id)"
+          [class.inactive-user]="user.status === 'INACTIVE'"
+          (click)="toggleUserSelection(user)">
+          <div class="user-select-avatar">
+            {{ (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase() }}
+          </div>
+          <div class="user-select-info">
+            <div class="user-select-name">{{ user.firstName }} {{ user.lastName }}</div>
+            <div class="user-select-meta">
+              <span class="user-role-chip">{{ user.role }}</span>
+              <span class="user-status-dot" [ngClass]="getUserStatusClass(user.status)">
+                {{ user.status }}
+              </span>
+            </div>
+            <div class="user-select-email">{{ user.email }}</div>
+          </div>
+          <div class="user-select-check" [class.visible]="isUserSelected(user.id)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5"/>
+            </svg>
+          </div>
+        </div>
+        <div class="user-list-empty" *ngIf="filteredUsers.length === 0">
+          No users match your search.
+        </div>
+      </div>
+
+      <!-- Required hint -->
+      <p class="validation-hint" *ngIf="selectedUserIds.size === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+        </svg>
+        Select at least one user to assign the task.
+      </p>
+    </div>
+
+    <!-- Wizard Footer -->
+    <div class="wizard-footer">
+      <button class="btn-back" (click)="wizardStep === 'task-info' ? closeWizard() : (wizardStep = 'task-info')"
+        id="wizard-back-btn">
+        {{ wizardStep === 'task-info' ? 'Cancel' : '← Back' }}
+      </button>
+
+      <button class="btn-next" *ngIf="wizardStep === 'task-info'"
+        [disabled]="!isStep1Valid()" (click)="goToStep2()" id="wizard-next-btn">
+        Next →
+      </button>
+
+      <button class="btn-assign" *ngIf="wizardStep === 'select-users'"
+        [disabled]="selectedUserIds.size === 0 || isSubmitting"
+        (click)="assignTask()" id="wizard-assign-btn">
+        <svg *ngIf="!isSubmitting" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"/>
+        </svg>
+        <span *ngIf="isSubmitting" class="spinner"></span>
+        {{ isSubmitting ? (isEditing ? 'Saving…' : 'Assigning…') : (isEditing ? 'Save Changes' : 'Assign Task') }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Status Update Modal ──────────────────────────────────────────────── -->
+<div class="modal-overlay" *ngIf="showStatusModal" (click)="closeStatusModal()">
+  <div class="small-modal" (click)="$event.stopPropagation()">
+    <div class="small-modal-header">
+      <h3>Update Task Status</h3>
+      <button class="wizard-close-btn" (click)="closeStatusModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="small-modal-body">
+      <p class="small-modal-task-name">{{ taskToUpdateStatus?.title }}</p>
+      <div class="status-options">
+        <button class="status-option" *ngFor="let s of STATUSES"
+          [class.active]="newStatus === s" (click)="newStatus = s"
+          [ngClass]="getStatusClass(s)">
+          {{ s }}
+        </button>
+      </div>
+    </div>
+    <div class="small-modal-footer">
+      <button class="btn-back" (click)="closeStatusModal()">Cancel</button>
+      <button class="btn-assign" (click)="saveStatus()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Delete Confirmation Modal ────────────────────────────────────────── -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+
+    <!-- Close Button -->
+    <button class="delete-modal-close" (click)="closeDeleteModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+      </svg>
+    </button>
+
+    <!-- Icon -->
+    <div class="delete-modal-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="m19 6-.867 12.142A2 2 0 0 1 16.138 20H7.862a2 2 0 0 1-1.995-1.858L5 6"/>
+        <path d="M10 11v6"/><path d="M14 11v6"/>
+        <path d="M9 6V4h6v2"/>
+      </svg>
+    </div>
+
+    <!-- Content -->
+    <div class="delete-modal-content">
+      <h2 class="delete-modal-title">Delete Task</h2>
+      <p class="delete-modal-subtitle">This action cannot be undone</p>
+
+      <div class="delete-task-name-box">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M9 9h6M9 12h6M9 15h4"/>
+        </svg>
+        <span>{{ taskToDelete?.title }}</span>
+      </div>
+
+      <p class="delete-modal-notice">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        All assigned users will be notified of the cancellation.
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="delete-modal-actions">
+      <button class="delete-btn-cancel" (click)="closeDeleteModal()">Cancel</button>
+      <button class="delete-btn-confirm" (click)="confirmDelete()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="m19 6-.867 12.142A2 2 0 0 1 16.138 20H7.862a2 2 0 0 1-1.995-1.858L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/>
+        </svg>
+        Delete Task
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── Toast ────────────────────────────────────────────────────────────── -->
+<div class="tm-toast" *ngIf="toast" [class.toast-success]="toast.type === 'success'"
+  [class.toast-error]="toast.type === 'error'">
+  <svg *ngIf="toast.type === 'success'" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+    stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+  <svg *ngIf="toast.type === 'error'" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+    stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6"/><path d="M9 9l6 6"/></svg>
+  {{ toast.message }}
+</div>

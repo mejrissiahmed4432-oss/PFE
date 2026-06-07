@@ -58,6 +58,14 @@ public class AiPredictionJobService {
 
                             Map<String, Object> response = aiClient.predictMaintenance(request);
 
+                            // Add a 3-second delay between AI service calls to prevent OpenRouter rate
+                            // limits (429)
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException ie) {
+                                Thread.currentThread().interrupt();
+                            }
+
                             EquipmentPrediction prediction = predictionRepository.findByEquipmentId(equipment.getId())
                                     .orElse(new EquipmentPrediction());
 

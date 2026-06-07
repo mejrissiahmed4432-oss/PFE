@@ -12,4 +12,7 @@ public interface TaskRepository extends MongoRepository<Task, String> {
     List<Task> findByUserId(String userId);
     long countByUserIdAndStatusIn(String userId, List<String> statuses);
     long countByAssignedToAndStatusIn(String assignedTo, List<String> statuses);
+    // Multi-user assignment queries
+    List<Task> findByAssignedUserIdsContaining(String userId);
+    List<Task> findByAssignedByUserId(String assignedByUserId);
 }

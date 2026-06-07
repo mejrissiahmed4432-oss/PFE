@@ -389,6 +389,19 @@
         <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">User Access</span>
       </a>
 
+      <!-- Task Management (IT Manager) -->
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'IT_MANAGER'"
+        [ngClass]="activeTab === 'task-management' ? 'nav-item-active' : 'nav-item-default'"
+        (click)="activeTab = 'task-management'" title="Task Management">
+        <span *ngIf="activeTab === 'task-management'" class="nav-item-indicator"></span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 11l3 3L22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Task Management</span>
+      </a>
+
       <!-- Equipment Management (IT Manager only) -->
       <div *ngIf="user?.role === 'IT_MANAGER'">
         <a href="javascript:void(0)" class="nav-item"
@@ -828,8 +841,9 @@
       <!-- Support Tickets Component View -->
       <app-tickets *ngIf="activeTab === 'tickets'"></app-tickets>
 
-      <!-- User Management Component View (IT Manager) -->
+      <!-- IT Manager Only / Shared -->
       <app-user-management *ngIf="activeTab === 'user-management'"></app-user-management>
+      <app-task-management *ngIf="activeTab === 'task-management'" [currentUserId]="user?.id" [currentUserRole]="user?.role"></app-task-management>
 
       <!-- Technician Departments Component View -->
       <app-technician-departments *ngIf="activeTab === 'departments'" (viewDevices)="onViewDevices($event)"></app-technician-departments>

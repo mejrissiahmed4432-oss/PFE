@@ -1,5 +1,6 @@
 package com.example.usermicroservice.controller;
 
+import com.example.usermicroservice.dto.TaskAssignRequest;
 import com.example.usermicroservice.model.Task;
 import com.example.usermicroservice.service.TaskService;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +29,40 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getTasksByUser(userId));
     }
 
+    /**
+     * Get tasks where a user is in the assignedUserIds list (used by assigned user's dashboard).
+     */
+    @GetMapping("/assigned-to/{userId}")
+    public ResponseEntity<List<Task>> getTasksAssignedToUser(@PathVariable String userId) {
+        return ResponseEntity.ok(taskService.getTasksAssignedToUser(userId));
+    }
+
+    /**
+     * Get all tasks assigned by a specific IT Manager.
+     */
+    @GetMapping("/assigned-by/{managerId}")
+    public ResponseEntity<List<Task>> getTasksAssignedByManager(@PathVariable String managerId) {
+        return ResponseEntity.ok(taskService.getTasksAssignedByManager(managerId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable String id) {
         return taskService.getTaskById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * IT Manager Task Assignment: creates a task and assigns it to multiple users.
+     * Status is initialized as "Pending". Notifications are sent to all assignees and the manager.
+     */
+    @PostMapping("/assign")
+    public ResponseEntity<Task> assignTask(@RequestBody TaskAssignRequest request) {
+        try {
+            return ResponseEntity.ok(taskService.assignTask(request));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping
@@ -64,3 +94,4 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 }
+

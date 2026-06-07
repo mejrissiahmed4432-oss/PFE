@@ -9,6 +9,8 @@ export interface Task {
   assignedTo: string;
 
   userId?: string;
+  assignedByUserId?: string;
+  assignedUserIds?: string[];
 
   createdAt: string;
   updatedAt?: string;

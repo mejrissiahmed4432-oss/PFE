@@ -1,6 +1,7 @@
 package com.example.itmanagermicroservice.service;
 
 import com.example.itmanagermicroservice.client.EmployeeClient;
+import com.example.itmanagermicroservice.client.TaskClient;
 import com.example.itmanagermicroservice.client.UserClient;
 import com.example.itmanagermicroservice.dto.EmployeeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,11 @@ public class ItManagerService {
 
     @Autowired
     private UserClient userClient;
+
+    @Autowired
+    private TaskClient taskClient;
+
+    // ── User Management ───────────────────────────────────────────────────────
 
     public List<EmployeeDTO> getAllEmployees() {
         return employeeClient.getAllEmployees();
@@ -45,4 +51,35 @@ public class ItManagerService {
     public void deleteUser(String id) {
         userClient.deleteUser(id);
     }
+
+    // ── Task Management ───────────────────────────────────────────────────────
+
+    public Map<String, Object> assignTask(Map<String, Object> request) {
+        return taskClient.assignTask(request);
+    }
+
+    public List<Map<String, Object>> getAllTasks() {
+        return taskClient.getAllTasks();
+    }
+
+    public List<Map<String, Object>> getTasksAssignedByManager(String managerId) {
+        return taskClient.getTasksAssignedByManager(managerId);
+    }
+
+    public List<Map<String, Object>> getTasksAssignedToUser(String userId) {
+        return taskClient.getTasksAssignedToUser(userId);
+    }
+
+    public Map<String, Object> updateTask(String id, Map<String, Object> task) {
+        return taskClient.updateTask(id, task);
+    }
+
+    public Map<String, Object> updateTaskStatus(String id, String status) {
+        return taskClient.updateTaskStatus(id, status);
+    }
+
+    public void deleteTask(String id) {
+        taskClient.deleteTask(id);
+    }
 }
+
