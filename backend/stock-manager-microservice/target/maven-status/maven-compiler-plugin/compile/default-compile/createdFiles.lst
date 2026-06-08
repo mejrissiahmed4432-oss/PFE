@@ -37,6 +37,7 @@ com\example\stockmanagermicroservice\service\DashboardService.class
 com\example\stockmanagermicroservice\procurement\controller\SupplierResponseController.class
 com\example\stockmanagermicroservice\model\Software.class
 com\example\stockmanagermicroservice\model\LicenseModel.class
+com\example\stockmanagermicroservice\controller\EquipmentController$InstallPartRequest.class
 com\example\stockmanagermicroservice\procurement\model\EquipmentRequest.class
 com\example\stockmanagermicroservice\procurement\repository\SupplierResponseRepository.class
 com\example\stockmanagermicroservice\controller\EquipmentController$PartAllocateRequest.class
