@@ -372,6 +372,10 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   }
 
   onQuantityChange(): void {
+    if (this.quantity !== undefined && this.quantity !== null && String(this.quantity) !== '') {
+      const cleaned = String(this.quantity).replace(/\D/g, '');
+      this.quantity = cleaned ? Number(cleaned) : 1;
+    }
     this.rebuildUnits();
     this.validateStockCapacity();
   }

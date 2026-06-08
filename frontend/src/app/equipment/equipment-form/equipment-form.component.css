@@ -1951,6 +1951,52 @@
   color: #94a3b8;
 }
 
+.part-specs-cell {
+  max-width: 220px;
+}
+
+.part-spec-chip {
+  display: inline-block;
+  margin: 2px 4px 2px 0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.part-spec-chip strong {
+  color: #475569;
+  font-weight: 600;
+}
+
+.part-actions-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.btn-view-part {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 8px;
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.btn-view-part:hover {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
 .btn-uninstall-part {
   display: inline-flex;
   align-items: center;

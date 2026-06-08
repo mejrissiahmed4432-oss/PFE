@@ -71,16 +71,19 @@ export class BoardComponent implements OnInit {
 
   /** Called when 'View All Devices' is clicked on a dept card */
   onViewDevices(deptName: string): void {
-    this.devicesDeptFilter = deptName;
-    this.activeTab = 'devices';
+    this.navigateToTab('devices', () => {
+      this.devicesDeptFilter = deptName;
+    });
   }
 
   /** Open devices with no filter (from sidebar) */
   openAllDevices(): void {
-    this.devicesDeptFilter = null;
-    this.activeTab = 'devices';
+    this.navigateToTab('devices', () => {
+      this.devicesDeptFilter = null;
+    });
   }
   activeTab: string = 'dashboard'; // Defaulting to dashboard for view
+  navResetKey = 0;
   selectedNatureFilter: 'Asset' | 'Consumable' | '' = '';
   selectedResourceFilter: string = '';
   selectedEqTab: 'available' | 'in-use' | 'history' = 'available';
@@ -394,32 +397,43 @@ export class BoardComponent implements OnInit {
     }
   }
 
+  navigateToTab(tab: string, setup?: () => void): void {
+    if (this.activeTab === tab) {
+      this.navResetKey++;
+    }
+    setup?.();
+    this.activeTab = tab;
+  }
+
   clearFiltersAndGoToEquipment(nature: 'Asset' | 'Consumable' | '' = ''): void {
     this.equipmentService.setShelfFilter(null, null);
-    this.selectedNatureFilter = nature;
-    this.activeTab = 'equipment';
+    this.navigateToTab('equipment', () => {
+      this.selectedNatureFilter = nature;
+    });
   }
 
   setEqTab(tab: 'available' | 'in-use' | 'history'): void {
-    this.selectedEqTab = tab;
-    this.activeTab = 'eq-management';
+    this.navigateToTab('eq-management', () => {
+      this.selectedEqTab = tab;
+    });
   }
 
   setResourceFilter(filter: string): void {
-    if (filter === '') {
-      if (this.user?.role === 'IT_MANAGER') {
-        this.selectedResourceFilter = 'Software';
+    this.navigateToTab('parts', () => {
+      if (filter === '') {
+        if (this.user?.role === 'IT_MANAGER') {
+          this.selectedResourceFilter = 'Software';
+        } else {
+          this.selectedResourceFilter = 'Parts';
+        }
       } else {
-        this.selectedResourceFilter = 'Parts';
+        this.selectedResourceFilter = filter;
       }
-    } else {
-      this.selectedResourceFilter = filter;
-    }
-    this.activeTab = 'parts';
+    });
   }
 
   openMessages(): void {
-    this.activeTab = 'messages';
+    this.navigateToTab('messages');
   }
 
   private loadTicketCount() {

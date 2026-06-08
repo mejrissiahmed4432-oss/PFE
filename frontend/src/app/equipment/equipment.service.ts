@@ -94,4 +94,29 @@ export class EquipmentService {
   returnPart(id: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${id}/return`, {});
   }
+
+  returnPartToTechnician(
+    partId: string,
+    technicianId: string,
+    technicianName?: string
+  ): Observable<Equipment> {
+    return this.http.post<Equipment>(`${this.apiUrl}/${partId}/return-to-technician`, {
+      technicianId,
+      technicianName: technicianName || 'Technician'
+    });
+  }
+
+  installPartFromMaintenance(
+    partId: string,
+    parentId: string,
+    payload: {
+      replacesSpecKey?: string;
+      actionType?: string;
+      specification?: string;
+      brand?: string;
+      actor?: string;
+    }
+  ): Observable<Equipment> {
+    return this.http.post<Equipment>(`${this.apiUrl}/${partId}/install-in/${parentId}`, payload);
+  }
 }

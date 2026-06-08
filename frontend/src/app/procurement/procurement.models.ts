@@ -111,6 +111,7 @@ export interface PurchaseOrder {
   receivedAt?: string;
   receiptNotes?: string;
   supplierRating?: number;
+  stockPosted?: boolean;
 }
 
 // ─── UI Helpers ───────────────────────────────────────────────────────────────

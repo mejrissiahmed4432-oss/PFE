@@ -41,6 +41,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   allShelves: Shelf[] = [];
   categories: EquipmentCategory[] = [];
   currentUserName: string = '';
+  currentUserRole: string = '';
   activeTab: string = 'overview';
   isSNAvailable: boolean = true;
   isCheckingSN: boolean = false;
@@ -80,6 +81,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const userData = this.authService.getCurrentUser();
+    this.currentUserRole = userData?.role || '';
     this.currentUserName = userData?.firstName
       ? `${userData.firstName} ${userData.lastName || ''}`.trim()
       : (userData?.email || 'Unknown');
@@ -775,9 +777,18 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   loadInstalledParts(): void {
     if (!this.equipment || !this.equipment.id) return;
+    const parentId = this.equipment.id;
+    const parentName = this.equipment.equipmentName;
     this.equipmentService.getAllEquipment().subscribe({
       next: (allEq) => {
-        this.installedParts = allEq.filter(e => e.assignedToEquipmentId === this.equipment?.id);
+        this.installedParts = allEq.filter(e => {
+          const status = (e.status || '').toLowerCase();
+          const isInstalled = status === 'installed' || status === 'assigned';
+          const matchesParent =
+            e.assignedToEquipmentId === parentId ||
+            (!!parentName && e.assignedToEquipmentName === parentName);
+          return isInstalled && matchesParent;
+        });
       },
       error: (err) => console.error('Error loading installed parts', err)
     });
@@ -789,18 +800,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
       next: () => {
         this.toastService.success(`Part ${part.equipmentName} uninstalled and returned to stock.`);
         this.loadInstalledParts();
-        if (this.equipment && this.equipment.id) {
-          this.equipmentService.getEquipmentById(this.equipment.id).subscribe(fullEq => {
-            this.equipment = fullEq;
-            this.formData = { ...fullEq };
-            if (this.formData.purchaseDate) {
-              this.formData.purchaseDate = this.formatDate(this.formData.purchaseDate);
-            }
-            if (this.formData.warrantyExpiration) {
-              this.formData.warrantyExpiration = this.formatDate(this.formData.warrantyExpiration);
-            }
-          });
-        }
+        this.refreshParentEquipment();
       },
       error: (err: any) => {
         console.error('Error uninstalling part', err);
@@ -937,7 +937,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     const part = this.availablePartsForInstall.find(p => p.id === partId);
     if (part) {
       this.selectedPartToInstall = part;
-      this.installSpecKey = part.type ? part.type.toUpperCase() : '';
+      this.installSpecKey = this.resolveInstallSpecKey(part);
     } else {
       this.selectedPartToInstall = null;
       this.installSpecKey = '';
@@ -948,77 +948,76 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     this.selectedPartToInstall = part;
     if (part) {
       this.selectedPartId = part.id || '';
-      this.installSpecKey = part.type ? part.type.toUpperCase() : '';
+      this.installSpecKey = this.resolveInstallSpecKey(part);
     } else {
       this.selectedPartId = '';
       this.installSpecKey = '';
     }
   }
 
+  resolveInstallSpecKey(part: Equipment): string {
+    const type = (part.type || '').toLowerCase().trim();
+    const parentSpecs = this.equipment?.specifications || {};
+    const existingKey = Object.keys(parentSpecs).find(k => k.toLowerCase().trim() === type);
+    return existingKey || part.type || 'Part';
+  }
+
+  formatPartSpecifications(part: Equipment): string {
+    if (!part.specifications || Object.keys(part.specifications).length === 0) {
+      return '—';
+    }
+    return Object.entries(part.specifications)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(', ');
+  }
+
+  getPartSpecificationEntries(part: Equipment): { key: string; value: string }[] {
+    if (!part.specifications) return [];
+    return Object.entries(part.specifications).map(([key, value]) => ({ key, value }));
+  }
+
+  refreshParentEquipment(): void {
+    if (!this.equipment?.id) return;
+    this.equipmentService.getEquipmentById(this.equipment.id).subscribe({
+      next: (fullEq) => {
+        this.equipment = fullEq;
+        this.formData = { ...fullEq };
+        if (this.formData.purchaseDate) {
+          this.formData.purchaseDate = this.formatDate(this.formData.purchaseDate);
+        }
+        if (this.formData.warrantyExpiration) {
+          this.formData.warrantyExpiration = this.formatDate(this.formData.warrantyExpiration);
+        }
+      },
+      error: (err) => console.error('Error refreshing equipment', err)
+    });
+  }
+
   confirmInstallPart(): void {
     if (!this.selectedPartToInstall || !this.selectedPartToInstall.id || !this.equipment || !this.equipment.id) return;
-    
+
     const part = this.selectedPartToInstall;
     const parent = this.equipment;
+    const specKey = (this.installSpecKey || this.resolveInstallSpecKey(part)).trim();
+    const specification = this.formatPartSpecifications(part);
+    const actor = this.currentUserName || 'Stock Manager';
 
-    // 1. Update the part status and association
-    part.status = 'Installed';
-    part.assignedToEquipmentId = parent.id;
-    part.assignedToEquipmentName = parent.equipmentName;
-    part.shelfId = '';
-    if (!part.lifecycle) part.lifecycle = [];
-    part.lifecycle.push({
-      status: 'Installed',
-      timestamp: new Date().toISOString(),
-      description: `Installed inside equipment ${parent.equipmentName} (${parent.id})`,
-      actor: this.currentUserName || 'Stock Manager'
-    });
-
-    // 2. Add to parent specifications and parent lifecycle if a spec key is provided
-    if (!parent.lifecycle) parent.lifecycle = [];
-    parent.lifecycle.push({
-      status: 'Component Installed',
-      timestamp: new Date().toISOString(),
-      description: `Installed component: ${part.equipmentName} (S/N: ${part.serialNumber || 'N/A'})`,
-      actor: this.currentUserName || 'Stock Manager'
-    });
-
-    if (this.installSpecKey) {
-      if (!parent.specifications) parent.specifications = {};
-      const specValue = `${part.brand} ${part.model || ''} (S/N: ${part.serialNumber || 'N/A'})`.trim();
-      parent.specifications[this.installSpecKey] = specValue;
-    }
-
-    // 3. Save part and parent
-    this.equipmentService.updateEquipment(part.id!, part).subscribe({
+    this.equipmentService.installPartFromMaintenance(part.id!, parent.id!, {
+      replacesSpecKey: specKey,
+      actionType: 'Install',
+      specification: specification !== '—' ? specification : undefined,
+      brand: part.brand,
+      actor
+    }).subscribe({
       next: () => {
-        this.equipmentService.updateEquipment(parent.id!, parent).subscribe({
-          next: (updatedParent) => {
-            this.toastService.success(`Part ${part.equipmentName} successfully installed inside ${parent.equipmentName}.`);
-            this.showInstallModal = false;
-            
-            // Refresh parent data and installed parts list!
-            this.equipment = updatedParent;
-            this.formData = { ...updatedParent };
-            if (this.formData.purchaseDate) {
-              this.formData.purchaseDate = this.formatDate(this.formData.purchaseDate);
-            }
-            if (this.formData.warrantyExpiration) {
-              this.formData.warrantyExpiration = this.formatDate(this.formData.warrantyExpiration);
-            }
-            this.loadInstalledParts();
-          },
-          error: (err) => {
-            console.error('Error updating parent specifications', err);
-            this.toastService.error('Part was assigned, but failed to update parent specifications.');
-            this.showInstallModal = false;
-            this.loadInstalledParts();
-          }
-        });
+        this.toastService.success(`Part ${part.equipmentName} successfully installed inside ${parent.equipmentName}.`);
+        this.showInstallModal = false;
+        this.refreshParentEquipment();
+        this.loadInstalledParts();
       },
       error: (err) => {
         console.error('Error installing part', err);
-        this.toastService.error(`Failed to install part: ${err.error?.message || err.message}`);
+        this.toastService.error(`Failed to install part: ${err.error?.message || err.message || 'Unknown error'}`);
       }
     });
   }

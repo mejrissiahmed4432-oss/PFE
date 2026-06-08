@@ -50,13 +50,22 @@ public class PartRequestController {
         service.consumeParts(requesterId, partsToConsume);
     }
 
+    @PostMapping("/restore-parts/{requesterId}")
+    public void restoreParts(@PathVariable String requesterId, @RequestBody List<PartConsumeRequest> partsToRestore) {
+        service.restoreParts(requesterId, partsToRestore);
+    }
+
     public static class PartConsumeRequest {
         public String name;
         public String type;
         public String specification;
         public int qty;
+        public String equipmentId;
+        public String brand;
         public String assignedToEquipmentName;
         public String assignedToEquipmentId;
+        public String replacesSpecKey;
+        public String actionType;
     }
 
     // @PostMapping("/cleanup-requests")

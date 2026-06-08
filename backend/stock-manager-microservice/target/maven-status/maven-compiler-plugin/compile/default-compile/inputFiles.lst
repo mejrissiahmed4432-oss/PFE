@@ -1,112 +1,112 @@
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\SupplierResponseRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\SupplierController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\CatalogItemController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\SupplierResponseService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\ResourceRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\CatalogItemService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Department.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\RFQService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\DashboardStats.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\LicensePool.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\OperatingSystemController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\EquipmentSoftware.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\SoftwareAssignmentRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\CatalogItemRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\DashboardController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\PredictionController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\EquipmentPrediction.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\config\WebSocketConfig.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\PurchaseOrderRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\ProcessInfoDTO.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\OperatingSystemService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\ShelfRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\EquipmentController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Software.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\EquipmentSpecificationRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\MachineRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\client\AiClient.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\SupplierService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentMetricsSnapshotRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\EquipmentRequest.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\MonitoringController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\client\AuditClient.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\OperatingSystemDTO.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\config\SecurityConfig.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\GlobalExceptionHandler.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentSoftwareRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Shelf.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\RenewalType.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\ActivationMethod.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\EquipmentSpecificationService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\CategoryType.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentPredictionRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\OperatingSystemRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\EquipmentSpecificationController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\InstallOSRequest.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\config\BlockchainTraceable.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\EquipmentCategory.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\PurchaseOrderService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\client\UserClient.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentCategoryRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\SoftwareAssignment.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Equipment.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\SoftwareService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\PurchaseOrderController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\LaptopMonitoringService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\SupplierResponseStatus.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\LifecycleEntry.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\CatalogItem.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\SoftwareRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\SoftwareController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\LicenseModel.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\EquipmentCategoryController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\SoftwareAssignmentDTO.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\RFQController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\PdfGenerationService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\SupplierRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\EquipmentRequestService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\ShelfService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Machine.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\seeder\CatalogSeeder.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Resource.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\ShelfController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\RFQRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\AssignedToType.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\PurchaseOrder.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\DepartmentRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\EquipmentCategoryService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\NotificationService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\LaptopStatusDTO.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\EquipmentRequestRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\AssignmentService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\DeptPcSummaryDTO.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\config\BlockchainAuditAspect.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\EmailService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\EquipmentRequestItem.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\client\UserClientFallback.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Supplier.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\LicensePoolRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\RFQToken.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\DashboardService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\EquipmentRequestController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\RFQ.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\AssignmentStatus.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\AiPredictionJobService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\MonitoringBroadcastService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\SupplierResponse.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\RequestStatus.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\StockManagerMicroserviceApplication.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\OperatingSystem.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\LicensePoolService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\EmailParsingService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\EquipmentMetricsSnapshot.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\EquipmentService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\seeder\DatabaseSeeder.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\LicensePoolDTO.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\SupplierResponseController.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\EquipmentSpecification.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\AlertService.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\SoftwareDTO.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\RFQTokenRepository.java
-C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\PublicSupplierController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\SoftwareRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\RequestStatus.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\RFQService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\client\UserClientFallback.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\EmailService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\LaptopStatusDTO.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\LaptopMonitoringService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\ResourceRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\SupplierController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Supplier.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\LicensePoolDTO.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\EquipmentRequestRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\client\UserClient.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\EquipmentRequestService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\RFQ.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\DashboardStats.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\ActivationMethod.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\SoftwareAssignmentDTO.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\OperatingSystemService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\EquipmentCategoryService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\AssignmentService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\DepartmentRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\EquipmentCategoryController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\EquipmentMetricsSnapshot.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\DashboardController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\NotificationService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Resource.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\SoftwareAssignment.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\config\BlockchainAuditAspect.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\OperatingSystemRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\EquipmentCategory.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentSoftwareRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\DeptPcSummaryDTO.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\LicensePool.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\SupplierResponse.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\EquipmentRequestController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\CatalogItemService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\RFQTokenRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\MonitoringBroadcastService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\SoftwareService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\SupplierResponseStatus.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\LicensePoolRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\MonitoringController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\SupplierService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\PurchaseOrderService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\EquipmentSpecificationService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Software.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\AssignmentStatus.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\EquipmentSpecificationController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\PredictionController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\AlertService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\EquipmentController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\ShelfService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\EquipmentRequestItem.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\ShelfRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\AssignedToType.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Equipment.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\PurchaseOrder.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\OperatingSystemDTO.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\SupplierResponseRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\EquipmentRequest.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\SoftwareController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\EquipmentService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\CatalogItemController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\RFQRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\LifecycleEntry.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\LicensePoolService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\PdfGenerationService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\StockManagerMicroserviceApplication.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\CatalogItemRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\ShelfController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Department.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\config\WebSocketConfig.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\config\BlockchainTraceable.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentPredictionRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\LicenseModel.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\SupplierRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\SoftwareAssignmentRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Machine.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\EquipmentPrediction.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\Shelf.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\config\SecurityConfig.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentCategoryRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\EquipmentSoftware.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\MachineRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\client\AiClient.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentMetricsSnapshotRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\GlobalExceptionHandler.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\PurchaseOrderRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\AiPredictionJobService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\OperatingSystem.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\EquipmentSpecification.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\PurchaseOrderController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\PublicSupplierController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\SupplierResponseController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\seeder\DatabaseSeeder.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\RFQToken.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\OperatingSystemController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\DashboardService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\InstallOSRequest.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\ProcessInfoDTO.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\RenewalType.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\CatalogItem.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\CategoryType.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\client\AuditClient.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\SupplierResponseService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\EmailParsingService.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\RFQController.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\seeder\CatalogSeeder.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\repository\EquipmentSpecificationRepository.java
+C:\Users\Asus\Desktop\pfe final version\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\SoftwareDTO.java

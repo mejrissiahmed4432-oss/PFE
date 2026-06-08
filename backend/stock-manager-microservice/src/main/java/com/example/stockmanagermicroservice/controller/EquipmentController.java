@@ -128,6 +128,40 @@ public class EquipmentController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{id}/return-to-technician")
+    public ResponseEntity<Equipment> returnPartToTechnician(
+            @PathVariable String id,
+            @RequestBody java.util.Map<String, String> body) {
+        String technicianId = body != null ? body.get("technicianId") : null;
+        String technicianName = body != null ? body.get("technicianName") : null;
+        Equipment restored = equipmentService.returnInstalledPartToTechnician(id, technicianId, technicianName);
+        return ResponseEntity.ok(restored);
+    }
+
+    @PostMapping("/{partId}/install-in/{parentId}")
+    public ResponseEntity<Equipment> installPartFromMaintenance(
+            @PathVariable String partId,
+            @PathVariable String parentId,
+            @RequestBody InstallPartRequest body) {
+        Equipment installed = equipmentService.installPartFromMaintenance(
+                partId,
+                parentId,
+                body != null ? body.replacesSpecKey : null,
+                body != null ? body.actionType : null,
+                body != null ? body.specification : null,
+                body != null ? body.brand : null,
+                body != null ? body.actor : null);
+        return ResponseEntity.ok(installed);
+    }
+
+    public static class InstallPartRequest {
+        public String replacesSpecKey;
+        public String actionType;
+        public String specification;
+        public String brand;
+        public String actor;
+    }
+
     /**
      * One-time cleanup: removes "Out of Stock" records that have the same serial number
      * as an existing "Allocated" record. These were created by a previous bug in allocateParts.
@@ -244,10 +278,13 @@ public class EquipmentController {
         public String name;
         public String brand;
         public String type;
+        public String specification;
         public java.util.Map<String, String> specifications;
         public int qty;
         public String equipmentId;
         public String assignedToEquipmentName;
         public String assignedToEquipmentId;
+        public String replacesSpecKey;
+        public String actionType;
     }
 }

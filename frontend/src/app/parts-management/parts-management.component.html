@@ -150,7 +150,7 @@
                   <button class="btn-request-sm" (click)="openRequestWizard(group); $event.stopPropagation()">
                     Request
                   </button>
-                  <button *ngIf="group.items.length === 1" class="btn-return-sm"
+                  <button *ngIf="group.items.length === 1 && (group.items[0].qte || 0) > 0" class="btn-return-sm"
                     (click)="returnPartToStock(group.items[0]); $event.stopPropagation()">
                     Return
                   </button>
@@ -180,7 +180,7 @@
                         <td>{{ item.specification || '—' }}</td>
                         <td class="font-bold text-center" style="color: #3b82f6;">{{ item.qte }}</td>
                         <td class="text-center">
-                          <button class="btn-return-sm" (click)="returnPartToStock(item); $event.stopPropagation()">
+                          <button *ngIf="(item.qte || 0) > 0" class="btn-return-sm" (click)="returnPartToStock(item); $event.stopPropagation()">
                             Return
                           </button>
                         </td>

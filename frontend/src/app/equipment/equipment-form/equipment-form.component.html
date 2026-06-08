@@ -207,7 +207,7 @@
     <button class="tab-btn" [class.active]="activeTab==='overview'" (click)="activeTab='overview'">Overview</button>
     <button class="tab-btn" [class.active]="activeTab==='specs'" (click)="activeTab='specs'"
       *ngIf="isComputerCategory()">Specifications</button>
-    <button class="tab-btn" [class.active]="activeTab==='parts'" (click)="activeTab='parts'" *ngIf="isAsset()">
+    <button class="tab-btn" [class.active]="activeTab==='parts'" (click)="activeTab='parts'; loadInstalledParts()" *ngIf="isAsset()">
       Installed Parts
       <span class="badge-count" *ngIf="installedParts.length > 0">{{ installedParts.length }}</span>
     </button>
@@ -692,7 +692,7 @@
               </div>
               <span>Installed Parts ({{ installedParts.length }})</span>
             </div>
-            <button class="btn-uninstall-part" style="border-color: #3b82f6; color: #3b82f6; background-color: #fff;" (click)="openInstallModal()">
+            <button *ngIf="currentUserRole !== 'STOCK_MANAGER'" class="btn-uninstall-part" style="border-color: #3b82f6; color: #3b82f6; background-color: #fff;" (click)="openInstallModal()">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px; vertical-align: middle;">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -708,6 +708,7 @@
                 <tr>
                   <th>Part Name</th>
                   <th>Type</th>
+                  <th>Specifications</th>
                   <th>Brand / Model</th>
                   <th>Serial Number</th>
                   <th>Status</th>
@@ -721,20 +722,33 @@
                     <span class="part-id">{{ part.id }}</span>
                   </td>
                   <td><span class="tag tag-type">{{ part.type | titlecase }}</span></td>
+                  <td class="part-specs-cell">
+                    <ng-container *ngIf="getPartSpecificationEntries(part).length > 0; else noPartSpecs">
+                      <span class="part-spec-chip" *ngFor="let spec of getPartSpecificationEntries(part)">
+                        <strong>{{ spec.key }}:</strong> {{ spec.value }}
+                      </span>
+                    </ng-container>
+                    <ng-template #noPartSpecs>—</ng-template>
+                  </td>
                   <td>{{ part.brand }} / {{ part.model || '—' }}</td>
                   <td class="mono">{{ part.serialNumber }}</td>
                   <td>
                     <span class="tag tag-assigned">Installed</span>
                   </td>
                   <td>
-                    <button class="btn-uninstall-part" (click)="uninstallPart(part)">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M10 22H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6"></path>
-                        <polyline points="12 18 16 22 22 16"></polyline>
-                      </svg>
-                      Uninstall
-                    </button>
+                    <div class="part-actions-cell">
+                      <button *ngIf="part.id" class="btn-view-part" (click)="viewOtherEvent.emit(part.id!)" title="View part details">
+                        View Part
+                      </button>
+                      <button *ngIf="currentUserRole !== 'STOCK_MANAGER'" class="btn-uninstall-part" (click)="uninstallPart(part)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M10 22H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6"></path>
+                          <polyline points="12 18 16 22 22 16"></polyline>
+                        </svg>
+                        Uninstall
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -1263,8 +1277,13 @@
           <label style="font-weight: 600; color: #334155; font-size: 0.9rem;">Specification Field Name <span style="color: #94a3b8; font-size: 11px; font-weight: 400;">(e.g., RAM, SSD, STORAGE)</span></label>
           <input type="text" [(ngModel)]="installSpecKey" placeholder="Enter spec key (leave blank to skip spec update)" style="width: 100%; height: 40px; border-radius: 8px; border: 1.5px solid #cbd5e1; padding: 0 12px; font-size: 0.9rem; color: #334155; transition: border-color 0.2s;" />
           <div style="color: #64748b; font-size: 0.8rem; line-height: 1.5;">
-            Spec key will auto-fill or update in the parent specifications tab as: <br/>
-            <strong style="color: #3b82f6;">{{ installSpecKey || '(None)' }}</strong> &rarr; <code style="background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace;">{{ selectedPartToInstall.brand }} {{ selectedPartToInstall.model || '' }} (S/N: {{ selectedPartToInstall.serialNumber }})</code>
+            Parent equipment spec <strong style="color: #3b82f6;">{{ installSpecKey || '(auto)' }}</strong> will be recalculated from installed parts.<br/>
+            <span *ngIf="formatPartSpecifications(selectedPartToInstall) !== '—'">
+              Part specs: <code style="background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace;">{{ formatPartSpecifications(selectedPartToInstall) }}</code>
+            </span>
+            <span *ngIf="formatPartSpecifications(selectedPartToInstall) === '—'">
+              Part value: <code style="background-color: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace;">{{ selectedPartToInstall.brand }} {{ selectedPartToInstall.model || '' }} (S/N: {{ selectedPartToInstall.serialNumber || 'N/A' }})</code>
+            </span>
           </div>
         </div>
       </div>

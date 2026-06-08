@@ -268,6 +268,20 @@ export class AlertsComponent implements OnInit, OnDestroy {
     this.alertService.deleteAlert(id).subscribe();
   }
 
+  selectAllFiltered(): void {
+    this.filteredAlerts.forEach(a => {
+      if (a.id) this.selectedIds.add(a.id);
+    });
+  }
+
+  deleteAllFiltered(): void {
+    if (this.filteredAlerts.length === 0) return;
+    this.filteredAlerts.forEach(a => {
+      if (a.id) this.selectedIds.add(a.id);
+    });
+    this.deleteSelected();
+  }
+
   deleteSelected(): void {
     const idsToDelete = Array.from(this.selectedIds);
     this.alerts = this.alerts.filter(a => !this.selectedIds.has(a.id));

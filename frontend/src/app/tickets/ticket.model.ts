@@ -2,7 +2,7 @@ export interface Ticket {
     id?: string; // unique id
     title: string;
     description: string;
-    category: 'Maintenance' | 'Inspection' | 'Incident';
+    category: 'Maintenance' | 'Inspection' | 'Incident' | 'Upgrade';
     priority: 'High' | 'Medium' | 'Low';
     status: 'Open' | 'In Progress' | 'Waiting' | 'Testing' | 'Resolved' | 'Closed' | 'Diagnosing' | 'Waiting for Parts' | 'Completed' | 'Under Repair' | 'In Maintenance' | 'Cancelled';
     equipmentId?: string;
