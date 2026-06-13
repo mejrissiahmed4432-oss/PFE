@@ -48,12 +48,13 @@ public class EquipmentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @BlockchainTraceable(action = "Création d'un Équipement")
+    @BlockchainTraceable(action = "Create Equipment")
     @PostMapping
     public ResponseEntity<Equipment> createEquipment(@RequestBody Equipment equipment) {
         return ResponseEntity.ok(equipmentService.createEquipment(equipment));
     }
 
+    @BlockchainTraceable(action = "Bulk creation of Equipments")
     @PostMapping("/bulk")
     public List<Equipment> createBulkEquipment(@RequestBody List<Equipment> equipments) {
         return equipmentService.createBulkEquipment(equipments);
@@ -73,7 +74,7 @@ public class EquipmentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @BlockchainTraceable(action = "Mise à jour d'un Équipement")
+    @BlockchainTraceable(action = "Update Equipment")
     @PutMapping("/{id}")
     public ResponseEntity<Equipment> updateEquipment(@PathVariable String id, @RequestBody Equipment equipment) {
         try {
@@ -83,19 +84,21 @@ public class EquipmentController {
         }
     }
 
-    @BlockchainTraceable(action = "Suppression d'un Équipement")
+    @BlockchainTraceable(action = "Delete Equipment")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEquipment(@PathVariable String id) {
         equipmentService.deleteEquipment(id);
         return ResponseEntity.noContent().build();
     }
 
+    @BlockchainTraceable(action = "Bulk delete of Equipments")
     @PostMapping("/bulk-delete")
     public ResponseEntity<Void> deleteBulk(@RequestBody List<String> ids) {
         equipmentService.deleteBulk(ids);
         return ResponseEntity.noContent().build();
     }
 
+    @BlockchainTraceable(action = "Bulk update of Equipments")
     @PutMapping("/bulk-update-basic")
     public ResponseEntity<List<Equipment>> updateBulkBasicInfo(@RequestBody BulkUpdateBasicRequest request) {
         List<Equipment> updated = equipmentService.updateBulkBasicInfo(
@@ -110,18 +113,22 @@ public class EquipmentController {
         public String model;
     }
 
+    @BlockchainTraceable(action = "Consume Parts")
     @PostMapping("/consume-parts/{requesterId}")
-    public ResponseEntity<Void> consumeParts(@PathVariable String requesterId, @RequestBody List<PartConsumeRequest> requests) {
+    public ResponseEntity<Void> consumeParts(@PathVariable String requesterId,
+            @RequestBody List<PartConsumeRequest> requests) {
         equipmentService.consumeParts(requesterId, requests);
         return ResponseEntity.ok().build();
     }
 
+    @BlockchainTraceable(action = "Allocate Parts")
     @PostMapping("/allocate-parts")
     public ResponseEntity<Void> allocateParts(@RequestBody PartAllocateRequest request) {
         equipmentService.allocateParts(request.requesterId, request.requesterName, request.parts);
         return ResponseEntity.ok().build();
     }
 
+    @BlockchainTraceable(action = "Return Part")
     @PostMapping("/{id}/return")
     public ResponseEntity<Void> returnPart(@PathVariable String id) {
         equipmentService.returnPartToStock(id);
@@ -129,8 +136,10 @@ public class EquipmentController {
     }
 
     /**
-     * One-time cleanup: removes "Out of Stock" records that have the same serial number
-     * as an existing "Allocated" record. These were created by a previous bug in allocateParts.
+     * One-time cleanup: removes "Out of Stock" records that have the same serial
+     * number
+     * as an existing "Allocated" record. These were created by a previous bug in
+     * allocateParts.
      */
     @DeleteMapping("/cleanup-duplicates")
     public ResponseEntity<String> cleanupDuplicates() {
@@ -181,6 +190,7 @@ public class EquipmentController {
     }
 
     /** POST assign equipment to users or department (IT Manager) */
+    @BlockchainTraceable(action = "Assign Equipment")
     @PostMapping("/{id}/it-assign")
     public ResponseEntity<?> assignEquipmentIT(
             @PathVariable String id,
@@ -193,6 +203,7 @@ public class EquipmentController {
     }
 
     /** POST deassign equipment from users/department (IT Manager) */
+    @BlockchainTraceable(action = "Unassign Equipment")
     @PostMapping("/{id}/it-deassign")
     public ResponseEntity<?> deassignEquipmentIT(
             @PathVariable String id,
@@ -206,6 +217,7 @@ public class EquipmentController {
     }
 
     /** POST request return of equipment to stock (IT Manager) */
+
     @PostMapping("/{id}/request-return")
     public ResponseEntity<?> requestReturn(
             @PathVariable String id,
@@ -220,6 +232,7 @@ public class EquipmentController {
     }
 
     /** POST process a return request (Stock Manager) */
+    @BlockchainTraceable(action = "Equipment Return")
     @PostMapping("/{id}/process-return")
     public ResponseEntity<?> processReturn(
             @PathVariable String id,

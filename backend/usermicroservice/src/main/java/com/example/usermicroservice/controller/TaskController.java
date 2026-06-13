@@ -1,5 +1,6 @@
 package com.example.usermicroservice.controller;
 
+import com.example.usermicroservice.config.BlockchainTraceable;
 import com.example.usermicroservice.dto.TaskAssignRequest;
 import com.example.usermicroservice.model.Task;
 import com.example.usermicroservice.service.TaskService;
@@ -56,6 +57,7 @@ public class TaskController {
      * IT Manager Task Assignment: creates a task and assigns it to multiple users.
      * Status is initialized as "Pending". Notifications are sent to all assignees and the manager.
      */
+    @BlockchainTraceable(action = "Assign Task")
     @PostMapping("/assign")
     public ResponseEntity<Task> assignTask(@RequestBody TaskAssignRequest request) {
         try {
@@ -65,11 +67,14 @@ public class TaskController {
         }
     }
 
+    
+   
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
         return ResponseEntity.ok(taskService.createTask(task));
     }
 
+    
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable String id, @RequestBody Task task) {
         try {
@@ -79,6 +84,7 @@ public class TaskController {
         }
     }
 
+    
     @PatchMapping("/{id}/status")
     public ResponseEntity<Task> updateTaskStatus(@PathVariable String id, @RequestParam String status) {
         try {
@@ -88,6 +94,7 @@ public class TaskController {
         }
     }
 
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable String id) {
         taskService.deleteTask(id);

@@ -1,5 +1,6 @@
 package com.example.stockmanagermicroservice.controller;
 
+import com.example.stockmanagermicroservice.config.BlockchainTraceable;
 import com.example.stockmanagermicroservice.dto.LicensePoolDTO;
 import com.example.stockmanagermicroservice.dto.SoftwareAssignmentDTO;
 import com.example.stockmanagermicroservice.dto.SoftwareDTO;
@@ -38,17 +39,17 @@ public class SoftwareController {
     public ResponseEntity<SoftwareDTO> getSoftwareById(@PathVariable String id) {
         return ResponseEntity.ok(softwareService.getSoftwareById(id));
     }
-
+    @BlockchainTraceable(action = "create software")
     @PostMapping
     public ResponseEntity<SoftwareDTO> createSoftware(@RequestBody SoftwareDTO dto) {
         return ResponseEntity.ok(softwareService.createSoftware(dto));
     }
-
+    @BlockchainTraceable(action = "update software")
     @PutMapping("/{id}")
     public ResponseEntity<SoftwareDTO> updateSoftware(@PathVariable String id, @RequestBody SoftwareDTO dto) {
         return ResponseEntity.ok(softwareService.updateSoftware(id, dto));
     }
-
+    @BlockchainTraceable(action = "delete software")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSoftware(@PathVariable String id) {
         softwareService.deleteSoftware(id);
@@ -80,12 +81,12 @@ public class SoftwareController {
     public ResponseEntity<List<SoftwareAssignmentDTO>> getAssignmentsBySoftware(@PathVariable String softwareId) {
         return ResponseEntity.ok(assignmentService.getAssignmentsBySoftware(softwareId));
     }
-
+    @BlockchainTraceable(action = "assign license")
     @PostMapping("/assignments")
     public ResponseEntity<SoftwareAssignmentDTO> assignLicense(@RequestBody SoftwareAssignmentDTO dto) {
         return ResponseEntity.ok(assignmentService.assignLicense(dto));
     }
-
+    @BlockchainTraceable(action = "revoke assignment")
     @PostMapping("/assignments/{assignmentId}/revoke")
     public ResponseEntity<SoftwareAssignmentDTO> revokeAssignment(@PathVariable String assignmentId) {
         return ResponseEntity.ok(assignmentService.revokeAssignment(assignmentId));

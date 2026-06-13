@@ -89,11 +89,19 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
               });
               return next(retryReq);
             }),
-            catchError((refreshError) => {
-              // Refresh token is also expired or invalid → force re-login
+            catchError((refreshError: HttpErrorResponse) => {
               isRefreshing = false;
-              sessionStorage.clear();
-              window.location.href = '/login';
+              // If the refresh token is explicitly rejected (401/403), or if the user microservice
+              // said it was invalid, we log out.
+              // But if the server is just down (503, 500, 0), we don't clear the session yet,
+              // we just fail the current request.
+              if (refreshError.status === 401 || refreshError.status === 403 || refreshError.status === 400) {
+                sessionStorage.clear();
+                window.location.href = '/login';
+              } else {
+                console.error('Refresh token request failed because user-microservice is down:', refreshError);
+                // Optionally, we could notify the user here that the auth service is down
+              }
               return throwError(() => refreshError);
             })
           );

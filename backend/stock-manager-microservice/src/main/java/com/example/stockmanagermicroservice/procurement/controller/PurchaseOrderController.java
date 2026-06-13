@@ -1,5 +1,6 @@
 package com.example.stockmanagermicroservice.procurement.controller;
 
+import com.example.stockmanagermicroservice.config.BlockchainTraceable;
 import com.example.stockmanagermicroservice.procurement.model.PurchaseOrder;
 import com.example.stockmanagermicroservice.procurement.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ public class PurchaseOrderController {
     private PurchaseOrderService service;
 
     /** POST /api/procurement/orders — Create a Purchase Order */
+    
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody Map<String, String> body) {
         try {
@@ -54,6 +56,7 @@ public class PurchaseOrderController {
     }
 
     /** POST /api/procurement/orders/{id}/confirm-receipt — Confirm delivery */
+    @BlockchainTraceable(action = "Confirm receipt of Equipments")
     @PostMapping("/{id}/confirm-receipt")
     public ResponseEntity<?> confirmReceipt(@PathVariable String id, @RequestBody Map<String, Object> body) {
         try {

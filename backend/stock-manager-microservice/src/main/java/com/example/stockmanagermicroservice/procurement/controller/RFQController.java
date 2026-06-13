@@ -5,6 +5,7 @@ import com.example.stockmanagermicroservice.procurement.service.RFQService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.stockmanagermicroservice.config.BlockchainTraceable;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ public class RFQController {
     private RFQService rfqService;
 
     /** POST /api/procurement/rfq — Create RFQ, generate PDF, send emails */
+    @BlockchainTraceable(action = "Create RFQ")
     @PostMapping
     public ResponseEntity<?> createRFQ(@RequestBody Map<String, Object> body) {
         try {

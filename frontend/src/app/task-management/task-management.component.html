@@ -425,7 +425,7 @@
       <div class="user-select-list">
         <div class="user-select-card" *ngFor="let user of filteredUsers"
           [class.selected]="isUserSelected(user.id)"
-          [class.inactive-user]="user.status === 'INACTIVE'"
+          [class.inactive-user]="user.status !== 'ACTIVE'"
           (click)="toggleUserSelection(user)">
           <div class="user-select-avatar">
             {{ (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase() }}

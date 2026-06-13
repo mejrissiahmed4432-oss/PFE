@@ -63,6 +63,7 @@ public class EquipmentRequestController {
     }
 
     /** PUT /api/procurement/requests/{id}/approve — IT Manager approves */
+    
     @PutMapping("/{id}/approve")
     public ResponseEntity<EquipmentRequest> approve(@PathVariable String id) {
         try {

@@ -23,36 +23,36 @@ public class UserClientFallback implements UserClient {
     @Override
     public List<Map<String, Object>> getAllUsers() {
         log.error("[CircuitBreaker] user-microservice DOWN — getAllUsers blocked.");
-        throw new RuntimeException("Service User is not available for now! Try later or contact Admin.");
+        return Collections.emptyList();
     }
 
     @Override
     public Map<String, Object> provisionUser(Map<String, Object> request) {
         log.error("[CircuitBreaker] user-microservice DOWN — provisionUser failed.");
-        throw new RuntimeException("Le service utilisateur est indisponible. Impossible de créer le compte.");
+        throw new RuntimeException("User Service is not available for now! Try later or contact Admin.");
     }
 
     @Override
     public Map<String, Object> updateUserStatus(String id, Map<String, String> request) {
         log.error("[CircuitBreaker] user-microservice DOWN — updateUserStatus failed for id: {}", id);
-        throw new RuntimeException("Le service utilisateur est indisponible. Impossible de modifier le statut.");
+        throw new RuntimeException("User Service is not available for now! Try later or contact Admin.");
     }
 
     @Override
     public Map<String, Object> updateUserRole(String id, Map<String, String> request) {
         log.error("[CircuitBreaker] user-microservice DOWN — updateUserRole failed for id: {}", id);
-        throw new RuntimeException("Le service utilisateur est indisponible. Impossible de modifier le rôle.");
+        throw new RuntimeException("User Service is not available for now! Try later or contact Admin.");
     }
 
     @Override
     public Map<String, Object> resendInvitation(String id) {
         log.error("[CircuitBreaker] user-microservice DOWN — resendInvitation failed for id: {}", id);
-        throw new RuntimeException("Le service utilisateur est indisponible. Impossible de renvoyer l'invitation.");
+        throw new RuntimeException("User Service is not available for now! Try later or contact Admin.");
     }
 
     @Override
     public void deleteUser(String id) {
         log.error("[CircuitBreaker] user-microservice DOWN — deleteUser failed for id: {}", id);
-        throw new RuntimeException("Le service utilisateur est indisponible. Impossible de supprimer le compte.");
+        throw new RuntimeException("User Service is not available for now! Try later or contact Admin.");
     }
 }

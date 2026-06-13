@@ -585,6 +585,7 @@
   cursor: default;
   opacity: 1;
   border-color: var(--border-color, #e2e8f0);
+  font-size: 0.85rem;
 }
 
 .form-group {
@@ -798,13 +799,10 @@
 .user-select-avatar {
   width: 40px; height: 40px;
   border-radius: 10px;
-  background: linear-gradient(135deg, var(--text-muted, #94a3b8), var(--text-main, #475569));
+  background: linear-gradient(135deg, var(--accent-primary, #3b82f6), #2563eb);
   color: white;
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 0.9rem; letter-spacing: 1px;
-}
-.user-select-card.selected .user-select-avatar {
-  background: linear-gradient(135deg, var(--accent-primary, #3b82f6), #2563eb);
 }
 
 .user-select-info { flex: 1; min-width: 0; }
@@ -1284,7 +1282,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #94a3b8;
 }
 

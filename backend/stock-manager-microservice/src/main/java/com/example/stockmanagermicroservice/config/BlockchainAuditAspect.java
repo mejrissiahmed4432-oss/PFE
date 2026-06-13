@@ -43,21 +43,22 @@ public class BlockchainAuditAspect {
                     HttpServletRequest request = attrs.getRequest();
 
                     // Lire les headers injectes par l'intercepteur Angular
-                    String headerCin   = request.getHeader("X-User-CIN");
-                    String headerName  = request.getHeader("X-User-Name");
-                    String headerRole  = request.getHeader("X-User-Role");
+                    String headerCin = request.getHeader("X-User-CIN");
+                    String headerName = request.getHeader("X-User-Name");
+                    String headerRole = request.getHeader("X-User-Role");
                     String headerEmail = request.getHeader("X-User-Email");
 
                     logger.info("[BLOCKCHAIN-AOP] Headers recus -> CIN='{}', Nom='{}', Role='{}', Email='{}'",
                             headerCin, headerName, headerRole, headerEmail);
 
-                    // On utilise temporairement l'email comme ID pour que le microservice Employee puisse retrouver le CIN exact
+                    // On utilise temporairement l'email comme ID pour que le microservice Employee
+                    // puisse retrouver le CIN exact
                     if (headerEmail != null && !headerEmail.isEmpty()) {
                         userId = headerEmail;
                     } else if (headerCin != null && !headerCin.isEmpty()) {
                         userId = headerCin;
                     }
-                    
+
                     if (headerName != null && !headerName.isEmpty()) {
                         userName = headerName;
                         if (headerEmail != null && !headerEmail.isEmpty()) {
@@ -66,7 +67,7 @@ public class BlockchainAuditAspect {
                     } else if (headerEmail != null && !headerEmail.isEmpty()) {
                         userName = headerEmail;
                     }
-                    
+
                     if (headerRole != null && !headerRole.isEmpty()) {
                         userRole = headerRole;
                     }
@@ -81,17 +82,17 @@ public class BlockchainAuditAspect {
                 logger.error("[BLOCKCHAIN-AOP] Erreur lors de la lecture des headers HTTP : {}", e.getMessage());
             }
 
-            final String finalUserId   = userId;
+            final String finalUserId = userId;
             final String finalUserName = userName;
             final String finalUserRole = userRole;
-            final String finalIp       = ipAddress;
+            final String finalIp = ipAddress;
 
             Map<String, Object> auditRequest = new HashMap<>();
-            auditRequest.put("userId",    finalUserId);
-            auditRequest.put("userName",  finalUserName);
-            auditRequest.put("userRole",  finalUserRole);
-            auditRequest.put("action",    blockchainTraceable.action());
-            auditRequest.put("details",   "Methode: " + methodName + " | Executee avec succes.");
+            auditRequest.put("userId", finalUserId);
+            auditRequest.put("userName", finalUserName);
+            auditRequest.put("userRole", finalUserRole);
+            auditRequest.put("action", blockchainTraceable.action());
+            auditRequest.put("details", "Methode: " + methodName + " | Executee avec succes.");
             auditRequest.put("ipAddress", finalIp);
 
             logger.info("[BLOCKCHAIN-AOP] Envoi de la trace : action='{}', user='{}', role='{}'",

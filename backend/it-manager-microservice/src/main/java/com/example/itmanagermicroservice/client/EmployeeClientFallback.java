@@ -20,6 +20,6 @@ public class EmployeeClientFallback implements EmployeeClient {
     @Override
     public List<EmployeeDTO> getAllEmployees() {
         log.error("[CircuitBreaker] employee-microservice DOWN — getAllEmployees blocked.");
-        throw new RuntimeException("Service Employee is not available for now! Try later or contact Admin.");
+        return Collections.emptyList();
     }
 }

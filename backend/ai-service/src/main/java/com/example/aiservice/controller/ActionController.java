@@ -1,5 +1,6 @@
 package com.example.aiservice.controller;
 
+import com.example.aiservice.config.BlockchainTraceable;
 import com.example.aiservice.model.AiResponse;
 import com.example.aiservice.service.ActionExecutorService;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ public class ActionController {
         this.actionExecutor = actionExecutor;
     }
 
+    @BlockchainTraceable(action = "Execute AI action")
     @PostMapping("/execute")
     public ResponseEntity<AiResponse> executeAction(@RequestBody Map<String, Object> request) {
         String actionType = (String) request.get("actionType");

@@ -1,5 +1,6 @@
 package com.example.usermicroservice.controller;
 
+import com.example.usermicroservice.config.BlockchainTraceable;
 import com.example.usermicroservice.model.Ticket;
 import com.example.usermicroservice.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +39,13 @@ public class TicketController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @BlockchainTraceable(action = "Create Ticket")
     @PostMapping
     public Ticket createTicket(@RequestBody Ticket ticket) {
         return ticketService.createTicket(ticket);
     }
 
+    @BlockchainTraceable(action = "Update Ticket")
     @PutMapping("/{id}")
     public ResponseEntity<Ticket> updateTicket(@PathVariable String id, @RequestBody Ticket ticketDetails) {
         try {
@@ -52,9 +55,11 @@ public class TicketController {
         }
     }
 
+    @BlockchainTraceable(action = "Delete Ticket")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTicket(@PathVariable String id) {
         ticketService.deleteTicket(id);
         return ResponseEntity.noContent().build();
     }
 }
+

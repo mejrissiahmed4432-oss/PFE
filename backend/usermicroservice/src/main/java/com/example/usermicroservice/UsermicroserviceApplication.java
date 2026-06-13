@@ -2,10 +2,12 @@ package com.example.usermicroservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @org.springframework.data.mongodb.config.EnableMongoAuditing
+@EnableFeignClients
 @SpringBootApplication
 @RestController
 public class UsermicroserviceApplication {

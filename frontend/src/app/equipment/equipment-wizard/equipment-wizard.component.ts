@@ -847,19 +847,35 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
     const payloads = this.buildPayloads();
 
     const doBulkSave = (finalPayloads: Equipment[]) => {
-      this.equipmentService.createBulkEquipment(finalPayloads).subscribe({
-        next: () => {
-          this.toastService.success(`Successfully added ${payloads.length} units to inventory.`);
-          this.isSaving = false;
-          this.closeEvent.emit(true);
-          this.reset();
-        },
-        error: err => {
-          this.isSaving = false;
-          this.saveError = 'Failed to save equipment batch. Please try again.';
-          console.error(err);
-        }
-      });
+      if (finalPayloads.length === 1) {
+        this.equipmentService.createEquipment(finalPayloads[0]).subscribe({
+          next: () => {
+            this.toastService.success(`Successfully added ${finalPayloads[0].equipmentName} to inventory.`);
+            this.isSaving = false;
+            this.closeEvent.emit(true);
+            this.reset();
+          },
+          error: err => {
+            this.isSaving = false;
+            this.saveError = 'Failed to save equipment. Please try again.';
+            console.error(err);
+          }
+        });
+      } else {
+        this.equipmentService.createBulkEquipment(finalPayloads).subscribe({
+          next: () => {
+            this.toastService.success(`Successfully added ${payloads.length} units to inventory.`);
+            this.isSaving = false;
+            this.closeEvent.emit(true);
+            this.reset();
+          },
+          error: err => {
+            this.isSaving = false;
+            this.saveError = 'Failed to save equipment batch. Please try again.';
+            console.error(err);
+          }
+        });
+      }
     };
 
     if (this.typeRequiresQr) {

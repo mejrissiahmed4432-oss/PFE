@@ -1,5 +1,6 @@
 package com.example.technicianmicroservice.controller;
 
+import com.example.technicianmicroservice.config.BlockchainTraceable;
 import com.example.technicianmicroservice.model.PartRequest;
 import com.example.technicianmicroservice.service.PartRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ public class PartRequestController {
     @Autowired
     private PartRequestService service;
 
+   
     @PostMapping
     public PartRequest createRequest(@RequestBody PartRequest request) {
         return service.createRequest(request);
@@ -30,21 +32,25 @@ public class PartRequestController {
         return service.getAllRequests();
     }
 
+   
     @PutMapping("/{id}/status")
     public PartRequest updateStatus(@PathVariable String id, @RequestParam String status) {
         return service.updateStatus(id, status);
     }
 
+   
     @PutMapping("/{id}")
     public PartRequest updateRequest(@PathVariable String id, @RequestBody PartRequest updateDetails) {
         return service.updateRequest(id, updateDetails);
     }
 
+   
     @DeleteMapping("/{id}")
     public void deleteRequest(@PathVariable String id) {
         service.deleteRequest(id);
     }
 
+    
     @PostMapping("/consume-parts/{requesterId}")
     public void consumeParts(@PathVariable String requesterId, @RequestBody List<PartConsumeRequest> partsToConsume) {
         service.consumeParts(requesterId, partsToConsume);

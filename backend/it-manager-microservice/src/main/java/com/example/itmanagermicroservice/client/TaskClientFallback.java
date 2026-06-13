@@ -21,7 +21,7 @@ public class TaskClientFallback implements TaskClient {
     @Override
     public Map<String, Object> assignTask(Map<String, Object> request) {
         log.error("[CircuitBreaker] user-microservice DOWN — assignTask failed.");
-        throw new RuntimeException("Le service utilisateur est indisponible. Impossible d'assigner la tâche.");
+        throw new RuntimeException("User Service is not available for now! Try later or contact Admin.");
     }
 
     @Override
@@ -45,18 +45,18 @@ public class TaskClientFallback implements TaskClient {
     @Override
     public Map<String, Object> updateTask(String id, Map<String, Object> task) {
         log.error("[CircuitBreaker] user-microservice DOWN — updateTask failed for id: {}", id);
-        throw new RuntimeException("Le service utilisateur est indisponible. Impossible de modifier la tâche.");
+        throw new RuntimeException("User Service is not available for now! Try later or contact Admin.");
     }
 
     @Override
     public Map<String, Object> updateTaskStatus(String id, String status) {
         log.error("[CircuitBreaker] user-microservice DOWN — updateTaskStatus failed for id: {}", id);
-        throw new RuntimeException("Le service utilisateur est indisponible. Impossible de mettre à jour le statut.");
+        throw new RuntimeException("User Service is not available for now! Try later or contact Admin.");
     }
 
     @Override
     public void deleteTask(String id) {
         log.error("[CircuitBreaker] user-microservice DOWN — deleteTask failed for id: {}", id);
-        throw new RuntimeException("Le service utilisateur est indisponible. Impossible de supprimer la tâche.");
+        throw new RuntimeException("User Service is not available for now! Try later or contact Admin.");
     }
 }

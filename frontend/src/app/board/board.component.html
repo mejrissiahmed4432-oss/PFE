@@ -322,7 +322,7 @@
       </a>
 
       <!-- Predictive Maintenance -->
-      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'TECHNICIAN' || user?.role === 'IT_MANAGER'"
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'TECHNICIAN'"
         [ngClass]="activeTab === 'predictions' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'predictions'"
         title="Predictive Maintenance">
         <span *ngIf="activeTab === 'predictions'" class="nav-item-indicator"></span>

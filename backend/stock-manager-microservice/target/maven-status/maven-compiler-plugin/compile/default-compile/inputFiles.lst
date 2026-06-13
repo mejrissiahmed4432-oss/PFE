@@ -31,6 +31,7 @@ C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\MonitoringController.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\client\AuditClient.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\OperatingSystemDTO.java
+C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\PendingAuditLogRepository.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\config\SecurityConfig.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\GlobalExceptionHandler.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentSoftwareRepository.java
@@ -42,6 +43,7 @@ C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\EquipmentPredictionRepository.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\OperatingSystemRepository.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\EquipmentSpecificationController.java
+C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\client\AuditClientFallback.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\InstallOSRequest.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\config\BlockchainTraceable.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\EquipmentCategory.java
@@ -62,6 +64,7 @@ C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\controller\EquipmentCategoryController.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\dto\SoftwareAssignmentDTO.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\controller\RFQController.java
+C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\PendingAuditLog.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\PdfGenerationService.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\repository\SupplierRepository.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\service\EquipmentRequestService.java
@@ -95,6 +98,7 @@ C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\AiPredictionJobService.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\service\MonitoringBroadcastService.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\SupplierResponse.java
+C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\client\AiClientFallback.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\procurement\model\RequestStatus.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\StockManagerMicroserviceApplication.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\stock-manager-microservice\src\main\java\com\example\stockmanagermicroservice\model\OperatingSystem.java

@@ -2,6 +2,8 @@ package com.example.employeemicroservice.blockchain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.example.employeemicroservice.repository.PendingAuditLogRepository;
+import com.example.employeemicroservice.model.PendingAuditLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,7 +14,9 @@ import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.http.HttpService;
+import com.example.employeemicroservice.model.PendingAuditLog;
 
+import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +38,9 @@ public class BlockchainAuditService {
 
     @Autowired
     private com.example.employeemicroservice.repository.EmployeeRepository employeeRepository;
+
+    @Autowired
+    private com.example.employeemicroservice.repository.PendingAuditLogRepository pendingAuditLogRepository;
 
     private Web3j web3j;
     private Credentials credentials;
@@ -114,13 +121,18 @@ public class BlockchainAuditService {
 
                 if (ethSendTransaction.hasError()) {
                     logger.error("Erreur Blockchain : {}", ethSendTransaction.getError().getMessage());
+                    saveToPendingLogs(request);
                 } else {
                     txHash = ethSendTransaction.getTransactionHash();
                     logger.info("Log enregistré dans la Blockchain. TxHash: {}", txHash);
                 }
             } catch (Exception e) {
                 logger.error("Échec de l'envoi vers la Blockchain", e);
+                saveToPendingLogs(request);
             }
+        } else {
+            logger.warn("Blockchain indisponible (Ganache éteint). Sauvegarde dans la file d'attente pending_audit_logs.");
+            saveToPendingLogs(request);
         }
 
         return new AuditLogEntry(
@@ -131,6 +143,73 @@ public class BlockchainAuditService {
                 request.getDetails(),
                 LocalDateTime.now()
         );
+    }
+
+    public boolean retryLogToBlockchain(PendingAuditLog pendingLog) {
+        if (!isBlockchainAvailable) {
+            return false;
+        }
+
+        try {
+            Function function = new Function(
+                    "addLog",
+                    Arrays.asList(
+                            new Utf8String(pendingLog.getUserId() != null ? pendingLog.getUserId() : "unknown"),
+                            new Utf8String(pendingLog.getUserName() != null ? pendingLog.getUserName() : "unknown"),
+                            new Utf8String(pendingLog.getUserRole() != null ? pendingLog.getUserRole() : "unknown"),
+                            new Utf8String(pendingLog.getAction()),
+                            new Utf8String(pendingLog.getDetails() != null ? pendingLog.getDetails() : "")
+                    ),
+                    Collections.emptyList()
+            );
+
+            String encodedFunction = FunctionEncoder.encode(function);
+            org.web3j.protocol.core.methods.response.EthGetTransactionCount ethGetTransactionCount =
+                    web3j.ethGetTransactionCount(credentials.getAddress(),
+                            org.web3j.protocol.core.DefaultBlockParameterName.LATEST).send();
+            java.math.BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+
+            org.web3j.crypto.RawTransaction rawTransaction = org.web3j.crypto.RawTransaction.createTransaction(
+                    nonce,
+                    java.math.BigInteger.valueOf(20_000_000_000L),
+                    java.math.BigInteger.valueOf(3_000_000L),
+                    contractAddress.trim(),
+                    encodedFunction
+            );
+
+            byte[] signedMessage = org.web3j.crypto.TransactionEncoder.signMessage(rawTransaction, credentials);
+            String hexValue = org.web3j.utils.Numeric.toHexString(signedMessage);
+
+            EthSendTransaction ethSendTransaction = web3j.ethSendRawTransaction(hexValue).send();
+
+            if (ethSendTransaction.hasError()) {
+                logger.error("[Retry] Erreur Blockchain : {}", ethSendTransaction.getError().getMessage());
+                return false;
+            } else {
+                logger.info("[Retry] Log récupéré et enregistré. TxHash: {}", ethSendTransaction.getTransactionHash());
+                return true;
+            }
+        } catch (Exception e) {
+            logger.error("[Retry] Échec de l'envoi vers la Blockchain", e);
+            return false;
+        }
+    }
+
+    private void saveToPendingLogs(AuditEventRequest request) {
+        try {
+            PendingAuditLog pendingLog = new PendingAuditLog(
+                    request.getUserId(),
+                    request.getUserName(),
+                    request.getUserRole(),
+                    request.getAction(),
+                    request.getDetails(),
+                    null // ipAddress not sent in AuditEventRequest currently
+            );
+            pendingAuditLogRepository.save(pendingLog);
+            logger.info("[Store & Forward] Log sauvegardé dans pending_audit_logs suite à une panne Ganache.");
+        } catch (Exception e) {
+            logger.error("Impossible de sauvegarder dans pending_audit_logs: {}", e.getMessage());
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────

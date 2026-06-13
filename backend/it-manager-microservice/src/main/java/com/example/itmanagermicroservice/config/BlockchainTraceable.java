@@ -1,0 +1,16 @@
+package com.example.itmanagermicroservice.config;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * Annotation à placer sur une méthode pour qu'elle soit tracée
+ * dans la blockchain via le employee-microservice.
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface BlockchainTraceable {
+    String action() default "Action Non Spécifiée";
+}

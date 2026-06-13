@@ -76,6 +76,7 @@ public class SupplierResponseController {
     }
 
     /** PUT /api/procurement/responses/{id}/approve — IT Manager selects supplier */
+    
     @PutMapping("/{id}/approve")
     public ResponseEntity<SupplierResponse> approve(@PathVariable String id) {
         return ResponseEntity.ok(service.approveResponse(id));

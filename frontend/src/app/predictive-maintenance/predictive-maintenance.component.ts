@@ -25,6 +25,7 @@ export interface Prediction {
 export class PredictiveMaintenanceComponent implements OnInit {
   predictions: Prediction[] = [];
   loading = true;
+  selectedPrediction: Prediction | null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -33,10 +34,11 @@ export class PredictiveMaintenanceComponent implements OnInit {
   }
 
   fetchPredictions() {
+    this.loading = true;
     this.http.get<Prediction[]>('http://localhost:8000/api/monitoring/predictions')
       .subscribe({
         next: (data) => {
-          this.predictions = data.sort((a, b) => b.riskScore - a.riskScore); // Sort by highest risk
+          this.predictions = data.sort((a, b) => b.riskScore - a.riskScore);
           this.loading = false;
         },
         error: (err) => {
@@ -44,5 +46,38 @@ export class PredictiveMaintenanceComponent implements OnInit {
           this.loading = false;
         }
       });
+  }
+
+  openDetail(pred: Prediction) {
+    this.selectedPrediction = pred;
+  }
+
+  closeDetail() {
+    this.selectedPrediction = null;
+  }
+
+  getRiskClass(level: string): string {
+    switch ((level || '').toUpperCase()) {
+      case 'CRITICAL': return 'risk-critical';
+      case 'HIGH':     return 'risk-high';
+      case 'MEDIUM':   return 'risk-medium';
+      default:         return 'risk-low';
+    }
+  }
+
+  getScoreColor(score: number): string {
+    if (score >= 86) return '#ef4444';
+    if (score >= 61) return '#f97316';
+    if (score >= 31) return '#f59e0b';
+    return '#10b981';
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '—';
+    return new Date(dateStr).toLocaleDateString('en-GB', {
+      day: '2-digit', month: 'short', year: 'numeric'
+    }) + ' ' + new Date(dateStr).toLocaleTimeString('en-GB', {
+      hour: '2-digit', minute: '2-digit'
+    });
   }
 }

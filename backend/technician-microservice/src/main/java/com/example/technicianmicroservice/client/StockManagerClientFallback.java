@@ -23,8 +23,7 @@ public class StockManagerClientFallback implements StockManagerClient {
     public void allocateParts(Map<String, Object> requestedParts) {
         log.error("[CircuitBreaker] stock-manager-microservice is DOWN — part allocation FAILED. Request: {}", requestedParts);
         throw new RuntimeException(
-            "Le service de gestion du stock est temporairement indisponible. " +
-            "L'allocation des pièces n'a pas pu être effectuée. Veuillez réessayer dans quelques instants."
+            "Stock Service is not available for now! Try later or contact Admin."
         );
     }
 
@@ -32,8 +31,7 @@ public class StockManagerClientFallback implements StockManagerClient {
     public void consumeParts(String requesterId, Object consumedParts) {
         log.error("[CircuitBreaker] stock-manager-microservice is DOWN — part consumption FAILED for requester: {}", requesterId);
         throw new RuntimeException(
-            "Le service de gestion du stock est temporairement indisponible. " +
-            "La consommation des pièces n'a pas pu être enregistrée. Veuillez réessayer dans quelques instants."
+            "Stock Service is not available for now! Try later or contact Admin."
         );
     }
 }

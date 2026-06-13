@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
-@FeignClient(name = "ai-service", url = "${app.ai-service.url:http://localhost:8085}")
+@FeignClient(name = "ai-service", url = "${app.ai-service.url:http://localhost:8085}", fallback = AiClientFallback.class)
 public interface AiClient {
 
     @PostMapping("/api/ai/predict-maintenance")

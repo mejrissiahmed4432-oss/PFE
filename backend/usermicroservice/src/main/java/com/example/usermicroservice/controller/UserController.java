@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.usermicroservice.config.BlockchainTraceable;
 import com.example.usermicroservice.config.JwtUtils;
 import com.example.usermicroservice.dto.UpdateEmailRequest;
 import com.example.usermicroservice.dto.ChangePasswordRequest;
@@ -71,13 +72,14 @@ public class UserController {
     @Value("${app.frontend.url}")
     private String frontendUrl;
 
+    
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         Optional<User> userOpt = userRepository.findByEmail(loginRequest.getEmail());
 
         if (userOpt.isPresent() && passwordEncoder.matches(loginRequest.getPassword(), userOpt.get().getPassword())) {
             User user = userOpt.get();
-            
+
             if (user.getStatus() != null && user.getStatus() == UserStatus.INACTIVE) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(Map.of("message", "Your account has been deactivated. Please contact the IT Manager."));
@@ -93,14 +95,14 @@ public class UserController {
 
             userRepository.save(user);
 
-            // Broadcast status change via WebSocket so IT Manager dashboard updates in real-time
+            // Broadcast status change via WebSocket so IT Manager dashboard updates in
+            // real-time
             messagingTemplate.convertAndSend("/topic/user-status",
-                Map.of(
-                    "userId",    user.getId(),
-                    "status",    user.getStatus().name(),
-                    "email",     user.getEmail(),
-                    "lastLogin", user.getLastLogin() != null ? user.getLastLogin().toString() : ""
-                ));
+                    Map.of(
+                            "userId", user.getId(),
+                            "status", user.getStatus().name(),
+                            "email", user.getEmail(),
+                            "lastLogin", user.getLastLogin() != null ? user.getLastLogin().toString() : ""));
 
             String token = jwtUtils.generateToken(user.getEmail());
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getEmail());
@@ -126,25 +128,26 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("message", "Refresh token is required"));
         }
         return refreshTokenService.findByToken(requestRefreshToken)
-            .map(rt -> {
-                if (refreshTokenService.isExpired(rt)) {
-                    refreshTokenService.deleteByUserEmail(rt.getUserEmail());
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                            .body(Map.of("message", "Refresh token expired. Please log in again."));
-                }
-                String newAccessToken = jwtUtils.generateToken(rt.getUserEmail());
-                // Refresh Token Rotation: create a new one, which automatically deletes the old one in createRefreshToken
-                RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(rt.getUserEmail());
-                
-                return ResponseEntity.ok(Map.of(
-                    "token", newAccessToken,
-                    "refreshToken", newRefreshToken.getToken()
-                ));
-            })
-            .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Invalid refresh token")));
+                .map(rt -> {
+                    if (refreshTokenService.isExpired(rt)) {
+                        refreshTokenService.deleteByUserEmail(rt.getUserEmail());
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                .body(Map.of("message", "Refresh token expired. Please log in again."));
+                    }
+                    String newAccessToken = jwtUtils.generateToken(rt.getUserEmail());
+                    // Refresh Token Rotation: create a new one, which automatically deletes the old
+                    // one in createRefreshToken
+                    RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(rt.getUserEmail());
+
+                    return ResponseEntity.ok(Map.of(
+                            "token", newAccessToken,
+                            "refreshToken", newRefreshToken.getToken()));
+                })
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "Invalid refresh token")));
     }
 
+   
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody Map<String, String> request) {
         String email = request.get("email");
@@ -182,6 +185,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Email not found"));
     }
 
+    @BlockchainTraceable(action = "Reset Password")
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         System.out.println("Received reset password request. Token: [" + request.getToken() + "]");
@@ -215,6 +219,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Password set successfully. You can now log in."));
     }
 
+    @BlockchainTraceable(action = "Change Password")
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -246,6 +251,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of("success", true, "message", "Password updated successfully"));
     }
 
+    @BlockchainTraceable(action = "Change Email")
     @PostMapping("/change-email")
     public ResponseEntity<?> changeEmail(@Valid @RequestBody UpdateEmailRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -269,7 +275,7 @@ public class UserController {
         }
 
         User user = userOpt.get();
-        
+
         // Verify current password
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return ResponseEntity.ok(Map.of("success", false, "message", "Invalid password. Email update denied."));
@@ -278,7 +284,8 @@ public class UserController {
         user.setEmail(request.getNewEmail());
         userRepository.save(user);
 
-        return ResponseEntity.ok(Map.of("success", true, "message", "Email updated successfully. Please log in again with your new email."));
+        return ResponseEntity.ok(Map.of("success", true, "message",
+                "Email updated successfully. Please log in again with your new email."));
     }
 
     @PostMapping
@@ -303,18 +310,20 @@ public class UserController {
         }
 
         User user = userOpt.get();
-        if (request.containsKey("firstName")) user.setFirstName(request.get("firstName"));
-        if (request.containsKey("lastName")) user.setLastName(request.get("lastName"));
-        if (request.containsKey("phoneNumber")) user.setPhoneNumber(request.get("phoneNumber"));
+        if (request.containsKey("firstName"))
+            user.setFirstName(request.get("firstName"));
+        if (request.containsKey("lastName"))
+            user.setLastName(request.get("lastName"));
+        if (request.containsKey("phoneNumber"))
+            user.setPhoneNumber(request.get("phoneNumber"));
 
         userRepository.save(user);
 
         return ResponseEntity.ok(Map.of(
-            "message", "Profile updated successfully",
-            "firstName", user.getFirstName(),
-            "lastName", user.getLastName(),
-            "phoneNumber", user.getPhoneNumber() != null ? user.getPhoneNumber() : ""
-        ));
+                "message", "Profile updated successfully",
+                "firstName", user.getFirstName(),
+                "lastName", user.getLastName(),
+                "phoneNumber", user.getPhoneNumber() != null ? user.getPhoneNumber() : ""));
     }
 
     @GetMapping("/me")
@@ -323,22 +332,21 @@ public class UserController {
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Not authenticated"));
         }
-        
+
         String email = auth.getPrincipal().toString();
         Optional<User> userOpt = userRepository.findByEmail(email);
-        
+
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             return ResponseEntity.ok(Map.of(
-                "id", user.getId(),
-                "email", user.getEmail(),
-                "firstName", user.getFirstName() != null ? user.getFirstName() : "",
-                "lastName", user.getLastName() != null ? user.getLastName() : "",
-                "role", user.getRole() != null ? user.getRole() : "",
-                "phoneNumber", user.getPhoneNumber() != null ? user.getPhoneNumber() : ""
-            ));
+                    "id", user.getId(),
+                    "email", user.getEmail(),
+                    "firstName", user.getFirstName() != null ? user.getFirstName() : "",
+                    "lastName", user.getLastName() != null ? user.getLastName() : "",
+                    "role", user.getRole() != null ? user.getRole() : "",
+                    "phoneNumber", user.getPhoneNumber() != null ? user.getPhoneNumber() : ""));
         }
-        
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
     }
 
@@ -364,7 +372,7 @@ public class UserController {
         List<User> users = userRepository.findAll();
         // Server-side calculation ignores any client-side timezone mismatches
         for (User user : users) {
-             user.setOnline(webSocketEventListener.isUserOnline(user.getId()));
+            user.setOnline(webSocketEventListener.isUserOnline(user.getId()));
         }
         return users;
     }
@@ -374,6 +382,7 @@ public class UserController {
     // ─────────────────────────────────────────────
 
     /** Provision a new user from an employee (IT Manager only) */
+    @BlockchainTraceable(action = "Create User Account")
     @PostMapping("/provision")
     public ResponseEntity<?> provisionUser(@RequestBody Map<String, String> request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -383,8 +392,10 @@ public class UserController {
         // Verify requester is IT_MANAGER
         String requesterEmail = auth.getPrincipal().toString();
         Optional<User> requesterOpt = userRepository.findByEmail(requesterEmail);
-        if (requesterOpt.isEmpty() || requesterOpt.get().getRole() != com.example.usermicroservice.model.Role.IT_MANAGER) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied – IT Manager only"));
+        if (requesterOpt.isEmpty()
+                || requesterOpt.get().getRole() != com.example.usermicroservice.model.Role.IT_MANAGER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "Access denied – IT Manager only"));
         }
 
         String email = request.get("email");
@@ -398,7 +409,8 @@ public class UserController {
         }
 
         if (userRepository.findByEmail(email).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", "A user with this email already exists"));
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", "A user with this email already exists"));
         }
 
         com.example.usermicroservice.model.Role role;
@@ -434,11 +446,11 @@ public class UserController {
         }
 
         return ResponseEntity.ok(Map.of(
-            "message", "User provisioned successfully. Welcome email sent.",
-            "userId", newUser.getId()
-        ));
+                "message", "User provisioned successfully. Welcome email sent.",
+                "userId", newUser.getId()));
     }
 
+    @BlockchainTraceable(action = "Update User Status")
     @PutMapping("/{id}/status")
     public ResponseEntity<?> updateUserStatus(@PathVariable String id, @RequestBody Map<String, String> request) {
         Optional<User> userOpt = userRepository.findById(id);
@@ -455,7 +467,8 @@ public class UserController {
         String targetStatus = statusStr.toUpperCase();
 
         if ("ACTIVE".equals(targetStatus)) {
-            // If user never logged in or was never active, return to PENDING instead of ACTIVE
+            // If user never logged in or was never active, return to PENDING instead of
+            // ACTIVE
             if (user.getLastLogin() == null && user.getLastActive() == null) {
                 user.setStatus(UserStatus.PENDING);
             } else {
@@ -471,22 +484,22 @@ public class UserController {
 
         userRepository.save(user);
 
-        // Broadcast status change via WebSocket so IT Manager dashboard updates in real-time
+        // Broadcast status change via WebSocket so IT Manager dashboard updates in
+        // real-time
         messagingTemplate.convertAndSend("/topic/user-status",
-            Map.of(
-                "userId",    user.getId(),
-                "status",    user.getStatus().name(),
-                "email",     user.getEmail(),
-                "lastLogin", user.getLastLogin() != null ? user.getLastLogin().toString() : ""
-            ));
+                Map.of(
+                        "userId", user.getId(),
+                        "status", user.getStatus().name(),
+                        "email", user.getEmail(),
+                        "lastLogin", user.getLastLogin() != null ? user.getLastLogin().toString() : ""));
 
         return ResponseEntity.ok(Map.of(
-            "message", "User status updated successfully",
-            "newStatus", user.getStatus()
-        ));
+                "message", "User status updated successfully",
+                "newStatus", user.getStatus()));
     }
 
     /** Delete a user (IT Manager only) */
+    @BlockchainTraceable(action = "Delete User")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -495,8 +508,10 @@ public class UserController {
         }
         String requesterEmail = auth.getPrincipal().toString();
         Optional<User> requesterOpt = userRepository.findByEmail(requesterEmail);
-        if (requesterOpt.isEmpty() || requesterOpt.get().getRole() != com.example.usermicroservice.model.Role.IT_MANAGER) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied – IT Manager only"));
+        if (requesterOpt.isEmpty()
+                || requesterOpt.get().getRole() != com.example.usermicroservice.model.Role.IT_MANAGER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "Access denied – IT Manager only"));
         }
         // Prevent self-deletion
         if (requesterOpt.get().getId().equals(id)) {
@@ -509,15 +524,15 @@ public class UserController {
 
         // Broadcast DELETED status so the user is auto-logged out if they are online
         messagingTemplate.convertAndSend("/topic/user-status",
-            Map.of(
-                "userId", id,
-                "status", "DELETED"
-            ));
+                Map.of(
+                        "userId", id,
+                        "status", "DELETED"));
 
         return ResponseEntity.ok(Map.of("message", "User access revoked successfully"));
     }
 
     /** Update user role (IT Manager only) */
+    @BlockchainTraceable(action = "Update User Role")
     @PutMapping("/{id}/role")
     public ResponseEntity<?> updateUserRole(@PathVariable String id, @RequestBody Map<String, String> request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -526,8 +541,10 @@ public class UserController {
         }
         String requesterEmail = auth.getPrincipal().toString();
         Optional<User> requesterOpt = userRepository.findByEmail(requesterEmail);
-        if (requesterOpt.isEmpty() || requesterOpt.get().getRole() != com.example.usermicroservice.model.Role.IT_MANAGER) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied – IT Manager only"));
+        if (requesterOpt.isEmpty()
+                || requesterOpt.get().getRole() != com.example.usermicroservice.model.Role.IT_MANAGER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "Access denied – IT Manager only"));
         }
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
@@ -554,8 +571,10 @@ public class UserController {
         }
         String requesterEmail = auth.getPrincipal().toString();
         Optional<User> requesterOpt = userRepository.findByEmail(requesterEmail);
-        if (requesterOpt.isEmpty() || requesterOpt.get().getRole() != com.example.usermicroservice.model.Role.IT_MANAGER) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Access denied – IT Manager only"));
+        if (requesterOpt.isEmpty()
+                || requesterOpt.get().getRole() != com.example.usermicroservice.model.Role.IT_MANAGER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "Access denied – IT Manager only"));
         }
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
@@ -573,7 +592,7 @@ public class UserController {
             return ResponseEntity.ok(Map.of("message", "Invitation resent successfully"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("message", "Failed to send email: " + e.getMessage()));
+                    .body(Map.of("message", "Failed to send email: " + e.getMessage()));
         }
     }
 }

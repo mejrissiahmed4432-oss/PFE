@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "user-microservice", fallback = UserClientFallback.class)
+@FeignClient(name = "user-microservice", contextId = "userClient", fallback = UserClientFallback.class)
 public interface UserClient {
     @GetMapping("/api/users")
     List<Map<String, Object>> getAllUsers();

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
-@FeignClient(name = "employee-microservice", path = "/api/employees/audit")
+@FeignClient(name = "employee-microservice", path = "/api/employees/audit", fallback = AuditClientFallback.class)
 public interface AuditClient {
 
     @PostMapping("/log")

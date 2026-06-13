@@ -1,5 +1,6 @@
 package com.example.employeemicroservice.controller;
 
+import com.example.employeemicroservice.config.BlockchainTraceable;
 import com.example.employeemicroservice.dto.DepartmentDTO;
 import com.example.employeemicroservice.model.Department;
 import com.example.employeemicroservice.service.DepartmentService;
@@ -29,12 +30,14 @@ public class DepartmentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @BlockchainTraceable(action = "Create Department")
     @PostMapping
     public ResponseEntity<DepartmentDTO> createDepartment(@RequestBody Department department) {
         DepartmentDTO created = departmentService.createDepartment(department);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    @BlockchainTraceable(action = "Update Department")
     @PutMapping("/{id}")
     public ResponseEntity<DepartmentDTO> updateDepartment(@PathVariable String id,
                                                         @RequestBody Department department) {
@@ -46,6 +49,7 @@ public class DepartmentController {
         }
     }
 
+    @BlockchainTraceable(action = "Delete Department")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDepartment(@PathVariable String id) {
         departmentService.deleteDepartment(id);
