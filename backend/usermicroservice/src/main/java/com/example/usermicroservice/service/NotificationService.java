@@ -87,8 +87,8 @@ public class NotificationService {
     private AlertService alertService;
 
     public void createNotification(String title, String message, String type, String category, String relatedId, String recipientId, String targetRole) {
-        // Enforce strict logic: Notifications are for INFO/SUCCESS only.
-        if (type != null && (type.equalsIgnoreCase("ERROR") || type.equalsIgnoreCase("WARNING") || type.equalsIgnoreCase("URGENT"))) {
+        // Enforce strict logic: only truly critical notification types become alerts.
+        if (type != null && (type.equalsIgnoreCase("ERROR") || type.equalsIgnoreCase("URGENT"))) {
             // Reroute critical events to AlertService
             String key = "SYSTEM_ALERT_" + (relatedId != null ? relatedId : java.util.UUID.randomUUID().toString());
             alertService.createOrUpdateAlert(

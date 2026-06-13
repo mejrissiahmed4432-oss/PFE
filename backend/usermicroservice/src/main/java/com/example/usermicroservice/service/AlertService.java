@@ -10,9 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AlertService {
@@ -30,20 +28,12 @@ public class AlertService {
     @org.springframework.context.annotation.Lazy
     private NotificationService notificationService;
 
-    // Cooldown in minutes (configurable later if needed)
-    private static final long ALERT_COOLDOWN_MINUTES = 60;
-
     public List<Alert> getAllAlerts(String userId, String role) {
         if (isParamEmpty(userId) && isParamEmpty(role)) {
             return alertRepository.findAllByOrderByCreatedAtDesc();
         }
         
-        Criteria criteria = new Criteria().orOperator(
-            Criteria.where("targetType").is("USER").and("targetId").is(userId),
-            Criteria.where("targetType").is("ROLE").and("targetId").is(role),
-            Criteria.where("targetType").is(null),
-            Criteria.where("targetType").exists(false)
-        );
+        Criteria criteria = buildTargetCriteria(userId, role);
         
         Query query = new Query(criteria).with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt"));
         return mongoTemplate.find(query, Alert.class);
@@ -56,16 +46,26 @@ public class AlertService {
         
         Criteria criteria = new Criteria().andOperator(
             Criteria.where("status").is("ACTIVE"),
-            new Criteria().orOperator(
-                Criteria.where("targetType").is("USER").and("targetId").is(userId),
-                Criteria.where("targetType").is("ROLE").and("targetId").is(role),
-                Criteria.where("targetType").is(null),
-                Criteria.where("targetType").exists(false)
-            )
+            buildTargetCriteria(userId, role)
         );
         
         Query query = new Query(criteria).with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt"));
         return mongoTemplate.find(query, Alert.class);
+    }
+
+    private Criteria buildTargetCriteria(String userId, String role) {
+        boolean hasUser = !isParamEmpty(userId);
+        boolean hasRole = !isParamEmpty(role);
+
+        if (hasUser && hasRole) {
+            return new Criteria().orOperator(
+                    Criteria.where("targetType").is("USER").and("targetId").is(userId),
+                    Criteria.where("targetType").is("ROLE").and("targetId").is(role));
+        }
+        if (hasUser) {
+            return Criteria.where("targetType").is("USER").and("targetId").is(userId);
+        }
+        return Criteria.where("targetType").is("ROLE").and("targetId").is(role);
     }
 
     private boolean isParamEmpty(String param) {
@@ -73,27 +73,25 @@ public class AlertService {
     }
 
     /**
-     * Core robust alert generation with deduplication and cooldown.
+     * Core robust alert generation with active-key deduplication.
      */
     public void createOrUpdateAlert(String key, String type, String priority, String targetType, String targetId, String title, String message) {
         alertRepository.findByKeyAndStatus(key, "ACTIVE").ifPresentOrElse(
             existing -> {
-                // Check cooldown to avoid spam
-                if (existing.getLastSentAt() != null && 
-                    existing.getLastSentAt().isAfter(LocalDateTime.now().minusMinutes(ALERT_COOLDOWN_MINUTES))) {
-                    return;
-                }
                 existing.setTitle(title);
                 existing.setMessage(message);
+                existing.setType(type);
                 existing.setPriority(priority);
+                existing.setTargetType(targetType);
+                existing.setTargetId(targetId);
                 existing.setLastSentAt(LocalDateTime.now());
-                alertRepository.save(existing);
-                messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
+                Alert saved = alertRepository.save(existing);
+                pushToWebSocket(saved);
             },
             () -> {
                 Alert alert = new Alert(key, title, message, type, priority, targetType, targetId);
-                alertRepository.save(alert);
-                messagingTemplate.convertAndSend("/topic/alerts", "UPDATE");
+                Alert saved = alertRepository.save(alert);
+                pushToWebSocket(saved);
             }
         );
     }

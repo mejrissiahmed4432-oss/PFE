@@ -219,7 +219,7 @@ export class BoardComponent implements OnInit {
 
     // 1. Load System Alerts (Stock/Warranty/System)
     this.alertService.getAlerts(userId, role).subscribe(alerts => {
-      this.unreadAlertsCount = alerts.filter(a => !a.read).length;
+      this.unreadAlertsCount = alerts.filter(a => (a.status || 'ACTIVE') === 'ACTIVE').length;
     });
 
     // 2. Load Notifications (CRUD/User Actions)

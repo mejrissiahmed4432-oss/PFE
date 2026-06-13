@@ -12,7 +12,6 @@ public class Alert {
     @Id
     private String id;
     
-    @Indexed
     private String key; // Unique deterministic key for deduplication (e.g., LOW_STOCK_item_123)
     
     private String title;

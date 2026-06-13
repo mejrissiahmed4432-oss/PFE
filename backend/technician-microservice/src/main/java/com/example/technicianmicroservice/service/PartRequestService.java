@@ -51,15 +51,19 @@ public class PartRequestService {
             "INFO", "PART_REQUEST", saved.getId(), null, "STOCK_MANAGER"
         );
         
-        alertService.triggerSystemAlert(
-            "REQUEST_PENDING_" + saved.getId(),
-            "REQUEST_PENDING",
-            "HIGH".equalsIgnoreCase(saved.getPriority()) ? "HIGH" : "MEDIUM",
-            "ROLE",
-            "STOCK_MANAGER",
-            "Pending Part Request",
-            "Part request from " + saved.getRequesterName() + " is pending review. Priority: " + saved.getPriority() + "."
-        );
+        if ("HIGH".equalsIgnoreCase(saved.getPriority())) {
+            alertService.triggerSystemAlert(
+                "REQUEST_PENDING_" + saved.getId(),
+                "REQUEST_PENDING",
+                "HIGH",
+                "ROLE",
+                "STOCK_MANAGER",
+                "Pending Part Request",
+                "Part request from " + saved.getRequesterName() + " is pending review. Priority: " + saved.getPriority() + "."
+            );
+        } else {
+            alertService.resolveSystemAlert("REQUEST_PENDING_" + saved.getId());
+        }
         
         // We no longer notify the requester upon submission per user request
         

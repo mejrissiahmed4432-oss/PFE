@@ -6,9 +6,13 @@ export interface Alert {
   id: string;
   title: string;
   message: string;
-  type: 'WARNING' | 'INFO' | 'ERROR' | 'SUCCESS';
-  category: string;
-  read: boolean;
+  type: string;
+  priority?: 'HIGH' | 'MEDIUM' | 'LOW' | string;
+  status?: 'ACTIVE' | 'RESOLVED' | string;
+  targetType?: 'USER' | 'ROLE' | string;
+  targetId?: string;
+  category?: string;
+  read?: boolean;
   relatedId?: string;
   createdAt: string;
 }
@@ -36,14 +40,14 @@ export class AlertService {
   }
 
   markAsRead(id: string): Observable<Alert> {
-    return this.http.put<Alert>(`${this.apiUrl}/${id}/read`, {});
+    return this.http.put<Alert>(`${this.apiUrl}/${id}/resolve`, {});
   }
 
   markAllAsRead(userId?: string, role?: string): Observable<void> {
     let params: any = {};
     if (userId) params.userId = userId;
     if (role) params.role = role;
-    return this.http.put<void>(`${this.apiUrl}/read-all`, {}, { params });
+    return this.http.put<void>(`${this.apiUrl}/resolve-all`, {}, { params });
   }
 
   deleteAlert(id: string): Observable<void> {

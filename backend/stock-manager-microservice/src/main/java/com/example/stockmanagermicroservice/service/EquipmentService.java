@@ -1314,9 +1314,7 @@ public class EquipmentService {
                     eq.getEquipmentName() + " is now completely out of stock.");
             alertService.resolveSystemAlert(lowStockKey);
         } else if (newQte > 0 && newQte <= LOW_STOCK_THRESHOLD) {
-            alertService.triggerSystemAlert(lowStockKey, "LOW_STOCK", "MEDIUM", "ROLE", "STOCK_MANAGER",
-                    "Low Stock: " + eq.getEquipmentName(),
-                    eq.getEquipmentName() + " stock is running low (" + newQte + " remaining).");
+            alertService.resolveSystemAlert(lowStockKey);
             if (oldQte == 0)
                 alertService.resolveSystemAlert(outOfStockKey);
         } else if (newQte > LOW_STOCK_THRESHOLD) {

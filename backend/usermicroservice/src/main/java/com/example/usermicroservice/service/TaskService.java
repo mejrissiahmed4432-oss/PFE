@@ -13,10 +13,14 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final NotificationService notificationService;
+    private final TaskAlertScheduler taskAlertScheduler;
 
-    public TaskService(TaskRepository taskRepository, NotificationService notificationService) {
+    public TaskService(TaskRepository taskRepository,
+                       NotificationService notificationService,
+                       TaskAlertScheduler taskAlertScheduler) {
         this.taskRepository = taskRepository;
         this.notificationService = notificationService;
+        this.taskAlertScheduler = taskAlertScheduler;
     }
 
     public List<Task> getAllTasks() {
@@ -92,6 +96,7 @@ public class TaskService {
                     "SUCCESS", "TASK", saved.getId(), saved.getAssignedByUserId(), null);
         }
 
+        taskAlertScheduler.syncTaskOverdueAlerts(saved);
         return saved;
     }
 
@@ -111,6 +116,7 @@ public class TaskService {
                     "INFO", "SCHEDULE", saved.getId(), null, "TECHNICIAN");
         }
 
+        taskAlertScheduler.syncTaskOverdueAlerts(saved);
         return saved;
     }
 
@@ -156,6 +162,7 @@ public class TaskService {
                             }
                         }
                     }
+                    taskAlertScheduler.syncTaskOverdueAlerts(saved);
                     return saved;
                 })
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
@@ -183,6 +190,7 @@ public class TaskService {
                                 "The status of task '" + saved.getTitle() + "' is now: " + status,
                                 "SUCCESS", "SCHEDULE", saved.getId(), saved.getAssignedTo(), null);
                     }
+                    taskAlertScheduler.syncTaskOverdueAlerts(saved);
                     return saved;
                 })
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
@@ -190,6 +198,9 @@ public class TaskService {
 
     public void deleteTask(String id) {
         taskRepository.findById(id).ifPresent(task -> {
+            task.setStatus("Cancelled");
+            taskAlertScheduler.syncTaskOverdueAlerts(task);
+
             // Notify multi-assigned users
             if (task.getAssignedUserIds() != null && !task.getAssignedUserIds().isEmpty()) {
                 for (String userId : task.getAssignedUserIds()) {

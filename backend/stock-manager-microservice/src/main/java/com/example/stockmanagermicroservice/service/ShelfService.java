@@ -104,15 +104,15 @@ public class ShelfService {
             String emptyKey = "SHELF_EMPTY_" + shelf.getId();
             
             if ("LOW".equals(shelf.getStatus())) {
-                alertService.triggerSystemAlert(lowKey, "SYSTEM", "MEDIUM", "ROLE", "STOCK_MANAGER", "Low Stock Alert: Shelf " + shelf.getNb(), "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") is running low on stock.");
+                alertService.resolveSystemAlert(lowKey);
                 alertService.resolveSystemAlert(fullKey);
                 alertService.resolveSystemAlert(emptyKey);
             } else if ("FULL".equals(shelf.getStatus())) {
-                alertService.triggerSystemAlert(fullKey, "SYSTEM", "MEDIUM", "ROLE", "STOCK_MANAGER", "Shelf Full: Shelf " + shelf.getNb(), "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") has reached maximum capacity.");
+                alertService.resolveSystemAlert(fullKey);
                 alertService.resolveSystemAlert(lowKey);
                 alertService.resolveSystemAlert(emptyKey);
             } else if ("EMPTY".equals(shelf.getStatus())) {
-                alertService.triggerSystemAlert(emptyKey, "SYSTEM", "HIGH", "ROLE", "STOCK_MANAGER", "Stock Empty Alert: Shelf " + shelf.getNb(), "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") is completely empty. restocking is needed.");
+                alertService.triggerSystemAlert(emptyKey, "SHELF_EMPTY", "HIGH", "ROLE", "STOCK_MANAGER", "Stock Empty Alert: Shelf " + shelf.getNb(), "Shelf " + shelf.getNb() + " (" + shelf.getEquipmentType() + ") is completely empty. restocking is needed.");
                 alertService.resolveSystemAlert(lowKey);
                 alertService.resolveSystemAlert(fullKey);
             } else {

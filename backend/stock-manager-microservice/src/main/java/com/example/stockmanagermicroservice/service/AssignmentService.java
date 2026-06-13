@@ -3,9 +3,11 @@ package com.example.stockmanagermicroservice.service;
 import com.example.stockmanagermicroservice.dto.SoftwareAssignmentDTO;
 import com.example.stockmanagermicroservice.model.AssignmentStatus;
 import com.example.stockmanagermicroservice.model.LicensePool;
+import com.example.stockmanagermicroservice.model.Software;
 import com.example.stockmanagermicroservice.model.SoftwareAssignment;
 import com.example.stockmanagermicroservice.repository.LicensePoolRepository;
 import com.example.stockmanagermicroservice.repository.SoftwareAssignmentRepository;
+import com.example.stockmanagermicroservice.repository.SoftwareRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,12 @@ public class AssignmentService {
 
     @Autowired
     private LicensePoolRepository licensePoolRepository;
+
+    @Autowired
+    private SoftwareRepository softwareRepository;
+
+    @Autowired
+    private AlertService alertService;
 
     public List<SoftwareAssignmentDTO> getAssignmentsBySoftware(String softwareId) {
         return assignmentRepository.findBySoftwareId(softwareId).stream()
@@ -40,6 +48,7 @@ public class AssignmentService {
         pool.setAvailableSeats(pool.getAvailableSeats() - 1);
         pool.setUpdatedAt(LocalDateTime.now());
         licensePoolRepository.save(pool);
+        syncLicensePoolAlert(pool);
 
         SoftwareAssignment assignment = new SoftwareAssignment();
         assignment.setLicensePoolId(pool.getId());
@@ -74,6 +83,7 @@ public class AssignmentService {
         pool.setAvailableSeats(pool.getAvailableSeats() + 1);
         pool.setUpdatedAt(LocalDateTime.now());
         licensePoolRepository.save(pool);
+        syncLicensePoolAlert(pool);
 
         assignment.setStatus(AssignmentStatus.REVOKED);
         assignment.setRevokedAt(LocalDateTime.now());
@@ -98,5 +108,35 @@ public class AssignmentService {
         dto.setAssignedBy(assignment.getAssignedBy());
         dto.setLicenseKeyUsed(assignment.getLicenseKeyUsed());
         return dto;
+    }
+
+    private void syncLicensePoolAlert(LicensePool pool) {
+        String key = "SOFTWARE_LICENSE_DEPLETED_" + pool.getId();
+        int availableSeats = pool.getAvailableSeats() != null ? pool.getAvailableSeats() : 0;
+
+        if (availableSeats <= 0) {
+            String softwareName = getSoftwareName(pool.getSoftwareId());
+
+            alertService.triggerSystemAlert(
+                    key,
+                    "LICENSE_POOL_DEPLETED",
+                    "HIGH",
+                    "ROLE",
+                    "IT_MANAGER",
+                    "Software Licenses Depleted: " + softwareName,
+                    "All available seats for " + softwareName + " have been assigned.");
+        } else {
+            alertService.resolveSystemAlert(key);
+        }
+    }
+
+    private String getSoftwareName(String softwareId) {
+        if (softwareId == null || softwareId.trim().isEmpty()) {
+            return "Unknown software";
+        }
+
+        return softwareRepository.findById(softwareId)
+                .map(Software::getName)
+                .orElse("Unknown software");
     }
 }

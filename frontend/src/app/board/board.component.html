@@ -182,7 +182,7 @@
       </p>
 
       <!-- Alerts -->
-      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'"
+      <a href="javascript:void(0)" class="nav-item"
         [ngClass]="activeTab === 'alerts' ? 'nav-item-active' : 'nav-item-default'" (click)="navigateToTab('alerts')" title="Alerts">
         <span *ngIf="activeTab === 'alerts'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"

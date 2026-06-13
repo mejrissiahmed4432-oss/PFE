@@ -147,8 +147,8 @@ public class OperatingSystemService {
                     "OS_LICENSE_DEPLETED_" + os.getId(),
                     "LICENSE_DEPLETED",
                     "HIGH",
-                    "OS",
-                    os.getId(),
+                    "ROLE",
+                    "IT_MANAGER",
                     "Licenses Depleted: " + osName,
                     "All licenses for " + osName + " have been used. No further installations are possible."
                 );
