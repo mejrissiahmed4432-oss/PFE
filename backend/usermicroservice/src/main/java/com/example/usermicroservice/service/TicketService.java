@@ -183,10 +183,10 @@ public class TicketService {
                 if ("Cancelled".equalsIgnoreCase(updated.getStatus())) {
                     alertService.createOrUpdateAlert(
                         "TICKET_CANCELLED_" + updated.getId(),
-                        "SYSTEM",
+                        "TICKET_CANCELLED",
                         "HIGH",
-                        "ROLE",
-                        "STOCK_MANAGER",
+                        ticketAlertTargetType(updated),
+                        ticketAlertTargetId(updated),
                         "Ticket Cancelled",
                         "The ticket '" + updated.getTitle() + "' for equipment '" + updated.getEquipmentName() + "' was cancelled."
                     );
@@ -198,8 +198,8 @@ public class TicketService {
                         "TICKET_OVERDUE_" + updated.getId(),
                         "TICKET_OVERDUE",
                         "HIGH",
-                        "ROLE",
-                        "STOCK_MANAGER",
+                        ticketAlertTargetType(updated),
+                        ticketAlertTargetId(updated),
                         "Ticket Overdue: " + updated.getTitle(),
                         "Ticket ID " + updated.getId() + " has been marked as overdue."
                     );
@@ -213,6 +213,18 @@ public class TicketService {
             
             return updated;
         }).orElseThrow(() -> new RuntimeException("Ticket not found with id " + id));
+    }
+
+    private String ticketAlertTargetType(Ticket ticket) {
+        return isBlank(ticket.getAssignedTo()) ? "ROLE" : "USER";
+    }
+
+    private String ticketAlertTargetId(Ticket ticket) {
+        return isBlank(ticket.getAssignedTo()) ? "TECHNICIAN" : ticket.getAssignedTo();
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 
     public void deleteTicket(String id) {

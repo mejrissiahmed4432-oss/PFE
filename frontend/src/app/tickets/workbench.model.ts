@@ -80,6 +80,8 @@ export interface WorkbenchResource {
   specification?: string;
   equipmentId?: string;     // inventory item ID — used for lifecycle update on completion
   replacesSpecKey?: string; // spec key this part replaces (e.g. "RAM", "Storage")
+  partType?: string;        // equipment type (e.g. RAM, Storage)
+  brand?: string;
 }
 
 export interface ValidationItem {

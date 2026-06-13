@@ -8,6 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients(defaultConfiguration = com.example.itmanagermicroservice.config.FeignConfig.class)
+
 public class ItManagerMicroserviceApplication {
     public static void main(String[] args) {
         SpringApplication.run(ItManagerMicroserviceApplication.class, args);

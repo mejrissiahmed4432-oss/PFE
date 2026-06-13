@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TicketService } from './ticket.service';
@@ -12,11 +12,13 @@ import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from 
 import { PartRequestService } from '../parts-management/part-request.service';
 import { PartRequest } from '../parts-management/part-request.model';
 import { LiveWorkbenchComponent } from './live-workbench/live-workbench.component';
+import { UpgradeWorkspaceComponent } from './upgrade-workspace/upgrade-workspace.component';
 import { RefreshService } from '../shared/refresh.service';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
 import { ToastService } from '../shared/toast.service';
 import { ConfirmDialogService } from '../shared/components/confirm-dialog/confirm-dialog.service';
 import { TranslatePipe } from '../shared/translate.pipe';
+import { applyPartToSpecifications, buildPartSpecValue, isReplaceAction, InstalledPartPayload } from './part-install.util';
 
 export interface RepairHistoryEntry {
   issue: string;
@@ -39,6 +41,9 @@ export interface ExtendedHistoryEntry {
   workNote?: string;
   repairTasks?: any[];
   partsUsed?: any[];
+  diagnosisResult?: string;
+  validationSummary?: string;
+  category?: string;
 }
 
 export interface EquipmentWithHistory extends Equipment {
@@ -51,11 +56,13 @@ export interface EquipmentWithHistory extends Equipment {
 @Component({
   selector: 'app-tickets',
   standalone: true,
-  imports: [CommonModule, FormsModule, DragDropModule, LiveWorkbenchComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, DragDropModule, LiveWorkbenchComponent, UpgradeWorkspaceComponent, TranslatePipe],
   templateUrl: './tickets.component.html',
   styleUrl: './tickets.component.css'
 })
-export class TicketsComponent implements OnInit, OnDestroy {
+export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() resetKey = 0;
+
   // View Mode: 'equipment' or 'tickets'
   viewMode: 'equipment' | 'tickets' = 'equipment';
 
@@ -91,7 +98,6 @@ export class TicketsComponent implements OnInit, OnDestroy {
   isEditMode: boolean = false;
   isSubmitting: boolean = false;
   currentUser: any;
-  attachmentFiles: { name: string; size: string; base64?: string }[] = [];
 
   // Real-time Activity Badges
   newEquipments = new Set<string>();
@@ -114,18 +120,24 @@ export class TicketsComponent implements OnInit, OnDestroy {
 
   // ── Live Workbench State ──
   showWorkbench: boolean = false;
-  showWorkbenchHistory: boolean = false;
   workbenchTicket: Ticket | null = null;
   workbenchEquipment: EquipmentWithHistory | null = null;
 
+  // ── Upgrade Workspace State ──
+  showUpgradeWorkspace: boolean = false;
+  upgradeTicket: Ticket | null = null;
+  upgradeEquipment: EquipmentWithHistory | null = null;
+
   // Technician Inventory
   userInventory: { 
+    id?: string;
     name: string; 
     totalQty: number; 
     category: string;
     type: string;
     specification: string;
     brand?: string;
+    isMatched?: boolean;
   }[] = [];
   private refreshSubscription?: Subscription;
 
@@ -141,6 +153,24 @@ export class TicketsComponent implements OnInit, OnDestroy {
     private toastService: ToastService,
     private confirmDialogService: ConfirmDialogService
   ) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['resetKey'] && !changes['resetKey'].firstChange) {
+      this.resetToRootView();
+    }
+  }
+
+  resetToRootView(): void {
+    this.viewMode = 'equipment';
+    this.selectedEquipment = null;
+    this.selectedTicket = null;
+    this.showFullHistory = false;
+    this.showWorkbench = false;
+    this.showUpgradeWorkspace = false;
+    this.workbenchTicket = null;
+    this.upgradeTicket = null;
+    this.showAddModal = false;
+  }
 
   ngOnInit(): void {
     this.authService.user$.subscribe(user => {
@@ -217,6 +247,9 @@ export class TicketsComponent implements OnInit, OnDestroy {
               );
               if (existing) {
                 existing.totalQty += item.quantity;
+                if (!existing.id && item.equipmentId) {
+                  existing.id = item.equipmentId;
+                }
               } else {
                 itemsList.push({
                   id: item.equipmentId,
@@ -460,7 +493,10 @@ export class TicketsComponent implements OnInit, OnDestroy {
       userRole: t.userRole || 'Technician',
       workNote: t.workNote,
       repairTasks: t.repairTasks,
-      partsUsed: t.partsUsed
+      partsUsed: t.partsUsed,
+      diagnosisResult: t.diagnosisResult,
+      validationSummary: t.validationSummary,
+      category: t.category
     })).sort((a, b) => {
       const dateA = new Date(a.dateStr + ' ' + a.timeStr).getTime();
       const dateB = new Date(b.dateStr + ' ' + b.timeStr).getTime();
@@ -614,51 +650,17 @@ export class TicketsComponent implements OnInit, OnDestroy {
     }
     // STOCK_MANAGER: leave assignedTo blank — backend's findBestTechnician() handles it
 
-    this.attachmentFiles = [];
     this.showAddModal = true;
   }
 
   openEditModal(ticket: Ticket): void {
     this.isEditMode = true;
     this.newTicket = { ...ticket };
-    // Map existing attachments if strings to the UI model
-    this.attachmentFiles = (ticket.attachments || []).map(att => ({
-      name: 'Attachment',
-      size: 'N/A',
-      base64: att
-    }));
     this.showAddModal = true;
   }
 
   setPriority(p: 'High' | 'Medium' | 'Low'): void {
     this.newTicket.priority = p;
-  }
-
-  handleAttachmentUpload(event: any): void {
-    const files: FileList = event.target.files;
-    if (!files || files.length === 0) return;
-    Array.from(files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.attachmentFiles.push({
-          name: file.name,
-          size: this.formatFileSize(file.size),
-          base64: e.target.result
-        });
-      };
-      reader.readAsDataURL(file);
-    });
-    event.target.value = '';
-  }
-
-  removeAttachment(index: number): void {
-    this.attachmentFiles.splice(index, 1);
-  }
-
-  private formatFileSize(bytes: number): string {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   }
 
   closeModal(): void {
@@ -675,8 +677,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
       userId: this.currentUser?.id,
       userName: (this.currentUser?.firstName ? this.currentUser.firstName + ' ' + (this.currentUser.lastName || '') : '') || this.currentUser?.email || 'Unknown User',
       userRole: this.currentUser?.role || 'Technician',
-      equipmentId: this.newTicket.equipmentId || this.selectedEquipment?.id,
-      attachments: this.attachmentFiles.map(f => f.base64 || f.name)
+      equipmentId: this.newTicket.equipmentId || this.selectedEquipment?.id
     };
 
     const request = this.isEditMode && this.newTicket.id
@@ -703,9 +704,12 @@ export class TicketsComponent implements OnInit, OnDestroy {
             this.toastService.success(`Ticket "${result.title}" created.${assignedMsg}`);
           }
 
-          // If technician, auto-open workbench immediately
           if (this.currentUser?.role === 'TECHNICIAN' && result.status !== 'Completed') {
-            this.startWorkbench(result);
+            if (result.category === 'Upgrade') {
+              this.startUpgradeWorkspace(result);
+            } else {
+              this.startWorkbench(result);
+            }
           }
         }
 
@@ -713,8 +717,8 @@ export class TicketsComponent implements OnInit, OnDestroy {
         this.isSubmitting = false;
         this.applyTicketFilters();
 
-        if (!this.isEditMode && this.selectedEquipment) {
-          // New ticket: Update status to Maintenance
+        if (!this.isEditMode && this.selectedEquipment && result.category !== 'Upgrade') {
+          // New ticket: Update status to Maintenance (not for upgrade tickets)
           this.selectedEquipment.status = 'Maintenance';
           this.calculateEquipmentHistory(this.selectedEquipment);
 
@@ -837,6 +841,43 @@ export class TicketsComponent implements OnInit, OnDestroy {
     }
   }
 
+  getCategoryClass(category: string | undefined): string {
+    switch (category) {
+      case 'Maintenance': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
+      case 'Inspection': return 'bg-blue-50 text-blue-600 border-blue-100';
+      case 'Incident': return 'bg-red-50 text-red-600 border-red-100';
+      case 'Upgrade': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+      default: return 'bg-gray-50 text-gray-500 border-gray-200';
+    }
+  }
+
+  isAssetEquipment(eq: Equipment): boolean {
+    if (!eq.type || !this.categories?.length) return true;
+    const cat = this.categories.find(c => c.name === eq.category);
+    const tInfo = cat?.types?.find(t => t.name === eq.type);
+    if (tInfo) return tInfo.nature === 'Asset';
+    const assetTypes = ['pc', 'laptop', 'server', 'monitor', 'printer', 'tablet'];
+    return assetTypes.includes((eq.type || '').toLowerCase().trim());
+  }
+
+  getEquipmentsForTicketModal(): EquipmentWithHistory[] {
+    if (this.newTicket.category === 'Upgrade') {
+      return this.filteredEquipments.filter(eq => this.isAssetEquipment(eq));
+    }
+    return this.filteredEquipments;
+  }
+
+  hasMaintenanceSummary(ticket: Ticket | null): boolean {
+    if (!ticket) return false;
+    const status = (ticket.status || '').toLowerCase();
+    if (status !== 'completed' && status !== 'closed') return false;
+    return !!(ticket.diagnosisResult || ticket.workNote || ticket.repairTasks?.length || ticket.partsUsed?.length || ticket.validationSummary);
+  }
+
+  isTaskDone(status: string | undefined): boolean {
+    return (status || '').toLowerCase() === 'done';
+  }
+
   getStatusClass(status: string | undefined): string {
     const s = (status || '').toLowerCase();
     if (s.includes('repair')) return 'status-warning';
@@ -858,6 +899,86 @@ export class TicketsComponent implements OnInit, OnDestroy {
   }
 
   // \u2500\u2500 Live Workbench Methods \u2500\u2500
+
+  openTicketWorkspace(ticket: Ticket): void {
+    if (ticket.category === 'Upgrade') {
+      this.startUpgradeWorkspace(ticket);
+    } else {
+      this.startWorkbench(ticket);
+    }
+  }
+
+  startUpgradeWorkspace(ticket: Ticket): void {
+    if (this.currentUser?.role !== 'TECHNICIAN') {
+      alert('Only technicians can access the Upgrade Workspace.');
+      return;
+    }
+    this.upgradeTicket = { ...ticket };
+    this.upgradeEquipment = this.selectedEquipment
+      || (ticket.equipmentId ? this.equipments.find(e => e.id === ticket.equipmentId) : undefined)
+      || this.equipments.find(e => e.name === ticket.equipmentName || e.equipmentName === ticket.equipmentName)
+      || null;
+
+    if (ticket.status !== 'In Progress') {
+      const updated: Ticket = { ...ticket, status: 'In Progress' };
+      this.ticketService.updateTicket(ticket.id!, updated).subscribe({
+        next: (res: Ticket) => {
+          const idx = this.ticketsList.findIndex(t => t.id === res.id);
+          if (idx !== -1) this.ticketsList[idx] = res;
+          this.upgradeTicket = res;
+          this.applyTicketFilters();
+        },
+        error: () => {}
+      });
+    }
+    this.loadUserInventory();
+    this.showUpgradeWorkspace = true;
+    this.showWorkbench = false;
+  }
+
+  onUpgradeComplete(): void {
+    if (!this.upgradeTicket?.id) return;
+    const updated: Ticket = { ...this.upgradeTicket, status: 'Completed', workNote: 'Upgrade completed.' };
+    this.ticketService.updateTicket(this.upgradeTicket.id, updated).subscribe({
+      next: (res: Ticket) => {
+        this.toastService.success('Upgrade ticket completed.');
+        const idx = this.ticketsList.findIndex(t => t.id === res.id);
+        if (idx !== -1) this.ticketsList[idx] = res;
+        this.showUpgradeWorkspace = false;
+        this.upgradeTicket = null;
+        this.upgradeEquipment = null;
+        this.applyTicketFilters();
+        this.loadAllData();
+        this.refreshService.triggerRefresh('TICKET');
+      },
+      error: () => this.toastService.error('Failed to complete upgrade ticket.')
+    });
+  }
+
+  onUpgradeClose(): void {
+    this.showUpgradeWorkspace = false;
+    this.upgradeTicket = null;
+  }
+
+  onUpgradeCancel(): void {
+    if (!this.upgradeTicket?.id) return;
+
+    const ticketId = this.upgradeTicket.id;
+    this.ticketService.deleteTicket(ticketId).subscribe({
+      next: () => {
+        this.ticketsList = this.ticketsList.filter(t => t.id !== ticketId);
+        this.toastService.info('Upgrade cancelled. All changes have been reverted.');
+        this.showUpgradeWorkspace = false;
+        this.upgradeTicket = null;
+        this.upgradeEquipment = null;
+        this.loadUserInventory();
+        this.applyTicketFilters();
+        this.loadAllData();
+        this.refreshService.triggerRefresh('TICKET');
+      },
+      error: () => this.toastService.error('Failed to delete upgrade ticket.')
+    });
+  }
 
   startWorkbench(ticket: Ticket): void {
     if (this.currentUser?.role !== 'TECHNICIAN') {
@@ -940,6 +1061,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
         this.toastService.success(`Maintenance on ${res.equipmentName} completed.`);
         const idx = this.ticketsList.findIndex(t => t.id === res.id);
         if (idx !== -1) this.ticketsList[idx] = res;
+        this.selectedTicket = res;
 
         // Capture BEFORE nulling any references — used in async closures below
         const completedEquipmentId: string | undefined = this.workbenchEquipment?.id || res.equipmentId;
@@ -1009,15 +1131,12 @@ export class TicketsComponent implements OnInit, OnDestroy {
             });
           }
 
-          // ── AUTOMATED SPECIFICATION SYNC ──
+          // Part specs & component lifecycle are synced by consumeParts on the stock-manager service.
+          // Apply the same rules locally so the detail pane reflects changes immediately.
           if (event.partsInstalled && event.partsInstalled.length > 0) {
             if (!eq.specifications) eq.specifications = {};
-            event.partsInstalled.forEach((part: any) => {
-              if (part.replacesSpecKey) {
-                const newValue = [part.name, part.specification].filter(Boolean).join(' ').trim();
-                eq.specifications![part.replacesSpecKey] = newValue;
-                console.log(`Spec synced: ${part.replacesSpecKey} -> ${newValue}`);
-              }
+            event.partsInstalled.forEach((part: InstalledPartPayload) => {
+              applyPartToSpecifications(eq.specifications!, part);
             });
           }
 
@@ -1041,42 +1160,76 @@ export class TicketsComponent implements OnInit, OnDestroy {
         this.applyTicketFilters();
         this.showWorkbench = false;
         this.workbenchTicket = null;
-        this.selectedTicket = null;
-        this.selectedEquipment = null;
+        if (eq) {
+          this.selectedEquipment = eq;
+        }
         
-        // ── CONSUME PARTS & UPDATE PART RECORDS ──
-        if (event.partsInstalled && event.partsInstalled.length > 0) {
-          const consumed = event.partsInstalled.map((p: any) => ({
-            name: p.name,
-            qty: p.qty,
-            specification: p.specification,
-            assignedToEquipmentName: completedEquipmentName,
-            assignedToEquipmentId: completedEquipmentId
-          }));
-          
-          if (this.currentUser?.id) {
-            this.partRequestService.consumeParts(this.currentUser.id, consumed).subscribe({
-              next: () => this.loadUserInventory()
-            });
+        // ── INSTALL PARTS in target equipment, then deduct technician inventory ──
+        if (event.partsInstalled && event.partsInstalled.length > 0 && completedEquipmentId) {
+          const actor = this.currentUser?.firstName || 'Technician';
+          const resolvePartEquipmentId = (p: InstalledPartPayload): string | undefined => {
+            if (p.equipmentId) return p.equipmentId;
+            const inv = this.userInventory.find(i =>
+              i.name?.toLowerCase() === p.name?.toLowerCase() &&
+              (i.specification || '').toLowerCase() === (p.specification || '').toLowerCase()
+            );
+            return inv?.id;
+          };
 
-            // Update individual part records to "Installed" with full lifecycle entry
-            event.partsInstalled.forEach((part: any) => {
-              if (part.equipmentId) {
-                this.equipmentService.getEquipmentById(part.equipmentId).subscribe(partRecord => {
-                  partRecord.status = 'Installed';
-                  partRecord.assignedToEquipmentName = completedEquipmentName;
-                  partRecord.assignedToEquipmentId = completedEquipmentId;
-                  if (!partRecord.lifecycle) partRecord.lifecycle = [];
-                  partRecord.lifecycle.push({
-                    status: 'Installed',
-                    timestamp: new Date().toISOString(),
-                    description: `Installed in ${completedEquipmentName} during ticket #${completedTicketId}`,
-                    actor: this.currentUser?.firstName || 'Technician'
-                  });
-                  this.equipmentService.updateEquipment(partRecord.id!, partRecord).subscribe();
-                });
+          const installCalls = event.partsInstalled
+            .map((p: InstalledPartPayload) => ({ ...p, equipmentId: resolvePartEquipmentId(p) }))
+            .filter((p: InstalledPartPayload) => !!p.equipmentId)
+            .map((p: InstalledPartPayload) =>
+              this.equipmentService.installPartFromMaintenance(p.equipmentId!, completedEquipmentId, {
+                replacesSpecKey: p.replacesSpecKey,
+                actionType: p.actionType,
+                specification: p.specification,
+                brand: p.brand,
+                actor
+              })
+            );
+
+          const afterInstall = () => {
+            if (!this.currentUser?.id) {
+              this.loadUserInventory();
+              this.loadAllData();
+              this.refreshService.triggerRefresh('TICKET');
+              return;
+            }
+
+            const consumed = event.partsInstalled!.map((p: InstalledPartPayload) => ({
+              name: p.name,
+              qty: p.qty,
+              type: p.partType,
+              specification: p.specification,
+              equipmentId: resolvePartEquipmentId(p),
+              brand: p.brand,
+              assignedToEquipmentName: completedEquipmentName,
+              assignedToEquipmentId: completedEquipmentId,
+              replacesSpecKey: p.replacesSpecKey,
+              actionType: p.actionType
+            }));
+
+            this.partRequestService.consumeParts(this.currentUser.id, consumed).subscribe({
+              next: () => {
+                this.loadUserInventory();
+                this.loadAllData();
+                this.refreshService.triggerRefresh('TICKET');
+              },
+              error: (err) => console.error('Failed to deduct consumed parts from requests', err)
+            });
+          };
+
+          if (installCalls.length > 0) {
+            forkJoin(installCalls).subscribe({
+              next: () => afterInstall(),
+              error: (err) => {
+                console.error('Failed to install parts in equipment', err);
+                afterInstall();
               }
             });
+          } else {
+            afterInstall();
           }
         }
         this.viewMode = 'tickets';

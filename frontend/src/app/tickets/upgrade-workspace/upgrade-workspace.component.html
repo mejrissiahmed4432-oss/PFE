@@ -1,0 +1,92 @@
+<div class="upgrade-workspace">
+  <div class="uw-header">
+    <div class="uw-header-left">
+      <button type="button" class="uw-back" (click)="close.emit()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <div>
+        <h2>Upgrade Workspace</h2>
+        <p>{{ equipment?.equipmentName || equipment?.name }} · Ticket #{{ ticket.id }}</p>
+      </div>
+    </div>
+    <div class="uw-header-actions">
+      <button type="button" class="uw-cancel-btn" [disabled]="isCancelling" (click)="cancelUpgrade()">
+        {{ isCancelling ? 'Reverting...' : 'Cancel Upgrade' }}
+      </button>
+      <button type="button" class="uw-complete-btn" [disabled]="isCancelling" (click)="completeUpgrade()">Complete Upgrade</button>
+    </div>
+  </div>
+
+  <div class="uw-grid">
+    <section class="uw-card">
+      <div class="uw-card-header">
+        <h3>Installed Parts ({{ installedParts.length }})</h3>
+      </div>
+      <div *ngIf="isLoading" class="uw-empty">Loading installed parts...</div>
+      <div *ngIf="!isLoading && installedParts.length === 0" class="uw-empty">No parts installed in this equipment yet.</div>
+      <table *ngIf="!isLoading && installedParts.length > 0" class="uw-table">
+        <thead>
+          <tr>
+            <th>Part</th>
+            <th>Type</th>
+            <th>Specifications</th>
+            <th>Serial</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let part of installedParts">
+            <td><strong>{{ part.equipmentName }}</strong></td>
+            <td><span class="uw-tag">{{ part.type }}</span></td>
+            <td>
+              <span class="uw-spec" *ngFor="let spec of getPartSpecificationEntries(part)">
+                {{ spec.key }}: {{ spec.value }}
+              </span>
+              <span *ngIf="getPartSpecificationEntries(part).length === 0">—</span>
+            </td>
+            <td class="mono">{{ part.serialNumber || '—' }}</td>
+            <td>
+              <button type="button" class="uw-btn-danger" [disabled]="uninstallingId === part.id" (click)="uninstallPart(part)">
+                {{ uninstallingId === part.id ? 'Uninstalling...' : 'Uninstall' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="uw-card">
+      <div class="uw-card-header">
+        <h3>Your Parts Inventory</h3>
+        <span class="uw-sub">Install from approved requests</span>
+      </div>
+      <div *ngIf="availableInventory.length === 0" class="uw-empty">No parts available in your inventory.</div>
+      <div class="uw-inventory-list" *ngIf="availableInventory.length > 0">
+        <div class="uw-inventory-item" *ngFor="let item of availableInventory">
+          <div>
+            <strong>{{ item.name }}</strong>
+            <div class="uw-meta">{{ item.type }} · {{ item.specification || 'No spec' }} · Qty {{ item.totalQty }}</div>
+          </div>
+          <button type="button" class="uw-btn-primary"
+            [disabled]="installingKey === inventoryKey(item)"
+            (click)="installFromInventory(item)">
+            {{ installingKey === inventoryKey(item) ? 'Installing...' : 'Install' }}
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="uw-card uw-specs-card" *ngIf="equipment?.specifications">
+    <div class="uw-card-header">
+      <h3>Equipment Specifications</h3>
+    </div>
+    <div class="uw-specs-grid">
+      <div class="uw-spec-row" *ngFor="let entry of equipment.specifications | keyvalue">
+        <span class="uw-spec-key">{{ entry.key }}</span>
+        <span class="uw-spec-val">{{ entry.value }}</span>
+      </div>
+    </div>
+  </section>
+</div>

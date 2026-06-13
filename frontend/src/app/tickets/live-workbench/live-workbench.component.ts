@@ -402,6 +402,13 @@ export class LiveWorkbenchComponent implements OnInit {
 
   // ── AI Assistant Methods ───────────────────────────────────────────────────
 
+  getDiagnosisContext(): string {
+    const title = (this.ticket?.title || '').trim();
+    const description = (this.ticket?.description || '').trim();
+    if (title && description) return `${title}: ${description}`;
+    return title || description;
+  }
+
   copyAiToDiagnosis() {
     if (this.state.aiDiagnosisCauses && this.state.aiDiagnosisCauses.length > 0) {
       const causesText = this.state.aiDiagnosisCauses.map(c => `- ${c}`).join('\n');
@@ -423,15 +430,16 @@ export class LiveWorkbenchComponent implements OnInit {
 
   generateDiagnosis() {
     this.activeAiTab = 'diagnosis';
-    if (this.aiLoading || this.state.lastAiDiagnosisInput === this.ticket.description) return;
+    const diagnosisInput = this.getDiagnosisContext();
+    if (this.aiLoading || this.state.lastAiDiagnosisInput === diagnosisInput) return;
 
     this.aiLoading = true;
-    const prompt = `Analyze this problem description and provide possible causes and suggested checks: ${this.ticket.description}. Format exactly as follows: \nCauses:\n- cause 1\n- cause 2\nChecks:\n- check 1\n- check 2`;
+    const prompt = `Analyze this problem and provide possible causes and suggested checks: ${diagnosisInput}. Format exactly as follows: \nCauses:\n- cause 1\n- cause 2\nChecks:\n- check 1\n- check 2`;
 
     this.aiService.query(prompt).subscribe({
       next: (res) => {
         this.aiLoading = false;
-        this.state.lastAiDiagnosisInput = this.ticket.description;
+        this.state.lastAiDiagnosisInput = diagnosisInput;
         const text = res.answer || '';
         const causesPart = text.split(/Checks:/i)[0] || '';
         const checksPart = text.split(/Checks:/i)[1] || '';
@@ -458,10 +466,11 @@ export class LiveWorkbenchComponent implements OnInit {
 
   runPredictiveAnalysis() {
     this.activeAiTab = 'predictive';
-    if (this.aiLoading || this.state.lastAiPredictiveInput === this.ticket.description) return;
+    const diagnosisInput = this.getDiagnosisContext();
+    if (this.aiLoading || this.state.lastAiPredictiveInput === diagnosisInput) return;
 
     this.aiLoading = true;
-    const prompt = `Analyze this problem description: ${this.ticket.description}. Provide a predictive failure map with 2-3 likely failures, their risk level (High/Medium/Low), probability percentage, and a recommended action. Also provide one similar past case. Use this format:
+    const prompt = `Analyze this problem: ${diagnosisInput}. Provide a predictive failure map with 2-3 likely failures, their risk level (High/Medium/Low), probability percentage, and a recommended action. Also provide one similar past case. Use this format:
 Failures:
 - Cause: [name] | Risk: [High/Medium/Low] | Percentage: [number] | Action: [action]
 Similar Case:
@@ -470,7 +479,7 @@ Similar Case:
     this.aiService.query(prompt).subscribe({
       next: (res) => {
         this.aiLoading = false;
-        this.state.lastAiPredictiveInput = this.ticket.description;
+        this.state.lastAiPredictiveInput = diagnosisInput;
         const text = res.answer || '';
 
         this.state.aiPredictiveMap = [];
@@ -688,7 +697,9 @@ Return all necessary technical steps to fully resolve the issue in the following
               quantity: 1,
               specification: match.specification,
               equipmentId: match.id,
-              replacesSpecKey: autoKey
+              replacesSpecKey: autoKey,
+              partType: match.type,
+              brand: match.brand
             });
           } else if (action.target) {
             // Fallback: Write the required resource even if not in inventory
@@ -830,11 +841,11 @@ Return all necessary technical steps to fully resolve the issue in the following
       return;
     }
 
-    this.addResourceToAction('part', part.name, Number(qty), part.specification, part.id);
+    this.addResourceToAction('part', part.name, Number(qty), part.specification, part.id, part.type, part.brand);
     delete this.pendingPartAdd[key];
   }
 
-  addResourceToAction(resourceType: 'part' | 'software' | 'config' | 'network' | 'firmware' | 'service', name: string, quantity: number = 1, specification?: string, equipmentId?: string) {
+  addResourceToAction(resourceType: 'part' | 'software' | 'config' | 'network' | 'firmware' | 'service', name: string, quantity: number = 1, specification?: string, equipmentId?: string, partType?: string, brand?: string) {
     const action = this.selectedAction;
     if (!action) return;
     if (!action.resources) action.resources = [];
@@ -848,6 +859,8 @@ Return all necessary technical steps to fully resolve the issue in the following
     if (existing) {
       existing.quantity = (existing.quantity || 1) + quantity;
       if (equipmentId) existing.equipmentId = equipmentId;
+      if (partType) existing.partType = partType;
+      if (brand) existing.brand = brand;
     } else {
       let replacesSpecKey: string | undefined = undefined;
       if (resourceType === 'part') {
@@ -862,7 +875,7 @@ Return all necessary technical steps to fully resolve the issue in the following
           replacesSpecKey = rawKey.charAt(0).toUpperCase() + rawKey.slice(1);
         }
       }
-      action.resources.push({ resourceType, name, quantity, specification, equipmentId, replacesSpecKey });
+      action.resources.push({ resourceType, name, quantity, specification, equipmentId, replacesSpecKey, partType, brand });
     }
     this.state.aiResourceMatched = false;
     this.saveState();
@@ -908,9 +921,8 @@ Return all necessary technical steps to fully resolve the issue in the following
 
   selectActionForResources(id: string): void {
     this.selectedActionId = id;
-
+    this.inventorySearch = '';
     this.refreshInventory();
-
     this.saveState();
   }
 
@@ -949,6 +961,58 @@ Return all necessary technical steps to fully resolve the issue in the following
     return used;
   }
 
+  getTargetFilterWords(target: string): string[] {
+    const targetStr = (target || '').toLowerCase().trim();
+    if (!targetStr) return [];
+
+    const skipWords = ['replace', 'install', 'update', 'repair', 'clean', 'inspect', 'configure', 'modify', 'setup', 'test', 'remove', 'upgrade', 'on', 'the', 'with', 'and', 'for', 'part', 'component', 'system', 'device'];
+    let targetWords = targetStr.split(/[\s,]+/)
+      .filter((w: string) => w.length > 1)
+      .filter((w: string) => !skipWords.includes(w));
+
+    if (targetWords.length === 0) {
+      targetWords = [targetStr];
+    }
+
+    if (targetStr.includes('hard drive') || targetStr.includes('storage') || targetStr.includes('disk') || targetStr.includes('ssd') || targetStr.includes('hdd')) {
+      targetWords.push('hdd', 'ssd', 'nvme', 'drive', 'storage', 'disk');
+    }
+    if (targetStr.includes('ram') || targetStr.includes('memory')) {
+      targetWords.push('ram', 'ddr', 'memory', 'dimm', 'sodimm');
+    }
+    if (targetStr.includes('screen') || targetStr.includes('display') || targetStr.includes('monitor')) {
+      targetWords.push('monitor', 'lcd', 'panel', 'display', 'screen');
+    }
+    if (targetStr.includes('board') || targetStr.includes('mother')) {
+      targetWords.push('motherboard', 'mainboard', 'pcb', 'board');
+    }
+    if (targetStr.includes('power') || targetStr.includes('psu') || targetStr.includes('battery')) {
+      targetWords.push('power', 'psu', 'battery', 'charger', 'adapter');
+    }
+
+    return targetWords;
+  }
+
+  filterInventoryByTarget(inventory: any[], target: string): any[] {
+    const targetWords = this.getTargetFilterWords(target);
+    if (targetWords.length === 0) return inventory;
+
+    return inventory.filter((p: any) => {
+      const nameSpec = ((p.name || '') + ' ' + (p.specification || '') + ' ' + (p.category || '')).toLowerCase();
+      return targetWords.some((w: string) => {
+        const regex = new RegExp(`\\b${w}\\b`, 'i');
+        return regex.test(nameSpec);
+      });
+    });
+  }
+
+  onActionTargetChange(action: WorkbenchAction): void {
+    this.saveState();
+    if (this.selectedActionId === action.id) {
+      this.refreshInventory();
+    }
+  }
+
   refreshInventory(): void {
     // Merge items with same name + specification
     const merged: Record<string, any> = {};
@@ -956,8 +1020,20 @@ Return all necessary technical steps to fully resolve the issue in the following
       const key = `${p.name}||${p.specification || ''}`;
       if (merged[key]) {
         merged[key].totalQty += p.totalQty;
+        if (!merged[key].id && p.id) {
+          merged[key].id = p.id;
+        }
       } else {
-        merged[key] = { name: p.name, specification: p.specification, category: p.category, type: p.type, brand: p.brand, location: p.location, totalQty: p.totalQty };
+        merged[key] = {
+          id: p.id,
+          name: p.name,
+          specification: p.specification,
+          category: p.category,
+          type: p.type,
+          brand: p.brand,
+          location: p.location,
+          totalQty: p.totalQty
+        };
       }
     }
 
@@ -977,42 +1053,7 @@ Return all necessary technical steps to fully resolve the issue in the following
 
     // Auto-filter based on the action's target if no manual search is active
     if (this.selectedAction && this.selectedAction.target) {
-      const targetStr = this.selectedAction.target.toLowerCase().trim();
-      const skipWords = ['replace', 'install', 'update', 'repair', 'clean', 'inspect', 'configure', 'modify', 'setup', 'test', 'remove', 'upgrade', 'on', 'the', 'with', 'and', 'for', 'part', 'component', 'system', 'device'];
-      let targetWords = targetStr.split(/[\s,]+/)
-        .filter((w: string) => w.length > 1)
-        .filter((w: string) => !skipWords.includes(w));
-
-      if (targetWords.length === 0) {
-        targetWords = [targetStr];
-      }
-
-      if (targetStr.includes('hard drive') || targetStr.includes('storage') || targetStr.includes('disk') || targetStr.includes('ssd') || targetStr.includes('hdd')) {
-        targetWords.push('hdd', 'ssd', 'nvme', 'drive', 'storage', 'disk');
-      }
-      if (targetStr.includes('ram') || targetStr.includes('memory')) {
-        targetWords.push('ram', 'ddr', 'memory', 'dimm', 'sodimm');
-      }
-      if (targetStr.includes('screen') || targetStr.includes('display') || targetStr.includes('monitor')) {
-        targetWords.push('monitor', 'lcd', 'panel', 'display', 'screen');
-      }
-      if (targetStr.includes('board') || targetStr.includes('mother')) {
-        targetWords.push('motherboard', 'mainboard', 'pcb', 'board');
-      }
-      if (targetStr.includes('power') || targetStr.includes('psu') || targetStr.includes('battery')) {
-        targetWords.push('power', 'psu', 'battery', 'charger', 'adapter');
-      }
-
-      if (targetWords.length > 0) {
-        result = result.filter((p: any) => {
-          const nameSpec = ((p.name || '') + ' ' + (p.specification || '') + ' ' + (p.category || '')).toLowerCase();
-          return targetWords.some((w: string) => {
-            // Use word boundary to prevent 'ram' from matching 'frame'
-            const regex = new RegExp(`\\b${w}\\b`, 'i');
-            return regex.test(nameSpec);
-          });
-        });
-      }
+      result = this.filterInventoryByTarget(result, this.selectedAction.target);
     }
 
     this.cachedInventory = result;
@@ -1054,14 +1095,14 @@ Return all necessary technical steps to fully resolve the issue in the following
   togglePartForAction(part: any, action: WorkbenchAction): void {
     const idx = action.resources.findIndex(r => r.name === part.name && r.specification === part.specification);
     if (idx === -1) {
-      action.resources.push({ resourceType: 'part', name: part.name, quantity: 1, specification: part.specification });
+      this.selectedActionId = action.id;
+      this.addResourceToAction('part', part.name, 1, part.specification, part.id, part.type, part.brand);
     } else {
       action.resources.splice(idx, 1);
+      this.state.aiResourceMatched = false;
+      this.saveState();
+      this.refreshInventory();
     }
-    this.saveState();
-
-    this.refreshInventory();
-
   }
 
   // ── Execution Step ──────────────────────────────────────────────────────────
@@ -1545,14 +1586,19 @@ Return all necessary technical steps to fully resolve the issue in the following
 
   confirmComplete(): void {
     const parts = this.state.actions
-      .flatMap(a => a.resources.filter(r => r.resourceType === 'part'))
-      .map(r => ({
-        name: r.name,
-        qty: r.quantity || 1,
-        specification: r.specification,
-        equipmentId: r.equipmentId,
-        replacesSpecKey: r.replacesSpecKey
-      }));
+      .flatMap(a => a.resources
+        .filter(r => r.resourceType === 'part')
+        .map(r => ({
+          name: r.name,
+          qty: r.quantity || 1,
+          specification: r.specification,
+          equipmentId: r.equipmentId,
+          replacesSpecKey: r.replacesSpecKey,
+          actionType: a.type,
+          partType: r.partType,
+          brand: r.brand
+        }))
+      );
 
     const tasks = this.state.actions.map(a => ({
       label: `[${a.category.toUpperCase()}] ${a.type} ${a.target}`,

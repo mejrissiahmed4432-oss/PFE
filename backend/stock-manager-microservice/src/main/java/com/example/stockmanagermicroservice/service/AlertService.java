@@ -77,16 +77,9 @@ public class AlertService {
                 // Resolve expiring alert if it exists
                 resolveSystemAlert(expiringKey);
             } else if (expDate.isBefore(thirtyDaysFromNow)) {
-                // Expiring soon
-                triggerSystemAlert(
-                        expiringKey,
-                        "WARRANTY_EXPIRING",
-                        "MEDIUM",
-                        "ROLE",
-                        "STOCK_MANAGER",
-                        "Warranty Expiring: " + eq.getEquipmentName(),
-                        "Warranty for " + eq.getEquipmentName() + " (SN: " + eq.getSerialNumber()
-                                + ") will expire soon on " + expDate + ".");
+                // Expiring soon is informational, not a critical alert.
+                resolveSystemAlert(expiredKey);
+                resolveSystemAlert(expiringKey);
             } else {
                 // Warranty extended or not close to expiry, resolve any existing alerts
                 resolveSystemAlert(expiredKey);

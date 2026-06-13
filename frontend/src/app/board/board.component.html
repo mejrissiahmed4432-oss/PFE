@@ -33,8 +33,8 @@
 
       <!-- Dashboard -->
       <a href="javascript:void(0)" class="nav-item"
-        [ngClass]="activeTab === 'dashboard' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'dashboard'"
-        title="Dashboard">
+        [ngClass]="activeTab === 'dashboard' ? 'nav-item-active' : 'nav-item-default'"
+        (click)="navigateToTab('dashboard')" title="Dashboard">
         <span *ngIf="activeTab === 'dashboard'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -53,7 +53,7 @@
       </p>
       <!-- Employees (HR Role only) -->
       <a href="javascript:void(0)" class="nav-item" [class.active]="activeTab === 'employees'"
-        *ngIf="user?.role === 'HR'" (click)="activeTab = 'employees'" title="Employees">
+        *ngIf="user?.role === 'HR'" (click)="navigateToTab('employees')" title="Employees">
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -65,7 +65,7 @@
       </a>
       <!-- Stock -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'"
-        [ngClass]="activeTab === 'stock' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'stock'"
+        [ngClass]="activeTab === 'stock' ? 'nav-item-active' : 'nav-item-default'" (click)="navigateToTab('stock')"
         title="Stock">
         <span *ngIf="activeTab === 'stock'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
@@ -120,7 +120,7 @@
       <!-- Categories -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'"
         [ngClass]="activeTab === 'categories' ? 'nav-item-active' : 'nav-item-default'"
-        (click)="activeTab = 'categories'" title="Equipment Category">
+        (click)="navigateToTab('categories')" title="Equipment Category">
         <span *ngIf="activeTab === 'categories'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -134,9 +134,10 @@
       </a>
 
       <!-- Suppliers -->
-      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'STOCK_MANAGER' || user?.role === 'IT_MANAGER' || user?.role === 'ADMIN'"
-        [ngClass]="activeTab === 'suppliers' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'suppliers'"
-        title="Suppliers">
+      <a href="javascript:void(0)" class="nav-item"
+        *ngIf="user?.role === 'STOCK_MANAGER' || user?.role === 'IT_MANAGER' || user?.role === 'ADMIN'"
+        [ngClass]="activeTab === 'suppliers' ? 'nav-item-active' : 'nav-item-default'"
+        (click)="navigateToTab('suppliers')" title="Suppliers">
         <span *ngIf="activeTab === 'suppliers'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -155,16 +156,16 @@
       <a href="javascript:void(0)" class="nav-item"
         *ngIf="user?.role === 'STOCK_MANAGER' || user?.role === 'IT_MANAGER'"
         [ngClass]="activeTab === 'procurement' ? 'nav-item-active' : 'nav-item-default'"
-        (click)="activeTab = 'procurement'" title="Procurement">
+        (click)="navigateToTab('procurement')" title="Procurement">
         <span *ngIf="activeTab === 'procurement'" class="nav-item-indicator"></span>
         <div class="relative">
           <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
-            <path d="M3 6h18"/>
-            <path d="M16 10a4 4 0 0 1-8 0"/>
-            <line x1="12" y1="14" x2="12" y2="18"/>
-            <line x1="10" y1="16" x2="14" y2="16"/>
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+            <path d="M3 6h18" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+            <line x1="12" y1="14" x2="12" y2="18" />
+            <line x1="10" y1="16" x2="14" y2="16" />
           </svg>
           <span *ngIf="isSidebarCollapsed && pendingProcurementCount > 0"
             class="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-emerald-500 ring-2 ring-[var(--bg-sidebar)] text-[7px] font-bold text-white">{{
@@ -180,13 +181,12 @@
       </a>
 
       <!-- Section: Management -->
-      <p class="nav-section-label"
-        *ngIf="!isSidebarCollapsed">{{ t('Management') }}
+      <p class="nav-section-label" *ngIf="!isSidebarCollapsed">{{ t('Management') }}
       </p>
 
       <!-- Alerts -->
-      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'"
-        [ngClass]="activeTab === 'alerts' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'alerts'"
+      <a href="javascript:void(0)" class="nav-item"
+        [ngClass]="activeTab === 'alerts' ? 'nav-item-active' : 'nav-item-default'" (click)="navigateToTab('alerts')"
         title="Alerts">
         <span *ngIf="activeTab === 'alerts'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
@@ -200,8 +200,8 @@
 
       <!-- Schedule -->
       <a href="javascript:void(0)" class="nav-item"
-        [ngClass]="activeTab === 'schedule' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'schedule'"
-        title="Schedule">
+        [ngClass]="activeTab === 'schedule' ? 'nav-item-active' : 'nav-item-default'"
+        (click)="navigateToTab('schedule')" title="Schedule">
         <span *ngIf="activeTab === 'schedule'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -216,7 +216,7 @@
 
       <!-- Reports -->
       <a href="javascript:void(0)" class="nav-item"
-        [ngClass]="activeTab === 'reports' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'reports'"
+        [ngClass]="activeTab === 'reports' ? 'nav-item-active' : 'nav-item-default'" (click)="navigateToTab('reports')"
         title="Reports">
         <span *ngIf="activeTab === 'reports'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
@@ -232,7 +232,7 @@
       <!-- Requests Manager -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'TECHNICIAN' && user?.role !== 'IT_MANAGER'"
         [ngClass]="activeTab === 'manager-requests' ? 'nav-item-active' : 'nav-item-default'"
-        (click)="activeTab = 'manager-requests'" title="Part Requests">
+        (click)="navigateToTab('manager-requests')" title="Part Requests">
         <span *ngIf="activeTab === 'manager-requests'" class="nav-item-indicator"></span>
         <div class="relative">
           <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
@@ -256,24 +256,24 @@
       </a>
 
       <!-- Parts (for technicians) -->
-      <a href="javascript:void(0)" class="nav-item"
-        *ngIf="user?.role === 'TECHNICIAN'"
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'TECHNICIAN'"
         [ngClass]="activeTab === 'parts' && selectedResourceFilter === 'Parts' ? 'nav-item-active' : 'nav-item-default'"
         (click)="setResourceFilter('Parts')" title="Parts">
         <span *ngIf="activeTab === 'parts' && selectedResourceFilter === 'Parts'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <path
+            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+          </path>
           <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
           <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
-        <span class="nav-item-label"
-          [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">{{ t('Parts') }}</span>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">{{
+          t('Parts') }}</span>
       </a>
 
       <!-- Software & License -->
-      <a href="javascript:void(0)" class="nav-item"
-        *ngIf="user?.role === 'TECHNICIAN' || user?.role === 'IT_MANAGER' || user?.role === 'ADMIN'"
+      <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'IT_MANAGER' || user?.role === 'ADMIN'"
         [ngClass]="activeTab === 'parts' && selectedResourceFilter === 'Software' ? 'nav-item-active' : 'nav-item-default'"
         (click)="setResourceFilter('Software')" title="Software & Licenses">
         <span *ngIf="activeTab === 'parts' && selectedResourceFilter === 'Software'" class="nav-item-indicator"></span>
@@ -283,8 +283,8 @@
           <polyline points="2 17 12 22 22 17"></polyline>
           <polyline points="2 12 12 17 22 12"></polyline>
         </svg>
-        <span class="nav-item-label"
-          [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Software & License</span>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Software &
+          License</span>
       </a>
 
 
@@ -292,15 +292,15 @@
 
       <!-- Departments Overview (for technicians) -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'TECHNICIAN'"
-        [ngClass]="activeTab === 'departments' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'departments'"
-        title="Departments">
+        [ngClass]="activeTab === 'departments' ? 'nav-item-active' : 'nav-item-default'"
+        (click)="navigateToTab('departments')" title="Departments">
         <span *ngIf="activeTab === 'departments'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="7" width="20" height="14" rx="2"/>
-          <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-          <line x1="12" y1="12" x2="12" y2="16"/>
-          <line x1="10" y1="14" x2="14" y2="14"/>
+          <rect x="2" y="7" width="20" height="14" rx="2" />
+          <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
+          <line x1="12" y1="12" x2="12" y2="16" />
+          <line x1="10" y1="14" x2="14" y2="14" />
         </svg>
         <span class="nav-item-label"
           [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Departments</span>
@@ -313,9 +313,9 @@
         <span *ngIf="activeTab === 'devices'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-          <line x1="8" y1="21" x2="16" y2="21"/>
-          <line x1="12" y1="17" x2="12" y2="21"/>
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+          <line x1="8" y1="21" x2="16" y2="21" />
+          <line x1="12" y1="17" x2="12" y2="21" />
         </svg>
         <span class="nav-item-label"
           [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Devices</span>
@@ -323,22 +323,22 @@
 
       <!-- Predictive Maintenance -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'TECHNICIAN'"
-        [ngClass]="activeTab === 'predictions' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'predictions'"
-        title="Predictive Maintenance">
+        [ngClass]="activeTab === 'predictions' ? 'nav-item-active' : 'nav-item-default'"
+        (click)="activeTab = 'predictions'" title="Predictive Maintenance">
         <span *ngIf="activeTab === 'predictions'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 2v20"></path>
           <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
         </svg>
-        <span class="nav-item-label"
-          [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">AI Maintenance</span>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">AI
+          Maintenance</span>
       </a>
 
       <!-- My Requests (for technicians) -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'TECHNICIAN'"
-        [ngClass]="activeTab === 'requests' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'requests'"
-        title="My Part Requests">
+        [ngClass]="activeTab === 'requests' ? 'nav-item-active' : 'nav-item-default'"
+        (click)="navigateToTab('requests')" title="My Part Requests">
         <span *ngIf="activeTab === 'requests'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -359,7 +359,7 @@
 
       <!-- Support Tickets -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role !== 'IT_MANAGER'"
-        [ngClass]="activeTab === 'tickets' ? 'nav-item-active' : 'nav-item-default'" (click)="activeTab = 'tickets'"
+        [ngClass]="activeTab === 'tickets' ? 'nav-item-active' : 'nav-item-default'" (click)="navigateToTab('tickets')"
         title="Support Tickets">
         <span *ngIf="activeTab === 'tickets'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
@@ -377,7 +377,7 @@
       <!-- User Management (IT Manager only) -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'IT_MANAGER'"
         [ngClass]="activeTab === 'user-management' ? 'nav-item-active' : 'nav-item-default'"
-        (click)="activeTab = 'user-management'" title="User Access Management">
+        (click)="navigateToTab('user-management')" title="User Access Management">
         <span *ngIf="activeTab === 'user-management'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -386,35 +386,40 @@
           <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
           <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
         </svg>
-        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">User Access</span>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">User
+          Access</span>
       </a>
 
       <!-- Task Management (IT Manager) -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'IT_MANAGER'"
         [ngClass]="activeTab === 'task-management' ? 'nav-item-active' : 'nav-item-default'"
-        (click)="activeTab = 'task-management'" title="Task Management">
+        (click)="navigateToTab('task-management')" title="Task Management">
         <span *ngIf="activeTab === 'task-management'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 11l3 3L22 4"/>
-          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          <path d="M9 11l3 3L22 4" />
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
         </svg>
-        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Task Management</span>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Task
+          Management</span>
       </a>
 
       <!-- Equipment Management (IT Manager only) -->
       <div *ngIf="user?.role === 'IT_MANAGER'">
         <a href="javascript:void(0)" class="nav-item"
           [ngClass]="activeTab === 'eq-management' ? 'nav-item-active' : 'nav-item-default'"
-          (click)="activeTab = 'eq-management'" title="Equipment Management">
+          (click)="navigateToTab('eq-management')" title="Equipment Management">
           <span *ngIf="activeTab === 'eq-management'" class="nav-item-indicator"></span>
           <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+            </path>
             <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
             <line x1="12" y1="22.08" x2="12" y2="12"></line>
           </svg>
-          <span class="nav-item-label-flex" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Equipment</span>
+          <span class="nav-item-label-flex"
+            [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Equipment</span>
           <svg *ngIf="!isSidebarCollapsed" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
             fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
             class="nav-chevron" [class.rotate-90]="activeTab === 'eq-management'">
@@ -423,19 +428,22 @@
         </a>
         <div class="nav-sub-list" *ngIf="activeTab === 'eq-management' && !isSidebarCollapsed">
           <a href="javascript:void(0)" class="nav-sub-item"
-             [ngClass]="selectedEqTab === 'available' ? 'nav-sub-item-active' : 'nav-sub-item-default'"
-             (click)="setEqTab('available')" title="Available Equipment">
-            <div class="nav-sub-dot" [ngClass]="selectedEqTab === 'available' ? 'bg-blue-400' : 'bg-slate-600'"></div><span>Available Equipment</span>
+            [ngClass]="selectedEqTab === 'available' ? 'nav-sub-item-active' : 'nav-sub-item-default'"
+            (click)="setEqTab('available')" title="Available Equipment">
+            <div class="nav-sub-dot" [ngClass]="selectedEqTab === 'available' ? 'bg-blue-400' : 'bg-slate-600'"></div>
+            <span>Available Equipment</span>
           </a>
           <a href="javascript:void(0)" class="nav-sub-item"
-             [ngClass]="selectedEqTab === 'in-use' ? 'nav-sub-item-active' : 'nav-sub-item-default'"
-             (click)="setEqTab('in-use')" title="In Use">
-            <div class="nav-sub-dot" [ngClass]="selectedEqTab === 'in-use' ? 'bg-blue-400' : 'bg-slate-600'"></div><span>Equipment In Use</span>
+            [ngClass]="selectedEqTab === 'in-use' ? 'nav-sub-item-active' : 'nav-sub-item-default'"
+            (click)="setEqTab('in-use')" title="In Use">
+            <div class="nav-sub-dot" [ngClass]="selectedEqTab === 'in-use' ? 'bg-blue-400' : 'bg-slate-600'"></div>
+            <span>Equipment In Use</span>
           </a>
           <a href="javascript:void(0)" class="nav-sub-item"
-             [ngClass]="selectedEqTab === 'history' ? 'nav-sub-item-active' : 'nav-sub-item-default'"
-             (click)="setEqTab('history')" title="History">
-            <div class="nav-sub-dot" [ngClass]="selectedEqTab === 'history' ? 'bg-blue-400' : 'bg-slate-600'"></div><span>Assignment History</span>
+            [ngClass]="selectedEqTab === 'history' ? 'nav-sub-item-active' : 'nav-sub-item-default'"
+            (click)="setEqTab('history')" title="History">
+            <div class="nav-sub-dot" [ngClass]="selectedEqTab === 'history' ? 'bg-blue-400' : 'bg-slate-600'"></div>
+            <span>Assignment History</span>
           </a>
         </div>
       </div>
@@ -443,7 +451,7 @@
       <!-- Admin Dashboard (Admin only) -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'ADMIN'"
         [ngClass]="activeTab === 'admin-dashboard' ? 'nav-item-active' : 'nav-item-default'"
-        (click)="activeTab = 'admin-dashboard'" title="Admin Console">
+        (click)="navigateToTab('admin-dashboard')" title="Admin Console">
         <span *ngIf="activeTab === 'admin-dashboard'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -451,33 +459,36 @@
           <circle cx="12" cy="11" r="3"></circle>
           <path d="M7 20c0-3.3 2.7-6 6-6"></path>
         </svg>
-        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Admin Console</span>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Admin
+          Console</span>
       </a>
 
       <!-- Blockchain Audit (Admin only) -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'ADMIN'"
-        [ngClass]="activeTab === 'audit' ? 'nav-item-active' : 'nav-item-default'"
-        (click)="activeTab = 'audit'" title="Blockchain Audit">
+        [ngClass]="activeTab === 'audit' ? 'nav-item-active' : 'nav-item-default'" (click)="navigateToTab('audit')"
+        title="Blockchain Audit">
         <span *ngIf="activeTab === 'audit'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
         </svg>
-        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Blockchain Audit</span>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Blockchain
+          Audit</span>
       </a>
 
       <!-- Equipment Returns (Stock Manager only) -->
       <a href="javascript:void(0)" class="nav-item" *ngIf="user?.role === 'STOCK_MANAGER'"
         [ngClass]="activeTab === 'eq-returns' ? 'nav-item-active' : 'nav-item-default'"
-        (click)="activeTab = 'eq-returns'" title="Equipment Returns">
+        (click)="navigateToTab('eq-returns')" title="Equipment Returns">
         <span *ngIf="activeTab === 'eq-returns'" class="nav-item-indicator"></span>
         <svg xmlns="http://www.w3.org/2000/svg" class="nav-item-icon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9 14 4 9 9 4"></polyline>
           <path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
         </svg>
-        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Eq. Returns</span>
+        <span class="nav-item-label" [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">Eq.
+          Returns</span>
         <div class="nav-item-label flex items-center justify-between flex-1 overflow-hidden"
           [ngClass]="isSidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'">
           <span class="!w-auto !opacity-100">{{ t('Tickets') }}</span>
@@ -498,7 +509,7 @@
 
     <div class="sidebar-footer" [class.flex]="isSidebarCollapsed" [class.justify-center]="isSidebarCollapsed"
       [class.p-2]="isSidebarCollapsed">
-      <button (click)="activeTab = 'settings'" class="sidebar-settings-btn" title="Settings">
+      <button (click)="navigateToTab('settings')" class="sidebar-settings-btn" title="Settings">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <path
@@ -690,7 +701,7 @@
 
 
         <!-- Alerts -->
-        <button (click)="activeTab = 'alerts'" class="topbar-btn-danger" title="Alerts">
+        <button (click)="navigateToTab('alerts')" class="topbar-btn-danger" title="Alerts">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
@@ -725,7 +736,7 @@
               <p class="dropdown-email">{{ user?.email || 'ahmed@medinaflux.com' }}</p>
             </div>
             <div class="dropdown-body">
-              <button (click)="activeTab = 'profile'" class="dropdown-item">
+              <button (click)="navigateToTab('profile')" class="dropdown-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
@@ -733,7 +744,7 @@
                 </svg>
                 My Profile
               </button>
-              <button (click)="activeTab = 'settings'" class="dropdown-item">
+              <button (click)="navigateToTab('settings')" class="dropdown-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path
@@ -784,10 +795,11 @@
 
 
       <!-- Stock / Shelves Component View -->
-      <app-shelf-list *ngIf="activeTab === 'stock'" (navigate)="activeTab = $event"></app-shelf-list>
+      <app-shelf-list *ngIf="activeTab === 'stock'" (navigate)="navigateToTab($event)"></app-shelf-list>
 
       <!-- Equipment Component View -->
-      <app-equipment *ngIf="activeTab === 'equipment'" [natureFilter]="selectedNatureFilter"></app-equipment>
+      <app-equipment *ngIf="activeTab === 'equipment'" [natureFilter]="selectedNatureFilter"
+        [resetKey]="navResetKey"></app-equipment>
 
       <!-- Category Component View -->
       <app-category-manager *ngIf="activeTab === 'categories'"></app-category-manager>
@@ -812,8 +824,7 @@
 
       <!-- Parts Management View (Technician Workspace) -->
 
-      <app-parts-management
-        *ngIf="activeTab === 'parts' && selectedResourceFilter !== 'Software'"
+      <app-parts-management *ngIf="activeTab === 'parts' && selectedResourceFilter !== 'Software'"
         [resourceFilter]="selectedResourceFilter"></app-parts-management>
 
       <!-- Software Management View -->
@@ -831,25 +842,25 @@
       <app-reports *ngIf="activeTab === 'reports'"></app-reports>
 
       <!-- Procurement Component View -->
-      <app-procurement
-        *ngIf="activeTab === 'procurement'"
-        [userRole]="user?.role"
-        [userId]="user?.id"
+      <app-procurement *ngIf="activeTab === 'procurement'" [userRole]="user?.role" [userId]="user?.id"
         [userName]="(user?.firstName || '') + ' ' + (user?.lastName || '')">
       </app-procurement>
 
       <!-- Support Tickets Component View -->
-      <app-tickets *ngIf="activeTab === 'tickets'"></app-tickets>
+      <app-tickets *ngIf="activeTab === 'tickets'" [resetKey]="navResetKey"></app-tickets>
 
       <!-- IT Manager Only / Shared -->
       <app-user-management *ngIf="activeTab === 'user-management'"></app-user-management>
-      <app-task-management *ngIf="activeTab === 'task-management'" [currentUserId]="user?.id" [currentUserRole]="user?.role"></app-task-management>
+      <app-task-management *ngIf="activeTab === 'task-management'" [currentUserId]="user?.id"
+        [currentUserRole]="user?.role"></app-task-management>
 
       <!-- Technician Departments Component View -->
-      <app-technician-departments *ngIf="activeTab === 'departments'" (viewDevices)="onViewDevices($event)"></app-technician-departments>
+      <app-technician-departments *ngIf="activeTab === 'departments'"
+        (viewDevices)="onViewDevices($event)"></app-technician-departments>
 
       <!-- Technician Devices Component View -->
-      <app-technician-devices *ngIf="activeTab === 'devices'" [departmentFilter]="devicesDeptFilter"></app-technician-devices>
+      <app-technician-devices *ngIf="activeTab === 'devices'"
+        [departmentFilter]="devicesDeptFilter"></app-technician-devices>
 
       <!-- Admin Dashboard Component View (Admin) -->
       <app-admin-dashboard *ngIf="activeTab === 'admin-dashboard'"></app-admin-dashboard>
@@ -858,7 +869,8 @@
       <app-audit-dashboard *ngIf="activeTab === 'audit'"></app-audit-dashboard>
 
       <!-- IT Equipment Management Component View (IT Manager) -->
-      <app-it-equipment-management *ngIf="activeTab === 'eq-management'" [activeTab]="selectedEqTab"></app-it-equipment-management>
+      <app-it-equipment-management *ngIf="activeTab === 'eq-management'"
+        [activeTab]="selectedEqTab"></app-it-equipment-management>
 
       <!-- Equipment Returns Component View (Stock Manager) -->
       <app-equipment-returns *ngIf="activeTab === 'eq-returns'"></app-equipment-returns>

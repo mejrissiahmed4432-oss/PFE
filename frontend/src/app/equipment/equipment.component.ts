@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EquipmentListComponent } from './equipment-list/equipment-list.component';
 import { EquipmentFormComponent } from './equipment-form/equipment-form.component';
@@ -17,7 +17,8 @@ import { Subscription } from 'rxjs';
   templateUrl: './equipment.component.html',
   styleUrl: './equipment.component.css'
 })
-export class EquipmentComponent implements OnInit, OnDestroy {
+export class EquipmentComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() resetKey = 0;
   mode: 'list' | 'form' = 'list';
   equipmentToEdit: Equipment | null = null;
   formViewOnly: boolean = false;
@@ -35,6 +36,20 @@ export class EquipmentComponent implements OnInit, OnDestroy {
     private refreshService: RefreshService
   ) {}
   
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['resetKey'] && !changes['resetKey'].firstChange) {
+      this.resetToList();
+    }
+  }
+
+  resetToList(): void {
+    this.mode = 'list';
+    this.equipmentToEdit = null;
+    this.formViewOnly = false;
+    this.isAddSimilar = false;
+    this.showWizard = false;
+  }
+
   ngOnInit(): void {
     // Listen for global refresh events (e.g., from AI Assistant)
     this.refreshSubscription = this.refreshService.refresh$.subscribe(actionType => {

@@ -26,7 +26,7 @@ public class RequestAlertScheduler {
         for (PartRequest request : allRequests) {
             String key = "REQUEST_PENDING_" + request.getId();
 
-            if ("PENDING".equalsIgnoreCase(request.getStatus())) {
+            if ("PENDING".equalsIgnoreCase(request.getStatus()) && "HIGH".equalsIgnoreCase(request.getPriority())) {
                 // Trigger alert
                 String title = "Pending Part Request";
                 String message = "Part request from " + request.getRequesterName() + " is pending review. Priority: " + request.getPriority() + ".";
@@ -34,7 +34,7 @@ public class RequestAlertScheduler {
                 alertService.triggerSystemAlert(
                     key,
                     "REQUEST_PENDING",
-                    "HIGH".equalsIgnoreCase(request.getPriority()) ? "HIGH" : "MEDIUM",
+                    "HIGH",
                     "ROLE",
                     "STOCK_MANAGER",
                     title,

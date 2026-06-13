@@ -32,6 +32,7 @@ export class AlertsComponent implements OnInit, OnDestroy {
   urgentCount = 0;
   upcomingCount = 0;
   overdueCount = 0;
+  activeCount = 0;
   unreadCount = 0;
   activityData: number[] = []; // Real activity data for the chart
 
@@ -80,11 +81,13 @@ export class AlertsComponent implements OnInit, OnDestroy {
     this.upcomingCount = this.alerts.filter(a => this.getAlertTheme(a) === 'upcoming').length;
     this.overdueCount = this.alerts.filter(a => this.getAlertTheme(a) === 'overdue').length;
     this.unreadCount = this.alerts.filter(a => !a.read).length;
+    this.activeCount = this.alerts.filter(a => (a.status || 'ACTIVE') === 'ACTIVE').length;
 
     // Generate categories dynamically
     const catMap = new Map<string, number>();
     this.alerts.forEach(a => {
-      catMap.set(a.category, (catMap.get(a.category) || 0) + 1);
+      const category = this.getAlertCategory(a);
+      catMap.set(category, (catMap.get(category) || 0) + 1);
     });
     this.categories = Array.from(catMap.entries()).map(([name, count]) => ({name, count}));
   }
@@ -96,7 +99,8 @@ export class AlertsComponent implements OnInit, OnDestroy {
     const data = new Array(12).fill(0);
     
     this.alerts.forEach(a => {
-      const date = new Date(a.createdAt);
+      const date = this.getAlertDate(a);
+      if (!date) return;
       const diffHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
       if (diffHours < 24) {
         const index = 11 - Math.floor(diffHours / 2); // 0-11 index
@@ -137,29 +141,16 @@ export class AlertsComponent implements OnInit, OnDestroy {
       }
     }
     
-    // Time Range Filter
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const lastWeek = new Date(today);
-    lastWeek.setDate(lastWeek.getDate() - 7);
-
     if (this.filterTimeRange !== 'all') {
-      temp = temp.filter(a => {
-        const d = new Date(a.createdAt);
-        if (this.filterTimeRange === 'today') return d >= today;
-        if (this.filterTimeRange === 'yesterday') return d >= yesterday && d < today;
-        if (this.filterTimeRange === 'week') return d >= lastWeek;
-        return true;
-      });
+      temp = temp.filter(a => this.matchesTimeRange(a, this.filterTimeRange));
     }
 
     // Specific Date Filter
     if (this.filterDate) {
       temp = temp.filter(a => {
-        if (!a.createdAt) return false;
-        const alertDateStr = new Date(a.createdAt).toISOString().split('T')[0];
+        const date = this.getAlertDate(a);
+        if (!date) return false;
+        const alertDateStr = this.toLocalDateKey(date);
         return alertDateStr === this.filterDate;
       });
     }
@@ -168,9 +159,13 @@ export class AlertsComponent implements OnInit, OnDestroy {
     if (this.searchQuery.trim() !== '') {
       const q = this.searchQuery.toLowerCase();
       temp = temp.filter(a => 
-        a.title.toLowerCase().includes(q) || 
-        a.message.toLowerCase().includes(q) ||
-        a.category.toLowerCase().includes(q) ||
+        a.title?.toLowerCase().includes(q) ||
+        a.message?.toLowerCase().includes(q) ||
+        this.getAlertCategory(a).toLowerCase().includes(q) ||
+        a.priority?.toLowerCase().includes(q) ||
+        a.status?.toLowerCase().includes(q) ||
+        a.targetType?.toLowerCase().includes(q) ||
+        a.targetId?.toLowerCase().includes(q) ||
         (a.type && a.type.toLowerCase().includes(q))
       );
     }
@@ -221,6 +216,10 @@ export class AlertsComponent implements OnInit, OnDestroy {
     return this.filteredAlerts.length > 0 && this.selectedIds.size === this.filteredAlerts.length;
   }
 
+  isActiveAlert(alert: Alert): boolean {
+    return (alert.status || 'ACTIVE') === 'ACTIVE';
+  }
+
   // Grouping Logic
   getGroupedAlerts() {
     const groups: { title: string, alerts: Alert[] }[] = [];
@@ -229,12 +228,19 @@ export class AlertsComponent implements OnInit, OnDestroy {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const todayAlerts = this.filteredAlerts.filter(a => new Date(a.createdAt) >= today);
+    const todayAlerts = this.filteredAlerts.filter(a => {
+      const date = this.getAlertDate(a);
+      return !!date && date >= today;
+    });
     const yesterdayAlerts = this.filteredAlerts.filter(a => {
-      const date = new Date(a.createdAt);
+      const date = this.getAlertDate(a);
+      if (!date) return false;
       return date >= yesterday && date < today;
     });
-    const olderAlerts = this.filteredAlerts.filter(a => new Date(a.createdAt) < yesterday);
+    const olderAlerts = this.filteredAlerts.filter(a => {
+      const date = this.getAlertDate(a);
+      return !!date && date < yesterday;
+    });
 
     if (todayAlerts.length > 0) groups.push({ title: 'Today', alerts: todayAlerts });
     if (yesterdayAlerts.length > 0) groups.push({ title: 'Yesterday', alerts: yesterdayAlerts });
@@ -244,10 +250,12 @@ export class AlertsComponent implements OnInit, OnDestroy {
   }
 
   markAsRead(alert: Alert): void {
-    if (alert.read) return;
+    if (alert.status === 'RESOLVED') return;
     this.alertService.markAsRead(alert.id).subscribe(() => {
       alert.read = true;
+      alert.status = 'RESOLVED';
       this.calculateStats();
+      this.filterAlerts();
     });
   }
 
@@ -256,8 +264,12 @@ export class AlertsComponent implements OnInit, OnDestroy {
     const role = this.currentUser?.role;
     
     this.alertService.markAllAsRead(userId, role).subscribe(() => {
-      this.alerts.forEach(a => a.read = true);
+      this.alerts.forEach(a => {
+        a.read = true;
+        a.status = 'RESOLVED';
+      });
       this.calculateStats();
+      this.filterAlerts();
     });
   }
 
@@ -266,6 +278,20 @@ export class AlertsComponent implements OnInit, OnDestroy {
     this.filterAlerts();
     this.calculateStats();
     this.alertService.deleteAlert(id).subscribe();
+  }
+
+  selectAllFiltered(): void {
+    this.filteredAlerts.forEach(a => {
+      if (a.id) this.selectedIds.add(a.id);
+    });
+  }
+
+  deleteAllFiltered(): void {
+    if (this.filteredAlerts.length === 0) return;
+    this.filteredAlerts.forEach(a => {
+      if (a.id) this.selectedIds.add(a.id);
+    });
+    this.deleteSelected();
   }
 
   deleteSelected(): void {
@@ -280,7 +306,10 @@ export class AlertsComponent implements OnInit, OnDestroy {
   markSelectedAsRead(): void {
     const idsToMark = Array.from(this.selectedIds);
     this.alerts.forEach(a => {
-      if (this.selectedIds.has(a.id)) a.read = true;
+      if (this.selectedIds.has(a.id)) {
+        a.read = true;
+        a.status = 'RESOLVED';
+      }
     });
     this.calculateStats();
     // In a real app, call service.markAsReadBulk(idsToMark)
@@ -288,18 +317,70 @@ export class AlertsComponent implements OnInit, OnDestroy {
   }
 
   getDaysText(createdAt: string): string {
-    const diffTime = Math.abs(new Date().getTime() - new Date(createdAt).getTime());
+    const date = this.parseDate(createdAt);
+    if (!date) return 'Unknown';
+    const diffTime = Math.abs(new Date().getTime() - date.getTime());
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     if (diffDays === 0) return 'Today';
     return `${diffDays}d ago`;
   }
 
+  getAlertCategory(alert: Alert): string {
+    return alert.category || alert.type || 'ALERT';
+  }
+
+  private matchesTimeRange(alert: Alert, range: string): boolean {
+    const date = this.getAlertDate(alert);
+    if (!date) return false;
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const lastWeek = new Date(today);
+    lastWeek.setDate(today.getDate() - 7);
+
+    if (range === 'today') return date >= today && date < tomorrow;
+    if (range === 'yesterday') return date >= yesterday && date < today;
+    if (range === 'week') return date >= lastWeek && date < tomorrow;
+    return true;
+  }
+
+  private getAlertDate(alert: Alert): Date | null {
+    return this.parseDate(alert.createdAt);
+  }
+
+  private parseDate(value?: string): Date | null {
+    if (!value) return null;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  private toLocalDateKey(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   getAlertTheme(alert: Alert): 'overdue' | 'urgent' | 'upcoming' | 'info' | 'success' {
-    if (alert.type === 'ERROR') {
-      return alert.message.toLowerCase().includes('expired') ? 'overdue' : 'urgent';
+    const type = (alert.type || '').toUpperCase();
+    const priority = (alert.priority || '').toUpperCase();
+    const message = (alert.message || '').toLowerCase();
+
+    if (alert.status === 'RESOLVED') {
+      return 'success';
     }
-    if (alert.type === 'WARNING') return 'upcoming';
-    if (alert.type === 'SUCCESS') return 'success';
+    if (type.includes('EXPIRED') || type.includes('OVERDUE') || message.includes('expired') || message.includes('overdue')) {
+      return 'overdue';
+    }
+    if (priority === 'HIGH' || type === 'ERROR') {
+      return 'urgent';
+    }
+    if (priority === 'MEDIUM' || type === 'WARNING') return 'upcoming';
+    if (type === 'SUCCESS') return 'success';
     return 'info';
   }
   

@@ -47,20 +47,25 @@ public class PartRequestService {
 
         // Notify Stock Managers
         notificationService.createNotification(
+
                 "New Request",
                 "A new part request with " + (saved.getItems() != null ? saved.getItems().size() : 0)
                         + " items has been submitted. Priority: " + saved.getPriority(),
                 "INFO", "PART_REQUEST", saved.getId(), null, "STOCK_MANAGER");
 
-        alertService.triggerSystemAlert(
-                "REQUEST_PENDING_" + saved.getId(),
-                "REQUEST_PENDING",
-                "HIGH".equalsIgnoreCase(saved.getPriority()) ? "HIGH" : "MEDIUM",
-                "ROLE",
-                "STOCK_MANAGER",
-                "Pending Part Request",
-                "Part request from " + saved.getRequesterName() + " is pending review. Priority: " + saved.getPriority()
-                        + ".");
+        if ("HIGH".equalsIgnoreCase(saved.getPriority())) {
+            alertService.triggerSystemAlert(
+                    "REQUEST_PENDING_" + saved.getId(),
+                    "REQUEST_PENDING",
+                    "HIGH",
+                    "ROLE",
+                    "STOCK_MANAGER",
+                    "Pending Part Request",
+                    "Part request from " + saved.getRequesterName() + " is pending review. Priority: "
+                            + saved.getPriority() + ".");
+        } else {
+            alertService.resolveSystemAlert("REQUEST_PENDING_" + saved.getId());
+        }
 
         // We no longer notify the requester upon submission per user request
 
@@ -188,21 +193,23 @@ public class PartRequestService {
                 .collect(java.util.stream.Collectors.toList());
 
         for (com.example.technicianmicroservice.controller.PartRequestController.PartConsumeRequest consumed : consumedParts) {
-            int remainingToConsume = consumed.qty;
+            int remainingToConsume = consumed.qty > 0 ? consumed.qty : 1;
             for (PartRequest req : approvedRequests) {
                 if (remainingToConsume <= 0)
                     break;
                 if (req.getItems() != null) {
                     for (com.example.technicianmicroservice.model.PartRequestItem item : req.getItems()) {
-                        if (item.getPartName() != null && item.getPartName().equals(consumed.name) &&
-                                (item.getSpecification() == null
-                                        || item.getSpecification().equals(consumed.specification))) {
-                            int available = item.getQuantity() != null ? item.getQuantity() : 0;
-                            if (available > 0) {
-                                int deduct = Math.min(available, remainingToConsume);
-                                item.setQuantity(available - deduct);
-                                remainingToConsume -= deduct;
-                            }
+
+                        if (remainingToConsume <= 0)
+                            break;
+                        if (!matchesConsumeItem(item, consumed)) {
+                            continue;
+                        }
+                        int available = item.getQuantity() != null ? item.getQuantity() : 0;
+                        if (available > 0) {
+                            int deduct = Math.min(available, remainingToConsume);
+                            item.setQuantity(available - deduct);
+                            remainingToConsume -= deduct;
                         }
                     }
                 }
@@ -214,5 +221,59 @@ public class PartRequestService {
         stockManagerClient.consumeParts(requesterId, consumedParts);
         System.out.println("Forwarded consumption to Stock Manager: " + consumedParts.size() + " items for requester "
                 + requesterId);
+    }
+
+    private boolean matchesConsumeItem(com.example.technicianmicroservice.model.PartRequestItem item,
+            com.example.technicianmicroservice.controller.PartRequestController.PartConsumeRequest consumed) {
+        if (consumed.equipmentId != null && !consumed.equipmentId.isEmpty()
+                && consumed.equipmentId.equals(item.getEquipmentId())) {
+            return true;
+        }
+        if (consumed.name == null) {
+            return false;
+        }
+        boolean nameMatches = consumed.name.equals(item.getPartName())
+                || (item.getMatchedEquipmentName() != null && consumed.name.equals(item.getMatchedEquipmentName()));
+        if (!nameMatches) {
+            return false;
+        }
+        return item.getSpecification() == null
+                || consumed.specification == null
+                || item.getSpecification().equals(consumed.specification);
+    }
+
+    public void restoreParts(String requesterId,
+            List<com.example.technicianmicroservice.controller.PartRequestController.PartConsumeRequest> restoredParts) {
+        if (restoredParts == null || restoredParts.isEmpty()) {
+            return;
+        }
+        List<PartRequest> approvedRequests = repository.findByRequesterId(requesterId).stream()
+                .filter(r -> "APPROVED".equals(r.getStatus()))
+                .collect(java.util.stream.Collectors.toList());
+
+        for (com.example.technicianmicroservice.controller.PartRequestController.PartConsumeRequest restored : restoredParts) {
+            int remainingToRestore = restored.qty > 0 ? restored.qty : 1;
+            for (PartRequest req : approvedRequests) {
+                if (remainingToRestore <= 0) {
+                    break;
+                }
+                if (req.getItems() == null) {
+                    continue;
+                }
+                for (com.example.technicianmicroservice.model.PartRequestItem item : req.getItems()) {
+                    if (remainingToRestore <= 0) {
+                        break;
+                    }
+                    if (!matchesConsumeItem(item, restored)) {
+                        continue;
+                    }
+                    int current = item.getQuantity() != null ? item.getQuantity() : 0;
+                    item.setQuantity(current + remainingToRestore);
+                    item.setReturned(false);
+                    remainingToRestore = 0;
+                }
+                repository.save(req);
+            }
+        }
     }
 }

@@ -1,8 +1,5 @@
 package com.example.usermicroservice.service;
 
-import com.example.usermicroservice.model.AlertPriority;
-import com.example.usermicroservice.model.AlertType;
-import com.example.usermicroservice.model.TargetType;
 import com.example.usermicroservice.model.Ticket;
 import com.example.usermicroservice.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +53,8 @@ public class TicketAlertScheduler {
                             key,
                             "TICKET_OVERDUE",
                             "HIGH",
-                            "ROLE",
-                            "STOCK_MANAGER", // Or whatever role handles tickets
+                            ticketAlertTargetType(ticket),
+                            ticketAlertTargetId(ticket),
                             title,
                             message
                         );
@@ -70,5 +67,17 @@ public class TicketAlertScheduler {
                 }
             }
         }
+    }
+
+    private String ticketAlertTargetType(Ticket ticket) {
+        return isBlank(ticket.getAssignedTo()) ? "ROLE" : "USER";
+    }
+
+    private String ticketAlertTargetId(Ticket ticket) {
+        return isBlank(ticket.getAssignedTo()) ? "TECHNICIAN" : ticket.getAssignedTo();
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }
