@@ -42,6 +42,9 @@ public final class DialogNewTicketBinding implements ViewBinding {
   public final EditText etTicketTitle;
 
   @NonNull
+  public final LinearLayout layoutDeadline;
+
+  @NonNull
   public final LinearLayout layoutDlgEquipmentList;
 
   @NonNull
@@ -62,13 +65,17 @@ public final class DialogNewTicketBinding implements ViewBinding {
   @NonNull
   public final TextView tvSelectedEqSerialType;
 
+  @NonNull
+  public final TextView tvTicketDeadline;
+
   private DialogNewTicketBinding(@NonNull ScrollView rootView, @NonNull Button btnCancelTicket,
       @NonNull Button btnChangeSelectedEq, @NonNull Button btnSubmitTicket,
       @NonNull EditText etDlgSearchEquipment, @NonNull EditText etTicketDescription,
-      @NonNull EditText etTicketTitle, @NonNull LinearLayout layoutDlgEquipmentList,
-      @NonNull LinearLayout layoutEqSearchSelector, @NonNull LinearLayout layoutSelectedEqCard,
-      @NonNull Spinner spTicketCategory, @NonNull Spinner spTicketPriority,
-      @NonNull TextView tvSelectedEqName, @NonNull TextView tvSelectedEqSerialType) {
+      @NonNull EditText etTicketTitle, @NonNull LinearLayout layoutDeadline,
+      @NonNull LinearLayout layoutDlgEquipmentList, @NonNull LinearLayout layoutEqSearchSelector,
+      @NonNull LinearLayout layoutSelectedEqCard, @NonNull Spinner spTicketCategory,
+      @NonNull Spinner spTicketPriority, @NonNull TextView tvSelectedEqName,
+      @NonNull TextView tvSelectedEqSerialType, @NonNull TextView tvTicketDeadline) {
     this.rootView = rootView;
     this.btnCancelTicket = btnCancelTicket;
     this.btnChangeSelectedEq = btnChangeSelectedEq;
@@ -76,6 +83,7 @@ public final class DialogNewTicketBinding implements ViewBinding {
     this.etDlgSearchEquipment = etDlgSearchEquipment;
     this.etTicketDescription = etTicketDescription;
     this.etTicketTitle = etTicketTitle;
+    this.layoutDeadline = layoutDeadline;
     this.layoutDlgEquipmentList = layoutDlgEquipmentList;
     this.layoutEqSearchSelector = layoutEqSearchSelector;
     this.layoutSelectedEqCard = layoutSelectedEqCard;
@@ -83,6 +91,7 @@ public final class DialogNewTicketBinding implements ViewBinding {
     this.spTicketPriority = spTicketPriority;
     this.tvSelectedEqName = tvSelectedEqName;
     this.tvSelectedEqSerialType = tvSelectedEqSerialType;
+    this.tvTicketDeadline = tvTicketDeadline;
   }
 
   @Override
@@ -148,6 +157,12 @@ public final class DialogNewTicketBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.layoutDeadline;
+      LinearLayout layoutDeadline = ViewBindings.findChildViewById(rootView, id);
+      if (layoutDeadline == null) {
+        break missingId;
+      }
+
       id = R.id.layoutDlgEquipmentList;
       LinearLayout layoutDlgEquipmentList = ViewBindings.findChildViewById(rootView, id);
       if (layoutDlgEquipmentList == null) {
@@ -190,10 +205,16 @@ public final class DialogNewTicketBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tvTicketDeadline;
+      TextView tvTicketDeadline = ViewBindings.findChildViewById(rootView, id);
+      if (tvTicketDeadline == null) {
+        break missingId;
+      }
+
       return new DialogNewTicketBinding((ScrollView) rootView, btnCancelTicket, btnChangeSelectedEq,
-          btnSubmitTicket, etDlgSearchEquipment, etTicketDescription, etTicketTitle,
+          btnSubmitTicket, etDlgSearchEquipment, etTicketDescription, etTicketTitle, layoutDeadline,
           layoutDlgEquipmentList, layoutEqSearchSelector, layoutSelectedEqCard, spTicketCategory,
-          spTicketPriority, tvSelectedEqName, tvSelectedEqSerialType);
+          spTicketPriority, tvSelectedEqName, tvSelectedEqSerialType, tvTicketDeadline);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

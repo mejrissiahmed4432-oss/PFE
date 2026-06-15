@@ -21,7 +21,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Account Settings"
+                android:text="@string/txt_account_settings"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="@color/textPrimary"
@@ -29,7 +29,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Manage your account preferences and settings"
+                android:text="@string/txt_manage_your_account_preferences_and_sett"
                 android:textSize="12sp"
                 android:textColor="@color/textHint"
                 android:layout_marginTop="2dp" />
@@ -72,7 +72,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Account Security"
+                            android:text="@string/txt_account_security"
                             android:textColor="@color/textPrimary"
                             android:textSize="15sp"
                             android:textStyle="bold" />
@@ -80,7 +80,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Manage your credentials and authentication details"
+                            android:text="@string/txt_manage_your_credentials_and_authenticati"
                             android:textColor="@color/textHint"
                             android:textSize="11sp" />
                     </LinearLayout>
@@ -122,7 +122,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Change Password"
+                                android:text="@string/txt_change_password"
                                 android:textColor="@color/textPrimary"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -130,7 +130,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Update your login password periodically"
+                                android:text="@string/txt_update_your_login_password_periodically"
                                 android:textColor="@color/textHint"
                                 android:textSize="11sp" />
                         </LinearLayout>
@@ -176,7 +176,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Change Email Address"
+                                android:text="@string/txt_change_email_address"
                                 android:textColor="@color/textPrimary"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -185,7 +185,7 @@
                                 android:id="@+id/tvCurrentEmailLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="technician@company.com"
+                                android:text="@string/txt_technician_company_com"
                                 android:textColor="@color/textHint"
                                 android:textSize="11sp" />
                         </LinearLayout>
@@ -210,7 +210,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Update Password"
+                        android:text="@string/txt_update_password"
                         android:textColor="@color/textPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold"
@@ -220,7 +220,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Current Password *"
+                        android:text="@string/txt_current_password"
                         android:textColor="@color/textSecondary"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -241,7 +241,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@null"
-                            android:hint="Enter current password"
+                            android:hint="@string/txt_enter_current_password"
                             android:textColor="@color/textPrimary"
                             android:textColorHint="@color/textHint"
                             android:textSize="14sp"
@@ -261,7 +261,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="New Password *"
+                        android:text="@string/txt_new_password"
                         android:textColor="@color/textSecondary"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -282,7 +282,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@null"
-                            android:hint="Minimum 8 characters"
+                            android:hint="@string/txt_minimum_8_characters"
                             android:textColor="@color/textPrimary"
                             android:textColorHint="@color/textHint"
                             android:textSize="14sp"
@@ -350,7 +350,7 @@
                             android:id="@+id/tvStrengthLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Weak"
+                            android:text="@string/txt_weak"
                             android:textColor="@color/errorText"
                             android:textSize="11sp"
                             android:textStyle="bold" />
@@ -360,7 +360,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Confirm New Password *"
+                        android:text="@string/txt_confirm_new_password"
                         android:textColor="@color/textSecondary"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -381,7 +381,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@null"
-                            android:hint="Confirm your new password"
+                            android:hint="@string/txt_confirm_your_new_password"
                             android:textColor="@color/textPrimary"
                             android:textColorHint="@color/textHint"
                             android:textSize="14sp"
@@ -408,7 +408,7 @@
                             android:layout_width="0dp"
                             android:layout_height="46dp"
                             android:layout_weight="1"
-                            android:text="Save Password"
+                            android:text="@string/txt_save_password"
                             android:textColor="@color/white"
                             android:textSize="13sp"
                             android:textStyle="bold"
@@ -419,7 +419,7 @@
                             android:id="@+id/btnCancelPasswordChange"
                             android:layout_width="wrap_content"
                             android:layout_height="46dp"
-                            android:text="Cancel"
+                            android:text="@string/txt_cancel"
                             android:textColor="@color/textSecondary"
                             android:textSize="13sp"
                             android:background="@android:color/transparent"
@@ -439,7 +439,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Change Email Address"
+                        android:text="@string/txt_change_email_address"
                         android:textColor="@color/textPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold"
@@ -449,7 +449,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="New Email Address *"
+                        android:text="@string/txt_new_email_address"
                         android:textColor="@color/textSecondary"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -468,7 +468,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@null"
-                            android:hint="Enter new email address"
+                            android:hint="@string/txt_enter_new_email_address"
                             android:textColor="@color/textPrimary"
                             android:textColorHint="@color/textHint"
                             android:textSize="14sp"
@@ -480,7 +480,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Confirm New Email *"
+                        android:text="@string/txt_confirm_new_email"
                         android:textColor="@color/textSecondary"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -499,7 +499,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@null"
-                            android:hint="Repeat new email address"
+                            android:hint="@string/txt_repeat_new_email_address"
                             android:textColor="@color/textPrimary"
                             android:textColorHint="@color/textHint"
                             android:textSize="14sp"
@@ -511,7 +511,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Confirm with Password *"
+                        android:text="@string/txt_confirm_with_password"
                         android:textColor="@color/textSecondary"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -532,7 +532,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:background="@null"
-                            android:hint="Enter your password to authorize change"
+                            android:hint="@string/txt_enter_your_password_to_authorize_change"
                             android:textColor="@color/textPrimary"
                             android:textColorHint="@color/textHint"
                             android:textSize="14sp"
@@ -551,7 +551,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Your password is required to securely update your account email."
+                        android:text="@string/txt_your_password_is_required_to_securely_up"
                         android:textColor="@color/textHint"
                         android:textSize="11sp"
                         android:layout_marginBottom="20dp" />
@@ -567,7 +567,7 @@
                             android:layout_width="0dp"
                             android:layout_height="46dp"
                             android:layout_weight="1"
-                            android:text="Save Email Address"
+                            android:text="@string/txt_save_email_address"
                             android:textColor="@color/white"
                             android:textSize="13sp"
                             android:textStyle="bold"
@@ -578,7 +578,7 @@
                             android:id="@+id/btnCancelEmailChange"
                             android:layout_width="wrap_content"
                             android:layout_height="46dp"
-                            android:text="Cancel"
+                            android:text="@string/txt_cancel"
                             android:textColor="@color/textSecondary"
                             android:textSize="13sp"
                             android:background="@android:color/transparent"
@@ -586,194 +586,6 @@
                     </LinearLayout>
 
                 </LinearLayout>
-
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- ═══ Email Preferences Card ═══ -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/white"
-            android:layout_marginBottom="24dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <!-- Header Details -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="16dp">
-
-                    <View
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_icon_service_desk"
-                        android:layout_marginEnd="12dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Email Preferences"
-                            android:textColor="@color/textPrimary"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Manage how we communicate with you"
-                            android:textColor="@color/textHint"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Email Notifications Preference -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingVertical="8dp">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Email Notifications"
-                            android:textColor="@color/textPrimary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Receive notifications about your account activity"
-                            android:textColor="@color/textHint"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switchEmailNotifications"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/divider"
-                    android:layout_marginVertical="8dp" />
-
-                <!-- Security Alerts Preference -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingVertical="8dp">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Security Alerts"
-                            android:textColor="@color/textPrimary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Get notified about security events and login details"
-                            android:textColor="@color/textHint"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switchSecurityAlerts"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/divider"
-                    android:layout_marginVertical="8dp" />
-
-                <!-- Marketing Emails Preference -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingVertical="8dp">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Marketing Emails"
-                            android:textColor="@color/textPrimary"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Receive updates about new features and offers"
-                            android:textColor="@color/textHint"
-                            android:textSize="11sp" />
-                    </LinearLayout>
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switchMarketingEmails"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="false" />
-                </LinearLayout>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnSavePreferences"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="Save Preferences"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:background="@drawable/bg_button_gradient"
-                    android:layout_marginTop="20dp" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

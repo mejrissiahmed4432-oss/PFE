@@ -90,11 +90,6 @@
             android:name="com.medina.app.activities.DashboardActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name="com.medina.app.activities.LiveWorkbenchActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MedinaApp"
-            android:windowSoftInputMode="adjustResize" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

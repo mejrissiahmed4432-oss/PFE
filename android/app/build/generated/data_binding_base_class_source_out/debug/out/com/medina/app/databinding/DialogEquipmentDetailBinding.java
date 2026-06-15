@@ -28,6 +28,9 @@ public final class DialogEquipmentDetailBinding implements ViewBinding {
   public final Button btnEqDetailCancel;
 
   @NonNull
+  public final LinearLayout layoutEqSpecsContainer;
+
+  @NonNull
   public final LinearLayout layoutEqTimelineContainer;
 
   @NonNull
@@ -55,18 +58,23 @@ public final class DialogEquipmentDetailBinding implements ViewBinding {
   public final TextView tvEqDetailType;
 
   @NonNull
+  public final TextView tvEqSpecsTitle;
+
+  @NonNull
   public final TextView tvEqTimelineEmpty;
 
   private DialogEquipmentDetailBinding(@NonNull NestedScrollView rootView,
       @NonNull Button btnEqDetailAction, @NonNull Button btnEqDetailCancel,
-      @NonNull LinearLayout layoutEqTimelineContainer, @NonNull LinearLayout layoutEqWarningBanner,
-      @NonNull TextView tvEqDetailAssigned, @NonNull TextView tvEqDetailCategory,
-      @NonNull TextView tvEqDetailLastRepair, @NonNull TextView tvEqDetailName,
-      @NonNull TextView tvEqDetailSerial, @NonNull TextView tvEqDetailStatusBadge,
-      @NonNull TextView tvEqDetailType, @NonNull TextView tvEqTimelineEmpty) {
+      @NonNull LinearLayout layoutEqSpecsContainer, @NonNull LinearLayout layoutEqTimelineContainer,
+      @NonNull LinearLayout layoutEqWarningBanner, @NonNull TextView tvEqDetailAssigned,
+      @NonNull TextView tvEqDetailCategory, @NonNull TextView tvEqDetailLastRepair,
+      @NonNull TextView tvEqDetailName, @NonNull TextView tvEqDetailSerial,
+      @NonNull TextView tvEqDetailStatusBadge, @NonNull TextView tvEqDetailType,
+      @NonNull TextView tvEqSpecsTitle, @NonNull TextView tvEqTimelineEmpty) {
     this.rootView = rootView;
     this.btnEqDetailAction = btnEqDetailAction;
     this.btnEqDetailCancel = btnEqDetailCancel;
+    this.layoutEqSpecsContainer = layoutEqSpecsContainer;
     this.layoutEqTimelineContainer = layoutEqTimelineContainer;
     this.layoutEqWarningBanner = layoutEqWarningBanner;
     this.tvEqDetailAssigned = tvEqDetailAssigned;
@@ -76,6 +84,7 @@ public final class DialogEquipmentDetailBinding implements ViewBinding {
     this.tvEqDetailSerial = tvEqDetailSerial;
     this.tvEqDetailStatusBadge = tvEqDetailStatusBadge;
     this.tvEqDetailType = tvEqDetailType;
+    this.tvEqSpecsTitle = tvEqSpecsTitle;
     this.tvEqTimelineEmpty = tvEqTimelineEmpty;
   }
 
@@ -115,6 +124,12 @@ public final class DialogEquipmentDetailBinding implements ViewBinding {
       id = R.id.btnEqDetailCancel;
       Button btnEqDetailCancel = ViewBindings.findChildViewById(rootView, id);
       if (btnEqDetailCancel == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutEqSpecsContainer;
+      LinearLayout layoutEqSpecsContainer = ViewBindings.findChildViewById(rootView, id);
+      if (layoutEqSpecsContainer == null) {
         break missingId;
       }
 
@@ -172,6 +187,12 @@ public final class DialogEquipmentDetailBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tvEqSpecsTitle;
+      TextView tvEqSpecsTitle = ViewBindings.findChildViewById(rootView, id);
+      if (tvEqSpecsTitle == null) {
+        break missingId;
+      }
+
       id = R.id.tvEqTimelineEmpty;
       TextView tvEqTimelineEmpty = ViewBindings.findChildViewById(rootView, id);
       if (tvEqTimelineEmpty == null) {
@@ -179,9 +200,10 @@ public final class DialogEquipmentDetailBinding implements ViewBinding {
       }
 
       return new DialogEquipmentDetailBinding((NestedScrollView) rootView, btnEqDetailAction,
-          btnEqDetailCancel, layoutEqTimelineContainer, layoutEqWarningBanner, tvEqDetailAssigned,
-          tvEqDetailCategory, tvEqDetailLastRepair, tvEqDetailName, tvEqDetailSerial,
-          tvEqDetailStatusBadge, tvEqDetailType, tvEqTimelineEmpty);
+          btnEqDetailCancel, layoutEqSpecsContainer, layoutEqTimelineContainer,
+          layoutEqWarningBanner, tvEqDetailAssigned, tvEqDetailCategory, tvEqDetailLastRepair,
+          tvEqDetailName, tvEqDetailSerial, tvEqDetailStatusBadge, tvEqDetailType, tvEqSpecsTitle,
+          tvEqTimelineEmpty);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

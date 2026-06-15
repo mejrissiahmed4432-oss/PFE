@@ -29,7 +29,7 @@
                     android:id="@+id/tvEqDetailName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Equipment Name"
+                    android:text="@string/txt_equipment_name"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/textPrimary"/>
@@ -38,7 +38,7 @@
                     android:id="@+id/tvEqDetailSerial"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SN: 00000"
+                    android:text="@string/txt_sn_00000"
                     android:textSize="12sp"
                     android:textColor="@color/textSecondary"
                     android:layout_marginTop="2dp"/>
@@ -48,7 +48,7 @@
                 android:id="@+id/tvEqDetailStatusBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="AVAILABLE"
+                android:text="@string/txt_available"
                 android:textSize="10sp"
                 android:textStyle="bold"
                 android:textColor="@color/successText"
@@ -89,7 +89,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TYPE"
+                    android:text="@string/txt_type"
                     android:textSize="9sp"
                     android:textStyle="bold"
                     android:textColor="@color/textHint"/>
@@ -97,7 +97,7 @@
                     android:id="@+id/tvEqDetailType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Laptop"
+                    android:text="@string/txt_laptop"
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="@color/textPrimary"
@@ -117,7 +117,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CATEGORY"
+                    android:text="@string/txt_category"
                     android:textSize="9sp"
                     android:textStyle="bold"
                     android:textColor="@color/textHint"/>
@@ -125,7 +125,7 @@
                     android:id="@+id/tvEqDetailCategory"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hardware"
+                    android:text="@string/txt_hardware"
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="@color/textPrimary"
@@ -144,7 +144,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ASSIGNED TO"
+                    android:text="@string/txt_name"
                     android:textSize="9sp"
                     android:textStyle="bold"
                     android:textColor="@color/textHint"/>
@@ -152,7 +152,7 @@
                     android:id="@+id/tvEqDetailAssigned"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Morad Mejri"
+                    android:text="@string/txt_morad_mejri"
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="@color/textPrimary"
@@ -171,7 +171,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="LAST REPAIR"
+                    android:text="@string/txt_last_repair"
                     android:textSize="9sp"
                     android:textStyle="bold"
                     android:textColor="@color/textHint"/>
@@ -179,7 +179,7 @@
                     android:id="@+id/tvEqDetailLastRepair"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Never"
+                    android:text="@string/txt_never"
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="@color/textPrimary"
@@ -211,17 +211,41 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="This equipment has an active ticket. Please resolve it before creating a new one."
+                android:text="@string/txt_this_equipment_has_an_active_ticket_plea"
                 android:textSize="11sp"
                 android:textColor="@color/errorText"
                 android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- Specifications Section -->
+        <TextView
+            android:id="@+id/tvEqSpecsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_specifications"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="@color/textSecondary"
+            android:layout_marginBottom="8dp"
+            android:letterSpacing="0.1"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/layoutEqSpecsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
         </LinearLayout>
 
         <!-- Timeline Section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="REPAIR HISTORY"
+            android:text="@string/txt_repair_history"
             android:textSize="11sp"
             android:textStyle="bold"
             android:textColor="@color/textSecondary"
@@ -241,7 +265,7 @@
                 android:id="@+id/tvEqTimelineEmpty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No previous repair records found."
+                android:text="@string/txt_no_previous_repair_records_found"
                 android:textSize="12sp"
                 android:textColor="@color/textHint"
                 android:gravity="center"
@@ -259,7 +283,7 @@
                 android:id="@+id/btnEqDetailCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Close"
+                android:text="@string/txt_close"
                 android:textColor="@color/textSecondary"
                 android:backgroundTint="@color/inputBackground"
                 android:layout_marginEnd="8dp"
@@ -269,7 +293,7 @@
                 android:id="@+id/btnEqDetailAction"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Create Ticket"
+                android:text="@string/txt_create_ticket"
                 android:textColor="@color/white"
                 android:backgroundTint="@color/colorPrimary"
                 android:textAllCaps="false"/>

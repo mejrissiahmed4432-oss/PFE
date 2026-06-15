@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surfaceColor">
+    android:background="#F3F4F6">
 
     <!-- Main content column -->
     <LinearLayout
@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bg_sidebar"
+            android:background="#FFFFFF"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingTop="18dp"
@@ -25,17 +25,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Service Desk"
+                android:text="@string/txt_service_desk"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#FFFFFF"/>
+                android:textColor="#1E293B"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Manage tickets and equipment"
+                android:text="@string/txt_manage_tickets_and_equipment"
                 android:textSize="12sp"
-                android:textColor="#B0C4DE"
+                android:textColor="#64748B"
                 android:layout_marginTop="2dp"/>
 
             <!-- Stats Row -->
@@ -64,7 +64,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Open"
+                        android:text="@string/txt_open"
                         android:textSize="10sp"
                         android:textColor="#B0C4DE"/>
                 </LinearLayout>
@@ -88,7 +88,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="In Progress"
+                        android:text="@string/txt_in_progress"
                         android:textSize="10sp"
                         android:textColor="#B0C4DE"/>
                 </LinearLayout>
@@ -111,7 +111,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Resolved"
+                        android:text="@string/txt_resolved"
                         android:textSize="10sp"
                         android:textColor="#B0C4DE"/>
                 </LinearLayout>
@@ -124,38 +124,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:background="#FFFFFF"
             android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="0dp">
+            android:paddingEnd="16dp">
 
             <TextView
                 android:id="@+id/tabTickets"
-                android:layout_width="0dp"
-                android:layout_height="36dp"
-                android:layout_weight="1"
-                android:text="Tickets"
-                android:textSize="13sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_tickets"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:gravity="center"
-                android:background="@drawable/bg_tab_active"
                 android:textColor="@color/colorPrimary"
-                android:layout_marginEnd="6dp"/>
+                android:paddingBottom="8dp"
+                android:paddingEnd="16dp"
+                android:layout_marginEnd="16dp"/>
 
             <TextView
                 android:id="@+id/tabEquipment"
-                android:layout_width="0dp"
-                android:layout_height="36dp"
-                android:layout_weight="1"
-                android:text="Equipment"
-                android:textSize="13sp"
-                android:gravity="center"
-                android:background="@drawable/bg_card"
-                android:textColor="@color/textSecondary"/>
-
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_equipment"
+                android:textSize="14sp"
+                android:textColor="#9CA3AF"
+                android:paddingBottom="8dp"
+                android:paddingEnd="16dp"/>
         </LinearLayout>
-
-        <!-- ===== SEARCH + FILTER ===== -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -179,15 +173,25 @@
 
                 <EditText
                     android:id="@+id/etSearch"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:hint="Search..."
+                    android:hint="@string/txt_search_tickets"
                     android:textSize="13sp"
                     android:textColor="@color/textPrimary"
                     android:textColorHint="@color/textHint"
                     android:background="@null"
                     android:singleLine="true"
                     android:imeOptions="actionSearch"/>
+
+                <ImageButton
+                    android:id="@+id/btnScanQR"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_camera"
+                    android:tint="@color/textSecondary"
+                    android:padding="4dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -204,7 +208,7 @@
                     android:id="@+id/tvToggleFiltersLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Filters ▾"
+                    android:text="@string/txt_filters"
                     android:textSize="12sp"
                     android:textColor="@color/textSecondary"
                     android:textStyle="bold"/>
@@ -236,7 +240,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Status: "
+                    android:text="@string/txt_status"
                     android:textSize="12sp"
                     android:textColor="@color/textSecondary"
                     android:layout_marginEnd="8dp"/>
@@ -254,106 +258,55 @@
                 android:id="@+id/layoutEquipmentFilters"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:visibility="gone">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
+                    android:text="@string/txt_category"
+                    android:textSize="12sp"
+                    android:textColor="@color/textSecondary"
+                    android:layout_marginEnd="8dp"/>
+                <Spinner
+                    android:id="@+id/spEqCategory"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_input_field"
+                    android:layout_marginEnd="8dp"/>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginEnd="8dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Category"
-                            android:textSize="10sp"
-                            android:textColor="@color/textSecondary"
-                            android:layout_marginBottom="4dp"/>
-                        <Spinner
-                            android:id="@+id/spEqCategory"
-                            android:layout_width="match_parent"
-                            android:layout_height="36dp"
-                            android:background="@drawable/bg_input_field"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Type"
-                            android:textSize="10sp"
-                            android:textColor="@color/textSecondary"
-                            android:layout_marginBottom="4dp"/>
-                        <Spinner
-                            android:id="@+id/spEqType"
-                            android:layout_width="match_parent"
-                            android:layout_height="36dp"
-                            android:background="@drawable/bg_input_field"/>
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="bottom">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:layout_marginEnd="8dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Serial Number"
-                            android:textSize="10sp"
-                            android:textColor="@color/textSecondary"
-                            android:layout_marginBottom="4dp"/>
-                        <EditText
-                            android:id="@+id/etEqSerial"
-                            android:layout_width="match_parent"
-                            android:layout_height="36dp"
-                            android:background="@drawable/bg_input_field"
-                            android:hint="e.g. SN-XYZ"
-                            android:textColorHint="@color/textHint"
-                            android:textColor="@color/textPrimary"
-                            android:textSize="12sp"
-                            android:paddingStart="8dp"
-                            android:paddingEnd="8dp"
-                            android:singleLine="true"/>
-                    </LinearLayout>
-
-                    <Button
-                        android:id="@+id/btnScanQR"
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:text="Scan QR"
-                        android:textSize="11sp"
-                        android:textColor="@color/white"
-                        android:backgroundTint="@color/colorPrimary"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"
-                        android:textAllCaps="false"/>
-
-                </LinearLayout>
+                    android:text="@string/txt_status"
+                    android:textSize="12sp"
+                    android:textColor="@color/textSecondary"
+                    android:layout_marginEnd="8dp"/>
+                <Spinner
+                    android:id="@+id/spEqStatus"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_input_field"/>
 
             </LinearLayout>
 
         </LinearLayout>
+
+        <!-- Create Ticket Button -->
+        <Button
+            android:id="@+id/btnCreateTicket"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/txt_create_new_ticket"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/colorPrimary"
+            android:textAllCaps="false"/>
 
         <!-- ===== CONTENT AREA ===== -->
         <FrameLayout
@@ -402,7 +355,7 @@
                     android:id="@+id/tvEmpty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No tickets found"
+                    android:text="@string/txt_no_tickets_found"
                     android:textSize="14sp"
                     android:textColor="@color/textHint"
                     android:layout_marginTop="12dp"/>
@@ -419,16 +372,5 @@
         </FrameLayout>
 
     </LinearLayout>
-
-    <!-- ===== FAB overlaid ===== -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabNewTicket"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_add"
-        android:contentDescription="New Ticket"/>
 
 </RelativeLayout>

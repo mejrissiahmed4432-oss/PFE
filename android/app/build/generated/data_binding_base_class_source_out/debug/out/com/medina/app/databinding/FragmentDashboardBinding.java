@@ -21,40 +21,10 @@ public final class FragmentDashboardBinding implements ViewBinding {
   private final ScrollView rootView;
 
   @NonNull
-  public final TextView eq1Name;
+  public final LinearLayout layoutDashTotalTasks;
 
   @NonNull
-  public final TextView eq1Status;
-
-  @NonNull
-  public final TextView eq1Sub;
-
-  @NonNull
-  public final TextView eq2Name;
-
-  @NonNull
-  public final TextView eq2Status;
-
-  @NonNull
-  public final TextView eq2Sub;
-
-  @NonNull
-  public final TextView eq3Name;
-
-  @NonNull
-  public final TextView eq3Status;
-
-  @NonNull
-  public final TextView eq3Sub;
-
-  @NonNull
-  public final LinearLayout equipItem1;
-
-  @NonNull
-  public final LinearLayout equipItem2;
-
-  @NonNull
-  public final LinearLayout equipItem3;
+  public final LinearLayout layoutDashTotalTickets;
 
   @NonNull
   public final TextView statInProgress;
@@ -63,43 +33,75 @@ public final class FragmentDashboardBinding implements ViewBinding {
   public final TextView statOpen;
 
   @NonNull
-  public final TextView statTesting;
-
-  @NonNull
   public final TextView statWaiting;
 
   @NonNull
-  public final TextView tabEquipment;
+  public final TextView tvDashAvatar;
 
   @NonNull
-  public final TextView tabQueue;
+  public final TextView tvDashEmail;
 
-  private FragmentDashboardBinding(@NonNull ScrollView rootView, @NonNull TextView eq1Name,
-      @NonNull TextView eq1Status, @NonNull TextView eq1Sub, @NonNull TextView eq2Name,
-      @NonNull TextView eq2Status, @NonNull TextView eq2Sub, @NonNull TextView eq3Name,
-      @NonNull TextView eq3Status, @NonNull TextView eq3Sub, @NonNull LinearLayout equipItem1,
-      @NonNull LinearLayout equipItem2, @NonNull LinearLayout equipItem3,
-      @NonNull TextView statInProgress, @NonNull TextView statOpen, @NonNull TextView statTesting,
-      @NonNull TextView statWaiting, @NonNull TextView tabEquipment, @NonNull TextView tabQueue) {
+  @NonNull
+  public final TextView tvDashName;
+
+  @NonNull
+  public final TextView tvDashRole;
+
+  @NonNull
+  public final TextView tvDashTotalTasks;
+
+  @NonNull
+  public final TextView tvDashTotalTickets;
+
+  @NonNull
+  public final TextView tvHighPriorityCount;
+
+  @NonNull
+  public final TextView tvInfoHighPriority;
+
+  @NonNull
+  public final TextView tvInfoOverdue;
+
+  @NonNull
+  public final TextView tvOverdueCount;
+
+  @NonNull
+  public final TextView tvTaskDone;
+
+  @NonNull
+  public final TextView tvTaskInProgress;
+
+  @NonNull
+  public final TextView tvTaskTodo;
+
+  private FragmentDashboardBinding(@NonNull ScrollView rootView,
+      @NonNull LinearLayout layoutDashTotalTasks, @NonNull LinearLayout layoutDashTotalTickets,
+      @NonNull TextView statInProgress, @NonNull TextView statOpen, @NonNull TextView statWaiting,
+      @NonNull TextView tvDashAvatar, @NonNull TextView tvDashEmail, @NonNull TextView tvDashName,
+      @NonNull TextView tvDashRole, @NonNull TextView tvDashTotalTasks,
+      @NonNull TextView tvDashTotalTickets, @NonNull TextView tvHighPriorityCount,
+      @NonNull TextView tvInfoHighPriority, @NonNull TextView tvInfoOverdue,
+      @NonNull TextView tvOverdueCount, @NonNull TextView tvTaskDone,
+      @NonNull TextView tvTaskInProgress, @NonNull TextView tvTaskTodo) {
     this.rootView = rootView;
-    this.eq1Name = eq1Name;
-    this.eq1Status = eq1Status;
-    this.eq1Sub = eq1Sub;
-    this.eq2Name = eq2Name;
-    this.eq2Status = eq2Status;
-    this.eq2Sub = eq2Sub;
-    this.eq3Name = eq3Name;
-    this.eq3Status = eq3Status;
-    this.eq3Sub = eq3Sub;
-    this.equipItem1 = equipItem1;
-    this.equipItem2 = equipItem2;
-    this.equipItem3 = equipItem3;
+    this.layoutDashTotalTasks = layoutDashTotalTasks;
+    this.layoutDashTotalTickets = layoutDashTotalTickets;
     this.statInProgress = statInProgress;
     this.statOpen = statOpen;
-    this.statTesting = statTesting;
     this.statWaiting = statWaiting;
-    this.tabEquipment = tabEquipment;
-    this.tabQueue = tabQueue;
+    this.tvDashAvatar = tvDashAvatar;
+    this.tvDashEmail = tvDashEmail;
+    this.tvDashName = tvDashName;
+    this.tvDashRole = tvDashRole;
+    this.tvDashTotalTasks = tvDashTotalTasks;
+    this.tvDashTotalTickets = tvDashTotalTickets;
+    this.tvHighPriorityCount = tvHighPriorityCount;
+    this.tvInfoHighPriority = tvInfoHighPriority;
+    this.tvInfoOverdue = tvInfoOverdue;
+    this.tvOverdueCount = tvOverdueCount;
+    this.tvTaskDone = tvTaskDone;
+    this.tvTaskInProgress = tvTaskInProgress;
+    this.tvTaskTodo = tvTaskTodo;
   }
 
   @Override
@@ -129,75 +131,15 @@ public final class FragmentDashboardBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.eq1Name;
-      TextView eq1Name = ViewBindings.findChildViewById(rootView, id);
-      if (eq1Name == null) {
+      id = R.id.layoutDashTotalTasks;
+      LinearLayout layoutDashTotalTasks = ViewBindings.findChildViewById(rootView, id);
+      if (layoutDashTotalTasks == null) {
         break missingId;
       }
 
-      id = R.id.eq1Status;
-      TextView eq1Status = ViewBindings.findChildViewById(rootView, id);
-      if (eq1Status == null) {
-        break missingId;
-      }
-
-      id = R.id.eq1Sub;
-      TextView eq1Sub = ViewBindings.findChildViewById(rootView, id);
-      if (eq1Sub == null) {
-        break missingId;
-      }
-
-      id = R.id.eq2Name;
-      TextView eq2Name = ViewBindings.findChildViewById(rootView, id);
-      if (eq2Name == null) {
-        break missingId;
-      }
-
-      id = R.id.eq2Status;
-      TextView eq2Status = ViewBindings.findChildViewById(rootView, id);
-      if (eq2Status == null) {
-        break missingId;
-      }
-
-      id = R.id.eq2Sub;
-      TextView eq2Sub = ViewBindings.findChildViewById(rootView, id);
-      if (eq2Sub == null) {
-        break missingId;
-      }
-
-      id = R.id.eq3Name;
-      TextView eq3Name = ViewBindings.findChildViewById(rootView, id);
-      if (eq3Name == null) {
-        break missingId;
-      }
-
-      id = R.id.eq3Status;
-      TextView eq3Status = ViewBindings.findChildViewById(rootView, id);
-      if (eq3Status == null) {
-        break missingId;
-      }
-
-      id = R.id.eq3Sub;
-      TextView eq3Sub = ViewBindings.findChildViewById(rootView, id);
-      if (eq3Sub == null) {
-        break missingId;
-      }
-
-      id = R.id.equipItem1;
-      LinearLayout equipItem1 = ViewBindings.findChildViewById(rootView, id);
-      if (equipItem1 == null) {
-        break missingId;
-      }
-
-      id = R.id.equipItem2;
-      LinearLayout equipItem2 = ViewBindings.findChildViewById(rootView, id);
-      if (equipItem2 == null) {
-        break missingId;
-      }
-
-      id = R.id.equipItem3;
-      LinearLayout equipItem3 = ViewBindings.findChildViewById(rootView, id);
-      if (equipItem3 == null) {
+      id = R.id.layoutDashTotalTickets;
+      LinearLayout layoutDashTotalTickets = ViewBindings.findChildViewById(rootView, id);
+      if (layoutDashTotalTickets == null) {
         break missingId;
       }
 
@@ -213,33 +155,95 @@ public final class FragmentDashboardBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.statTesting;
-      TextView statTesting = ViewBindings.findChildViewById(rootView, id);
-      if (statTesting == null) {
-        break missingId;
-      }
-
       id = R.id.statWaiting;
       TextView statWaiting = ViewBindings.findChildViewById(rootView, id);
       if (statWaiting == null) {
         break missingId;
       }
 
-      id = R.id.tabEquipment;
-      TextView tabEquipment = ViewBindings.findChildViewById(rootView, id);
-      if (tabEquipment == null) {
+      id = R.id.tvDashAvatar;
+      TextView tvDashAvatar = ViewBindings.findChildViewById(rootView, id);
+      if (tvDashAvatar == null) {
         break missingId;
       }
 
-      id = R.id.tabQueue;
-      TextView tabQueue = ViewBindings.findChildViewById(rootView, id);
-      if (tabQueue == null) {
+      id = R.id.tvDashEmail;
+      TextView tvDashEmail = ViewBindings.findChildViewById(rootView, id);
+      if (tvDashEmail == null) {
         break missingId;
       }
 
-      return new FragmentDashboardBinding((ScrollView) rootView, eq1Name, eq1Status, eq1Sub,
-          eq2Name, eq2Status, eq2Sub, eq3Name, eq3Status, eq3Sub, equipItem1, equipItem2,
-          equipItem3, statInProgress, statOpen, statTesting, statWaiting, tabEquipment, tabQueue);
+      id = R.id.tvDashName;
+      TextView tvDashName = ViewBindings.findChildViewById(rootView, id);
+      if (tvDashName == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDashRole;
+      TextView tvDashRole = ViewBindings.findChildViewById(rootView, id);
+      if (tvDashRole == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDashTotalTasks;
+      TextView tvDashTotalTasks = ViewBindings.findChildViewById(rootView, id);
+      if (tvDashTotalTasks == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDashTotalTickets;
+      TextView tvDashTotalTickets = ViewBindings.findChildViewById(rootView, id);
+      if (tvDashTotalTickets == null) {
+        break missingId;
+      }
+
+      id = R.id.tvHighPriorityCount;
+      TextView tvHighPriorityCount = ViewBindings.findChildViewById(rootView, id);
+      if (tvHighPriorityCount == null) {
+        break missingId;
+      }
+
+      id = R.id.tvInfoHighPriority;
+      TextView tvInfoHighPriority = ViewBindings.findChildViewById(rootView, id);
+      if (tvInfoHighPriority == null) {
+        break missingId;
+      }
+
+      id = R.id.tvInfoOverdue;
+      TextView tvInfoOverdue = ViewBindings.findChildViewById(rootView, id);
+      if (tvInfoOverdue == null) {
+        break missingId;
+      }
+
+      id = R.id.tvOverdueCount;
+      TextView tvOverdueCount = ViewBindings.findChildViewById(rootView, id);
+      if (tvOverdueCount == null) {
+        break missingId;
+      }
+
+      id = R.id.tvTaskDone;
+      TextView tvTaskDone = ViewBindings.findChildViewById(rootView, id);
+      if (tvTaskDone == null) {
+        break missingId;
+      }
+
+      id = R.id.tvTaskInProgress;
+      TextView tvTaskInProgress = ViewBindings.findChildViewById(rootView, id);
+      if (tvTaskInProgress == null) {
+        break missingId;
+      }
+
+      id = R.id.tvTaskTodo;
+      TextView tvTaskTodo = ViewBindings.findChildViewById(rootView, id);
+      if (tvTaskTodo == null) {
+        break missingId;
+      }
+
+      return new FragmentDashboardBinding((ScrollView) rootView, layoutDashTotalTasks,
+          layoutDashTotalTickets, statInProgress, statOpen, statWaiting, tvDashAvatar, tvDashEmail,
+          tvDashName, tvDashRole, tvDashTotalTasks, tvDashTotalTickets, tvHighPriorityCount,
+          tvInfoHighPriority, tvInfoOverdue, tvOverdueCount, tvTaskDone, tvTaskInProgress,
+          tvTaskTodo);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

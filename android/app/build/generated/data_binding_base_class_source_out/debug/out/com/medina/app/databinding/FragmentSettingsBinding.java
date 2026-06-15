@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.medina.app.R;
@@ -35,9 +34,6 @@ public final class FragmentSettingsBinding implements ViewBinding {
 
   @NonNull
   public final AppCompatButton btnSavePassword;
-
-  @NonNull
-  public final AppCompatButton btnSavePreferences;
 
   @NonNull
   public final ImageButton btnToggleConfirmPassword;
@@ -100,15 +96,6 @@ public final class FragmentSettingsBinding implements ViewBinding {
   public final View strengthBar4;
 
   @NonNull
-  public final SwitchCompat switchEmailNotifications;
-
-  @NonNull
-  public final SwitchCompat switchMarketingEmails;
-
-  @NonNull
-  public final SwitchCompat switchSecurityAlerts;
-
-  @NonNull
   public final TextView tvCurrentEmailLabel;
 
   @NonNull
@@ -117,8 +104,8 @@ public final class FragmentSettingsBinding implements ViewBinding {
   private FragmentSettingsBinding(@NonNull ScrollView rootView,
       @NonNull AppCompatButton btnCancelEmailChange,
       @NonNull AppCompatButton btnCancelPasswordChange, @NonNull AppCompatButton btnSaveEmail,
-      @NonNull AppCompatButton btnSavePassword, @NonNull AppCompatButton btnSavePreferences,
-      @NonNull ImageButton btnToggleConfirmPassword, @NonNull ImageButton btnToggleCurrentPassword,
+      @NonNull AppCompatButton btnSavePassword, @NonNull ImageButton btnToggleConfirmPassword,
+      @NonNull ImageButton btnToggleCurrentPassword,
       @NonNull ImageButton btnToggleEmailConfirmPassword, @NonNull ImageButton btnToggleNewPassword,
       @NonNull LinearLayout btnTriggerEmailForm, @NonNull LinearLayout btnTriggerPasswordForm,
       @NonNull EditText etConfirmEmail, @NonNull EditText etConfirmPassword,
@@ -127,15 +114,13 @@ public final class FragmentSettingsBinding implements ViewBinding {
       @NonNull LinearLayout layoutEmailChangeForm, @NonNull LinearLayout layoutPasswordChangeForm,
       @NonNull LinearLayout layoutSecurityMenu, @NonNull LinearLayout layoutStrengthMeter,
       @NonNull View strengthBar1, @NonNull View strengthBar2, @NonNull View strengthBar3,
-      @NonNull View strengthBar4, @NonNull SwitchCompat switchEmailNotifications,
-      @NonNull SwitchCompat switchMarketingEmails, @NonNull SwitchCompat switchSecurityAlerts,
-      @NonNull TextView tvCurrentEmailLabel, @NonNull TextView tvStrengthLabel) {
+      @NonNull View strengthBar4, @NonNull TextView tvCurrentEmailLabel,
+      @NonNull TextView tvStrengthLabel) {
     this.rootView = rootView;
     this.btnCancelEmailChange = btnCancelEmailChange;
     this.btnCancelPasswordChange = btnCancelPasswordChange;
     this.btnSaveEmail = btnSaveEmail;
     this.btnSavePassword = btnSavePassword;
-    this.btnSavePreferences = btnSavePreferences;
     this.btnToggleConfirmPassword = btnToggleConfirmPassword;
     this.btnToggleCurrentPassword = btnToggleCurrentPassword;
     this.btnToggleEmailConfirmPassword = btnToggleEmailConfirmPassword;
@@ -156,9 +141,6 @@ public final class FragmentSettingsBinding implements ViewBinding {
     this.strengthBar2 = strengthBar2;
     this.strengthBar3 = strengthBar3;
     this.strengthBar4 = strengthBar4;
-    this.switchEmailNotifications = switchEmailNotifications;
-    this.switchMarketingEmails = switchMarketingEmails;
-    this.switchSecurityAlerts = switchSecurityAlerts;
     this.tvCurrentEmailLabel = tvCurrentEmailLabel;
     this.tvStrengthLabel = tvStrengthLabel;
   }
@@ -211,12 +193,6 @@ public final class FragmentSettingsBinding implements ViewBinding {
       id = R.id.btnSavePassword;
       AppCompatButton btnSavePassword = ViewBindings.findChildViewById(rootView, id);
       if (btnSavePassword == null) {
-        break missingId;
-      }
-
-      id = R.id.btnSavePreferences;
-      AppCompatButton btnSavePreferences = ViewBindings.findChildViewById(rootView, id);
-      if (btnSavePreferences == null) {
         break missingId;
       }
 
@@ -340,24 +316,6 @@ public final class FragmentSettingsBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.switchEmailNotifications;
-      SwitchCompat switchEmailNotifications = ViewBindings.findChildViewById(rootView, id);
-      if (switchEmailNotifications == null) {
-        break missingId;
-      }
-
-      id = R.id.switchMarketingEmails;
-      SwitchCompat switchMarketingEmails = ViewBindings.findChildViewById(rootView, id);
-      if (switchMarketingEmails == null) {
-        break missingId;
-      }
-
-      id = R.id.switchSecurityAlerts;
-      SwitchCompat switchSecurityAlerts = ViewBindings.findChildViewById(rootView, id);
-      if (switchSecurityAlerts == null) {
-        break missingId;
-      }
-
       id = R.id.tvCurrentEmailLabel;
       TextView tvCurrentEmailLabel = ViewBindings.findChildViewById(rootView, id);
       if (tvCurrentEmailLabel == null) {
@@ -371,13 +329,13 @@ public final class FragmentSettingsBinding implements ViewBinding {
       }
 
       return new FragmentSettingsBinding((ScrollView) rootView, btnCancelEmailChange,
-          btnCancelPasswordChange, btnSaveEmail, btnSavePassword, btnSavePreferences,
-          btnToggleConfirmPassword, btnToggleCurrentPassword, btnToggleEmailConfirmPassword,
-          btnToggleNewPassword, btnTriggerEmailForm, btnTriggerPasswordForm, etConfirmEmail,
-          etConfirmPassword, etCurrentPassword, etEmailConfirmPassword, etNewEmail, etNewPassword,
+          btnCancelPasswordChange, btnSaveEmail, btnSavePassword, btnToggleConfirmPassword,
+          btnToggleCurrentPassword, btnToggleEmailConfirmPassword, btnToggleNewPassword,
+          btnTriggerEmailForm, btnTriggerPasswordForm, etConfirmEmail, etConfirmPassword,
+          etCurrentPassword, etEmailConfirmPassword, etNewEmail, etNewPassword,
           layoutEmailChangeForm, layoutPasswordChangeForm, layoutSecurityMenu, layoutStrengthMeter,
-          strengthBar1, strengthBar2, strengthBar3, strengthBar4, switchEmailNotifications,
-          switchMarketingEmails, switchSecurityAlerts, tvCurrentEmailLabel, tvStrengthLabel);
+          strengthBar1, strengthBar2, strengthBar3, strengthBar4, tvCurrentEmailLabel,
+          tvStrengthLabel);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

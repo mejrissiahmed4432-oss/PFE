@@ -8,12 +8,15 @@ import com.medina.app.model.User;
 import com.medina.app.model.Notification;
 import com.medina.app.model.Alert;
 import com.medina.app.model.Task;
-import com.medina.app.model.PartRequest;
+
 import com.medina.app.model.Shelf;
 import com.medina.app.model.Message;
 import com.medina.app.model.ConversationSummary;
 import com.medina.app.model.Ticket;
 import com.medina.app.model.Equipment;
+import com.medina.app.model.AiRequest;
+import com.medina.app.model.AiResponse;
+import com.medina.app.model.AiConversation;
 
 import java.util.List;
 import java.util.Map;
@@ -99,21 +102,12 @@ public interface ApiService {
     @DELETE("api/users/tasks/{id}")
     Call<Void> deleteTask(@Path("id") String id);
 
-    // --- Part Request & Shelf endpoints ---
-    @GET("api/part-requests/my/{requesterId}")
-    Call<List<PartRequest>> getMyPartRequests(@Path("requesterId") String requesterId);
-
-    @POST("api/part-requests")
-    Call<PartRequest> createPartRequest(@Body PartRequest request);
-
     @POST("api/equipment/{id}/return")
     Call<Void> returnPart(@Path("id") String id);
 
-    @PUT("api/part-requests/{id}")
-    Call<PartRequest> updatePartRequest(@Path("id") String id, @Body PartRequest request);
-
     @POST("api/part-requests/consume-parts/{requesterId}")
-    Call<Void> consumeParts(@Path("requesterId") String requesterId, @Body List<Map<String, Object>> parts);
+    Call<Void> consumeParts(@Path("requesterId") String requesterId, @Body java.util.List<java.util.Map<String, Object>> parts);
+
 
     @GET("api/shelves")
     Call<List<Shelf>> getAllShelves();
@@ -174,4 +168,20 @@ public interface ApiService {
 
     @PUT("api/equipment/{id}")
     Call<Equipment> updateEquipment(@Path("id") String id, @Body Equipment equipment);
+
+    // --- AI Assistant endpoints ---
+    @POST("api/ai/query")
+    Call<AiResponse> queryAi(@Body AiRequest request);
+
+    @POST("api/ai/action/execute")
+    Call<AiResponse> executeAiAction(@Body Map<String, Object> body);
+
+    @GET("api/aiconversations")
+    Call<List<AiConversation>> getAllAiConversations();
+
+    @POST("api/aiconversations")
+    Call<AiConversation> saveAiConversation(@Body AiConversation conversation);
+
+    @DELETE("api/aiconversations/{id}")
+    Call<Void> deleteAiConversation(@Path("id") String id);
 }

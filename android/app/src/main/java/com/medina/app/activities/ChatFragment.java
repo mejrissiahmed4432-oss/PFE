@@ -218,25 +218,35 @@ public class ChatFragment extends Fragment {
 
     private void sendAttachmentMessage(String fileName, String fileUrl) {
         String now = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
-        Message msg = new Message();
-        msg.setSenderId(currentUserId);
-        msg.setReceiverId(selectedContactId);
-        msg.setContent("[Attachment] " + fileName);
-        msg.setAttachmentName(fileName);
-        msg.setAttachmentUrl(fileUrl);
-        msg.setTimestamp(now);
-        msg.setStatus("SENT");
+        Message uiMsg = new Message();
+        uiMsg.setSenderId(currentUserId);
+        uiMsg.setReceiverId(selectedContactId);
+        uiMsg.setContent("[Attachment] " + fileName);
+        uiMsg.setAttachmentName(fileName);
+        uiMsg.setAttachmentUrl(fileUrl);
+        uiMsg.setTimestamp(now);
+        uiMsg.setStatus("SENT");
 
-        messages.add(msg);
+        messages.add(uiMsg);
         messagesAdapter.notifyItemInserted(messages.size() - 1);
         scrollToBottom();
 
-        ApiClient.getApiService().sendMessage(msg).enqueue(new Callback<Message>() {
+        Message apiMsg = new Message();
+        apiMsg.setSenderId(currentUserId);
+        apiMsg.setReceiverId(selectedContactId);
+        apiMsg.setContent("[Attachment] " + fileName);
+        apiMsg.setAttachmentName(fileName);
+        apiMsg.setAttachmentUrl(fileUrl);
+        apiMsg.setStatus("SENT");
+
+        ApiClient.getApiService().sendMessage(apiMsg).enqueue(new Callback<Message>() {
             @Override public void onResponse(Call<Message> c, Response<Message> r) {
                 if (r.isSuccessful() && r.body() != null) {
-                    int last = messages.size() - 1;
-                    messages.set(last, r.body());
-                    messagesAdapter.notifyItemChanged(last);
+                    int last = messages.indexOf(uiMsg);
+                    if (last >= 0) {
+                        messages.set(last, r.body());
+                        messagesAdapter.notifyItemChanged(last);
+                    }
                 }
             }
             @Override public void onFailure(Call<Message> c, Throwable t) {}
@@ -609,29 +619,37 @@ public class ChatFragment extends Fragment {
 
     private void sendMessage(String text) {
         String now = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
-        Message msg = new Message();
-        msg.setSenderId(currentUserId);
-        msg.setReceiverId(selectedContactId);
-        msg.setContent(text);
-        msg.setTimestamp(now);
-        msg.setStatus("SENT");
+        Message uiMsg = new Message();
+        uiMsg.setSenderId(currentUserId);
+        uiMsg.setReceiverId(selectedContactId);
+        uiMsg.setContent(text);
+        uiMsg.setTimestamp(now);
+        uiMsg.setStatus("SENT");
 
-        messages.add(msg);
+        messages.add(uiMsg);
         messagesAdapter.notifyItemInserted(messages.size() - 1);
         scrollToBottom();
         etMessageCompose.setText("");
+
+        Message apiMsg = new Message();
+        apiMsg.setSenderId(currentUserId);
+        apiMsg.setReceiverId(selectedContactId);
+        apiMsg.setContent(text);
+        apiMsg.setStatus("SENT");
 
         ApiClient.authToken = requireActivity()
                 .getSharedPreferences("medina_prefs", Context.MODE_PRIVATE)
                 .getString("auth_token", null);
 
-        ApiClient.getApiService().sendMessage(msg).enqueue(new Callback<Message>() {
+        ApiClient.getApiService().sendMessage(apiMsg).enqueue(new Callback<Message>() {
             @Override
             public void onResponse(Call<Message> call, Response<Message> r) {
                 if (r.isSuccessful() && r.body() != null) {
-                    int last = messages.size() - 1;
-                    messages.set(last, r.body());
-                    messagesAdapter.notifyItemChanged(last);
+                    int last = messages.indexOf(uiMsg);
+                    if (last >= 0) {
+                        messages.set(last, r.body());
+                        messagesAdapter.notifyItemChanged(last);
+                    }
                 }
             }
             @Override public void onFailure(Call<Message> call, Throwable t) {}

@@ -33,7 +33,7 @@
                 android:id="@+id/tvTicketNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="#TKT-001"
+                android:text="@string/txt_tkt_001"
                 android:textSize="11sp"
                 android:textColor="@color/colorPrimaryVariant"
                 android:textStyle="bold"/>
@@ -42,7 +42,7 @@
                 android:id="@+id/tvTicketTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ticket Title"
+                android:text="@string/txt_ticket_title"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/textPrimary"
@@ -55,7 +55,7 @@
             android:id="@+id/tvTicketStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OPEN"
+            android:text="@string/txt_open"
             android:textSize="9sp"
             android:textStyle="bold"
             android:paddingStart="7dp"
@@ -71,7 +71,7 @@
         android:id="@+id/tvTicketEquipment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="🖥 Equipment Name"
+        android:text="@string/txt_equipment_name"
         android:textSize="12sp"
         android:textColor="@color/textSecondary"
         android:layout_marginBottom="4dp"/>
@@ -96,7 +96,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="👤 User Name"
+            android:text="@string/txt_user_name"
             android:textSize="11sp"
             android:textColor="@color/textHint"/>
 
@@ -104,7 +104,7 @@
             android:id="@+id/tvTicketPriority"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HIGH"
+            android:text="@string/txt_high"
             android:textSize="10sp"
             android:textStyle="bold"
             android:layout_marginEnd="12dp"/>

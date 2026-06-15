@@ -19,7 +19,7 @@
             android:id="@+id/tvWbActionIndex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Action #1"
+            android:text="@string/txt_action_1"
             android:textStyle="bold"
             android:textColor="@color/textPrimary"
             android:textSize="12sp"/>
@@ -43,7 +43,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Category"
+        android:text="@string/txt_category"
         android:textSize="10sp"
         android:textColor="@color/textSecondary"
         android:layout_marginBottom="4dp"/>
@@ -58,7 +58,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Action Type"
+        android:text="@string/txt_action_type"
         android:textSize="10sp"
         android:textColor="@color/textSecondary"
         android:layout_marginBottom="4dp"/>
@@ -73,7 +73,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Target Element"
+        android:text="@string/txt_target_element"
         android:textSize="10sp"
         android:textColor="@color/textSecondary"
         android:layout_marginBottom="4dp"/>
@@ -82,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:background="@drawable/bg_input_field"
-        android:hint="e.g. RAM, CPU, OS Registry"
+        android:hint="@string/txt_e_g_ram_cpu_os_registry"
         android:textColorHint="@color/textHint"
         android:textColor="@color/textPrimary"
         android:textSize="12sp"
@@ -95,7 +95,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Priority"
+        android:text="@string/txt_priority"
         android:textSize="10sp"
         android:textColor="@color/textSecondary"
         android:layout_marginBottom="4dp"/>
@@ -110,7 +110,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Technical Description"
+        android:text="@string/txt_technical_description"
         android:textSize="10sp"
         android:textColor="@color/textSecondary"
         android:layout_marginBottom="4dp"/>
@@ -119,7 +119,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@drawable/bg_input_field"
-        android:hint="Describe action steps..."
+        android:hint="@string/txt_describe_action_steps"
         android:textColorHint="@color/textHint"
         android:textColor="@color/textPrimary"
         android:textSize="12sp"

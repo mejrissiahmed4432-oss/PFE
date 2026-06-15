@@ -43,7 +43,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="MedinaFlux"
+                    android:text="@string/txt_medinaflux"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -61,7 +61,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Welcome to MedinaFlux"
+                    android:text="@string/txt_welcome_to_medinaflux"
                     android:textColor="@color/white"
                     android:textSize="26sp"
                     android:textStyle="bold" />
@@ -69,7 +69,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="MANAGE YOUR IT ECOSYSTEM EFFICIENTLY"
+                    android:text="@string/txt_manage_your_it_ecosystem_efficiently"
                     android:textColor="#CCFFFFFF"
                     android:textSize="10sp"
                     android:textStyle="bold"
@@ -303,7 +303,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sign In"
+                    android:text="@string/txt_sign_in"
                     android:textColor="@color/white"
                     android:textSize="17sp"
                     android:textStyle="bold"

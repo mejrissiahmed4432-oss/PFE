@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -31,7 +32,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanIntentResult;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -42,6 +42,7 @@ import com.medina.app.model.Ticket;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import androidx.activity.result.ActivityResultLauncher;
 
@@ -57,14 +58,14 @@ public class TicketsFragment extends Fragment {
     private EditText etSearch;
     private LinearLayout btnToggleFilters, layoutFilterPanel;
     private LinearLayout layoutTicketFilters, layoutEquipmentFilters;
-    private Spinner spTicketStatus, spEqCategory, spEqType;
-    private EditText etEqSerial;
-    private Button btnScanQR;
+    private Spinner spTicketStatus;
+    private Spinner spEqCategory, spEqStatus;
+    private ImageButton btnScanQR;
     private RecyclerView rvTickets, rvEquipment;
     private LinearLayout layoutEmpty;
     private TextView tvEmpty;
     private ProgressBar progressTickets;
-    private FloatingActionButton fabNewTicket;
+    private Button btnCreateTicket;
 
     // ── Data ──────────────────────────────────────────────────────────────────
     private final List<Ticket> allTickets = new ArrayList<>();
@@ -77,24 +78,25 @@ public class TicketsFragment extends Fragment {
     private EquipmentAdapter equipmentAdapter;
 
     // ── State ─────────────────────────────────────────────────────────────────
-    private boolean showingTickets = true;
+    private boolean isTicketsTabActive = true;
     private boolean filtersVisible = false;
     private String currentTicketStatusFilter = "all";
     private String currentEqCategoryFilter = "all";
-    private String currentEqTypeFilter = "all";
+    private String currentEqStatusFilter = "all";
     private SharedPreferences prefs;
 
     // ── QR Scanner ────────────────────────────────────────────────────────────
     private static final int CAMERA_PERMISSION_REQUEST = 1001;
     private ActivityResultLauncher<ScanOptions> qrScanLauncher;
 
-    // Spinner value arrays
+    // Spinner value arrays for Tickets (categories from web: Maintenance | Inspection | Incident | Upgrade)
     private final String[] STATUS_VALUES  = {"all", "open", "in_progress", "resolved", "closed"};
     private final String[] STATUS_LABELS  = {"All Statuses", "Open", "In Progress", "Resolved", "Closed"};
-    private final String[] CATEGORY_VALUES = {"all", "NETWORK", "STORAGE", "COMPONENT", "PERIPHERAL", "SERVER & DEVICE"};
-    private final String[] CATEGORY_LABELS = {"All Categories", "Network", "Storage", "Component", "Peripheral", "Server & Device"};
-    private final String[] TYPE_VALUES    = {"all", "Router", "Switch", "Access Point", "SSD", "HDD", "NVMe", "USB Flash", "RAM", "CPU", "GPU", "Motherboard", "NIC", "Keyboard", "Mouse", "Printer", "Scanner", "Headset", "Webcam", "HDMI Cable", "USB Cable", "Charger", "Adapter", "USB Hub", "Laptop", "System Unit", "Desktop", "Server", "Monitor"};
-    private final String[] TYPE_LABELS    = {"All Types", "Router", "Switch", "Access Point", "SSD", "HDD", "NVMe", "USB Flash", "RAM", "CPU", "GPU", "Motherboard", "NIC", "Keyboard", "Mouse", "Printer", "Scanner", "Headset", "Webcam", "HDMI Cable", "USB Cable", "Charger", "Adapter", "USB Hub", "Laptop", "System Unit", "Desktop", "Server", "Monitor"};
+    private final String[] TICKET_CATEGORY_VALUES = {"all", "Maintenance", "Inspection", "Incident", "Upgrade"};
+    private final String[] TICKET_CATEGORY_LABELS = {"All Categories", "Maintenance", "Inspection", "Incident", "Upgrade"};
+    // Equipment status filter options
+    private final String[] EQ_STATUS_VALUES = {"all", "available", "in_use", "under_maintenance", "decommissioned"};
+    private final String[] EQ_STATUS_LABELS = {"All Statuses", "Available", "In Use", "Under Maintenance", "Decommissioned"};
 
     // ─────────────────────────────────────────────────────────────────────────
     @Nullable
@@ -109,24 +111,58 @@ public class TicketsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Register QR scanner result callback
-        qrScanLauncher = registerForActivityResult(new ScanContract(), result -> {
+        qrScanLauncher = registerForActivityResult(new com.journeyapps.barcodescanner.ScanContract(), result -> {
             if (result.getContents() != null) {
-                String scanned = result.getContents().trim();
-                // Switch to Equipment tab and set serial filter to scanned value
-                switchTab(false);
-                if (filtersVisible) {
-                    etEqSerial.setText(scanned);
-                } else {
-                    // Open filter panel and set serial
-                    filtersVisible = true;
-                    if (layoutFilterPanel != null) layoutFilterPanel.setVisibility(View.VISIBLE);
-                    if (tvToggleFiltersLabel != null) tvToggleFiltersLabel.setText("Filters ▴");
-                    if (layoutEquipmentFilters != null) layoutEquipmentFilters.setVisibility(View.VISIBLE);
-                    if (layoutTicketFilters != null) layoutTicketFilters.setVisibility(View.GONE);
-                    etEqSerial.setText(scanned);
+                String rawContent = result.getContents().trim();
+                String serialNumber = null;
+                String equipmentId = null;
+                
+                // Try parsing as JSON (web generates: {id, name, serial})
+                try {
+                    org.json.JSONObject json = new org.json.JSONObject(rawContent);
+                    // Web encodes key "serial" (not "serialNumber")
+                    if (json.has("serial")) {
+                        serialNumber = json.getString("serial");
+                    } else if (json.has("serialNumber")) {
+                        serialNumber = json.getString("serialNumber");
+                    }
+                    if (json.has("id")) {
+                        equipmentId = json.getString("id");
+                    }
+                } catch (Exception e) {
+                    // Not JSON - treat raw string as serial number
+                    serialNumber = rawContent;
                 }
-                Toast.makeText(requireContext(),
-                        "Scanning for: " + scanned, Toast.LENGTH_SHORT).show();
+                
+                // Search equipment by serial number first, then by id as fallback
+                Equipment foundEq = null;
+                if (serialNumber != null) {
+                    final String sn = serialNumber;
+                    for (Equipment eq : allEquipment) {
+                        if (sn.equalsIgnoreCase(eq.getSerialNumber())) {
+                            foundEq = eq;
+                            break;
+                        }
+                    }
+                }
+                // Fallback: match by equipment ID
+                if (foundEq == null && equipmentId != null) {
+                    final String eqId = equipmentId;
+                    for (Equipment eq : allEquipment) {
+                        if (eqId.equalsIgnoreCase(eq.getId())) {
+                            foundEq = eq;
+                            break;
+                        }
+                    }
+                }
+                
+                if (foundEq != null) {
+                    Toast.makeText(requireContext(), "Equipment found: " + foundEq.getEquipmentName(), Toast.LENGTH_SHORT).show();
+                    showEquipmentDetailDialog(foundEq);
+                } else {
+                    String displaySerial = serialNumber != null ? serialNumber : rawContent;
+                    Toast.makeText(requireContext(), "No equipment found with S/N: " + displaySerial, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -137,23 +173,45 @@ public class TicketsFragment extends Fragment {
         prefs = requireActivity().getSharedPreferences("medina_prefs", 0);
 
         bindViews(view);
+        setupRoleBasedUI();
+        setupTabListeners();
         setupSpinners();
         setupAdapters();
-        setupTabListeners();
         setupSearchListener();
         setupFilterToggle();
-        setupFab();
-
+        setupCreateTicketButton();
         loadTickets();
-        loadEquipment();
+        loadEquipment(); // Load equipment for all users to support QR scanning and ticket details
+    }
+
+    private boolean isTechnicianOrAdmin() {
+        String role = prefs.getString("user_role", "");
+        return "TECHNICIAN".equalsIgnoreCase(role) || "ADMIN".equalsIgnoreCase(role);
+    }
+
+    private void setupRoleBasedUI() {
+        // Hide equipment tab for non-tech users
+        boolean isTech = isTechnicianOrAdmin();
+        if (tabEquipment != null)
+            tabEquipment.setVisibility(isTech ? View.VISIBLE : View.GONE);
+        // QR Scanner is visible for everyone
+        if (btnScanQR != null)
+            btnScanQR.setVisibility(View.VISIBLE);
+        if (rvEquipment != null)
+            rvEquipment.setVisibility(View.GONE);
+        // Search hint based on role
+        if (etSearch != null)
+            etSearch.setHint(isTech ? "Search tickets or equipment..." : "Search my tickets...");
+            
+        // Hide Create Ticket floating button for non-technicians
+        if (btnCreateTicket != null)
+            btnCreateTicket.setVisibility(isTech ? View.VISIBLE : View.GONE);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
     //  BIND VIEWS
     // ─────────────────────────────────────────────────────────────────────────
     private void bindViews(View v) {
-        tabTickets           = v.findViewById(R.id.tabTickets);
-        tabEquipment         = v.findViewById(R.id.tabEquipment);
         tvStatOpen           = v.findViewById(R.id.tvStatOpen);
         tvStatInProgress     = v.findViewById(R.id.tvStatInProgress);
         tvStatResolved       = v.findViewById(R.id.tvStatResolved);
@@ -162,18 +220,57 @@ public class TicketsFragment extends Fragment {
         tvToggleFiltersLabel = v.findViewById(R.id.tvToggleFiltersLabel);
         layoutFilterPanel    = v.findViewById(R.id.layoutFilterPanel);
         layoutTicketFilters  = v.findViewById(R.id.layoutTicketFilters);
-        layoutEquipmentFilters = v.findViewById(R.id.layoutEquipmentFilters);
+        layoutEquipmentFilters= v.findViewById(R.id.layoutEquipmentFilters);
         spTicketStatus       = v.findViewById(R.id.spTicketStatus);
         spEqCategory         = v.findViewById(R.id.spEqCategory);
-        spEqType             = v.findViewById(R.id.spEqType);
-        etEqSerial           = v.findViewById(R.id.etEqSerial);
+        spEqStatus           = v.findViewById(R.id.spEqStatus);
         btnScanQR            = v.findViewById(R.id.btnScanQR);
         rvTickets            = v.findViewById(R.id.rvTickets);
         rvEquipment          = v.findViewById(R.id.rvEquipment);
+        tabTickets           = v.findViewById(R.id.tabTickets);
+        tabEquipment         = v.findViewById(R.id.tabEquipment);
         layoutEmpty          = v.findViewById(R.id.layoutEmpty);
         tvEmpty              = v.findViewById(R.id.tvEmpty);
         progressTickets      = v.findViewById(R.id.progressTickets);
-        fabNewTicket         = v.findViewById(R.id.fabNewTicket);
+        btnCreateTicket      = v.findViewById(R.id.btnCreateTicket);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    //  TABS
+    // ─────────────────────────────────────────────────────────────────────────
+    private void setupTabListeners() {
+        tabTickets.setOnClickListener(v -> switchTab(true));
+        tabEquipment.setOnClickListener(v -> switchTab(false));
+    }
+
+    private void switchTab(boolean isTickets) {
+        isTicketsTabActive = isTickets;
+        
+        // Update tab styling
+        tabTickets.setTextColor(isTickets ? ContextCompat.getColor(requireContext(), R.color.colorPrimary) : Color.parseColor("#9CA3AF"));
+        tabEquipment.setTextColor(!isTickets ? ContextCompat.getColor(requireContext(), R.color.colorPrimary) : Color.parseColor("#9CA3AF"));
+        
+        // Update list visibility
+        rvTickets.setVisibility(isTickets ? View.VISIBLE : View.GONE);
+        rvEquipment.setVisibility(!isTickets ? View.VISIBLE : View.GONE);
+        
+        // Update filter visibility
+        if (filtersVisible) {
+            layoutTicketFilters.setVisibility(isTickets ? View.VISIBLE : View.GONE);
+            layoutEquipmentFilters.setVisibility(!isTickets ? View.VISIBLE : View.GONE);
+        } else {
+            layoutTicketFilters.setVisibility(View.GONE);
+            layoutEquipmentFilters.setVisibility(View.GONE);
+        }
+        
+        // Button only visible for Tickets tab
+        if (btnCreateTicket != null) {
+            btnCreateTicket.setVisibility(isTickets ? View.VISIBLE : View.GONE);
+        }
+        
+        // Reset search field
+        etSearch.setHint(isTickets ? "Search tickets..." : "Search equipment...");
+        applyFilters();
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -194,39 +291,35 @@ public class TicketsFragment extends Fragment {
             @Override public void onNothingSelected(AdapterView<?> p) {}
         });
 
-        // Equipment Category Spinner
-        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_item, CATEGORY_LABELS);
-        catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spEqCategory.setAdapter(catAdapter);
+        // Equipment Category Spinner - populated dynamically after equipment loads
+        // Start with just "All Categories" placeholder
+        ArrayAdapter<String> eqCatAdapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_item, new String[]{"All Categories"});
+        eqCatAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spEqCategory.setAdapter(eqCatAdapter);
         spEqCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
-                currentEqCategoryFilter = CATEGORY_VALUES[pos];
+                String[] items = new String[p.getCount()];
+                for (int i = 0; i < p.getCount(); i++) items[i] = (String) p.getItemAtPosition(i);
+                currentEqCategoryFilter = (pos == 0) ? "all" : items[pos];
                 applyFilters();
             }
             @Override public void onNothingSelected(AdapterView<?> p) {}
         });
 
-        // Equipment Type Spinner
-        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_item, TYPE_LABELS);
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spEqType.setAdapter(typeAdapter);
-        spEqType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        // Equipment Status Spinner
+        ArrayAdapter<String> eqStatusAdapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_item, EQ_STATUS_LABELS);
+        eqStatusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spEqStatus.setAdapter(eqStatusAdapter);
+        spEqStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
-                currentEqTypeFilter = TYPE_VALUES[pos];
+                currentEqStatusFilter = EQ_STATUS_VALUES[pos];
                 applyFilters();
             }
             @Override public void onNothingSelected(AdapterView<?> p) {}
-        });
-
-        // Serial Number text watcher
-        etEqSerial.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
-            @Override public void onTextChanged(CharSequence s, int st, int b, int c) { applyFilters(); }
-            @Override public void afterTextChanged(Editable s) {}
         });
 
         // QR Scan button — request camera permission then launch ZXing scanner
@@ -275,45 +368,7 @@ public class TicketsFragment extends Fragment {
         rvEquipment.setAdapter(equipmentAdapter);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    //  TAB SWITCHING
-    // ─────────────────────────────────────────────────────────────────────────
-    private void setupTabListeners() {
-        tabTickets.setOnClickListener(v -> switchTab(true));
-        tabEquipment.setOnClickListener(v -> switchTab(false));
-    }
 
-    private void switchTab(boolean tickets) {
-        showingTickets = tickets;
-
-        if (tickets) {
-            tabTickets.setBackgroundResource(R.drawable.bg_tab_active);
-            tabTickets.setTextColor(getResources().getColor(R.color.colorPrimary));
-            tabEquipment.setBackgroundResource(R.drawable.bg_card);
-            tabEquipment.setTextColor(getResources().getColor(R.color.textSecondary));
-            rvTickets.setVisibility(View.VISIBLE);
-            rvEquipment.setVisibility(View.GONE);
-            etSearch.setHint("Search tickets...");
-            fabNewTicket.setVisibility(View.VISIBLE);
-        } else {
-            tabEquipment.setBackgroundResource(R.drawable.bg_tab_active);
-            tabEquipment.setTextColor(getResources().getColor(R.color.colorPrimary));
-            tabTickets.setBackgroundResource(R.drawable.bg_card);
-            tabTickets.setTextColor(getResources().getColor(R.color.textSecondary));
-            rvTickets.setVisibility(View.GONE);
-            rvEquipment.setVisibility(View.VISIBLE);
-            etSearch.setHint("Search equipment...");
-            fabNewTicket.setVisibility(View.GONE);
-        }
-
-        // Show correct filter sub-panel when filter panel is open
-        if (filtersVisible) {
-            layoutTicketFilters.setVisibility(tickets ? View.VISIBLE : View.GONE);
-            layoutEquipmentFilters.setVisibility(tickets ? View.GONE : View.VISIBLE);
-        }
-
-        applyFilters();
-    }
 
     // ─────────────────────────────────────────────────────────────────────────
     //  FILTER TOGGLE
@@ -324,8 +379,8 @@ public class TicketsFragment extends Fragment {
             if (filtersVisible) {
                 layoutFilterPanel.setVisibility(View.VISIBLE);
                 tvToggleFiltersLabel.setText("Filters ▴");
-                layoutTicketFilters.setVisibility(showingTickets ? View.VISIBLE : View.GONE);
-                layoutEquipmentFilters.setVisibility(showingTickets ? View.GONE : View.VISIBLE);
+                layoutTicketFilters.setVisibility(isTicketsTabActive ? View.VISIBLE : View.GONE);
+                layoutEquipmentFilters.setVisibility(!isTicketsTabActive ? View.VISIBLE : View.GONE);
             } else {
                 layoutFilterPanel.setVisibility(View.GONE);
                 tvToggleFiltersLabel.setText("Filters ▾");
@@ -349,7 +404,7 @@ public class TicketsFragment extends Fragment {
     // ─────────────────────────────────────────────────────────────────────────
     private void applyFilters() {
         String q = etSearch.getText().toString().trim().toLowerCase();
-        if (showingTickets) {
+        if (isTicketsTabActive) {
             applyTicketFilters(q);
         } else {
             applyEquipmentFilters(q);
@@ -375,36 +430,37 @@ public class TicketsFragment extends Fragment {
     }
 
     private void applyEquipmentFilters(String query) {
-        String serialQuery = etEqSerial != null ? etEqSerial.getText().toString().trim().toLowerCase() : "";
         filteredEquipment.clear();
-        for (Equipment e : allEquipment) {
+        for (Equipment eq : allEquipment) {
             // Category filter
             boolean matchesCat = currentEqCategoryFilter.equals("all") ||
-                    (e.getCategory() != null && e.getCategory().equalsIgnoreCase(currentEqCategoryFilter));
-            // Type filter
-            boolean matchesType = currentEqTypeFilter.equals("all") ||
-                    (e.getType() != null && e.getType().equalsIgnoreCase(currentEqTypeFilter));
-            // Serial number filter
-            boolean matchesSerial = serialQuery.isEmpty() ||
-                    (e.getSerialNumber() != null && e.getSerialNumber().toLowerCase().contains(serialQuery));
+                    (eq.getCategory() != null && eq.getCategory().equalsIgnoreCase(currentEqCategoryFilter));
+            // Status filter
+            boolean matchesStatus = currentEqStatusFilter.equals("all") ||
+                    (eq.getStatus() != null && eq.getStatus().equalsIgnoreCase(currentEqStatusFilter));
             // Search filter
             boolean matchesSearch = query.isEmpty() ||
-                    (e.getEquipmentName() != null && e.getEquipmentName().toLowerCase().contains(query)) ||
-                    (e.getSerialNumber() != null && e.getSerialNumber().toLowerCase().contains(query)) ||
-                    (e.getType() != null && e.getType().toLowerCase().contains(query)) ||
-                    (e.getBrand() != null && e.getBrand().toLowerCase().contains(query));
-            if (matchesCat && matchesType && matchesSerial && matchesSearch)
-                filteredEquipment.add(e);
+                    (eq.getEquipmentName() != null && eq.getEquipmentName().toLowerCase().contains(query)) ||
+                    (eq.getSerialNumber() != null && eq.getSerialNumber().toLowerCase().contains(query)) ||
+                    (eq.getBrand() != null && eq.getBrand().toLowerCase().contains(query));
+
+            if (matchesCat && matchesStatus && matchesSearch) {
+                filteredEquipment.add(eq);
+            }
         }
         equipmentAdapter.notifyDataSetChanged();
         showEmptyState(filteredEquipment.isEmpty(), "No equipment found");
     }
 
+
+
     // ─────────────────────────────────────────────────────────────────────────
-    //  FAB → New Ticket
+    //  Create Ticket Button → New Ticket
     // ─────────────────────────────────────────────────────────────────────────
-    private void setupFab() {
-        fabNewTicket.setOnClickListener(v -> showNewTicketDialog());
+    private void setupCreateTicketButton() {
+        if (btnCreateTicket != null) {
+            btnCreateTicket.setOnClickListener(v -> showNewTicketDialog());
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -416,14 +472,7 @@ public class TicketsFragment extends Fragment {
         String userRole = prefs.getString("user_role", "");
         ApiClient.authToken = prefs.getString("auth_token", null);
 
-        Call<List<Ticket>> call;
-        if ("admin".equalsIgnoreCase(userRole) || "manager".equalsIgnoreCase(userRole)) {
-            call = ApiClient.getApiService().getAllTickets();
-        } else if ("technician".equalsIgnoreCase(userRole)) {
-            call = ApiClient.getApiService().getTicketsForTechnician(userId);
-        } else {
-            call = ApiClient.getApiService().getTicketsByUser(userId);
-        }
+        Call<List<Ticket>> call = ApiClient.getApiService().getTicketsByUser(userId);
 
         call.enqueue(new Callback<List<Ticket>>() {
             @Override
@@ -447,6 +496,8 @@ public class TicketsFragment extends Fragment {
         });
     }
 
+
+
     private void loadEquipment() {
         ApiClient.authToken = prefs.getString("auth_token", null);
         ApiClient.getApiService().getAllEquipment().enqueue(new Callback<List<Equipment>>() {
@@ -455,12 +506,33 @@ public class TicketsFragment extends Fragment {
                 if (r.isSuccessful() && r.body() != null) {
                     allEquipment.clear();
                     allEquipment.addAll(r.body());
-                    if (!showingTickets) applyFilters();
+                    populateEquipmentCategorySpinner();
+                    applyFilters();
                 }
             }
             @Override
             public void onFailure(Call<List<Equipment>> c, Throwable t) {}
         });
+    }
+
+    private void populateEquipmentCategorySpinner() {
+        if (spEqCategory == null || !isAdded()) return;
+        // Collect unique non-null categories from loaded equipment
+        java.util.LinkedHashSet<String> cats = new java.util.LinkedHashSet<>();
+        for (Equipment eq : allEquipment) {
+            if (eq.getCategory() != null && !eq.getCategory().isEmpty()) {
+                // Capitalize first letter for display
+                String cat = eq.getCategory();
+                cats.add(cat);
+            }
+        }
+        List<String> labelList = new ArrayList<>();
+        labelList.add("All Categories");
+        labelList.addAll(cats);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_item, labelList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spEqCategory.setAdapter(adapter);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -525,11 +597,42 @@ public class TicketsFragment extends Fragment {
                 .setText(ticket.getDescription() != null && !ticket.getDescription().isEmpty()
                         ? ticket.getDescription() : "No description provided.");
 
-        // Edit/Delete buttons hidden for non-admin
-        String role = prefs.getString("user_role", "");
-        boolean isAdmin = "admin".equalsIgnoreCase(role) || "manager".equalsIgnoreCase(role);
-        v.findViewById(R.id.btnTicketDetailEdit).setVisibility(isAdmin ? View.VISIBLE : View.GONE);
-        v.findViewById(R.id.btnTicketDetailDelete).setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        // Equipment Details Card
+        View layoutEqInfo = v.findViewById(R.id.layoutDetailEquipmentInfo);
+        if (layoutEqInfo != null) {
+            layoutEqInfo.setVisibility(View.VISIBLE);
+            TextView tvEqName   = v.findViewById(R.id.tvDetailEqName);
+            TextView tvEqSerial = v.findViewById(R.id.tvDetailEqSerial);
+            TextView tvEqBrand  = v.findViewById(R.id.tvDetailEqBrand);
+            TextView tvEqStatus = v.findViewById(R.id.tvDetailEqStatus);
+
+            Equipment relatedEq = null;
+            if (ticket.getEquipmentId() != null) {
+                for (Equipment eq : allEquipment) {
+                    if (ticket.getEquipmentId().equals(eq.getId())) {
+                        relatedEq = eq;
+                        break;
+                    }
+                }
+            }
+            if (relatedEq != null) {
+                if (tvEqName   != null) tvEqName.setText(relatedEq.getEquipmentName() != null ? relatedEq.getEquipmentName() : "—");
+                if (tvEqSerial != null) tvEqSerial.setText(relatedEq.getSerialNumber() != null ? relatedEq.getSerialNumber() : "—");
+                if (tvEqBrand  != null) tvEqBrand.setText(relatedEq.getBrand() != null ? relatedEq.getBrand() : "—");
+                if (tvEqStatus != null) tvEqStatus.setText(relatedEq.getStatus() != null ? relatedEq.getStatus().replace("_", " ") : "—");
+            } else {
+                if (tvEqName   != null) tvEqName.setText(ticket.getEquipmentName() != null ? ticket.getEquipmentName() : "—");
+                if (tvEqSerial != null) tvEqSerial.setText("—");
+                if (tvEqBrand  != null) tvEqBrand.setText("—");
+                if (tvEqStatus != null) tvEqStatus.setText("—");
+            }
+        }
+
+        // Edit/Delete buttons visible for tech, admin, or ticket creator
+        String currentUserId = prefs.getString("user_id", "");
+        boolean canEdit = isTechnicianOrAdmin() || (ticket.getUserId() != null && ticket.getUserId().equals(currentUserId));
+        v.findViewById(R.id.btnTicketDetailEdit).setVisibility(canEdit ? View.VISIBLE : View.GONE);
+        v.findViewById(R.id.btnTicketDetailDelete).setVisibility(canEdit ? View.VISIBLE : View.GONE);
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(v)
@@ -541,24 +644,10 @@ public class TicketsFragment extends Fragment {
         // Close
         v.findViewById(R.id.btnTicketDetailCancel).setOnClickListener(x -> dialog.dismiss());
 
-        // "Start Working" → launch LiveWorkbench
+        // "Update Ticket"
         Button btnAction = v.findViewById(R.id.btnTicketDetailAction);
-        boolean isTech = "technician".equalsIgnoreCase(role);
-        if (isTech && ("open".equalsIgnoreCase(status) || "in_progress".equalsIgnoreCase(status))) {
-            btnAction.setText("Start Working");
-            btnAction.setVisibility(View.VISIBLE);
-            btnAction.setOnClickListener(x -> {
-                dialog.dismiss();
-                Intent intent = new Intent(requireContext(), LiveWorkbenchActivity.class);
-                intent.putExtra("ticket_id",     ticket.getId());
-                intent.putExtra("ticket_title",  ticket.getTitle());
-                intent.putExtra("ticket_number", ticket.getTicketNumber());
-                intent.putExtra("eq_id",         ticket.getEquipmentId());
-                intent.putExtra("eq_name",       ticket.getEquipmentName());
-                startActivity(intent);
-            });
-        } else if (isAdmin) {
-            btnAction.setText("Update Status");
+        if (canEdit) {
+            btnAction.setText("Update Ticket");
             btnAction.setVisibility(View.VISIBLE);
             btnAction.setOnClickListener(x -> {
                 dialog.dismiss();
@@ -587,82 +676,111 @@ public class TicketsFragment extends Fragment {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    //  UPDATE STATUS DIALOG
+    //  EDIT TICKET DIALOG  (Title, Desc, Category, Priority, Deadline)
     // ─────────────────────────────────────────────────────────────────────────
     private void showUpdateStatusDialog(Ticket ticket) {
         if (!isAdded()) return;
         View v = LayoutInflater.from(requireContext())
-                .inflate(R.layout.dialog_ticket_detail, null);
+                .inflate(R.layout.dialog_new_ticket, null);
 
-        // Populate basic fields
-        setTextSafe(v, R.id.tvDetailTicketNumber,
-                ticket.getTicketNumber() != null ? ticket.getTicketNumber() : "—");
-        setTextSafe(v, R.id.tvDetailTitle,
-                ticket.getTitle() != null ? ticket.getTitle() : "Untitled");
-        setTextSafe(v, R.id.tvDetailRequester,
-                ticket.getUserName() != null ? ticket.getUserName() : "—");
-        setTextSafe(v, R.id.tvDetailEquipment,
-                ticket.getEquipmentName() != null ? ticket.getEquipmentName() : "—");
-        setTextSafe(v, R.id.tvDetailCategory,
-                ticket.getCategory() != null ? ticket.getCategory() : "—");
+        // ── Pre-fill Title ────────────────────────────────────────────────
+        EditText etTitle = v.findViewById(R.id.etTicketTitle);
+        if (etTitle != null && ticket.getTitle() != null) etTitle.setText(ticket.getTitle());
 
-        String date = ticket.getCreatedAt();
-        if (date != null && date.length() >= 10) date = date.substring(0, 10);
-        setTextSafe(v, R.id.tvDetailDate, date != null ? date : "—");
-        setTextSafe(v, R.id.tvDetailDescription,
-                ticket.getDescription() != null ? ticket.getDescription() : "No description.");
+        // ── Pre-fill Description ──────────────────────────────────────────
+        EditText etDesc = v.findViewById(R.id.etTicketDescription);
+        if (etDesc != null && ticket.getDescription() != null) etDesc.setText(ticket.getDescription());
 
-        // Work note
-        EditText etWorkNote = v.findViewById(R.id.etDetailWorkNote);
-        if (etWorkNote != null)
-            etWorkNote.setText(ticket.getWorkNote() != null ? ticket.getWorkNote() : "");
-
-        // Status badge
-        TextView tvStatus = v.findViewById(R.id.tvDetailStatus);
-        String status = ticket.getStatus() != null ? ticket.getStatus() : "open";
-        if (tvStatus != null) {
-            tvStatus.setText(status.toUpperCase().replace("_", " "));
-            applyStatusBadge(tvStatus, status);
+        // ── Pre-fill Deadline ─────────────────────────────────────────────
+        LinearLayout layoutDeadline = v.findViewById(R.id.layoutDeadline);
+        TextView tvDeadline = v.findViewById(R.id.tvTicketDeadline);
+        final String[] selectedDeadline = {ticket.getDeadline() != null ? ticket.getDeadline() : null};
+        if (tvDeadline != null && selectedDeadline[0] != null) {
+            tvDeadline.setText(selectedDeadline[0]);
+            tvDeadline.setTextColor(0xFF1E293B);
+        }
+        if (layoutDeadline != null) {
+            layoutDeadline.setOnClickListener(x -> {
+                java.util.Calendar cal = java.util.Calendar.getInstance();
+                new android.app.DatePickerDialog(requireContext(), (dp, year, month, day) -> {
+                    selectedDeadline[0] = String.format(java.util.Locale.US, "%04d-%02d-%02d", year, month + 1, day);
+                    tvDeadline.setText(selectedDeadline[0]);
+                    tvDeadline.setTextColor(0xFF1E293B);
+                }, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH),
+                        cal.get(java.util.Calendar.DAY_OF_MONTH)).show();
+            });
         }
 
-        // Priority badge
-        TextView tvPriority = v.findViewById(R.id.tvDetailPriority);
-        String priority = ticket.getPriority() != null ? ticket.getPriority() : "medium";
-        if (tvPriority != null) {
-            tvPriority.setText(priority.toUpperCase());
-            applyPriorityColor(tvPriority, priority);
-        }
-
-        // Status spinner
-        Spinner spStatus = v.findViewById(R.id.spDetailStatus);
-        if (spStatus != null) {
-            ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(requireContext(),
-                    android.R.layout.simple_spinner_item, STATUS_LABELS);
-            statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spStatus.setAdapter(statusAdapter);
-            for (int i = 0; i < STATUS_VALUES.length; i++) {
-                if (STATUS_VALUES[i].equalsIgnoreCase(status)) {
-                    spStatus.setSelection(i);
-                    break;
+        // ── Category spinner ──────────────────────────────────────────────
+        final String[] categories = {"Maintenance", "Inspection", "Incident"};
+        Spinner spCategory = v.findViewById(R.id.spTicketCategory);
+        if (spCategory != null) {
+            ArrayAdapter<String> catAdapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_spinner_item, categories);
+            catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spCategory.setAdapter(catAdapter);
+            if (ticket.getCategory() != null) {
+                for (int i = 0; i < categories.length; i++) {
+                    if (categories[i].equalsIgnoreCase(ticket.getCategory())) {
+                        spCategory.setSelection(i);
+                        break;
+                    }
                 }
             }
         }
 
+        // ── Priority spinner ──────────────────────────────────────────────
+        final String[] priorities     = {"low", "medium", "high", "critical"};
+        final String[] priorityLabels = {"Low", "Medium", "High", "Critical"};
+        Spinner spPriority = v.findViewById(R.id.spTicketPriority);
+        if (spPriority != null) {
+            ArrayAdapter<String> priAdapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_spinner_item, priorityLabels);
+            priAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spPriority.setAdapter(priAdapter);
+            if (ticket.getPriority() != null) {
+                for (int i = 0; i < priorities.length; i++) {
+                    if (priorities[i].equalsIgnoreCase(ticket.getPriority())) {
+                        spPriority.setSelection(i);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // ── Hide equipment selector (not editable in update mode) ─────────
+        View layoutEqCard   = v.findViewById(R.id.layoutSelectedEqCard);
+        View layoutEqSearch = v.findViewById(R.id.layoutEqSearchSelector);
+        if (layoutEqCard   != null) layoutEqCard.setVisibility(View.GONE);
+        if (layoutEqSearch != null) layoutEqSearch.setVisibility(View.GONE);
+
+        // ── Build dialog ──────────────────────────────────────────────────
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(v)
                 .create();
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-        View btnClose = v.findViewById(R.id.btnDetailClose);
-        if (btnClose != null) btnClose.setOnClickListener(x -> dialog.dismiss());
+        // ── Cancel button ─────────────────────────────────────────────────
+        Button btnCancel = v.findViewById(R.id.btnCancelTicket);
+        if (btnCancel != null) btnCancel.setOnClickListener(x -> dialog.dismiss());
 
-        View btnUpdate = v.findViewById(R.id.btnDetailUpdate);
-        if (btnUpdate != null) {
-            btnUpdate.setOnClickListener(x -> {
-                int selectedIdx = spStatus != null ? spStatus.getSelectedItemPosition() : 0;
-                String newStatus = STATUS_VALUES[Math.min(selectedIdx, STATUS_VALUES.length - 1)];
-                String workNote  = etWorkNote != null ? etWorkNote.getText().toString().trim() : "";
-                ticket.setStatus(newStatus);
-                ticket.setWorkNote(workNote);
+        // ── Save button ───────────────────────────────────────────────────
+        Button btnSubmit = v.findViewById(R.id.btnSubmitTicket);
+        if (btnSubmit != null) {
+            btnSubmit.setText("Save Changes");
+            btnSubmit.setOnClickListener(x -> {
+                String newTitle = etTitle != null ? etTitle.getText().toString().trim() : "";
+                if (newTitle.isEmpty()) {
+                    Toast.makeText(requireContext(), "Title cannot be empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                ticket.setTitle(newTitle);
+                if (etDesc != null) ticket.setDescription(etDesc.getText().toString().trim());
+                if (spCategory != null) ticket.setCategory(categories[spCategory.getSelectedItemPosition()]);
+                if (spPriority != null) ticket.setPriority(priorities[spPriority.getSelectedItemPosition()]);
+                if (selectedDeadline[0] != null) ticket.setDeadline(selectedDeadline[0]);
+
                 updateTicket(ticket, dialog);
             });
         }
@@ -716,9 +834,81 @@ public class TicketsFragment extends Fragment {
         if (warningBanner != null)
             warningBanner.setVisibility(hasActiveTicket ? View.VISIBLE : View.GONE);
 
-        // Timeline empty message
-        View timelineEmpty = v.findViewById(R.id.tvEqTimelineEmpty);
-        if (timelineEmpty != null) timelineEmpty.setVisibility(View.VISIBLE);
+        // Timeline empty message and History
+        TextView timelineEmpty = v.findViewById(R.id.tvEqTimelineEmpty);
+        
+        String lastRepairDate = "Never";
+        StringBuilder historyBuilder = new StringBuilder();
+        int historyCount = 0;
+        for (Ticket t : allTickets) {
+            if (eq.getId() != null && eq.getId().equals(t.getEquipmentId())) {
+                historyCount++;
+                String dateStr = t.getCreatedAt() != null && t.getCreatedAt().length() >= 10 
+                                 ? t.getCreatedAt().substring(0, 10) : "Unknown Date";
+                String titleStr = t.getTitle() != null ? t.getTitle() : "Untitled";
+                String statusStr = t.getStatus() != null ? t.getStatus().toUpperCase() : "OPEN";
+                historyBuilder.append("• ").append(dateStr).append(" - ").append(titleStr)
+                              .append(" [").append(statusStr).append("]\n");
+                              
+                if (statusStr.equals("RESOLVED") || statusStr.equals("CLOSED") || statusStr.equals("COMPLETED")) {
+                    if (lastRepairDate.equals("Never") || dateStr.compareTo(lastRepairDate) > 0) {
+                        lastRepairDate = dateStr;
+                    }
+                }
+            }
+        }
+        setTextSafe(v, R.id.tvEqDetailLastRepair, lastRepairDate);
+        
+        if (timelineEmpty != null) {
+            timelineEmpty.setVisibility(View.VISIBLE);
+            if (historyCount > 0) {
+                timelineEmpty.setText(historyBuilder.toString().trim());
+                timelineEmpty.setGravity(android.view.Gravity.START);
+                timelineEmpty.setTextColor(ContextCompat.getColor(requireContext(), R.color.textPrimary));
+            } else {
+                timelineEmpty.setText("No previous repair records found.");
+                timelineEmpty.setGravity(android.view.Gravity.CENTER);
+            }
+        }
+
+        // Specifications section - dynamically add key/value spec rows
+        LinearLayout layoutSpecsContainer = v.findViewById(R.id.layoutEqSpecsContainer);
+        TextView tvEqSpecsTitle = v.findViewById(R.id.tvEqSpecsTitle);
+        java.util.Map<String, String> specs = eq.getSpecifications();
+        if (specs != null && !specs.isEmpty() && layoutSpecsContainer != null) {
+            layoutSpecsContainer.setVisibility(View.VISIBLE);
+            if (tvEqSpecsTitle != null) tvEqSpecsTitle.setVisibility(View.VISIBLE);
+
+            for (java.util.Map.Entry<String, String> entry : specs.entrySet()) {
+                String val = entry.getValue();
+                if (val == null || val.trim().isEmpty() || val.equalsIgnoreCase("null") || val.equalsIgnoreCase("N/A") || val.equalsIgnoreCase("-")) {
+                    continue; // Skip empty specs dynamically
+                }
+                LinearLayout row = new LinearLayout(requireContext());
+                row.setOrientation(LinearLayout.HORIZONTAL);
+                row.setPadding(0, 3, 0, 3);
+
+                TextView tvKey = new TextView(requireContext());
+                tvKey.setText(entry.getKey() + ":");
+                tvKey.setTextSize(12f);
+                tvKey.setTextColor(ContextCompat.getColor(requireContext(), R.color.textHint));
+                LinearLayout.LayoutParams halfParams = new LinearLayout.LayoutParams(
+                        0, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+                tvKey.setLayoutParams(halfParams);
+
+                TextView tvVal = new TextView(requireContext());
+                tvVal.setText(entry.getValue() != null ? entry.getValue() : "—");
+                tvVal.setTextSize(12f);
+                tvVal.setTextColor(ContextCompat.getColor(requireContext(), R.color.textPrimary));
+                tvVal.setTypeface(null, android.graphics.Typeface.BOLD);
+                tvVal.setLayoutParams(new LinearLayout.LayoutParams(
+                        0, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+
+                row.addView(tvKey);
+                row.addView(tvVal);
+                layoutSpecsContainer.addView(row);
+            }
+        }
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(v)
@@ -734,14 +924,9 @@ public class TicketsFragment extends Fragment {
         Button btnAction = v.findViewById(R.id.btnEqDetailAction);
         if (btnAction != null) {
             if (hasActiveTicket) {
-                btnAction.setText("View Ticket");
-                btnAction.setOnClickListener(x -> {
-                    dialog.dismiss();
-                    // Switch to Tickets tab and filter by this equipment name
-                    switchTab(true);
-                    etSearch.setText(eq.getEquipmentName() != null ? eq.getEquipmentName() : "");
-                });
+                btnAction.setVisibility(View.GONE); // Hide button to prevent creating another ticket
             } else {
+                btnAction.setVisibility(View.VISIBLE);
                 btnAction.setText("Create Ticket");
                 btnAction.setOnClickListener(x -> {
                     dialog.dismiss();
@@ -749,6 +934,7 @@ public class TicketsFragment extends Fragment {
                 });
             }
         }
+
 
         dialog.show();
     }
@@ -778,6 +964,19 @@ public class TicketsFragment extends Fragment {
         LinearLayout layoutEqSearch   = v.findViewById(R.id.layoutEqSearchSelector);
         EditText     etDlgSearch      = v.findViewById(R.id.etDlgSearchEquipment);
         LinearLayout layoutDlgEqList  = v.findViewById(R.id.layoutDlgEquipmentList);
+        
+        // ── Deadline DatePicker ──────────────────────────────────────────────
+        LinearLayout layoutDeadline   = v.findViewById(R.id.layoutDeadline);
+        TextView     tvTicketDeadline = v.findViewById(R.id.tvTicketDeadline);
+        final String[] selectedDeadline = {null};
+        layoutDeadline.setOnClickListener(x -> {
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            new android.app.DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
+                selectedDeadline[0] = String.format(java.util.Locale.US, "%04d-%02d-%02d", year, month + 1, dayOfMonth);
+                tvTicketDeadline.setText(selectedDeadline[0]);
+                tvTicketDeadline.setTextColor(0xFF1E293B); // Dark text color
+            }, cal.get(java.util.Calendar.YEAR), cal.get(java.util.Calendar.MONTH), cal.get(java.util.Calendar.DAY_OF_MONTH)).show();
+        });
 
         // ── Category spinner ─────────────────────────────────────────────────
         final String[] categories  = {"Maintenance", "Inspection", "Incident"};
@@ -902,6 +1101,9 @@ public class TicketsFragment extends Fragment {
             newTicket.setCategory(categories[spCategory.getSelectedItemPosition()]);
             newTicket.setPriority(priorities[spPriority.getSelectedItemPosition()]);
             newTicket.setStatus("open");
+            if (selectedDeadline[0] != null) {
+                newTicket.setDeadline(selectedDeadline[0]);
+            }
             newTicket.setUserId(prefs.getString("user_id", ""));
             newTicket.setUserName(prefs.getString("user_name", ""));
             newTicket.setEquipmentId(selectedEquipment[0].getId());

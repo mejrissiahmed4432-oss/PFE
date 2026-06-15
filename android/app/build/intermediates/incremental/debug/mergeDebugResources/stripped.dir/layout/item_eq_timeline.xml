@@ -35,7 +35,7 @@
             android:id="@+id/tvTimelineIssue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="RAM Module Upgrade"
+            android:text="@string/txt_ram_module_upgrade"
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="@color/textPrimary"/>
@@ -44,7 +44,7 @@
             android:id="@+id/tvTimelineMeta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2026-06-03 • Technician"
+            android:text="@string/txt_2026_06_03_technician"
             android:textSize="10sp"
             android:textColor="@color/textSecondary"
             android:layout_marginTop="2dp"/>

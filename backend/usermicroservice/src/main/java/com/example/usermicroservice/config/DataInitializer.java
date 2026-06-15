@@ -27,7 +27,7 @@ public class DataInitializer {
                         "mejrissi",
                         adminEmail,
                         passwordEncoder.encode("1234656Aa"),
-                        Role.IT_MANAGER);
+                        Role.STOCK_MANAGER);
 
                 repository.save(admin);
                 System.out.println("Admin user created: " + adminEmail);

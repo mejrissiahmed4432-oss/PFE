@@ -4,6 +4,8 @@ package com.medina.app.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -20,6 +22,15 @@ import java.lang.String;
 public final class FragmentAlertsBinding implements ViewBinding {
   @NonNull
   private final LinearLayout rootView;
+
+  @NonNull
+  public final Button btnDeleteSelectedAlerts;
+
+  @NonNull
+  public final CheckBox cbSelectAllAlerts;
+
+  @NonNull
+  public final LinearLayout layoutAlertsSelectionBar;
 
   @NonNull
   public final LinearLayout layoutEmptyAlerts;
@@ -49,12 +60,16 @@ public final class FragmentAlertsBinding implements ViewBinding {
   public final TextView tvStatWarningCount;
 
   private FragmentAlertsBinding(@NonNull LinearLayout rootView,
-      @NonNull LinearLayout layoutEmptyAlerts, @NonNull RecyclerView rvAlerts,
-      @NonNull AppCompatSpinner spinnerSeverity, @NonNull AppCompatSpinner spinnerStatus,
-      @NonNull AppCompatSpinner spinnerTimeRange, @NonNull TextView tvStatActiveCount,
-      @NonNull TextView tvStatResolvedCount, @NonNull TextView tvStatTotalCount,
-      @NonNull TextView tvStatWarningCount) {
+      @NonNull Button btnDeleteSelectedAlerts, @NonNull CheckBox cbSelectAllAlerts,
+      @NonNull LinearLayout layoutAlertsSelectionBar, @NonNull LinearLayout layoutEmptyAlerts,
+      @NonNull RecyclerView rvAlerts, @NonNull AppCompatSpinner spinnerSeverity,
+      @NonNull AppCompatSpinner spinnerStatus, @NonNull AppCompatSpinner spinnerTimeRange,
+      @NonNull TextView tvStatActiveCount, @NonNull TextView tvStatResolvedCount,
+      @NonNull TextView tvStatTotalCount, @NonNull TextView tvStatWarningCount) {
     this.rootView = rootView;
+    this.btnDeleteSelectedAlerts = btnDeleteSelectedAlerts;
+    this.cbSelectAllAlerts = cbSelectAllAlerts;
+    this.layoutAlertsSelectionBar = layoutAlertsSelectionBar;
     this.layoutEmptyAlerts = layoutEmptyAlerts;
     this.rvAlerts = rvAlerts;
     this.spinnerSeverity = spinnerSeverity;
@@ -93,6 +108,24 @@ public final class FragmentAlertsBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.btnDeleteSelectedAlerts;
+      Button btnDeleteSelectedAlerts = ViewBindings.findChildViewById(rootView, id);
+      if (btnDeleteSelectedAlerts == null) {
+        break missingId;
+      }
+
+      id = R.id.cbSelectAllAlerts;
+      CheckBox cbSelectAllAlerts = ViewBindings.findChildViewById(rootView, id);
+      if (cbSelectAllAlerts == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutAlertsSelectionBar;
+      LinearLayout layoutAlertsSelectionBar = ViewBindings.findChildViewById(rootView, id);
+      if (layoutAlertsSelectionBar == null) {
+        break missingId;
+      }
+
       id = R.id.layoutEmptyAlerts;
       LinearLayout layoutEmptyAlerts = ViewBindings.findChildViewById(rootView, id);
       if (layoutEmptyAlerts == null) {
@@ -147,9 +180,10 @@ public final class FragmentAlertsBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentAlertsBinding((LinearLayout) rootView, layoutEmptyAlerts, rvAlerts,
-          spinnerSeverity, spinnerStatus, spinnerTimeRange, tvStatActiveCount, tvStatResolvedCount,
-          tvStatTotalCount, tvStatWarningCount);
+      return new FragmentAlertsBinding((LinearLayout) rootView, btnDeleteSelectedAlerts,
+          cbSelectAllAlerts, layoutAlertsSelectionBar, layoutEmptyAlerts, rvAlerts, spinnerSeverity,
+          spinnerStatus, spinnerTimeRange, tvStatActiveCount, tvStatResolvedCount, tvStatTotalCount,
+          tvStatWarningCount);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

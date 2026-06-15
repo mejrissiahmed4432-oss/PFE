@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,10 +27,22 @@ public final class DialogTicketDetailBinding implements ViewBinding {
   public final Button btnDetailClose;
 
   @NonNull
+  public final Button btnDetailCloseSimple;
+
+  @NonNull
+  public final Button btnDetailDelete;
+
+  @NonNull
   public final Button btnDetailUpdate;
 
   @NonNull
   public final EditText etDetailWorkNote;
+
+  @NonNull
+  public final LinearLayout layoutDetailEquipmentInfo;
+
+  @NonNull
+  public final LinearLayout layoutWorkbenchSection;
 
   @NonNull
   public final Spinner spDetailStatus;
@@ -42,6 +55,18 @@ public final class DialogTicketDetailBinding implements ViewBinding {
 
   @NonNull
   public final TextView tvDetailDescription;
+
+  @NonNull
+  public final TextView tvDetailEqBrand;
+
+  @NonNull
+  public final TextView tvDetailEqName;
+
+  @NonNull
+  public final TextView tvDetailEqSerial;
+
+  @NonNull
+  public final TextView tvDetailEqStatus;
 
   @NonNull
   public final TextView tvDetailEquipment;
@@ -62,20 +87,32 @@ public final class DialogTicketDetailBinding implements ViewBinding {
   public final TextView tvDetailTitle;
 
   private DialogTicketDetailBinding(@NonNull ScrollView rootView, @NonNull Button btnDetailClose,
+      @NonNull Button btnDetailCloseSimple, @NonNull Button btnDetailDelete,
       @NonNull Button btnDetailUpdate, @NonNull EditText etDetailWorkNote,
+      @NonNull LinearLayout layoutDetailEquipmentInfo, @NonNull LinearLayout layoutWorkbenchSection,
       @NonNull Spinner spDetailStatus, @NonNull TextView tvDetailCategory,
       @NonNull TextView tvDetailDate, @NonNull TextView tvDetailDescription,
+      @NonNull TextView tvDetailEqBrand, @NonNull TextView tvDetailEqName,
+      @NonNull TextView tvDetailEqSerial, @NonNull TextView tvDetailEqStatus,
       @NonNull TextView tvDetailEquipment, @NonNull TextView tvDetailPriority,
       @NonNull TextView tvDetailRequester, @NonNull TextView tvDetailStatus,
       @NonNull TextView tvDetailTicketNumber, @NonNull TextView tvDetailTitle) {
     this.rootView = rootView;
     this.btnDetailClose = btnDetailClose;
+    this.btnDetailCloseSimple = btnDetailCloseSimple;
+    this.btnDetailDelete = btnDetailDelete;
     this.btnDetailUpdate = btnDetailUpdate;
     this.etDetailWorkNote = etDetailWorkNote;
+    this.layoutDetailEquipmentInfo = layoutDetailEquipmentInfo;
+    this.layoutWorkbenchSection = layoutWorkbenchSection;
     this.spDetailStatus = spDetailStatus;
     this.tvDetailCategory = tvDetailCategory;
     this.tvDetailDate = tvDetailDate;
     this.tvDetailDescription = tvDetailDescription;
+    this.tvDetailEqBrand = tvDetailEqBrand;
+    this.tvDetailEqName = tvDetailEqName;
+    this.tvDetailEqSerial = tvDetailEqSerial;
+    this.tvDetailEqStatus = tvDetailEqStatus;
     this.tvDetailEquipment = tvDetailEquipment;
     this.tvDetailPriority = tvDetailPriority;
     this.tvDetailRequester = tvDetailRequester;
@@ -117,6 +154,18 @@ public final class DialogTicketDetailBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btnDetailCloseSimple;
+      Button btnDetailCloseSimple = ViewBindings.findChildViewById(rootView, id);
+      if (btnDetailCloseSimple == null) {
+        break missingId;
+      }
+
+      id = R.id.btnDetailDelete;
+      Button btnDetailDelete = ViewBindings.findChildViewById(rootView, id);
+      if (btnDetailDelete == null) {
+        break missingId;
+      }
+
       id = R.id.btnDetailUpdate;
       Button btnDetailUpdate = ViewBindings.findChildViewById(rootView, id);
       if (btnDetailUpdate == null) {
@@ -126,6 +175,18 @@ public final class DialogTicketDetailBinding implements ViewBinding {
       id = R.id.etDetailWorkNote;
       EditText etDetailWorkNote = ViewBindings.findChildViewById(rootView, id);
       if (etDetailWorkNote == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutDetailEquipmentInfo;
+      LinearLayout layoutDetailEquipmentInfo = ViewBindings.findChildViewById(rootView, id);
+      if (layoutDetailEquipmentInfo == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutWorkbenchSection;
+      LinearLayout layoutWorkbenchSection = ViewBindings.findChildViewById(rootView, id);
+      if (layoutWorkbenchSection == null) {
         break missingId;
       }
 
@@ -150,6 +211,30 @@ public final class DialogTicketDetailBinding implements ViewBinding {
       id = R.id.tvDetailDescription;
       TextView tvDetailDescription = ViewBindings.findChildViewById(rootView, id);
       if (tvDetailDescription == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDetailEqBrand;
+      TextView tvDetailEqBrand = ViewBindings.findChildViewById(rootView, id);
+      if (tvDetailEqBrand == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDetailEqName;
+      TextView tvDetailEqName = ViewBindings.findChildViewById(rootView, id);
+      if (tvDetailEqName == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDetailEqSerial;
+      TextView tvDetailEqSerial = ViewBindings.findChildViewById(rootView, id);
+      if (tvDetailEqSerial == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDetailEqStatus;
+      TextView tvDetailEqStatus = ViewBindings.findChildViewById(rootView, id);
+      if (tvDetailEqStatus == null) {
         break missingId;
       }
 
@@ -189,9 +274,11 @@ public final class DialogTicketDetailBinding implements ViewBinding {
         break missingId;
       }
 
-      return new DialogTicketDetailBinding((ScrollView) rootView, btnDetailClose, btnDetailUpdate,
-          etDetailWorkNote, spDetailStatus, tvDetailCategory, tvDetailDate, tvDetailDescription,
-          tvDetailEquipment, tvDetailPriority, tvDetailRequester, tvDetailStatus,
+      return new DialogTicketDetailBinding((ScrollView) rootView, btnDetailClose,
+          btnDetailCloseSimple, btnDetailDelete, btnDetailUpdate, etDetailWorkNote,
+          layoutDetailEquipmentInfo, layoutWorkbenchSection, spDetailStatus, tvDetailCategory,
+          tvDetailDate, tvDetailDescription, tvDetailEqBrand, tvDetailEqName, tvDetailEqSerial,
+          tvDetailEqStatus, tvDetailEquipment, tvDetailPriority, tvDetailRequester, tvDetailStatus,
           tvDetailTicketNumber, tvDetailTitle);
     }
     String missingId = rootView.getResources().getResourceName(id);

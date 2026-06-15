@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
+
+    <!-- AI Avatar -->
+    <TextView
+        android:id="@+id/tvAiAvatar"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/bg_avatar_white"
+        android:text="✨"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="@color/colorPrimary"/>
+
+    <!-- Content Area -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/tvAiAvatar"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="40dp"
+        android:orientation="vertical">
+
+        <!-- Message Bubble -->
+        <LinearLayout
+            android:id="@+id/layoutAiBubble"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- Main Answer text -->
+            <TextView
+                android:id="@+id/tvAssistantMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textPrimary"
+                android:textSize="13sp"
+                android:lineSpacingMultiplier="1.3"
+                android:text="@string/txt_ai_response"/>
+
+            <!-- Optional Data Table (TableLayout inside ScrollView) -->
+            <HorizontalScrollView
+                android:id="@+id/scrollDataTable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:scrollbars="none"
+                android:visibility="gone">
+
+                <TableLayout
+                    android:id="@+id/tableData"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:divider="?android:attr/listDivider"
+                    android:showDividers="middle"
+                    android:stretchColumns="*"/>
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+        <!-- Action Confirmation Controls (Step 1) -->
+        <LinearLayout
+            android:id="@+id/layoutActionPending"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_form_card"
+            android:padding="12dp"
+            android:layout_marginTop="6dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="6dp">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_alert"
+                    android:tint="#f59e0b"
+                    android:layout_marginEnd="6dp"/>
+
+                <TextView
+                    android:id="@+id/tvActionPendingType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_create_task"
+                    android:textColor="#f59e0b"
+                    android:textSize="11sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_this_action_will_modify_data_please_revi"
+                android:textSize="10sp"
+                android:textColor="@color/textHint"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnActionCancel"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:text="@string/txt_cancel"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:textColor="@color/textSecondary"
+                    android:textSize="11sp"
+                    android:layout_marginEnd="6dp"/>
+
+                <Button
+                    android:id="@+id/btnActionConfirm"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:text="@string/txt_proceed"
+                    android:background="@drawable/bg_button_gradient"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Suggested Prompt Chips (Linear vertical or flow) -->
+        <LinearLayout
+            android:id="@+id/layoutAiSuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="6dp"
+            android:visibility="gone"/>
+
+        <!-- Time stamp -->
+        <TextView
+            android:id="@+id/tvAiMsgTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="9sp"
+            android:textColor="@color/textHint"
+            android:layout_marginTop="2dp"
+            android:text="12:00"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
