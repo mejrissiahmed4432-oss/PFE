@@ -26,7 +26,7 @@
             android:id="@+id/tvEquipmentName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Equipment Name"
+            android:text="@string/txt_equipment_name"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@color/textPrimary"/>
@@ -35,7 +35,7 @@
             android:id="@+id/tvEquipmentSerialType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SN-001 • Laptop"
+            android:text="@string/txt_sn_001_laptop"
             android:textSize="11sp"
             android:textColor="@color/textSecondary"
             android:layout_marginTop="2dp"/>
@@ -44,7 +44,7 @@
             android:id="@+id/tvEquipmentAssignedUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="👤 Unassigned"
+            android:text="@string/txt_unassigned"
             android:textSize="11sp"
             android:textColor="@color/textHint"
             android:layout_marginTop="2dp"/>
@@ -55,7 +55,7 @@
         android:id="@+id/tvEquipmentStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="AVAILABLE"
+        android:text="@string/txt_available"
         android:textSize="9sp"
         android:textStyle="bold"
         android:paddingStart="7dp"

@@ -30,7 +30,7 @@
         android:id="@+id/tvConfirmTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Return to Stock"
+        android:text="@string/txt_return_to_stock"
         android:textColor="@color/textPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -41,7 +41,7 @@
         android:id="@+id/tvConfirmMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Are you sure you want to return this part to the main inventory stock? This action cannot be undone."
+        android:text="@string/txt_are_you_sure_you_want_to_return_this_par"
         android:textColor="@color/textSecondary"
         android:textSize="14sp"
         android:gravity="center"
@@ -59,9 +59,11 @@
             android:layout_width="0dp"
             android:layout_height="45dp"
             android:layout_weight="1"
-            android:text="Cancel"
+            android:text="@string/txt_cancel"
             android:textColor="@color/textPrimary"
             android:backgroundTint="@color/divider"
+            android:textAllCaps="false"
+            app:cornerRadius="8dp"
             android:layout_marginEnd="12dp"
             style="?android:attr/borderlessButtonStyle"/>
 
@@ -70,9 +72,11 @@
             android:layout_width="0dp"
             android:layout_height="45dp"
             android:layout_weight="1"
-            android:text="Confirm"
+            android:text="@string/txt_confirm"
             android:textColor="@color/white"
             android:backgroundTint="#EF4444"
+            android:textAllCaps="false"
+            app:cornerRadius="8dp"
             style="?android:attr/borderlessButtonStyle"/>
     </LinearLayout>
 </LinearLayout>

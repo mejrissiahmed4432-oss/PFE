@@ -45,7 +45,7 @@ public class DashboardActivity extends AppCompatActivity {
     private View layoutUserAvatar;
     private CardView profileDropdownCard;
     private TextView tvDropdownAvatar, tvDropdownName, tvDropdownEmail;
-    private View btnAI, btnLanguage, btnAlert, btnNotification;
+    private View btnLanguage, btnAlert, btnNotification;
     private View menuProfile, menuSettings, menuLogout;
 
     // Badge Views
@@ -55,10 +55,9 @@ public class DashboardActivity extends AppCompatActivity {
     private View btnMarkAllRead, btnClearAllNotifications;
 
     // Sidebar items and layouts
-    private LinearLayout navDashboard, navSchedule, navReports, navParts, navRequests, navTickets, navSettings, navLogout;
-    private ImageView iconDashboard, iconSchedule, iconReports, iconParts, iconRequests, iconTickets;
-    private TextView labelDashboard, labelSchedule, labelReports, labelParts, labelRequests, labelTickets;
-    private TextView badgeTickets;
+    private LinearLayout navDashboard, navSchedule, navTickets, navSettings, navLogout;
+    private ImageView iconDashboard, iconSchedule, iconTickets;
+    private TextView labelDashboard, labelSchedule, labelTickets, badgeTickets;
     // Topbar chat
     private View btnChat;
     private TextView tvChatBadge;
@@ -96,7 +95,6 @@ public class DashboardActivity extends AppCompatActivity {
         tvDropdownName = findViewById(R.id.tvDropdownName);
         tvDropdownEmail = findViewById(R.id.tvDropdownEmail);
 
-        btnAI = findViewById(R.id.btnAI);
         btnLanguage = findViewById(R.id.btnLanguage);
 
         btnAlert = findViewById(R.id.btnAlert);
@@ -118,27 +116,18 @@ public class DashboardActivity extends AppCompatActivity {
         // Sidebar Items
         navDashboard = findViewById(R.id.navDashboard);
         navSchedule = findViewById(R.id.navSchedule);
-        navReports = findViewById(R.id.navReports);
-        navParts = findViewById(R.id.navParts);
-        navRequests = findViewById(R.id.navRequests);
         navTickets = findViewById(R.id.navTickets);
         navSettings = findViewById(R.id.navSettings);
         navLogout = findViewById(R.id.navLogout);
- 
+
         // Sidebar Icons
         iconDashboard = findViewById(R.id.iconDashboard);
         iconSchedule = findViewById(R.id.iconSchedule);
-        iconReports = findViewById(R.id.iconReports);
-        iconParts = findViewById(R.id.iconParts);
-        iconRequests = findViewById(R.id.iconRequests);
         iconTickets = findViewById(R.id.iconTickets);
- 
+
         // Sidebar Labels
         labelDashboard = findViewById(R.id.labelDashboard);
         labelSchedule = findViewById(R.id.labelSchedule);
-        labelReports = findViewById(R.id.labelReports);
-        labelParts = findViewById(R.id.labelParts);
-        labelRequests = findViewById(R.id.labelRequests);
         labelTickets = findViewById(R.id.labelTickets);
         badgeTickets = findViewById(R.id.badgeTickets);
 
@@ -154,13 +143,16 @@ public class DashboardActivity extends AppCompatActivity {
         if (prefs.getString("user_id", "").isEmpty()) {
             ApiClient.getApiService().getCurrentUser().enqueue(new Callback<com.medina.app.model.User>() {
                 @Override
-                public void onResponse(Call<com.medina.app.model.User> call, Response<com.medina.app.model.User> response) {
+                public void onResponse(Call<com.medina.app.model.User> call,
+                        Response<com.medina.app.model.User> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         prefs.edit().putString("user_id", response.body().getId()).apply();
                     }
                 }
+
                 @Override
-                public void onFailure(Call<com.medina.app.model.User> call, Throwable t) {}
+                public void onFailure(Call<com.medina.app.model.User> call, Throwable t) {
+                }
             });
         }
 
@@ -170,20 +162,20 @@ public class DashboardActivity extends AppCompatActivity {
             drawerLayout.openDrawer(GravityCompat.START);
         });
 
-        navDashboard.setOnClickListener(v -> selectMenuItem(0));
-        navSchedule.setOnClickListener(v -> selectMenuItem(1));
-        navReports.setOnClickListener(v -> selectMenuItem(2));
-        navParts.setOnClickListener(v -> selectMenuItem(3));
-        navRequests.setOnClickListener(v -> selectMenuItem(4));
-        navTickets.setOnClickListener(v -> selectMenuItem(5));
+        navDashboard.setOnClickListener(v -> {
+            closeDropdowns();
+            selectMenuItem(0);
+        });
 
-        // Topbar Chat button navigates to Chat page
-        if (btnChat != null) {
-            btnChat.setOnClickListener(v -> {
-                closeDropdowns();
-                selectMenuItem(9);
-            });
-        }
+        navSchedule.setOnClickListener(v -> {
+            closeDropdowns();
+            selectMenuItem(1);
+        });
+
+        navTickets.setOnClickListener(v -> {
+            closeDropdowns();
+            selectMenuItem(5);
+        });
 
         navSettings.setOnClickListener(v -> {
             closeDropdowns();
@@ -196,8 +188,7 @@ public class DashboardActivity extends AppCompatActivity {
         if (btnAiFab != null) {
             btnAiFab.setOnClickListener(v -> {
                 closeDropdowns();
-                AiAssistantBottomSheet sheet = new AiAssistantBottomSheet();
-                sheet.show(getSupportFragmentManager(), "ai_assistant");
+                selectMenuItem(10);
             });
         }
 
@@ -222,7 +213,8 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-        // Alert topbar click: navigate directly to Alerts log fragment, matching the web behavior
+        // Alert topbar click: navigate directly to Alerts log fragment, matching the
+        // web behavior
         btnAlert.setOnClickListener(v -> {
             closeDropdowns();
             selectMenuItem(8);
@@ -244,8 +236,7 @@ public class DashboardActivity extends AppCompatActivity {
             performLogout();
         });
 
-        // Bind Actions Clicks
-        btnAI.setOnClickListener(v -> Toast.makeText(this, "AI Ecosystem analysis is active.", Toast.LENGTH_SHORT).show());
+
         btnLanguage.setOnClickListener(v -> {
             android.widget.PopupMenu popup = new android.widget.PopupMenu(this, btnLanguage);
             popup.getMenu().add(0, 1, 0, "English");
@@ -259,13 +250,25 @@ public class DashboardActivity extends AppCompatActivity {
             popup.show();
         });
 
-
         // Notifications action buttons
         btnMarkAllRead.setOnClickListener(v -> handleMarkAllNotificationsRead());
         btnClearAllNotifications.setOnClickListener(v -> handleClearAllNotifications());
 
+        // Chat topbar button
+        if (btnChat != null) {
+            btnChat.setOnClickListener(v -> {
+                closeDropdowns();
+                selectMenuItem(9);
+            });
+        }
+
         // Default view: Dashboard
         selectMenuItem(0);
+
+        // Role-based sidebar visibility
+        String userRole = prefs.getString("user_role", "");
+        boolean isTechnician = "TECHNICIAN".equalsIgnoreCase(userRole) || "ADMIN".equalsIgnoreCase(userRole);
+        if (navSchedule != null) navSchedule.setVisibility(View.VISIBLE);
 
         // Setup background status syncing
         setupPeriodicSync();
@@ -325,6 +328,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void syncNotificationsAndAlerts() {
         ApiClient.authToken = prefs.getString("auth_token", null);
+        String userId = prefs.getString("user_id", null);
         String userRole = prefs.getString("user_role", null);
 
         // Fetch alerts counts
@@ -343,11 +347,13 @@ public class DashboardActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Alert>> call, Throwable t) {}
+            public void onFailure(Call<List<Alert>> call, Throwable t) {
+            }
         });
 
-        // Fetch notifications count
-        ApiClient.getApiService().getNotifications(null, userRole).enqueue(new Callback<List<Notification>>() {
+        // Fetch notifications — pass userId so backend only returns THIS user's
+        // notifications
+        ApiClient.getApiService().getNotifications(userId, userRole).enqueue(new Callback<List<Notification>>() {
             @Override
             public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -363,7 +369,8 @@ public class DashboardActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<Notification>> call, Throwable t) {}
+            public void onFailure(Call<List<Notification>> call, Throwable t) {
+            }
         });
 
         // Fetch chat unread count only if we are not currently viewing the ChatFragment
@@ -371,7 +378,8 @@ public class DashboardActivity extends AppCompatActivity {
         if (!(currentFragment instanceof ChatFragment)) {
             ApiClient.getApiService().getConversations().enqueue(new Callback<List<ConversationSummary>>() {
                 @Override
-                public void onResponse(Call<List<ConversationSummary>> call, Response<List<ConversationSummary>> response) {
+                public void onResponse(Call<List<ConversationSummary>> call,
+                        Response<List<ConversationSummary>> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         int totalUnread = 0;
                         for (ConversationSummary cs : response.body()) {
@@ -382,7 +390,8 @@ public class DashboardActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(Call<List<ConversationSummary>> call, Throwable t) {}
+                public void onFailure(Call<List<ConversationSummary>> call, Throwable t) {
+                }
             });
         }
     }
@@ -418,9 +427,10 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void loadNotifications() {
         ApiClient.authToken = prefs.getString("auth_token", null);
+        String userId = prefs.getString("user_id", null);
         String userRole = prefs.getString("user_role", null);
 
-        ApiClient.getApiService().getNotifications(null, userRole).enqueue(new Callback<List<Notification>>() {
+        ApiClient.getApiService().getNotifications(userId, userRole).enqueue(new Callback<List<Notification>>() {
             @Override
             public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -442,9 +452,12 @@ public class DashboardActivity extends AppCompatActivity {
     private void loadFallbackNotifications() {
         if (notificationsList.isEmpty()) {
             notificationsList.clear();
-            notificationsList.add(new Notification("1", "Main Generator Shutdown", "Alert registered on main backup generator.", "2 mins ago", false));
-            notificationsList.add(new Notification("2", "Password Changed", "Your MedinaFlux profile security was updated.", "1 hour ago", true));
-            notificationsList.add(new Notification("3", "Server Ticket #1080", "Equipment database sync failure reported.", "Yesterday", false));
+            notificationsList.add(new Notification("1", "Main Generator Shutdown",
+                    "Alert registered on main backup generator.", "2 mins ago", false));
+            notificationsList.add(new Notification("2", "Password Changed",
+                    "Your MedinaFlux profile security was updated.", "1 hour ago", true));
+            notificationsList.add(new Notification("3", "Server Ticket #1080",
+                    "Equipment database sync failure reported.", "Yesterday", false));
         }
     }
 
@@ -574,7 +587,7 @@ public class DashboardActivity extends AppCompatActivity {
         Toast.makeText(this, "Notifications cleared", Toast.LENGTH_SHORT).show();
     }
 
-    private void selectMenuItem(int position) {
+    public void selectMenuItem(int position) {
         Fragment fragment = null;
         String title = "";
 
@@ -595,27 +608,6 @@ public class DashboardActivity extends AppCompatActivity {
                 navSchedule.setBackgroundResource(R.drawable.bg_nav_item_active);
                 iconSchedule.setColorFilter(Color.WHITE);
                 labelSchedule.setTextColor(Color.WHITE);
-                break;
-            case 2:
-                fragment = new ReportsFragment();
-                title = getString(R.string.nav_reports);
-                navReports.setBackgroundResource(R.drawable.bg_nav_item_active);
-                iconReports.setColorFilter(Color.WHITE);
-                labelReports.setTextColor(Color.WHITE);
-                break;
-            case 3:
-                fragment = new PartsFragment();
-                title = getString(R.string.nav_parts);
-                navParts.setBackgroundResource(R.drawable.bg_nav_item_active);
-                iconParts.setColorFilter(Color.WHITE);
-                labelParts.setTextColor(Color.WHITE);
-                break;
-            case 4:
-                fragment = new RequestsFragment();
-                title = getString(R.string.nav_requests);
-                navRequests.setBackgroundResource(R.drawable.bg_nav_item_active);
-                iconRequests.setColorFilter(Color.WHITE);
-                labelRequests.setTextColor(Color.WHITE);
                 break;
             case 5:
                 fragment = new TicketsFragment();
@@ -641,7 +633,12 @@ public class DashboardActivity extends AppCompatActivity {
                 fragment = new ChatFragment();
                 title = getString(R.string.nav_chat);
                 // No sidebar item to highlight for chat (it's a topbar button now)
-                if (tvChatBadge != null) tvChatBadge.setVisibility(View.GONE);
+                if (tvChatBadge != null)
+                    tvChatBadge.setVisibility(View.GONE);
+                break;
+            case 10:
+                fragment = new AiAssistantFragment();
+                title = "AI Assistant";
                 break;
         }
 
@@ -667,17 +664,6 @@ public class DashboardActivity extends AppCompatActivity {
         iconSchedule.setColorFilter(defaultColor);
         labelSchedule.setTextColor(defaultColor);
 
-        navReports.setBackgroundResource(R.drawable.bg_nav_item_default);
-        iconReports.setColorFilter(defaultColor);
-        labelReports.setTextColor(defaultColor);
-
-        navParts.setBackgroundResource(R.drawable.bg_nav_item_default);
-        iconParts.setColorFilter(defaultColor);
-        labelParts.setTextColor(defaultColor);
-
-        navRequests.setBackgroundResource(R.drawable.bg_nav_item_default);
-        iconRequests.setColorFilter(defaultColor);
-        labelRequests.setTextColor(defaultColor);
 
         navTickets.setBackgroundResource(R.drawable.bg_nav_item_default);
         iconTickets.setColorFilter(defaultColor);
@@ -688,7 +674,8 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (profileDropdownCard.getVisibility() == View.VISIBLE || notificationDropdownCard.getVisibility() == View.VISIBLE) {
+        if (profileDropdownCard.getVisibility() == View.VISIBLE
+                || notificationDropdownCard.getVisibility() == View.VISIBLE) {
             closeDropdowns();
         } else if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);

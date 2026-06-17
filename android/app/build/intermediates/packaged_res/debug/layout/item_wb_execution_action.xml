@@ -11,7 +11,7 @@
         android:id="@+id/cbWbExecAction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Install RAM Module 8GB"
+        android:text="@string/txt_install_ram_module_8gb"
         android:textSize="12sp"
         android:textColor="@color/textPrimary"/>
 

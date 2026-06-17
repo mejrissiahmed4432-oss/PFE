@@ -51,12 +51,6 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity
-            android:name=".activities.LiveWorkbenchActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MedinaApp"
-            android:windowSoftInputMode="adjustResize" />
-
     </application>
 
 </manifest>

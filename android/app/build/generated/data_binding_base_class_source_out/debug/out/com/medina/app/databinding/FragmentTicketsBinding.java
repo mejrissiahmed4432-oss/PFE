@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -16,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.medina.app.R;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -27,19 +27,16 @@ public final class FragmentTicketsBinding implements ViewBinding {
   private final RelativeLayout rootView;
 
   @NonNull
-  public final Button btnScanQR;
+  public final Button btnCreateTicket;
+
+  @NonNull
+  public final ImageButton btnScanQR;
 
   @NonNull
   public final LinearLayout btnToggleFilters;
 
   @NonNull
-  public final EditText etEqSerial;
-
-  @NonNull
   public final EditText etSearch;
-
-  @NonNull
-  public final FloatingActionButton fabNewTicket;
 
   @NonNull
   public final LinearLayout layoutEmpty;
@@ -69,7 +66,7 @@ public final class FragmentTicketsBinding implements ViewBinding {
   public final Spinner spEqCategory;
 
   @NonNull
-  public final Spinner spEqType;
+  public final Spinner spEqStatus;
 
   @NonNull
   public final Spinner spTicketStatus;
@@ -95,23 +92,21 @@ public final class FragmentTicketsBinding implements ViewBinding {
   @NonNull
   public final TextView tvToggleFiltersLabel;
 
-  private FragmentTicketsBinding(@NonNull RelativeLayout rootView, @NonNull Button btnScanQR,
-      @NonNull LinearLayout btnToggleFilters, @NonNull EditText etEqSerial,
-      @NonNull EditText etSearch, @NonNull FloatingActionButton fabNewTicket,
-      @NonNull LinearLayout layoutEmpty, @NonNull LinearLayout layoutEquipmentFilters,
-      @NonNull LinearLayout layoutFilterPanel, @NonNull LinearLayout layoutTicketFilters,
-      @NonNull LinearLayout mainContent, @NonNull ProgressBar progressTickets,
-      @NonNull RecyclerView rvEquipment, @NonNull RecyclerView rvTickets,
-      @NonNull Spinner spEqCategory, @NonNull Spinner spEqType, @NonNull Spinner spTicketStatus,
-      @NonNull TextView tabEquipment, @NonNull TextView tabTickets, @NonNull TextView tvEmpty,
-      @NonNull TextView tvStatInProgress, @NonNull TextView tvStatOpen,
+  private FragmentTicketsBinding(@NonNull RelativeLayout rootView, @NonNull Button btnCreateTicket,
+      @NonNull ImageButton btnScanQR, @NonNull LinearLayout btnToggleFilters,
+      @NonNull EditText etSearch, @NonNull LinearLayout layoutEmpty,
+      @NonNull LinearLayout layoutEquipmentFilters, @NonNull LinearLayout layoutFilterPanel,
+      @NonNull LinearLayout layoutTicketFilters, @NonNull LinearLayout mainContent,
+      @NonNull ProgressBar progressTickets, @NonNull RecyclerView rvEquipment,
+      @NonNull RecyclerView rvTickets, @NonNull Spinner spEqCategory, @NonNull Spinner spEqStatus,
+      @NonNull Spinner spTicketStatus, @NonNull TextView tabEquipment, @NonNull TextView tabTickets,
+      @NonNull TextView tvEmpty, @NonNull TextView tvStatInProgress, @NonNull TextView tvStatOpen,
       @NonNull TextView tvStatResolved, @NonNull TextView tvToggleFiltersLabel) {
     this.rootView = rootView;
+    this.btnCreateTicket = btnCreateTicket;
     this.btnScanQR = btnScanQR;
     this.btnToggleFilters = btnToggleFilters;
-    this.etEqSerial = etEqSerial;
     this.etSearch = etSearch;
-    this.fabNewTicket = fabNewTicket;
     this.layoutEmpty = layoutEmpty;
     this.layoutEquipmentFilters = layoutEquipmentFilters;
     this.layoutFilterPanel = layoutFilterPanel;
@@ -121,7 +116,7 @@ public final class FragmentTicketsBinding implements ViewBinding {
     this.rvEquipment = rvEquipment;
     this.rvTickets = rvTickets;
     this.spEqCategory = spEqCategory;
-    this.spEqType = spEqType;
+    this.spEqStatus = spEqStatus;
     this.spTicketStatus = spTicketStatus;
     this.tabEquipment = tabEquipment;
     this.tabTickets = tabTickets;
@@ -159,8 +154,14 @@ public final class FragmentTicketsBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.btnCreateTicket;
+      Button btnCreateTicket = ViewBindings.findChildViewById(rootView, id);
+      if (btnCreateTicket == null) {
+        break missingId;
+      }
+
       id = R.id.btnScanQR;
-      Button btnScanQR = ViewBindings.findChildViewById(rootView, id);
+      ImageButton btnScanQR = ViewBindings.findChildViewById(rootView, id);
       if (btnScanQR == null) {
         break missingId;
       }
@@ -171,21 +172,9 @@ public final class FragmentTicketsBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.etEqSerial;
-      EditText etEqSerial = ViewBindings.findChildViewById(rootView, id);
-      if (etEqSerial == null) {
-        break missingId;
-      }
-
       id = R.id.etSearch;
       EditText etSearch = ViewBindings.findChildViewById(rootView, id);
       if (etSearch == null) {
-        break missingId;
-      }
-
-      id = R.id.fabNewTicket;
-      FloatingActionButton fabNewTicket = ViewBindings.findChildViewById(rootView, id);
-      if (fabNewTicket == null) {
         break missingId;
       }
 
@@ -243,9 +232,9 @@ public final class FragmentTicketsBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.spEqType;
-      Spinner spEqType = ViewBindings.findChildViewById(rootView, id);
-      if (spEqType == null) {
+      id = R.id.spEqStatus;
+      Spinner spEqStatus = ViewBindings.findChildViewById(rootView, id);
+      if (spEqStatus == null) {
         break missingId;
       }
 
@@ -297,11 +286,11 @@ public final class FragmentTicketsBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentTicketsBinding((RelativeLayout) rootView, btnScanQR, btnToggleFilters,
-          etEqSerial, etSearch, fabNewTicket, layoutEmpty, layoutEquipmentFilters,
-          layoutFilterPanel, layoutTicketFilters, mainContent, progressTickets, rvEquipment,
-          rvTickets, spEqCategory, spEqType, spTicketStatus, tabEquipment, tabTickets, tvEmpty,
-          tvStatInProgress, tvStatOpen, tvStatResolved, tvToggleFiltersLabel);
+      return new FragmentTicketsBinding((RelativeLayout) rootView, btnCreateTicket, btnScanQR,
+          btnToggleFilters, etSearch, layoutEmpty, layoutEquipmentFilters, layoutFilterPanel,
+          layoutTicketFilters, mainContent, progressTickets, rvEquipment, rvTickets, spEqCategory,
+          spEqStatus, spTicketStatus, tabEquipment, tabTickets, tvEmpty, tvStatInProgress,
+          tvStatOpen, tvStatResolved, tvToggleFiltersLabel);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

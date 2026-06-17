@@ -39,7 +39,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Schedule"
+                        android:text="@string/txt_schedule"
                         android:textColor="@color/textPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -47,7 +47,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Manage your tasks and planning"
+                        android:text="@string/txt_manage_your_tasks_and_planning"
                         android:textColor="@color/textSecondary"
                         android:textSize="12sp"
                         android:layout_marginTop="2dp" />
@@ -58,7 +58,7 @@
                     android:id="@+id/btnAddTask"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:text="+ Add Task"
+                    android:text="@string/txt_add_task"
                     android:textColor="@color/white"
                     android:textSize="13sp"
                     android:background="@drawable/bg_button_gradient"
@@ -104,7 +104,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Total Tasks"
+                            android:text="@string/txt_total_tasks"
                             android:textColor="@color/textSecondary"
                             android:textSize="10sp" />
                     </LinearLayout>
@@ -129,7 +129,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="In Progress"
+                            android:text="@string/txt_in_progress"
                             android:textColor="@color/textSecondary"
                             android:textSize="10sp" />
                     </LinearLayout>
@@ -154,7 +154,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pending"
+                            android:text="@string/txt_pending"
                             android:textColor="@color/textSecondary"
                             android:textSize="10sp" />
                     </LinearLayout>
@@ -178,7 +178,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Completed"
+                            android:text="@string/txt_completed"
                             android:textColor="@color/textSecondary"
                             android:textSize="10sp" />
                     </LinearLayout>
@@ -213,7 +213,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Tasks"
+                        android:text="@string/txt_tasks"
                         android:textColor="@color/textPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -248,7 +248,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Select a Day"
+                        android:text="@string/txt_select_a_day"
                         android:textColor="@color/textPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold"
@@ -256,7 +256,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tap a date on the calendar to view tasks"
+                        android:text="@string/txt_tap_a_date_on_the_calendar_to_view_tasks"
                         android:textColor="@color/textSecondary"
                         android:textSize="11sp"
                         android:layout_marginTop="2dp" />
@@ -302,7 +302,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="To Do"
+                                    android:text="@string/txt_to_do"
                                     android:textColor="@color/textPrimary"
                                     android:textSize="13sp"
                                     android:textStyle="bold" />
@@ -331,7 +331,7 @@
                                 android:id="@+id/tvTodoEmpty"
                                 android:layout_width="match_parent"
                                 android:layout_height="50dp"
-                                android:text="No pending tasks for this day"
+                                android:text="@string/txt_no_pending_tasks_for_this_day"
                                 android:textColor="@color/textHint"
                                 android:textSize="12sp"
                                 android:gravity="center"
@@ -363,7 +363,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="In Progress"
+                                    android:text="@string/txt_in_progress"
                                     android:textColor="@color/textPrimary"
                                     android:textSize="13sp"
                                     android:textStyle="bold" />
@@ -390,7 +390,7 @@
                                 android:id="@+id/tvProgressEmpty"
                                 android:layout_width="match_parent"
                                 android:layout_height="50dp"
-                                android:text="No tasks in progress for this day"
+                                android:text="@string/txt_no_tasks_in_progress_for_this_day"
                                 android:textColor="@color/textHint"
                                 android:textSize="12sp"
                                 android:gravity="center"
@@ -421,7 +421,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="Done"
+                                    android:text="@string/txt_done"
                                     android:textColor="@color/textPrimary"
                                     android:textSize="13sp"
                                     android:textStyle="bold" />
@@ -448,7 +448,7 @@
                                 android:id="@+id/tvDoneEmpty"
                                 android:layout_width="match_parent"
                                 android:layout_height="50dp"
-                                android:text="No completed tasks for this day"
+                                android:text="@string/txt_no_completed_tasks_for_this_day"
                                 android:textColor="@color/textHint"
                                 android:textSize="12sp"
                                 android:gravity="center"
@@ -483,7 +483,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="🕐  History"
+                        android:text="@string/txt_history"
                         android:textColor="@color/textPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -510,7 +510,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📦  Archive is empty"
+                        android:text="@string/txt_archive_is_empty"
                         android:textColor="@color/textHint"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -572,7 +572,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="June 2026"
+                        android:text="@string/txt_june_2026"
                         android:textColor="@color/textPrimary"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -625,7 +625,7 @@
                         android:gravity="center_vertical"
                         android:layout_marginEnd="12dp">
                         <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/bg_dot_todo" android:layout_marginEnd="4dp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pending" android:textColor="@color/textHint" android:textSize="10sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/txt_pending" android:textColor="@color/textHint" android:textSize="10sp"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -635,7 +635,7 @@
                         android:gravity="center_vertical"
                         android:layout_marginEnd="12dp">
                         <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/bg_dot_progress" android:layout_marginEnd="4dp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="In Progress" android:textColor="@color/textHint" android:textSize="10sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/txt_in_progress" android:textColor="@color/textHint" android:textSize="10sp"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -644,7 +644,7 @@
                         android:orientation="horizontal"
                         android:gravity="center_vertical">
                         <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/bg_dot_done" android:layout_marginEnd="4dp"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Done" android:textColor="@color/textHint" android:textSize="10sp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/txt_done" android:textColor="@color/textHint" android:textSize="10sp"/>
                     </LinearLayout>
                 </LinearLayout>
 

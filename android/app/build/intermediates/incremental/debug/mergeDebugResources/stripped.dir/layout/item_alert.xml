@@ -12,7 +12,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Selection Checkbox -->
+        <CheckBox
+            android:id="@+id/cbAlertSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:visibility="gone"
+            android:buttonTint="@color/colorPrimary" />
 
         <!-- Severity Indicator Bar (Left border strip) -->
         <View
@@ -53,7 +63,7 @@
                         android:id="@+id/tvAlertTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sensor Failure"
+                        android:text="@string/txt_sensor_failure"
                         android:textColor="@color/textPrimary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -65,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="CRITICAL"
+                    android:text="@string/txt_critical"
                     android:textColor="#ef4444"
                     android:textSize="10sp"
                     android:textStyle="bold"
@@ -80,7 +90,7 @@
                 android:id="@+id/tvAlertMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="The main temperature sensor returned an out-of-range value (125°C)."
+                android:text="@string/txt_the_main_temperature_sensor_returned_an_"
                 android:textColor="@color/textSecondary"
                 android:textSize="13sp"
                 android:layout_marginBottom="12dp" />
@@ -108,7 +118,7 @@
                         android:id="@+id/tvAlertTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="March 20, 2026 at 14:35"
+                        android:text="@string/txt_march_20_2026_at_14_35"
                         android:textColor="@color/textHint"
                         android:textSize="11sp" />
 
@@ -117,7 +127,7 @@
                         android:id="@+id/tvAlertResolvedDetails"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Resolved by morad.mejri@medina.com at 14:42"
+                        android:text="@string/txt_resolved_by_morad_mejri_medina_com_at_14"
                         android:textColor="@color/successText"
                         android:textSize="11sp"
                         android:textStyle="bold"
@@ -131,7 +141,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
-                    android:text="Resolve"
+                    android:text="@string/txt_resolve"
                     android:textColor="@color/successText"
                     android:textSize="11sp"
                     android:textStyle="bold"

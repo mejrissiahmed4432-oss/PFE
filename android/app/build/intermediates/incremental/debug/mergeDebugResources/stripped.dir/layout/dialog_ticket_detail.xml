@@ -23,7 +23,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="#TKT-001"
+                android:text="@string/txt_tkt_001"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimaryVariant"/>
@@ -32,7 +32,7 @@
                 android:id="@+id/tvDetailStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="OPEN"
+                android:text="@string/txt_open"
                 android:textSize="10sp"
                 android:textStyle="bold"
                 android:paddingStart="8dp"
@@ -48,7 +48,7 @@
             android:id="@+id/tvDetailTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ticket Title"
+            android:text="@string/txt_ticket_title"
             android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="@color/textPrimary"
@@ -76,14 +76,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PRIORITY"
+                    android:text="@string/txt_priority"
                     android:textSize="10sp"
                     android:textColor="@color/textHint"/>
                 <TextView
                     android:id="@+id/tvDetailPriority"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="HIGH"
+                    android:text="@string/txt_high"
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="#ef4444"/>
@@ -97,14 +97,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CATEGORY"
+                    android:text="@string/txt_category"
                     android:textSize="10sp"
                     android:textColor="@color/textHint"/>
                 <TextView
                     android:id="@+id/tvDetailCategory"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hardware"
+                    android:text="@string/txt_hardware"
                     android:textSize="13sp"
                     android:textColor="@color/textPrimary"/>
             </LinearLayout>
@@ -117,7 +117,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CREATED"
+                    android:text="@string/txt_created"
                     android:textSize="10sp"
                     android:textColor="@color/textHint"/>
                 <TextView
@@ -145,14 +145,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="REQUESTER"
+                    android:text="@string/txt_requester"
                     android:textSize="10sp"
                     android:textColor="@color/textHint"/>
                 <TextView
                     android:id="@+id/tvDetailRequester"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="John Doe"
+                    android:text="@string/txt_john_doe"
                     android:textSize="13sp"
                     android:textColor="@color/textPrimary"/>
             </LinearLayout>
@@ -165,7 +165,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="EQUIPMENT"
+                    android:text="@string/txt_equipment"
                     android:textSize="10sp"
                     android:textColor="@color/textHint"/>
                 <TextView
@@ -182,7 +182,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DESCRIPTION"
+            android:text="@string/txt_description"
             android:textSize="10sp"
             android:textColor="@color/textHint"
             android:layout_marginBottom="4dp"/>
@@ -190,7 +190,7 @@
             android:id="@+id/tvDetailDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No description provided."
+            android:text="@string/txt_no_description_provided"
             android:textSize="13sp"
             android:textColor="@color/textPrimary"
             android:background="@drawable/bg_input_field"
@@ -204,79 +204,224 @@
             android:background="@color/divider"
             android:layout_marginBottom="12dp"/>
 
-        <!-- Technician workbench section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Technician Workbench"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@color/textPrimary"
-            android:layout_marginBottom="10dp"/>
-
-        <!-- Update Status -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Update Status"
-            android:textColor="@color/textSecondary"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
-        <Spinner
-            android:id="@+id/spDetailStatus"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:background="@drawable/bg_input_field"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Work Note -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Work Note / Resolution"
-            android:textColor="@color/textSecondary"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
-        <EditText
-            android:id="@+id/etDetailWorkNote"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@drawable/bg_input_field"
-            android:hint="Add a work note or resolution steps..."
-            android:textColorHint="@color/textHint"
-            android:textColor="@color/textPrimary"
-            android:textSize="13sp"
-            android:padding="10dp"
-            android:gravity="top|start"
-            android:inputType="textMultiLine"
-            android:layout_marginBottom="20dp"/>
-
-        <!-- Action Buttons -->
+        <!-- Equipment Details Section -->
         <LinearLayout
+            android:id="@+id/layoutDetailEquipmentInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end">
+            android:orientation="vertical"
+            android:background="@drawable/bg_card"
+            android:padding="12dp"
+            android:layout_marginBottom="14dp"
+            android:visibility="gone">
 
-            <Button
-                android:id="@+id/btnDetailClose"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Close"
-                style="?android:attr/borderlessButtonStyle"
-                android:textColor="@color/textSecondary"
-                android:layout_marginEnd="8dp"/>
+                android:text="@string/txt_equipment_details"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1"
+                android:textColor="@color/textHint"
+                android:layout_marginBottom="8dp"/>
 
-            <Button
-                android:id="@+id/btnDetailUpdate"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Update Ticket"
-                android:backgroundTint="@color/colorPrimary"
-                android:textColor="@color/white"/>
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/txt_name"
+                        android:textSize="9sp"
+                        android:textColor="@color/textHint"/>
+                    <TextView
+                        android:id="@+id/tvDetailEqName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/txt_serial_no"
+                        android:textSize="9sp"
+                        android:textColor="@color/textHint"/>
+                    <TextView
+                        android:id="@+id/tvDetailEqSerial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textSize="12sp"
+                        android:textColor="@color/textPrimary"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/txt_brand"
+                        android:textSize="9sp"
+                        android:textColor="@color/textHint"/>
+                    <TextView
+                        android:id="@+id/tvDetailEqBrand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textSize="12sp"
+                        android:textColor="@color/textPrimary"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/txt_status"
+                        android:textSize="9sp"
+                        android:textColor="@color/textHint"/>
+                    <TextView
+                        android:id="@+id/tvDetailEqStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="—"
+                        android:textSize="12sp"
+                        android:textColor="@color/textPrimary"/>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
+
+        <!-- Technician workbench section wrapped in a hideable container -->
+        <LinearLayout
+            android:id="@+id/layoutWorkbenchSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Workbench Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_technician_workbench"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/textPrimary"
+                android:layout_marginBottom="10dp"/>
+
+            <!-- Update Status -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_update_status"
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+            <Spinner
+                android:id="@+id/spDetailStatus"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@drawable/bg_input_field"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Work Note -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_work_note_resolution"
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+            <EditText
+                android:id="@+id/etDetailWorkNote"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="@string/txt_add_a_work_note_or_resolution_steps"
+                android:textColorHint="@color/textHint"
+                android:textColor="@color/textPrimary"
+                android:textSize="13sp"
+                android:padding="10dp"
+                android:gravity="top|start"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- Action Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end">
+
+                <Button
+                    android:id="@+id/btnDetailClose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_close"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:textColor="@color/textSecondary"
+                    android:layout_marginEnd="8dp"/>
+
+                <Button
+                    android:id="@+id/btnDetailDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_delete"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:textColor="@color/errorText"
+                    android:layout_marginEnd="8dp"/>
+
+                <Button
+                    android:id="@+id/btnDetailUpdate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txt_update_ticket"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Close button for non-tech users (always visible) -->
+        <Button
+            android:id="@+id/btnDetailCloseSimple"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="@string/txt_close"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="@color/textSecondary"
+            android:visibility="gone"/>
 
     </LinearLayout>
 </ScrollView>

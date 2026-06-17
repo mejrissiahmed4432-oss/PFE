@@ -12,7 +12,7 @@
         android:id="@+id/tvDetailHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit Task"
+        android:text="@string/txt_edit_task"
         android:textColor="@color/textPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -22,7 +22,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Task Title"
+        android:text="@string/txt_task_title"
         android:textColor="@color/textSecondary"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="@drawable/bg_input_field"
-        android:hint="Task title"
+        android:hint="@string/txt_task_title"
         android:textColorHint="@color/textHint"
         android:textColor="@color/textPrimary"
         android:textSize="14sp"
@@ -45,7 +45,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Description"
+        android:text="@string/txt_description"
         android:textColor="@color/textSecondary"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -55,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="@drawable/bg_input_field"
-        android:hint="Description..."
+        android:hint="@string/txt_description"
         android:textColorHint="@color/textHint"
         android:textColor="@color/textPrimary"
         android:textSize="14sp"
@@ -81,7 +81,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category Type"
+                android:text="@string/txt_category_type"
                 android:textColor="@color/textSecondary"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -103,7 +103,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Priority Level"
+                android:text="@string/txt_priority_level"
                 android:textColor="@color/textSecondary"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -121,7 +121,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Due Date"
+        android:text="@string/txt_due_date"
         android:textColor="@color/textSecondary"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -131,7 +131,7 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="@drawable/bg_input_field"
-        android:text="Select target date"
+        android:text="@string/txt_select_target_date"
         android:textColor="@color/textHint"
         android:textSize="14sp"
         android:gravity="center_vertical"
@@ -145,7 +145,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Task Status"
+        android:text="@string/txt_task_status"
         android:textColor="@color/textSecondary"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -185,7 +185,7 @@
             android:id="@+id/btnDetailClose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="@string/txt_cancel"
             style="?android:attr/borderlessButtonStyle"
             android:textColor="@color/textSecondary"
             android:layout_marginEnd="8dp"/>
@@ -194,7 +194,7 @@
             android:id="@+id/btnDetailSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save Changes"
+            android:text="@string/txt_save_changes"
             android:backgroundTint="@color/colorPrimary"
             android:textColor="@color/white"/>
     </LinearLayout>

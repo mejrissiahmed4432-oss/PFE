@@ -99,12 +99,22 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked, OnChanges
   ) { }
 
   ngOnInit(): void {
-    this.conversations = this.aiService.getAllConversations();
-    if (this.conversations.length > 0) {
-      this.activeConversation = this.conversations[0];
-    } else {
-      this.startNewConversation();
-    }
+    this.isLoading = true;
+    this.aiService.getAllConversations().subscribe({
+      next: (convs) => {
+        this.conversations = convs || [];
+        if (this.conversations.length > 0) {
+          this.activeConversation = this.conversations[0];
+        } else {
+          this.startNewConversation();
+        }
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        this.startNewConversation();
+      }
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -125,7 +135,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked, OnChanges
     const conv = this.aiService.createConversation();
     this.activeConversation = conv;
     this.conversations.unshift(conv);
-    this.aiService.saveConversation(conv);
+    this.aiService.saveConversation(conv).subscribe();
     this.editingMessageId = null;
     setTimeout(() => this.resetTextareaHeight());
   }
@@ -137,15 +147,18 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked, OnChanges
 
   deleteConversation(conv: Conversation, event: Event): void {
     event.stopPropagation();
-    this.aiService.deleteConversation(conv.id);
-    this.conversations = this.conversations.filter(c => c.id !== conv.id);
-    if (this.activeConversation?.id === conv.id) {
-      if (this.conversations.length > 0) {
-        this.activeConversation = this.conversations[0];
-      } else {
-        this.startNewConversation();
+    this.aiService.deleteConversation(conv.id).subscribe({
+      next: () => {
+        this.conversations = this.conversations.filter(c => c.id !== conv.id);
+        if (this.activeConversation?.id === conv.id) {
+          if (this.conversations.length > 0) {
+            this.activeConversation = this.conversations[0];
+          } else {
+            this.startNewConversation();
+          }
+        }
       }
-    }
+    });
   }
 
   // ── Message Editing ───────────────────────────────────────────────────────
@@ -158,7 +171,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked, OnChanges
       const idx = this.activeConversation.messages.findIndex(m => m.id === msg.id);
       if (idx >= 0) {
         this.activeConversation.messages = this.activeConversation.messages.slice(0, idx);
-        this.aiService.saveConversation(this.activeConversation);
+        this.aiService.saveConversation(this.activeConversation).subscribe();
       }
     }
   }
@@ -227,7 +240,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked, OnChanges
         : userText || 'Image Upload';
     }
 
-    this.aiService.saveConversation(this.activeConversation);
+    this.aiService.saveConversation(this.activeConversation).subscribe();
 
     // Build conversation history for the backend (last 10 turns)
     const history: ConversationTurn[] = this.activeConversation.messages
@@ -263,8 +276,10 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked, OnChanges
           };
         }
         this.activeConversation!.messages.push(aiMsg);
-        this.aiService.saveConversation(this.activeConversation!);
-        this.conversations = this.aiService.getAllConversations();
+        this.aiService.saveConversation(this.activeConversation!).subscribe();
+        
+        // Re-fetch all to ensure order / titles are up to date from backend if we want, but local state is fine.
+        // this.aiService.getAllConversations().subscribe(c => this.conversations = c || []);
       },
       error: () => {
         this.isLoading = false;
@@ -275,7 +290,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked, OnChanges
           timestamp: new Date(),
           isError: true
         });
-        this.aiService.saveConversation(this.activeConversation!);
+        this.aiService.saveConversation(this.activeConversation!).subscribe();
       }
     });
   }
@@ -314,7 +329,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked, OnChanges
         };
 
         this.activeConversation!.messages.push(aiMsg);
-        this.aiService.saveConversation(this.activeConversation!);
+        this.aiService.saveConversation(this.activeConversation!).subscribe();
 
         // Trigger global refresh so other components update their data automatically
         this.refreshService.triggerRefresh(action.type);
@@ -337,6 +352,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked, OnChanges
           timestamp: new Date(),
           isError: true
         });
+        this.aiService.saveConversation(this.activeConversation!).subscribe();
       }
     });
   }
@@ -362,7 +378,7 @@ export class AiAssistantComponent implements OnInit, AfterViewChecked, OnChanges
       sender: 'assistant',
       timestamp: new Date()
     });
-    this.aiService.saveConversation(this.activeConversation);
+    this.aiService.saveConversation(this.activeConversation).subscribe();
   }
   // ── Helpers ───────────────────────────────────────────────────────────────
 

@@ -1,13 +1,5 @@
 [
     {
-        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_part_group_header.xml",
-        "source": "com.medina.app-main-35:/layout/item_part_group_header.xml"
-    },
-    {
-        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_part_detail.xml",
-        "source": "com.medina.app-main-35:/layout/dialog_part_detail.xml"
-    },
-    {
         "merged": "com.medina.app-mergeDebugResources-32:/layout/item_chat_message.xml",
         "source": "com.medina.app-main-35:/layout/item_chat_message.xml"
     },
@@ -32,10 +24,6 @@
         "source": "com.medina.app-main-35:/layout/fragment_tickets.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_parts.xml",
-        "source": "com.medina.app-main-35:/layout/fragment_parts.xml"
-    },
-    {
         "merged": "com.medina.app-mergeDebugResources-32:/layout/item_chat_contact.xml",
         "source": "com.medina.app-main-35:/layout/item_chat_contact.xml"
     },
@@ -50,6 +38,10 @@
     {
         "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_ticket_detail.xml",
         "source": "com.medina.app-main-35:/layout/dialog_ticket_detail.xml"
+    },
+    {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_ai_assistant.xml",
+        "source": "com.medina.app-main-35:/layout/fragment_ai_assistant.xml"
     },
     {
         "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_profile.xml",
@@ -80,20 +72,16 @@
         "source": "com.medina.app-main-35:/layout/dialog_confirm_return.xml"
     },
     {
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_ai_conversation.xml",
+        "source": "com.medina.app-main-35:/layout/item_ai_conversation.xml"
+    },
+    {
         "merged": "com.medina.app-mergeDebugResources-32:/layout/item_wb_execution_action.xml",
         "source": "com.medina.app-main-35:/layout/item_wb_execution_action.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_request_part.xml",
-        "source": "com.medina.app-main-35:/layout/dialog_request_part.xml"
-    },
-    {
-        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_reports.xml",
-        "source": "com.medina.app-main-35:/layout/fragment_reports.xml"
-    },
-    {
-        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_part_detail.xml",
-        "source": "com.medina.app-main-35:/layout/item_part_detail.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_ai_message_user.xml",
+        "source": "com.medina.app-main-35:/layout/item_ai_message_user.xml"
     },
     {
         "merged": "com.medina.app-mergeDebugResources-32:/layout/activity_forgot_password.xml",
@@ -104,8 +92,8 @@
         "source": "com.medina.app-main-35:/layout/dialog_equipment_detail.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_request_part_wizard.xml",
-        "source": "com.medina.app-main-35:/layout/dialog_request_part_wizard.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/item_ai_message_assistant.xml",
+        "source": "com.medina.app-main-35:/layout/item_ai_message_assistant.xml"
     },
     {
         "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_schedule.xml",
@@ -116,20 +104,12 @@
         "source": "com.medina.app-main-35:/layout/fragment_dashboard.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-32:/layout/activity_reset_password.xml",
-        "source": "com.medina.app-main-35:/layout/activity_reset_password.xml"
-    },
-    {
         "merged": "com.medina.app-mergeDebugResources-32:/layout/layout_ai_assistant.xml",
         "source": "com.medina.app-main-35:/layout/layout_ai_assistant.xml"
     },
     {
-        "merged": "com.medina.app-mergeDebugResources-32:/layout/fragment_requests.xml",
-        "source": "com.medina.app-main-35:/layout/fragment_requests.xml"
-    },
-    {
-        "merged": "com.medina.app-mergeDebugResources-32:/layout/activity_live_workbench.xml",
-        "source": "com.medina.app-main-35:/layout/activity_live_workbench.xml"
+        "merged": "com.medina.app-mergeDebugResources-32:/layout/activity_reset_password.xml",
+        "source": "com.medina.app-main-35:/layout/activity_reset_password.xml"
     },
     {
         "merged": "com.medina.app-mergeDebugResources-32:/layout/dialog_new_ticket.xml",

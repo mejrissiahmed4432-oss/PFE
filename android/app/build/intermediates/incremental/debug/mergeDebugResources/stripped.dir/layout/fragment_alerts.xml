@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Alerts Log"
+            android:text="@string/txt_alerts_log"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/textPrimary"
@@ -27,7 +27,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Real-time alerts, error notifications, and warning logs"
+            android:text="@string/txt_real_time_alerts_error_notifications_and"
             android:textSize="12sp"
             android:textColor="@color/textHint"
             android:layout_marginTop="2dp" />
@@ -72,7 +72,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Active Alerts"
+                        android:text="@string/txt_active_alerts"
                         android:textColor="@color/textSecondary"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -103,7 +103,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Warnings"
+                        android:text="@string/txt_warnings"
                         android:textColor="@color/textSecondary"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -134,7 +134,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Resolved Alerts"
+                        android:text="@string/txt_resolved_alerts"
                         android:textColor="@color/textSecondary"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -164,7 +164,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Total Logs"
+                        android:text="@string/txt_total_logs"
                         android:textColor="@color/textSecondary"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -238,6 +238,48 @@
         </LinearLayout>
     </HorizontalScrollView>
 
+    <!-- ═══ Selection Toolbar ═══ -->
+    <LinearLayout
+        android:id="@+id/layoutAlertsSelectionBar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/surfaceColor">
+
+        <CheckBox
+            android:id="@+id/cbSelectAllAlerts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_select_all"
+            android:textSize="13sp"
+            android:textColor="@color/textPrimary"
+            android:buttonTint="@color/colorPrimary"
+            android:layout_marginEnd="12dp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/btnDeleteSelectedAlerts"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="@string/txt_delete_selected"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/errorText"
+            android:enabled="false"
+            android:alpha="0.5"
+            android:textAllCaps="false"
+            android:paddingHorizontal="14dp"/>
+
+    </LinearLayout>
+
     <!-- ═══ Recycler and Empty State Container ═══ -->
     <FrameLayout
         android:layout_width="match_parent"
@@ -272,7 +314,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No alerts found"
+                android:text="@string/txt_no_alerts_found"
                 android:textColor="@color/textPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -281,7 +323,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Try adjusting your filter settings or time range"
+                android:text="@string/txt_try_adjusting_your_filter_settings_or_ti"
                 android:textColor="@color/textHint"
                 android:textSize="12sp"
                 android:gravity="center" />

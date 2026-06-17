@@ -56,18 +56,12 @@ export interface Conversation {
 })
 export class AiService {
   private apiUrl = '/api/ai';
-  private readonly BASE_STORAGE_KEY = 'ai_conversations';
+  private conversationsUrl = '/api/aiconversations';
 
   constructor(
     private http: HttpClient,
     private authService: AuthService
   ) { }
-
-  private getStorageKey(): string {
-    const user = this.authService.getCurrentUser();
-    const userId = user?.id || user?._id || 'guest';
-    return `${this.BASE_STORAGE_KEY}_${userId}`;
-  }
 
   query(message: string, history: ConversationTurn[] = [], imageBase64?: string): Observable<AiResponse> {
     const user = this.authService.getCurrentUser();
@@ -98,41 +92,18 @@ export class AiService {
     });
   }
 
-  // ── Conversation Persistence (localStorage) ───────────────────────────────
+  // ── Conversation Persistence (Backend) ───────────────────────────────
 
-  getAllConversations(): Conversation[] {
-    try {
-      const raw = localStorage.getItem(this.getStorageKey());
-      if (!raw) return [];
-      const parsed: Conversation[] = JSON.parse(raw);
-      return parsed.map(conv => ({
-        ...conv,
-        messages: conv.messages.map(m => ({ ...m, timestamp: new Date(m.timestamp) }))
-      }));
-    } catch {
-      return [];
-    }
+  getAllConversations(): Observable<Conversation[]> {
+    return this.http.get<Conversation[]>(this.conversationsUrl);
   }
 
-  saveConversation(conv: Conversation): void {
-    try {
-      const key = this.getStorageKey();
-      const all = this.getAllConversations();
-      const idx = all.findIndex(c => c.id === conv.id);
-      if (idx >= 0) {
-        all[idx] = { ...conv, updatedAt: new Date().toISOString() };
-      } else {
-        all.unshift({ ...conv, updatedAt: new Date().toISOString() });
-      }
-      localStorage.setItem(key, JSON.stringify(all));
-    } catch { }
+  saveConversation(conv: Conversation): Observable<Conversation> {
+    return this.http.post<Conversation>(this.conversationsUrl, conv);
   }
 
-  deleteConversation(id: string): void {
-    try {
-      const all = this.getAllConversations().filter(c => c.id !== id);
-      localStorage.setItem(this.getStorageKey(), JSON.stringify(all));
-    } catch { }
+  deleteConversation(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.conversationsUrl}/${id}`);
   }
 
   createConversation(): Conversation {

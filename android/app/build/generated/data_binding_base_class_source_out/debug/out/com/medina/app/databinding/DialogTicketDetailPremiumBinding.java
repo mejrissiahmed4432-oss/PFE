@@ -35,6 +35,9 @@ public final class DialogTicketDetailPremiumBinding implements ViewBinding {
   public final ImageButton btnTicketDetailEdit;
 
   @NonNull
+  public final LinearLayout layoutDetailEquipmentInfo;
+
+  @NonNull
   public final LinearLayout layoutTicketDetailAttachments;
 
   @NonNull
@@ -45,6 +48,18 @@ public final class DialogTicketDetailPremiumBinding implements ViewBinding {
 
   @NonNull
   public final LinearLayout layoutTicketDetailTech;
+
+  @NonNull
+  public final TextView tvDetailEqBrand;
+
+  @NonNull
+  public final TextView tvDetailEqName;
+
+  @NonNull
+  public final TextView tvDetailEqSerial;
+
+  @NonNull
+  public final TextView tvDetailEqStatus;
 
   @NonNull
   public final TextView tvTicketDetailAttachmentsLabel;
@@ -76,24 +91,31 @@ public final class DialogTicketDetailPremiumBinding implements ViewBinding {
   private DialogTicketDetailPremiumBinding(@NonNull NestedScrollView rootView,
       @NonNull Button btnTicketDetailAction, @NonNull Button btnTicketDetailCancel,
       @NonNull ImageButton btnTicketDetailDelete, @NonNull ImageButton btnTicketDetailEdit,
+      @NonNull LinearLayout layoutDetailEquipmentInfo,
       @NonNull LinearLayout layoutTicketDetailAttachments,
       @NonNull LinearLayout layoutTicketDetailAttachmentsList,
       @NonNull LinearLayout layoutTicketDetailDeadline,
-      @NonNull LinearLayout layoutTicketDetailTech,
-      @NonNull TextView tvTicketDetailAttachmentsLabel, @NonNull TextView tvTicketDetailCategory,
-      @NonNull TextView tvTicketDetailDeadline, @NonNull TextView tvTicketDetailDescription,
-      @NonNull TextView tvTicketDetailPriority, @NonNull TextView tvTicketDetailStatus,
-      @NonNull TextView tvTicketDetailTechAvatar, @NonNull TextView tvTicketDetailTechName,
-      @NonNull TextView tvTicketDetailTitle) {
+      @NonNull LinearLayout layoutTicketDetailTech, @NonNull TextView tvDetailEqBrand,
+      @NonNull TextView tvDetailEqName, @NonNull TextView tvDetailEqSerial,
+      @NonNull TextView tvDetailEqStatus, @NonNull TextView tvTicketDetailAttachmentsLabel,
+      @NonNull TextView tvTicketDetailCategory, @NonNull TextView tvTicketDetailDeadline,
+      @NonNull TextView tvTicketDetailDescription, @NonNull TextView tvTicketDetailPriority,
+      @NonNull TextView tvTicketDetailStatus, @NonNull TextView tvTicketDetailTechAvatar,
+      @NonNull TextView tvTicketDetailTechName, @NonNull TextView tvTicketDetailTitle) {
     this.rootView = rootView;
     this.btnTicketDetailAction = btnTicketDetailAction;
     this.btnTicketDetailCancel = btnTicketDetailCancel;
     this.btnTicketDetailDelete = btnTicketDetailDelete;
     this.btnTicketDetailEdit = btnTicketDetailEdit;
+    this.layoutDetailEquipmentInfo = layoutDetailEquipmentInfo;
     this.layoutTicketDetailAttachments = layoutTicketDetailAttachments;
     this.layoutTicketDetailAttachmentsList = layoutTicketDetailAttachmentsList;
     this.layoutTicketDetailDeadline = layoutTicketDetailDeadline;
     this.layoutTicketDetailTech = layoutTicketDetailTech;
+    this.tvDetailEqBrand = tvDetailEqBrand;
+    this.tvDetailEqName = tvDetailEqName;
+    this.tvDetailEqSerial = tvDetailEqSerial;
+    this.tvDetailEqStatus = tvDetailEqStatus;
     this.tvTicketDetailAttachmentsLabel = tvTicketDetailAttachmentsLabel;
     this.tvTicketDetailCategory = tvTicketDetailCategory;
     this.tvTicketDetailDeadline = tvTicketDetailDeadline;
@@ -156,6 +178,12 @@ public final class DialogTicketDetailPremiumBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.layoutDetailEquipmentInfo;
+      LinearLayout layoutDetailEquipmentInfo = ViewBindings.findChildViewById(rootView, id);
+      if (layoutDetailEquipmentInfo == null) {
+        break missingId;
+      }
+
       id = R.id.layoutTicketDetailAttachments;
       LinearLayout layoutTicketDetailAttachments = ViewBindings.findChildViewById(rootView, id);
       if (layoutTicketDetailAttachments == null) {
@@ -177,6 +205,30 @@ public final class DialogTicketDetailPremiumBinding implements ViewBinding {
       id = R.id.layoutTicketDetailTech;
       LinearLayout layoutTicketDetailTech = ViewBindings.findChildViewById(rootView, id);
       if (layoutTicketDetailTech == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDetailEqBrand;
+      TextView tvDetailEqBrand = ViewBindings.findChildViewById(rootView, id);
+      if (tvDetailEqBrand == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDetailEqName;
+      TextView tvDetailEqName = ViewBindings.findChildViewById(rootView, id);
+      if (tvDetailEqName == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDetailEqSerial;
+      TextView tvDetailEqSerial = ViewBindings.findChildViewById(rootView, id);
+      if (tvDetailEqSerial == null) {
+        break missingId;
+      }
+
+      id = R.id.tvDetailEqStatus;
+      TextView tvDetailEqStatus = ViewBindings.findChildViewById(rootView, id);
+      if (tvDetailEqStatus == null) {
         break missingId;
       }
 
@@ -236,11 +288,12 @@ public final class DialogTicketDetailPremiumBinding implements ViewBinding {
 
       return new DialogTicketDetailPremiumBinding((NestedScrollView) rootView,
           btnTicketDetailAction, btnTicketDetailCancel, btnTicketDetailDelete, btnTicketDetailEdit,
-          layoutTicketDetailAttachments, layoutTicketDetailAttachmentsList,
-          layoutTicketDetailDeadline, layoutTicketDetailTech, tvTicketDetailAttachmentsLabel,
-          tvTicketDetailCategory, tvTicketDetailDeadline, tvTicketDetailDescription,
-          tvTicketDetailPriority, tvTicketDetailStatus, tvTicketDetailTechAvatar,
-          tvTicketDetailTechName, tvTicketDetailTitle);
+          layoutDetailEquipmentInfo, layoutTicketDetailAttachments,
+          layoutTicketDetailAttachmentsList, layoutTicketDetailDeadline, layoutTicketDetailTech,
+          tvDetailEqBrand, tvDetailEqName, tvDetailEqSerial, tvDetailEqStatus,
+          tvTicketDetailAttachmentsLabel, tvTicketDetailCategory, tvTicketDetailDeadline,
+          tvTicketDetailDescription, tvTicketDetailPriority, tvTicketDetailStatus,
+          tvTicketDetailTechAvatar, tvTicketDetailTechName, tvTicketDetailTitle);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -1,10 +1,10 @@
-#Wed Jun 03 17:03:17 CEST 2026
-base.0=C\:\\Users\\Asus\\Desktop\\Nouveau dossier\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
-base.1=C\:\\Users\\Asus\\Desktop\\Nouveau dossier\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
-base.2=C\:\\Users\\Asus\\Desktop\\Nouveau dossier\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\11\\classes.dex
-base.3=C\:\\Users\\Asus\\Desktop\\Nouveau dossier\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\13\\classes.dex
-base.4=C\:\\Users\\Asus\\Desktop\\Nouveau dossier\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\7\\classes.dex
-base.5=C\:\\Users\\Asus\\Desktop\\Nouveau dossier\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
+#Mon Jun 15 16:14:38 CEST 2026
+base.0=C\:\\Users\\Asus\\Desktop\\pfe final version\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+base.1=C\:\\Users\\Asus\\Desktop\\pfe final version\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.2=C\:\\Users\\Asus\\Desktop\\pfe final version\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\11\\classes.dex
+base.3=C\:\\Users\\Asus\\Desktop\\pfe final version\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\13\\classes.dex
+base.4=C\:\\Users\\Asus\\Desktop\\pfe final version\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\7\\classes.dex
+base.5=C\:\\Users\\Asus\\Desktop\\pfe final version\\PFE\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.2=11/classes.dex

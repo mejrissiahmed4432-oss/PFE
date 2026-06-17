@@ -21,18 +21,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/surfaceColor">
+            android:background="@color/black">
 
             <!-- Top Bar -->
             <LinearLayout
                 android:id="@+id/topBar"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:paddingStart="4dp"
                 android:paddingEnd="16dp"
-                android:background="@color/topbarBg"
+                android:background="@drawable/bg_sidebar"
                 android:elevation="4dp">
 
                 <!-- Hamburger / Menu Button -->
@@ -44,7 +45,7 @@
                     android:padding="12dp"
                     android:src="@drawable/ic_menu"
                     android:contentDescription="Open menu"
-                    android:tint="@color/textSecondary"/>
+                    android:tint="@color/white" />
 
                 <!-- Page Title + Subtitle -->
                 <LinearLayout
@@ -58,11 +59,11 @@
                         android:id="@+id/tvPageTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Support Tickets"
+                        android:text="@string/txt_support_tickets"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:textColor="@color/textPrimary"
-                        android:fontFamily="sans-serif-medium"/>
+                        android:textColor="@color/white"
+                        android:fontFamily="sans-serif-medium" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -70,7 +71,7 @@
                         android:text="@string/medinaflux_platform"
                         android:textSize="10sp"
                         android:textColor="@color/textHint"
-                        android:letterSpacing="0.08"/>
+                        android:letterSpacing="0.08" />
                 </LinearLayout>
 
                 <!-- Topbar Actions Container -->
@@ -81,18 +82,7 @@
                     android:gravity="center_vertical"
                     android:layout_marginEnd="8dp">
 
-                    <!-- AI Assistant -->
-                    <ImageButton
-                        android:id="@+id/btnAI"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_ai"
-                        android:tint="@color/textSecondary"
-                        android:scaleType="fitCenter"
-                        android:padding="6dp"
-                        android:contentDescription="AI assistant"
-                        android:layout_marginEnd="2dp" />
+                    <!-- AI Assistant removed as requested -->
 
                     <!-- Language Selector -->
                     <ImageButton
@@ -101,12 +91,11 @@
                         android:layout_height="32dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:src="@drawable/ic_language"
-                        android:tint="@color/textSecondary"
+                        android:tint="@color/white"
                         android:scaleType="fitCenter"
                         android:padding="6dp"
                         android:contentDescription="Change Language"
                         android:layout_marginEnd="2dp" />
-
 
 
                     <!-- Alert Indicator with badge -->
@@ -121,7 +110,7 @@
                             android:layout_height="match_parent"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:src="@drawable/ic_alert"
-                            android:tint="@color/textSecondary"
+                            android:tint="@color/white"
                             android:scaleType="fitCenter"
                             android:padding="6dp"
                             android:contentDescription="Alerts" />
@@ -153,7 +142,7 @@
                             android:layout_height="match_parent"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:src="@drawable/ic_nav_chat"
-                            android:tint="@color/textSecondary"
+                            android:tint="@color/white"
                             android:scaleType="fitCenter"
                             android:padding="6dp"
                             android:contentDescription="Messages" />
@@ -227,7 +216,7 @@
                         android:textSize="13sp"
                         android:textStyle="bold"
                         android:background="@drawable/bg_avatar"
-                        android:text="MM"/>
+                        android:text="@string/txt_mm" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -237,7 +226,7 @@
                 android:id="@+id/fragmentContainer"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
         </LinearLayout>
 
@@ -277,7 +266,7 @@
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:background="@drawable/bg_avatar"
-                        android:text="MM"/>
+                        android:text="@string/txt_mm" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -290,20 +279,20 @@
                             android:id="@+id/tvDropdownName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Morad Mejri"
+                            android:text="@string/txt_morad_mejri"
                             android:textSize="13sp"
                             android:textStyle="bold"
                             android:textColor="@color/textPrimary"
-                            android:singleLine="true"/>
+                            android:singleLine="true" />
 
                         <TextView
                             android:id="@+id/tvDropdownEmail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="morad.mejri@medina.com"
+                            android:text="@string/txt_morad_mejri_medina_com"
                             android:textSize="10sp"
                             android:textColor="@color/textHint"
-                            android:singleLine="true"/>
+                            android:singleLine="true" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -311,7 +300,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/divider"
-                    android:layout_marginVertical="4dp"/>
+                    android:layout_marginVertical="4dp" />
 
                 <!-- Profile Item -->
                 <LinearLayout
@@ -333,9 +322,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="My Profile"
+                        android:text="@string/txt_my_profile"
                         android:textSize="13sp"
-                        android:textColor="@color/textPrimary"/>
+                        android:textColor="@color/textPrimary" />
                 </LinearLayout>
 
                 <!-- Settings Item -->
@@ -358,16 +347,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="Account Settings"
+                        android:text="@string/txt_account_settings"
                         android:textSize="13sp"
-                        android:textColor="@color/textPrimary"/>
+                        android:textColor="@color/textPrimary" />
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/divider"
-                    android:layout_marginVertical="4dp"/>
+                    android:layout_marginVertical="4dp" />
 
                 <!-- Logout Item -->
                 <LinearLayout
@@ -383,10 +372,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sign Out"
+                        android:text="@string/txt_sign_out"
                         android:textSize="13sp"
                         android:textColor="#ef4444"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -420,7 +409,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
-                        android:text="Notifications"
+                        android:text="@string/txt_notifications"
                         android:textColor="@color/textPrimary"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -431,7 +420,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:text="Mark all as read"
+                        android:text="@string/txt_mark_all_as_read"
                         android:textColor="@color/colorPrimary"
                         android:textSize="11sp"
                         android:textStyle="bold"
@@ -472,7 +461,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="38dp"
                     android:gravity="center"
-                    android:text="Clear All"
+                    android:text="@string/txt_clear_all"
                     android:textColor="@color/textSecondary"
                     android:textSize="12sp"
                     android:clickable="true"
@@ -495,12 +484,12 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackgroundBorderless">
-            
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_ai_fab">
-                
+
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
@@ -543,7 +532,7 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:src="@drawable/medinaflux_logo"
-                    android:scaleType="fitCenter"/>
+                    android:scaleType="fitCenter" />
             </LinearLayout>
 
             <!-- Brand Name -->
@@ -557,20 +546,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Medina"
+                    android:text="@string/txt_medina"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:letterSpacing="-0.02"/>
+                    android:letterSpacing="-0.02" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Flux"
+                    android:text="@string/txt_flux"
                     android:textColor="@color/colorAccent"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:letterSpacing="-0.02"/>
+                    android:letterSpacing="-0.02" />
             </LinearLayout>
         </LinearLayout>
 
@@ -579,7 +568,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/sidebarBorder"
-            android:alpha="0.5"/>
+            android:alpha="0.5" />
 
         <!-- ── Navigation Items ── -->
         <ScrollView
@@ -616,7 +605,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_nav_dashboard"
-                        android:tint="@color/sidebarText"/>
+                        android:tint="@color/sidebarText" />
                     <TextView
                         android:id="@+id/labelDashboard"
                         android:layout_width="0dp"
@@ -626,59 +615,14 @@
                         android:text="@string/nav_dashboard"
                         android:textSize="14sp"
                         android:textColor="@color/sidebarText"
-                        android:fontFamily="sans-serif-medium"/>
-                </LinearLayout>
-
-                <!-- Section Label: INVENTORY -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="INVENTORY"
-                    android:textSize="10sp"
-                    android:textColor="@color/sidebarSection"
-                    android:letterSpacing="0.1"
-                    android:textAllCaps="true"
-                    android:fontFamily="sans-serif-medium"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="6dp"/>
-
-                <!-- Parts -->
-                <LinearLayout
-                    android:id="@+id/navParts"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:background="@drawable/bg_nav_item_default"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_marginBottom="4dp">
-                    <ImageView
-                        android:id="@+id/iconParts"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_nav_parts"
-                        android:tint="@color/sidebarText"/>
-                    <TextView
-                        android:id="@+id/labelParts"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="12dp"
-                        android:text="@string/nav_parts"
-                        android:textSize="14sp"
-                        android:textColor="@color/sidebarText"
-                        android:fontFamily="sans-serif-medium"/>
+                        android:fontFamily="sans-serif-medium" />
                 </LinearLayout>
 
                 <!-- Section Label: MANAGEMENT -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="MANAGEMENT"
+                    android:text="@string/txt_management"
                     android:textSize="10sp"
                     android:textColor="@color/sidebarSection"
                     android:letterSpacing="0.1"
@@ -686,7 +630,7 @@
                     android:fontFamily="sans-serif-medium"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
-                    android:layout_marginBottom="6dp"/>
+                    android:layout_marginBottom="6dp" />
 
                 <!-- Schedule -->
                 <LinearLayout
@@ -706,7 +650,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_nav_schedule"
-                        android:tint="@color/sidebarText"/>
+                        android:tint="@color/sidebarText" />
                     <TextView
                         android:id="@+id/labelSchedule"
                         android:layout_width="0dp"
@@ -716,69 +660,7 @@
                         android:text="@string/nav_schedule"
                         android:textSize="14sp"
                         android:textColor="@color/sidebarText"
-                        android:fontFamily="sans-serif-medium"/>
-                </LinearLayout>
-
-                <!-- Reports -->
-                <LinearLayout
-                    android:id="@+id/navReports"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:background="@drawable/bg_nav_item_default"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_marginBottom="4dp">
-                    <ImageView
-                        android:id="@+id/iconReports"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_nav_reports"
-                        android:tint="@color/sidebarText"/>
-                    <TextView
-                        android:id="@+id/labelReports"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="12dp"
-                        android:text="@string/nav_reports"
-                        android:textSize="14sp"
-                        android:textColor="@color/sidebarText"
-                        android:fontFamily="sans-serif-medium"/>
-                </LinearLayout>
-
-                <!-- Requests -->
-                <LinearLayout
-                    android:id="@+id/navRequests"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:background="@drawable/bg_nav_item_default"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_marginBottom="4dp">
-                    <ImageView
-                        android:id="@+id/iconRequests"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_nav_requests"
-                        android:tint="@color/sidebarText"/>
-                    <TextView
-                        android:id="@+id/labelRequests"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="12dp"
-                        android:text="@string/nav_requests"
-                        android:textSize="14sp"
-                        android:textColor="@color/sidebarText"
-                        android:fontFamily="sans-serif-medium"/>
+                        android:fontFamily="sans-serif-medium" />
                 </LinearLayout>
 
                 <!-- Support Tickets (active by default) -->
@@ -799,7 +681,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_nav_tickets"
-                        android:tint="@color/white"/>
+                        android:tint="@color/white" />
                     <TextView
                         android:id="@+id/labelTickets"
                         android:layout_width="0dp"
@@ -810,7 +692,7 @@
                         android:textSize="14sp"
                         android:textColor="@color/white"
                         android:textStyle="bold"
-                        android:fontFamily="sans-serif-medium"/>
+                        android:fontFamily="sans-serif-medium" />
                     <!-- Badge -->
                     <TextView
                         android:id="@+id/badgeTickets"
@@ -822,7 +704,7 @@
                         android:textSize="10sp"
                         android:textStyle="bold"
                         android:text="1"
-                        android:visibility="visible"/>
+                        android:visibility="visible" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -833,7 +715,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/sidebarBorder"
-            android:alpha="0.4"/>
+            android:alpha="0.4" />
 
         <!-- ── Footer: Account Settings & Logout side-by-side ── -->
         <LinearLayout
@@ -860,7 +742,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_nav_settings"
-                    android:tint="@color/sidebarText"/>
+                    android:tint="@color/sidebarText" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -870,7 +752,7 @@
                     android:textColor="@color/sidebarText"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:fontFamily="sans-serif-medium"/>
+                    android:fontFamily="sans-serif-medium" />
             </LinearLayout>
 
             <LinearLayout
@@ -889,7 +771,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:src="@drawable/ic_logout"
-                    android:tint="#ef4444"/>
+                    android:tint="#ef4444" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -899,7 +781,7 @@
                     android:textColor="#ef4444"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:fontFamily="sans-serif-medium"/>
+                    android:fontFamily="sans-serif-medium" />
             </LinearLayout>
         </LinearLayout>
 

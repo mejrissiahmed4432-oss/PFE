@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Schedule New Task"
+        android:text="@string/txt_schedule_new_task"
         android:textColor="@color/textPrimary"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -19,7 +19,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Task Title"
+        android:text="@string/txt_task_title"
         android:textColor="@color/textSecondary"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="@drawable/bg_input_field"
-        android:hint="e.g., Replace server fan"
+        android:hint="@string/txt_e_g_replace_server_fan"
         android:textColorHint="@color/textHint"
         android:textColor="@color/textPrimary"
         android:textSize="14sp"
@@ -42,7 +42,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Description"
+        android:text="@string/txt_description"
         android:textColor="@color/textSecondary"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -52,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="@drawable/bg_input_field"
-        android:hint="Provide detailed task instructions..."
+        android:hint="@string/txt_provide_detailed_task_instructions"
         android:textColorHint="@color/textHint"
         android:textColor="@color/textPrimary"
         android:textSize="14sp"
@@ -78,7 +78,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category Type"
+                android:text="@string/txt_category_type"
                 android:textColor="@color/textSecondary"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -100,7 +100,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Priority Level"
+                android:text="@string/txt_priority_level"
                 android:textColor="@color/textSecondary"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -118,7 +118,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Due Date"
+        android:text="@string/txt_due_date"
         android:textColor="@color/textSecondary"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -128,7 +128,7 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="@drawable/bg_input_field"
-        android:text="Select target date"
+        android:text="@string/txt_select_target_date"
         android:textColor="@color/textHint"
         android:textSize="14sp"
         android:gravity="center_vertical"
@@ -149,7 +149,7 @@
             android:id="@+id/btnCancelTask"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="@string/txt_cancel"
             style="?android:attr/borderlessButtonStyle"
             android:textColor="@color/textSecondary"
             android:layout_marginEnd="8dp"/>
@@ -158,7 +158,7 @@
             android:id="@+id/btnSaveTask"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Schedule"
+            android:text="@string/txt_schedule"
             android:backgroundTint="@color/colorPrimary"
             android:textColor="@color/white"/>
     </LinearLayout>

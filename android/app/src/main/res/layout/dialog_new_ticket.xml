@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Submit New Ticket"
+            android:text="@string/txt_submit_new_ticket"
             android:textColor="@color/textPrimary"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Title *"
+            android:text="@string/txt_title"
             android:textColor="@color/textSecondary"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:background="@drawable/bg_input_field"
-            android:hint="Brief description of the issue"
+            android:hint="@string/txt_brief_description_of_the_issue"
             android:textColorHint="@color/textHint"
             android:textColor="@color/textPrimary"
             android:textSize="14sp"
@@ -46,7 +46,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Description"
+            android:text="@string/txt_description"
             android:textColor="@color/textSecondary"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -56,14 +56,49 @@
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:background="@drawable/bg_input_field"
-            android:hint="Provide detailed information about the issue..."
+            android:hint="@string/txt_provide_detailed_information_about_the_i"
             android:textColorHint="@color/textHint"
             android:textColor="@color/textPrimary"
             android:textSize="14sp"
             android:padding="12dp"
-            android:gravity="top|start"
             android:inputType="textMultiLine"
             android:layout_marginBottom="12dp"/>
+
+        <!-- Deadline -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_deadline"
+            android:textColor="@color/textSecondary"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+        <LinearLayout
+            android:id="@+id/layoutDeadline"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:layout_marginBottom="12dp">
+            
+            <TextView
+                android:id="@+id/tvTicketDeadline"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/txt_select_date"
+                android:textColor="@color/textHint"
+                android:textSize="14sp"/>
+                
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_today"
+                android:tint="@color/textSecondary" />
+        </LinearLayout>
 
         <!-- Category & Priority row -->
         <LinearLayout
@@ -81,7 +116,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Category"
+                    android:text="@string/txt_category"
                     android:textColor="@color/textSecondary"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -101,7 +136,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Priority"
+                    android:text="@string/txt_priority"
                     android:textColor="@color/textSecondary"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -119,7 +154,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Selected Equipment *"
+            android:text="@string/txt_selected_equipment"
             android:textColor="@color/textSecondary"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -147,7 +182,7 @@
                     android:id="@+id/tvSelectedEqName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dell XPS 13"
+                    android:text="@string/txt_dell_xps_13"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="@color/textPrimary"/>
@@ -156,7 +191,7 @@
                     android:id="@+id/tvSelectedEqSerialType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SN-12345 • Laptop"
+                    android:text="@string/txt_sn_12345_laptop"
                     android:textSize="11sp"
                     android:textColor="@color/textSecondary"
                     android:layout_marginTop="2dp"/>
@@ -166,7 +201,7 @@
                 android:id="@+id/btnChangeSelectedEq"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
-                android:text="Change"
+                android:text="@string/txt_change"
                 android:textSize="11sp"
                 style="?android:attr/borderlessButtonStyle"
                 android:textColor="@color/colorPrimary"
@@ -186,7 +221,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:background="@drawable/bg_input_field"
-                android:hint="Type to search equipment..."
+                android:hint="@string/txt_type_to_search_equipment"
                 android:textColorHint="@color/textHint"
                 android:textColor="@color/textPrimary"
                 android:textSize="13sp"
@@ -221,7 +256,7 @@
                 android:id="@+id/btnCancelTicket"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancel"
+                android:text="@string/txt_cancel"
                 style="?android:attr/borderlessButtonStyle"
                 android:textColor="@color/textSecondary"
                 android:layout_marginEnd="8dp"/>
@@ -230,7 +265,7 @@
                 android:id="@+id/btnSubmitTicket"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Submit Ticket"
+                android:text="@string/txt_submit_ticket"
                 android:backgroundTint="@color/colorPrimary"
                 android:textColor="@color/white"/>
         </LinearLayout>

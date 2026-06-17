@@ -8,12 +8,12 @@
         "source": "com.medina.app-main-35:/drawable/ic_view_list.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-33:/layout_dialog_ticket_detail.xml.flat",
-        "source": "com.medina.app-main-35:/layout/dialog_ticket_detail.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_fragment_ai_assistant.xml.flat",
+        "source": "com.medina.app-main-35:/layout/fragment_ai_assistant.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-33:/layout_fragment_reports.xml.flat",
-        "source": "com.medina.app-main-35:/layout/fragment_reports.xml"
+        "merged": "com.medina.app-merged_res-33:/layout_dialog_ticket_detail.xml.flat",
+        "source": "com.medina.app-main-35:/layout/dialog_ticket_detail.xml"
     },
     {
         "merged": "com.medina.app-merged_res-33:/drawable_bg_card.xml.flat",
@@ -48,24 +48,12 @@
         "source": "com.medina.app-main-35:/drawable/ic_logout.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-33:/layout_activity_live_workbench.xml.flat",
-        "source": "com.medina.app-main-35:/layout/activity_live_workbench.xml"
-    },
-    {
         "merged": "com.medina.app-merged_res-33:/drawable_bg_form_card.xml.flat",
         "source": "com.medina.app-main-35:/drawable/bg_form_card.xml"
     },
     {
         "merged": "com.medina.app-merged_res-33:/drawable_app_icon.png.flat",
         "source": "com.medina.app-main-35:/drawable/app_icon.png"
-    },
-    {
-        "merged": "com.medina.app-merged_res-33:/layout_item_part_group_header.xml.flat",
-        "source": "com.medina.app-main-35:/layout/item_part_group_header.xml"
-    },
-    {
-        "merged": "com.medina.app-merged_res-33:/layout_fragment_requests.xml.flat",
-        "source": "com.medina.app-main-35:/layout/fragment_requests.xml"
     },
     {
         "merged": "com.medina.app-merged_res-33:/drawable_medinaflux_logo.png.flat",
@@ -82,6 +70,10 @@
     {
         "merged": "com.medina.app-merged_res-33:/drawable_ic_filter.xml.flat",
         "source": "com.medina.app-main-35:/drawable/ic_filter.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_avatar_white.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_avatar_white.xml"
     },
     {
         "merged": "com.medina.app-merged_res-33:/layout_dialog_confirm_return.xml.flat",
@@ -132,6 +124,10 @@
         "source": "com.medina.app-main-35:/drawable/bg_banner_gradient.xml"
     },
     {
+        "merged": "com.medina.app-merged_res-33:/layout_item_ai_message_user.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_ai_message_user.xml"
+    },
+    {
         "merged": "com.medina.app-merged_res-33:/drawable_ic_nav_requests.xml.flat",
         "source": "com.medina.app-main-35:/drawable/ic_nav_requests.xml"
     },
@@ -158,6 +154,10 @@
     {
         "merged": "com.medina.app-merged_res-33:/drawable_bg_dot_done.xml.flat",
         "source": "com.medina.app-main-35:/drawable/bg_dot_done.xml"
+    },
+    {
+        "merged": "com.medina.app-merged_res-33:/layout_item_ai_message_assistant.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_ai_message_assistant.xml"
     },
     {
         "merged": "com.medina.app-merged_res-33:/layout_activity_reset_password.xml.flat",
@@ -192,10 +192,6 @@
         "source": "com.medina.app-main-35:/drawable/bg_dot_green.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-33:/layout_dialog_request_part.xml.flat",
-        "source": "com.medina.app-main-35:/layout/dialog_request_part.xml"
-    },
-    {
         "merged": "com.medina.app-merged_res-33:/drawable_bg_badge_rejected.xml.flat",
         "source": "com.medina.app-main-35:/drawable/bg_badge_rejected.xml"
     },
@@ -218,10 +214,6 @@
     {
         "merged": "com.medina.app-merged_res-33:/drawable_bg_input_field.xml.flat",
         "source": "com.medina.app-main-35:/drawable/bg_input_field.xml"
-    },
-    {
-        "merged": "com.medina.app-merged_res-33:/layout_fragment_parts.xml.flat",
-        "source": "com.medina.app-main-35:/layout/fragment_parts.xml"
     },
     {
         "merged": "com.medina.app-merged_res-33:/drawable_ic_view_module.xml.flat",
@@ -252,6 +244,10 @@
         "source": "com.medina.app-main-35:/layout/item_chat_message.xml"
     },
     {
+        "merged": "com.medina.app-merged_res-33:/layout_item_ai_conversation.xml.flat",
+        "source": "com.medina.app-main-35:/layout/item_ai_conversation.xml"
+    },
+    {
         "merged": "com.medina.app-merged_res-33:/drawable_logo.png.flat",
         "source": "com.medina.app-main-35:/drawable/logo.png"
     },
@@ -262,10 +258,6 @@
     {
         "merged": "com.medina.app-merged_res-33:/drawable_ic_attachment.xml.flat",
         "source": "com.medina.app-main-35:/drawable/ic_attachment.xml"
-    },
-    {
-        "merged": "com.medina.app-merged_res-33:/layout_dialog_request_part_wizard.xml.flat",
-        "source": "com.medina.app-main-35:/layout/dialog_request_part_wizard.xml"
     },
     {
         "merged": "com.medina.app-merged_res-33:/layout_item_alert.xml.flat",
@@ -408,8 +400,8 @@
         "source": "com.medina.app-main-35:/drawable/ic_notification.xml"
     },
     {
-        "merged": "com.medina.app-merged_res-33:/layout_dialog_part_detail.xml.flat",
-        "source": "com.medina.app-main-35:/layout/dialog_part_detail.xml"
+        "merged": "com.medina.app-merged_res-33:/drawable_bg_dot_orange.xml.flat",
+        "source": "com.medina.app-main-35:/drawable/bg_dot_orange.xml"
     },
     {
         "merged": "com.medina.app-merged_res-33:/drawable_ic_mode_toggle.xml.flat",
@@ -430,10 +422,6 @@
     {
         "merged": "com.medina.app-merged_res-33:/layout_dialog_new_ticket.xml.flat",
         "source": "com.medina.app-main-35:/layout/dialog_new_ticket.xml"
-    },
-    {
-        "merged": "com.medina.app-merged_res-33:/layout_item_part_detail.xml.flat",
-        "source": "com.medina.app-main-35:/layout/item_part_detail.xml"
     },
     {
         "merged": "com.medina.app-merged_res-33:/drawable_bg_title_accent.xml.flat",

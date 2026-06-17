@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
+
 import androidx.fragment.app.Fragment;
 
 import com.medina.app.R;
@@ -53,9 +53,7 @@ public class SettingsFragment extends Fragment {
     private boolean isEmailConfirmVisible = false;
     private TextView tvCurrentEmailLabel;
 
-    // Preference Views
-    private SwitchCompat switchEmailNotifications, switchSecurityAlerts, switchMarketingEmails;
-    private View btnSavePreferences;
+
 
     private SharedPreferences prefs;
 
@@ -99,11 +97,6 @@ public class SettingsFragment extends Fragment {
         btnCancelEmailChange = view.findViewById(R.id.btnCancelEmailChange);
         tvCurrentEmailLabel = view.findViewById(R.id.tvCurrentEmailLabel);
 
-        // Bind Preferences
-        switchEmailNotifications = view.findViewById(R.id.switchEmailNotifications);
-        switchSecurityAlerts = view.findViewById(R.id.switchSecurityAlerts);
-        switchMarketingEmails = view.findViewById(R.id.switchMarketingEmails);
-        btnSavePreferences = view.findViewById(R.id.btnSavePreferences);
 
         // Init triggers
         btnTriggerPasswordForm.setOnClickListener(v -> {
@@ -154,7 +147,6 @@ public class SettingsFragment extends Fragment {
         // Action Buttons click
         btnSavePassword.setOnClickListener(v -> handlePasswordSave());
         btnSaveEmail.setOnClickListener(v -> handleEmailSave());
-        btnSavePreferences.setOnClickListener(v -> handlePreferencesSave());
 
         // Load settings state
         loadSettingsState();
@@ -238,10 +230,6 @@ public class SettingsFragment extends Fragment {
     private void loadSettingsState() {
         String email = prefs.getString("user_email", "technician@company.com");
         tvCurrentEmailLabel.setText(email);
-
-        switchEmailNotifications.setChecked(prefs.getBoolean("email_notifs", true));
-        switchSecurityAlerts.setChecked(prefs.getBoolean("security_alerts", true));
-        switchMarketingEmails.setChecked(prefs.getBoolean("marketing_emails", false));
     }
 
     private void handlePasswordSave() {
@@ -334,17 +322,5 @@ public class SettingsFragment extends Fragment {
         });
     }
 
-    private void handlePreferencesSave() {
-        boolean notifs = switchEmailNotifications.isChecked();
-        boolean alerts = switchSecurityAlerts.isChecked();
-        boolean marketing = switchMarketingEmails.isChecked();
 
-        prefs.edit()
-                .putBoolean("email_notifs", notifs)
-                .putBoolean("security_alerts", alerts)
-                .putBoolean("marketing_emails", marketing)
-                .apply();
-
-        Toast.makeText(getContext(), "Preferences saved successfully!", Toast.LENGTH_SHORT).show();
-    }
 }

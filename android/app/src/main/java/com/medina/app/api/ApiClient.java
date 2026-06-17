@@ -4,6 +4,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.concurrent.TimeUnit;
 
 public class ApiClient {
@@ -17,10 +20,10 @@ public class ApiClient {
     // ╚══════════════════════════════════════════════════════════════╝
 
     // ▶ FOR EMULATOR:
-    // private static final String BASE_URL = "http://10.0.2.2:8080/";
+    // private static final String BASE_URL = "http://10.0.2.2:8000/";
 
     // ▶ FOR REAL DEVICE: Replace 192.168.X.X with your PC's IP from ipconfig
-    private static final String BASE_URL = "http://192.168.0.139:8080/";
+    private static final String BASE_URL = "http://192.168.0.194:8000/";
 
     private static Retrofit retrofit = null;
     
@@ -51,10 +54,14 @@ public class ApiClient {
 
             OkHttpClient client = clientBuilder.build();
 
+            Gson gson = new GsonBuilder()
+                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                    .create();
+
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .client(client)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofit;

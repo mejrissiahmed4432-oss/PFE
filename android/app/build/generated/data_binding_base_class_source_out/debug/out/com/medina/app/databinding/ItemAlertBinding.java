@@ -4,6 +4,7 @@ package com.medina.app.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -23,6 +24,9 @@ public final class ItemAlertBinding implements ViewBinding {
 
   @NonNull
   public final AppCompatButton btnResolveAlert;
+
+  @NonNull
+  public final CheckBox cbAlertSelect;
 
   @NonNull
   public final ImageView ivAlertIcon;
@@ -46,12 +50,13 @@ public final class ItemAlertBinding implements ViewBinding {
   public final View viewSeverityBar;
 
   private ItemAlertBinding(@NonNull CardView rootView, @NonNull AppCompatButton btnResolveAlert,
-      @NonNull ImageView ivAlertIcon, @NonNull TextView tvAlertMessage,
-      @NonNull TextView tvAlertResolvedDetails, @NonNull TextView tvAlertSeverityBadge,
-      @NonNull TextView tvAlertTime, @NonNull TextView tvAlertTitle,
-      @NonNull View viewSeverityBar) {
+      @NonNull CheckBox cbAlertSelect, @NonNull ImageView ivAlertIcon,
+      @NonNull TextView tvAlertMessage, @NonNull TextView tvAlertResolvedDetails,
+      @NonNull TextView tvAlertSeverityBadge, @NonNull TextView tvAlertTime,
+      @NonNull TextView tvAlertTitle, @NonNull View viewSeverityBar) {
     this.rootView = rootView;
     this.btnResolveAlert = btnResolveAlert;
+    this.cbAlertSelect = cbAlertSelect;
     this.ivAlertIcon = ivAlertIcon;
     this.tvAlertMessage = tvAlertMessage;
     this.tvAlertResolvedDetails = tvAlertResolvedDetails;
@@ -91,6 +96,12 @@ public final class ItemAlertBinding implements ViewBinding {
       id = R.id.btnResolveAlert;
       AppCompatButton btnResolveAlert = ViewBindings.findChildViewById(rootView, id);
       if (btnResolveAlert == null) {
+        break missingId;
+      }
+
+      id = R.id.cbAlertSelect;
+      CheckBox cbAlertSelect = ViewBindings.findChildViewById(rootView, id);
+      if (cbAlertSelect == null) {
         break missingId;
       }
 
@@ -136,8 +147,9 @@ public final class ItemAlertBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ItemAlertBinding((CardView) rootView, btnResolveAlert, ivAlertIcon, tvAlertMessage,
-          tvAlertResolvedDetails, tvAlertSeverityBadge, tvAlertTime, tvAlertTitle, viewSeverityBar);
+      return new ItemAlertBinding((CardView) rootView, btnResolveAlert, cbAlertSelect, ivAlertIcon,
+          tvAlertMessage, tvAlertResolvedDetails, tvAlertSeverityBadge, tvAlertTime, tvAlertTitle,
+          viewSeverityBar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

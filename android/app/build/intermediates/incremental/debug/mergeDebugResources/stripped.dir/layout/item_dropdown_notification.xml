@@ -32,7 +32,7 @@
                 android:id="@+id/tvDropdownNotifTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="System Alert"
+                android:text="@string/txt_system_alert"
                 android:textColor="@color/textPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -41,7 +41,7 @@
                 android:id="@+id/tvDropdownNotifMsg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="A high priority alert has been registered on water pump P-102."
+                android:text="@string/txt_a_high_priority_alert_has_been_registere"
                 android:textColor="@color/textSecondary"
                 android:textSize="11sp"
                 android:layout_marginTop="2dp" />
@@ -50,7 +50,7 @@
                 android:id="@+id/tvDropdownNotifTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10 mins ago"
+                android:text="@string/txt_10_mins_ago"
                 android:textColor="@color/textHint"
                 android:textSize="10sp"
                 android:layout_marginTop="4dp" />
