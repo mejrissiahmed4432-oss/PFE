@@ -37,7 +37,7 @@ spring:
         - id: user-microservice
           uri: lb://user-microservice
           predicates:
-            - Path=/api/users/**, /api/users, /api/messages/**, /api/tickets/**, /api/tickets, /api/alerts/**, /api/alerts, /api/notifications/**, /api/notifications, /api/aiconversations/**, /api/aiconversations
+            - Path=/api/users/**, /api/users, /api/messages/**, /api/tickets/**, /api/tickets, /api/alerts/**, /api/alerts, /api/notifications/**, /api/notifications, /api/aiconversations/**, /api/aiconversations, /api/personal-requests/**, /api/personal-requests
           filters:
             - name: CircuitBreaker
               args:

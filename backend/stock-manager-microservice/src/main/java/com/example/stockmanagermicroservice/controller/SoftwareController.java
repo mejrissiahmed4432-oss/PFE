@@ -39,16 +39,27 @@ public class SoftwareController {
     public ResponseEntity<SoftwareDTO> getSoftwareById(@PathVariable String id) {
         return ResponseEntity.ok(softwareService.getSoftwareById(id));
     }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<SoftwareDTO>> getAvailableSoftware() {
+        List<SoftwareDTO> available = softwareService.getAllSoftware().stream()
+            .filter(s -> s.getAvailableSeats() > 0 && !"Deprecated".equalsIgnoreCase(s.getStatus()))
+            .toList();
+        return ResponseEntity.ok(available);
+    }
+
     @BlockchainTraceable(action = "create software")
     @PostMapping
     public ResponseEntity<SoftwareDTO> createSoftware(@RequestBody SoftwareDTO dto) {
         return ResponseEntity.ok(softwareService.createSoftware(dto));
     }
+
     @BlockchainTraceable(action = "update software")
     @PutMapping("/{id}")
     public ResponseEntity<SoftwareDTO> updateSoftware(@PathVariable String id, @RequestBody SoftwareDTO dto) {
         return ResponseEntity.ok(softwareService.updateSoftware(id, dto));
     }
+
     @BlockchainTraceable(action = "delete software")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSoftware(@PathVariable String id) {
@@ -64,13 +75,15 @@ public class SoftwareController {
     }
 
     @PostMapping("/{softwareId}/pools")
-    public ResponseEntity<LicensePoolDTO> createLicensePool(@PathVariable String softwareId, @RequestBody LicensePoolDTO dto) {
+    public ResponseEntity<LicensePoolDTO> createLicensePool(@PathVariable String softwareId,
+            @RequestBody LicensePoolDTO dto) {
         dto.setSoftwareId(softwareId);
         return ResponseEntity.ok(licensePoolService.createLicensePool(dto));
     }
 
     @PostMapping("/pools/{poolId}/reveal-keys")
-    public ResponseEntity<List<String>> revealKeys(@PathVariable String poolId, @RequestBody Map<String, String> request) {
+    public ResponseEntity<List<String>> revealKeys(@PathVariable String poolId,
+            @RequestBody Map<String, String> request) {
         String password = request.get("password");
         return ResponseEntity.ok(licensePoolService.revealKeys(poolId, password));
     }
@@ -81,11 +94,13 @@ public class SoftwareController {
     public ResponseEntity<List<SoftwareAssignmentDTO>> getAssignmentsBySoftware(@PathVariable String softwareId) {
         return ResponseEntity.ok(assignmentService.getAssignmentsBySoftware(softwareId));
     }
+
     @BlockchainTraceable(action = "assign license")
     @PostMapping("/assignments")
     public ResponseEntity<SoftwareAssignmentDTO> assignLicense(@RequestBody SoftwareAssignmentDTO dto) {
         return ResponseEntity.ok(assignmentService.assignLicense(dto));
     }
+
     @BlockchainTraceable(action = "revoke assignment")
     @PostMapping("/assignments/{assignmentId}/revoke")
     public ResponseEntity<SoftwareAssignmentDTO> revokeAssignment(@PathVariable String assignmentId) {

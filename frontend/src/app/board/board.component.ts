@@ -40,6 +40,8 @@ import { ProcurementComponent } from '../procurement/procurement.component';
 import { ProcurementService } from '../procurement/procurement.service';
 import { ItEquipmentManagementComponent } from '../it-equipment-management/it-equipment-management.component';
 import { EquipmentReturnsComponent } from '../equipment-returns/equipment-returns.component';
+import { PersonalRequestsComponent } from '../personal-requests/personal-requests.component';
+import { RequestManagementComponent } from '../request-management/request-management.component';
 
 
 import { TicketService } from '../tickets/ticket.service';
@@ -54,7 +56,7 @@ import { TaskManagementComponent } from '../task-management/task-management.comp
   standalone: true,
 
 
-  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, UserManagementComponent, ToastComponent, ProcurementComponent, AdminDashboardComponent, TechnicianDepartmentsComponent, TechnicianDevicesComponent, SoftwareDashboardComponent, ItEquipmentManagementComponent, EquipmentReturnsComponent, AuditDashboardComponent, PredictiveMaintenanceComponent, TaskManagementComponent],
+  imports: [CommonModule, AiAssistantComponent, EquipmentComponent, ProfileComponent, SettingsComponent, SupplierComponent, DashboardComponent, AlertsComponent, ShelfListComponent, CategoryManagerComponent, MessagingComponent, ScheduleComponent, PartsManagementComponent, RequestListComponent, RequestManagerComponent, TicketsComponent, ReportsComponent, OsManagementComponent, ApplicationManagementComponent, EmployeeListComponent, HrDashboardComponent, UserManagementComponent, ToastComponent, ProcurementComponent, AdminDashboardComponent, TechnicianDepartmentsComponent, TechnicianDevicesComponent, SoftwareDashboardComponent, ItEquipmentManagementComponent, EquipmentReturnsComponent, AuditDashboardComponent, PredictiveMaintenanceComponent, TaskManagementComponent, PersonalRequestsComponent, RequestManagementComponent],
 
 
   providers: [MessagingService, TicketService],
@@ -375,6 +377,7 @@ export class BoardComponent implements OnInit {
       case 'settings': return this.t('Settings');
       case 'parts': return this.selectedResourceFilter ? `${this.t('Resources')} - ${this.selectedResourceFilter}` : this.t('Resources');
       case 'requests': return 'My Part Requests';
+      case 'personal-requests': return 'Personal Resource Requests';
       case 'manager-requests': return 'Incoming Part Requests';
 
       case 'user-management': return 'User Access Management';
