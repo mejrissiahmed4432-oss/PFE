@@ -129,10 +129,10 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
   upgradeEquipment: EquipmentWithHistory | null = null;
 
   // Technician Inventory
-  userInventory: { 
+  userInventory: {
     id?: string;
-    name: string; 
-    totalQty: number; 
+    name: string;
+    totalQty: number;
     category: string;
     type: string;
     specification: string;
@@ -241,7 +241,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
               const displayName = (isMatched ? item.matchedEquipmentName : item.partName) || 'Unknown Part';
               const displaySpec = (isMatched ? (item.matchedSpecification || item.specification) : (item.specification || '')) || '';
 
-              const existing = itemsList.find(i => 
+              const existing = itemsList.find(i =>
                 i.name.toLowerCase() === displayName.toLowerCase() &&
                 (i.specification || '').toLowerCase() === (displaySpec || '').toLowerCase()
               );
@@ -326,7 +326,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
             if (!this.previousIds.has(eq.id)) {
               this.newEquipments.add(eq.id);
               setTimeout(() => this.newEquipments.delete(eq.id!), 8000);
-            } 
+            }
             // Check if Updated (within last 60 seconds)
             else if (eq.updatedAt) {
               const updatedTime = new Date(eq.updatedAt).getTime();
@@ -346,7 +346,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
             lastRepair: undefined
           };
         });
-        
+
         this.applyFilters();
         this.calculateStats();
       }
@@ -468,8 +468,8 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
 
   private calculateEquipmentHistory(eq: EquipmentWithHistory): void {
     // Filter tickets that belong to this equipment and are NOT cancelled
-    const relatedTickets = this.ticketsList.filter(t => 
-      (t.equipmentId === eq.id ) && 
+    const relatedTickets = this.ticketsList.filter(t =>
+      (t.equipmentId === eq.id) &&
       (t.status || '').toLowerCase() !== 'cancelled'
     );
 
@@ -515,7 +515,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
     this.selectedTicket = ticket;
     // Map ticket to equipment for the detail pane
     const eq = this.equipments.find(e => e.id === ticket.equipmentId);
-    
+
     if (eq) {
       this.selectedEquipment = eq;
     } else {
@@ -533,7 +533,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
         lastRepair: 'Unknown'
       } as any;
     }
-    
+
     // Always calculate history, as we have the tickets locally to build the timeline
     this.calculateEquipmentHistory(this.selectedEquipment!);
     this.showFullHistory = false;
@@ -560,10 +560,10 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
           if (!ctx) return;
           ctx.drawImage(image, 0, 0);
           const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          
+
           // Use the jsQR library we added to index.html
           const code = (window as any).jsQR(imageData.data, imageData.width, imageData.height);
-          
+
           if (code && code.data) {
             let extractedSerial = code.data;
             try {
@@ -581,7 +581,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
             // If we found matching equipment, select it automatically for a better UX
             if (this.filteredEquipments.length > 0) {
               // Try to find an exact match first
-              const exactMatch = this.filteredEquipments.find(eq => 
+              const exactMatch = this.filteredEquipments.find(eq =>
                 (eq.serialNumber || '').toLowerCase() === extractedSerial.toLowerCase() ||
                 eq.id === extractedSerial
               );
@@ -817,7 +817,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
 
         this.toastService.delete(`Ticket deleted successfully.`);
         console.log('Ticket deleted successfully');
-        
+
         // Auto-refresh data to pull real-time changes
         this.loadAllData();
         this.refreshService.triggerRefresh('TICKET');
@@ -928,7 +928,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
           this.upgradeTicket = res;
           this.applyTicketFilters();
         },
-        error: () => {}
+        error: () => { }
       });
     }
     this.loadUserInventory();
@@ -991,7 +991,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
       || (ticket.equipmentId ? this.equipments.find(e => e.id === ticket.equipmentId) : undefined)
       || this.equipments.find(e => e.name === ticket.equipmentName || e.equipmentName === ticket.equipmentName)
       || null;
-    
+
     // Only update status if not already In Progress (avoids redundant API call for self-created tickets)
     if (ticket.status !== 'In Progress') {
       const updated: Ticket = { ...ticket, status: 'In Progress' };
@@ -1009,7 +1009,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
 
   onWorkbenchCancel(): void {
     if (!this.workbenchTicket?.id) return;
-    
+
     const eqName = this.workbenchTicket.equipmentName;
     const ticketId = this.workbenchTicket.id;
 
@@ -1034,19 +1034,19 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 
-  onWorkbenchComplete(event: { 
-    workNote: string; 
-    repairTasks: any[]; 
-    partsUsed: any[]; 
+  onWorkbenchComplete(event: {
+    workNote: string;
+    repairTasks: any[];
+    partsUsed: any[];
     isBroken?: boolean;
     diagnosisResult?: string;
     validationSummary?: string;
     partsInstalled?: any[];
   }): void {
     if (!this.workbenchTicket?.id) return;
-    
-    const updated: Ticket = { 
-      ...this.workbenchTicket, 
+
+    const updated: Ticket = {
+      ...this.workbenchTicket,
       status: 'Completed',
       workNote: event.workNote,
       repairTasks: event.repairTasks,
@@ -1077,7 +1077,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
               const oldPcName = eq.assignedToEquipmentName;
               eq.assignedToEquipmentId = undefined;
               eq.assignedToEquipmentName = undefined;
-              
+
               if (!eq.lifecycle) eq.lifecycle = [];
               eq.lifecycle.push({
                 status: 'Unrepairable',
@@ -1120,7 +1120,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
             }
           } else {
             eq.status = event.isBroken ? 'Unrepairable' : 'Available';
-            
+
             // ── AUTOMATED LIFECYCLE UPDATE ──
             if (!eq.lifecycle) eq.lifecycle = [];
             eq.lifecycle.push({
@@ -1163,7 +1163,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
         if (eq) {
           this.selectedEquipment = eq;
         }
-        
+
         // ── INSTALL PARTS in target equipment, then deduct technician inventory ──
         if (event.partsInstalled && event.partsInstalled.length > 0 && completedEquipmentId) {
           const actor = this.currentUser?.firstName || 'Technician';
@@ -1248,7 +1248,7 @@ export class TicketsComponent implements OnInit, OnDestroy, OnChanges {
 
   reopenTicket(ticket: Ticket): void {
     if (!ticket.id) return;
-    
+
     const updated: Ticket = { ...ticket, status: 'Open' };
     this.ticketService.updateTicket(ticket.id, updated).subscribe({
       next: (res: Ticket) => {

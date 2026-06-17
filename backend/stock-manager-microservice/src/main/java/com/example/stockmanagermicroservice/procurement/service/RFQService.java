@@ -77,22 +77,36 @@ public class RFQService {
         // Send emails with unique tokens
         if (mailSender != null && supplierIds != null && !supplierIds.isEmpty()) {
             sendRFQEmailsWithTokens(rfq, request, supplierIds, supplierEmails, pdfPath);
+            rfq = rfqRepository.save(rfq);
+        } else {
+            rfq.setStatus("FAILED");
+            rfq = rfqRepository.save(rfq);
         }
 
-        // Update request status
-        equipmentRequestService.markAsSentToSuppliers(requestId);
+        // Update request status only if fully sent
+        if ("SENT".equals(rfq.getStatus())) {
+            equipmentRequestService.markAsSentToSuppliers(requestId);
+        }
 
         return rfq;
     }
 
     private void sendRFQEmailsWithTokens(RFQ rfq, EquipmentRequest request, List<String> supplierIds, List<String> supplierEmails, String pdfPath) {
+        java.util.List<RFQ.SupplierDeliveryStatus> deliveryStatuses = new java.util.ArrayList<>();
+        boolean anyFailed = false;
+
         for (int i = 0; i < supplierIds.size(); i++) {
             String supplierId = supplierIds.get(i);
             String email = (supplierEmails != null && i < supplierEmails.size()) ? supplierEmails.get(i) : null;
             
-            if (email == null || email.trim().isEmpty()) continue;
-
             try {
+                if (email == null || email.trim().isEmpty()) {
+                    throw new Exception("Supplier has no email address configured.");
+                }
+                
+                if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                    throw new Exception("Invalid email format.");
+                }
                 // Generate secure token
                 String tokenString = java.util.UUID.randomUUID().toString();
                 RFQToken token = new RFQToken();
@@ -103,9 +117,11 @@ public class RFQService {
                 token.setSupplierEmail(email);
                 
                 // Fetch supplier name if possible
+                String supplierName = "Unknown";
                 Supplier supplier = supplierRepository.findById(supplierId).orElse(null);
                 if (supplier != null) {
-                    token.setSupplierName(supplier.getCompanyName());
+                    supplierName = supplier.getCompanyName();
+                    token.setSupplierName(supplierName);
                 }
                 
                 token.setCreatedAt(LocalDateTime.now());
@@ -124,11 +140,24 @@ public class RFQService {
                         new FileSystemResource(pdfPath));
                 mailSender.send(message);
                 System.out.println("✅ Successfully sent RFQ email to " + email);
+                
+                deliveryStatuses.add(new RFQ.SupplierDeliveryStatus(supplierId, email, supplierName, "SENT", null));
             } catch (Exception e) {
                 System.err.println("❌ Failed to send RFQ email to " + email + ": " + e.getMessage());
                 e.printStackTrace();
+                anyFailed = true;
+                
+                String supplierName = "Unknown";
+                Supplier supplier = supplierRepository.findById(supplierId).orElse(null);
+                if (supplier != null) {
+                    supplierName = supplier.getCompanyName();
+                }
+                deliveryStatuses.add(new RFQ.SupplierDeliveryStatus(supplierId, email, supplierName, "FAILED", e.getMessage()));
             }
         }
+        
+        rfq.setDeliveryStatuses(deliveryStatuses);
+        rfq.setStatus(anyFailed ? "FAILED" : "SENT");
     }
 
     private String buildEmailBody(RFQ rfq, EquipmentRequest request, String magicLink) {
@@ -183,5 +212,107 @@ public class RFQService {
 
     public Optional<RFQ> getRFQByRequestId(String requestId) {
         return rfqRepository.findByRequestId(requestId);
+    }
+
+    public RFQ resendFailedRfq(String rfqId, List<String> targetSupplierIds) throws Exception {
+        RFQ rfq = rfqRepository.findById(rfqId)
+                .orElseThrow(() -> new RuntimeException("RFQ not found: " + rfqId));
+
+        String reqId = rfq.getRequestId();
+        EquipmentRequest request = requestRepository.findById(reqId)
+                .orElseThrow(() -> new RuntimeException("Equipment request not found: " + reqId));
+
+        if (rfq.getDeliveryStatuses() == null) {
+            rfq.setDeliveryStatuses(new java.util.ArrayList<>());
+        }
+
+        boolean anyRemainingFailed = false;
+
+        for (String supplierId : targetSupplierIds) {
+            // Find the delivery status for this supplier
+            RFQ.SupplierDeliveryStatus statusObj = rfq.getDeliveryStatuses().stream()
+                    .filter(s -> s.getSupplierId().equals(supplierId))
+                    .findFirst()
+                    .orElse(null);
+
+            if (statusObj == null) {
+                int idx = rfq.getSupplierIds().indexOf(supplierId);
+                if (idx >= 0 && rfq.getSupplierEmails() != null && idx < rfq.getSupplierEmails().size()) {
+                    String email = rfq.getSupplierEmails().get(idx);
+                    String supplierName = "Unknown";
+                    Supplier supplier = supplierRepository.findById(supplierId).orElse(null);
+                    if (supplier != null) {
+                        supplierName = supplier.getCompanyName();
+                    }
+                    statusObj = new RFQ.SupplierDeliveryStatus(supplierId, email, supplierName, "FAILED", "Not attempted yet");
+                    rfq.getDeliveryStatuses().add(statusObj);
+                } else {
+                    continue; // Skip if we can't find email
+                }
+            }
+
+            // Attempt to resend
+            try {
+                if (statusObj.getSupplierEmail() == null || statusObj.getSupplierEmail().trim().isEmpty()) {
+                    throw new Exception("Supplier has no email address configured.");
+                }
+                
+                if (!statusObj.getSupplierEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                    throw new Exception("Invalid email format.");
+                }
+                
+                String tokenString = java.util.UUID.randomUUID().toString();
+                RFQToken token = new RFQToken();
+                token.setToken(tokenString);
+                token.setRfqId(rfq.getId());
+                token.setRequestId(request.getId());
+                token.setSupplierId(supplierId);
+                token.setSupplierEmail(statusObj.getSupplierEmail());
+                token.setSupplierName(statusObj.getSupplierName());
+                token.setCreatedAt(LocalDateTime.now());
+                token.setExpiresAt(LocalDateTime.now().plusDays(14));
+                rfqTokenRepository.save(token);
+
+                String magicLink = frontendUrl + "/supplier-respond/" + tokenString;
+
+                MimeMessage message = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(message, true);
+                helper.setFrom(fromEmail);
+                helper.setTo(statusObj.getSupplierEmail());
+                helper.setSubject("Request for Quotation — RFQ-" + rfq.getId().substring(0, 8).toUpperCase() + " | MedinaFlux");
+                helper.setText(buildEmailBody(rfq, request, magicLink), true);
+                helper.addAttachment("RFQ_" + rfq.getId().substring(0, 8).toUpperCase() + ".pdf",
+                        new FileSystemResource(rfq.getPdfFilePath()));
+                mailSender.send(message);
+                System.out.println("✅ Successfully resent RFQ email to " + statusObj.getSupplierEmail());
+                
+                statusObj.setStatus("SENT");
+                statusObj.setErrorReason(null);
+            } catch (Exception e) {
+                System.err.println("❌ Failed to resend RFQ email to " + statusObj.getSupplierEmail() + ": " + e.getMessage());
+                e.printStackTrace();
+                statusObj.setStatus("FAILED");
+                statusObj.setErrorReason(e.getMessage());
+                anyRemainingFailed = true;
+            }
+        }
+
+        // Check globally
+        for (RFQ.SupplierDeliveryStatus st : rfq.getDeliveryStatuses()) {
+            if ("FAILED".equals(st.getStatus())) {
+                anyRemainingFailed = true;
+                break;
+            }
+        }
+
+        rfq.setStatus(anyRemainingFailed ? "FAILED" : "SENT");
+        rfq.setUpdatedAt(LocalDateTime.now());
+        rfq = rfqRepository.save(rfq);
+
+        if ("SENT".equals(rfq.getStatus())) {
+            equipmentRequestService.markAsSentToSuppliers(request.getId());
+        }
+
+        return rfq;
     }
 }

@@ -199,20 +199,53 @@ isStep1Valid(): boolean {
   );
 }
 
+validateDueDate(event?: any): void {
+  if (this.taskForm.dueDate) {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const localTodayStr = `${yyyy}-${mm}-${dd}`;
+
+    if (this.taskForm.dueDate < localTodayStr) {
+      this.customAlert = {
+        type: 'error',
+        title: 'Validation Error',
+        message: 'Target date cannot be in the past.'
+      };
+      
+      this.taskForm.dueDate = ''; // reset model
+      if (event && event.target) {
+        event.target.value = ''; // force clear native input
+      }
+      
+      // Fallback timeout just in case
+      setTimeout(() => {
+        this.taskForm.dueDate = '';
+      });
+    }
+  }
+}
+
 goToStep2(): void {
   if(this.isStep1Valid()) {
-  const todayStr = new Date().toISOString().split('T')[0];
-  if (this.taskForm.dueDate < todayStr) {
-    this.customAlert = {
-      type: 'error',
-      title: 'Validation Error',
-      message: 'Target date cannot be in the past.'
-    };
-    return;
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const localTodayStr = `${yyyy}-${mm}-${dd}`;
+
+    if (this.taskForm.dueDate < localTodayStr) {
+      this.customAlert = {
+        type: 'error',
+        title: 'Validation Error',
+        message: 'Target date cannot be in the past.'
+      };
+      return;
+    }
+    this.wizardStep = 'select-users';
   }
-  this.wizardStep = 'select-users';
 }
-  }
 
   // ── Wizard Step 2: User Selection ─────────────────────────────────────────
   get filteredUsers(): SystemUser[] {

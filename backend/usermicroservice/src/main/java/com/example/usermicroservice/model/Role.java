@@ -2,7 +2,7 @@ package com.example.usermicroservice.model;
 
 public enum Role {
     ADMIN,
-    HR,
+    USER,
     STOCK_MANAGER,
     EMPLOYEE,
     TECHNICIAN,

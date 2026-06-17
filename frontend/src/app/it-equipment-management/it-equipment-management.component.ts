@@ -176,7 +176,7 @@ export class ItEquipmentManagementComponent implements OnInit {
     if (shelfId === 'MAINTENANCE_AREA') return 'Maintenance Area';
     if (shelfId === 'SCRAP_YARD') return 'Scrap Yard';
     if (shelfId === 'OUT_OF_STOCK') return 'Out of Stock';
-    const shelf = this.allShelves.find(s => s.id === shelfId);
+    const shelf = this.allShelves.find(s => String(s.id) === String(shelfId));
     return shelf ? `Shelf ${shelf.nb}` : `Shelf ${shelfId}`;
   }
 
@@ -227,7 +227,7 @@ export class ItEquipmentManagementComponent implements OnInit {
             equipmentName: eq.equipmentName,
             equipmentId: eq.id,
             serialNumber: eq.serialNumber || '',
-            icon: eq.icon || '💻',
+            icon: eq.type || eq.category || '',
             action: entry.status,
             description: entry.description,
             actor: entry.actor,
@@ -489,19 +489,40 @@ export class ItEquipmentManagementComponent implements OnInit {
       case 'Deassigned': return 'badge-deassigned';
       case 'Return Requested': return 'badge-return-req';
       case 'Returned to Stock': return 'badge-returned';
+      case 'Installed': return 'badge-installed';
+      case 'Allocated': return 'badge-allocated';
       default: return 'badge-default';
     }
   }
 
-  getEquipmentIcon(eq: ItEquipment): string {
-    if (eq.icon) return eq.icon;
-    const type = (eq.type || '').toLowerCase();
-    if (type.includes('laptop')) return '💻';
-    if (type.includes('desktop')) return '🖥️';
-    if (type.includes('monitor')) return '🖥️';
-    if (type.includes('printer')) return '🖨️';
-    if (type.includes('phone')) return '📱';
-    return '📦';
+  getTypeKey(type: string | undefined): string {
+    if (!type) return 'default';
+    const t = type.toLowerCase();
+    if (t.includes('laptop')) return 'laptop';
+    if (t.includes('desktop') || t.includes('pc')) return 'pc';
+    if (t.includes('monitor') || t.includes('screen')) return 'monitor';
+    if (t.includes('server')) return 'server';
+    if (t.includes('printer')) return 'printer';
+    if (t.includes('scanner')) return 'scanner';
+    if (t.includes('projector')) return 'projector';
+    if (t.includes('router') || t.includes('switch') || t.includes('network')) return 'router';
+    if (t.includes('ups') || t.includes('battery')) return 'ups';
+    if (t.includes('tablet')) return 'tablet';
+    if (t.includes('phone') || t.includes('mobile')) return 'phone';
+    if (t.includes('keyboard')) return 'keyboard';
+    if (t.includes('mouse')) return 'mouse';
+    if (t.includes('headset') || t.includes('headphone')) return 'headset';
+    if (t.includes('ram') || t.includes('memory')) return 'ram';
+    if (t.includes('hdd') || t.includes('ssd') || t.includes('drive')) return 'hdd';
+    if (t.includes('cpu') || t.includes('processor')) return 'cpu';
+    if (t.includes('gpu') || t.includes('graphic')) return 'gpu';
+    if (t.includes('motherboard')) return 'motherboard';
+    if (t.includes('power') || t.includes('psu')) return 'psu';
+    if (t.includes('cable') || t.includes('wire')) return 'cable';
+    if (t.includes('software') || t.includes('license')) return 'software';
+    if (t.includes('paper')) return 'paper';
+    if (t.includes('ink') || t.includes('toner')) return 'ink';
+    return 'default';
   }
 
   getCategories(): string[] {

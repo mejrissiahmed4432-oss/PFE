@@ -323,14 +323,12 @@ export class TechnicianDevicesComponent implements OnInit, OnDestroy, OnChanges 
 
   // ── Status helpers ───────────────────────────────────────
   resolveStatus(d: LaptopStatus): string {
-    if (d.upStatus === 'UP' && d.cpuPercent > 85) return 'WARNING';
     return d.upStatus;
   }
 
   statusLabel(d: LaptopStatus): string {
     const s = this.resolveStatus(d);
     if (s === 'UP')      return 'Online';
-    if (s === 'WARNING') return 'Warning';
     if (s === 'DOWN')    return 'Offline';
     return 'Not Found Yet';
   }
@@ -338,7 +336,6 @@ export class TechnicianDevicesComponent implements OnInit, OnDestroy, OnChanges 
   statusCls(d: LaptopStatus): string {
     const s = this.resolveStatus(d);
     if (s === 'UP')      return 'badge-up';
-    if (s === 'WARNING') return 'badge-warning';
     if (s === 'DOWN')    return 'badge-down';
     return 'badge-unknown';
   }

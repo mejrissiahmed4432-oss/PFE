@@ -66,7 +66,7 @@ export class ProcurementComponent implements OnInit {
   get tabs(): { id: ProcTab; label: string; icon: string; roles: string[]; count?: number }[] {
     return [
       { id: 'dashboard' as ProcTab,    label: 'Overview',      icon: 'chart',    roles: ['STOCK_MANAGER', 'IT_MANAGER'] },
-      { id: 'new-request' as ProcTab,  label: 'New Request',   icon: 'plus',     roles: ['STOCK_MANAGER', 'IT_MANAGER'] },
+      { id: 'new-request' as ProcTab,  label: 'New Request',   icon: 'plus',     roles: ['STOCK_MANAGER'] },
       { id: 'my-requests' as ProcTab,  label: 'Requests',      icon: 'list',     roles: ['STOCK_MANAGER', 'IT_MANAGER'] },
       { id: 'approvals' as ProcTab,    label: 'Approvals',     icon: 'check',    roles: ['IT_MANAGER'], count: this.pendingApprovalsCount },
       { id: 'rfq' as ProcTab,          label: 'Send RFQ',      icon: 'send',     roles: ['IT_MANAGER'], count: this.pendingRfqCount },

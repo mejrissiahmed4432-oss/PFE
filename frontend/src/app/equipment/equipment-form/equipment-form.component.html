@@ -692,13 +692,7 @@
               </div>
               <span>Installed Parts ({{ installedParts.length }})</span>
             </div>
-            <button *ngIf="currentUserRole !== 'STOCK_MANAGER'" class="btn-uninstall-part" style="border-color: #3b82f6; color: #3b82f6; background-color: #fff;" (click)="openInstallModal()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 4px; vertical-align: middle;">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Install Part
-            </button>
+           
           </div>
 
           <!-- Parts Table -->
@@ -740,14 +734,7 @@
                       <button *ngIf="part.id" class="btn-view-part" (click)="viewOtherEvent.emit(part.id!)" title="View part details">
                         View Part
                       </button>
-                      <button *ngIf="currentUserRole !== 'STOCK_MANAGER'" class="btn-uninstall-part" (click)="uninstallPart(part)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M10 22H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v6"></path>
-                          <polyline points="12 18 16 22 22 16"></polyline>
-                        </svg>
-                        Uninstall
-                      </button>
+                      
                     </div>
                   </td>
                 </tr>
@@ -822,10 +809,20 @@
             </div>
             <div class="input-group">
               <label>Status <span class="required">*</span></label>
-              <select [(ngModel)]="formData.status" (change)="onStatusChange()" class="field-select">
-                <option *ngFor="let opt of statusOptions" [value]="opt">{{ opt }}</option>
+
+              <!-- Editable: only when current status is Available or Broken -->
+              <select *ngIf="(!viewOnly || isEditing) && (formData.status === 'Available' || formData.status === 'Broken')"
+                      [(ngModel)]="formData.status" (change)="onStatusChange()" class="field-select">
+                <option value="Available">Available</option>
+                <option value="Broken">Broken</option>
               </select>
+
+              <!-- Read-only: status cannot be manually changed -->
+              <input *ngIf="viewOnly && !isEditing || ((!viewOnly || isEditing) && formData.status !== 'Available' && formData.status !== 'Broken')"
+                     type="text" [value]="formData.status || ''" readonly
+                     style="background: #f8fafc; color: #64748b; cursor: not-allowed; border: 1px solid #e2e8f0;">
             </div>
+
             <div class="input-group">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <label>Serial Number <span class="required">*</span></label>
@@ -834,8 +831,8 @@
                   Suggest SN
                 </button>
               </div>
-              <input type="text" [maxlength]="15" [(ngModel)]="formData.serialNumber"
-                (ngModelChange)="onSerialNumberChange()" placeholder="Enter serial number (exactly 15 chars)">
+              <input type="text" [(ngModel)]="formData.serialNumber"
+                (ngModelChange)="onSerialNumberChange()" placeholder="Enter serial number (min. 5 chars)">
 
               <!-- Error messages stack -->
               <div *ngIf="isCheckingSN" style="font-size: 11px; color: #3b82f6; margin-top: 2px;">
@@ -847,7 +844,7 @@
               </div>
 
               <div *ngIf="isSNInvalidLength" style="font-size: 11px; color: #ef4444; margin-top: 2px;">
-                Exactly 15 characters required. (Currently: {{formData.serialNumber?.length}})
+                Minimum 5 characters required. (Currently: {{formData.serialNumber?.length}})
               </div>
 
               <div *ngIf="isSNInvalidFormat" style="font-size: 11px; color: #ef4444; margin-top: 2px;">

@@ -180,13 +180,13 @@ export class PartRequestWizardComponent implements OnInit {
             return pName === item.partName && pSpec === (item.specification || '').trim();
           }).length;
           item.maxAvailable = totalInSystem;
-          
+
           if (item.quantity > totalInSystem && totalInSystem > 0) {
-             // We don't automatically reduce here to avoid wiping out requested counts on load, but we map the limit.
+            // We don't automatically reduce here to avoid wiping out requested counts on load, but we map the limit.
           }
         }
       });
-      
+
       this.stockLoaded = true;
       this.checkInitialPartSelection();
     });
@@ -195,30 +195,30 @@ export class PartRequestWizardComponent implements OnInit {
   checkInitialPartSelection(): void {
     if (this.categoriesLoaded && this.stockLoaded && this.initialPartSelection && !this.editRequest && !this.initialSelectionProcessed) {
       this.initialSelectionProcessed = true;
-      
+
       this.selectedCategory = this.initialPartSelection.category;
       this.onCategoryChange();
       this.selectedType = this.initialPartSelection.type;
       this.onTypeChange();
-      
+
       const spec = (this.initialPartSelection.items && this.initialPartSelection.items.length > 0) ? (this.initialPartSelection.items[0].specification || '') : '';
       const name = this.initialPartSelection.name;
-      
-      const matchingGroup = this.availableStockGroups.find(g => 
-        g.name === name && 
+
+      const matchingGroup = this.availableStockGroups.find(g =>
+        g.name === name &&
         (g.specification || '') === spec &&
         g.availableQte > 0
       );
 
       if (matchingGroup) {
-         matchingGroup.selected = true;
-         matchingGroup.requestQte = 1;
-         this.addSelectedToCart();
-         
-         this.customAlert = {
-           title: 'Item Added',
-           message: `We automatically added 1 unit of "${matchingGroup.name}" to your request list because it was available in stock.`
-         };
+        matchingGroup.selected = true;
+        matchingGroup.requestQte = 1;
+        this.addSelectedToCart();
+
+        this.customAlert = {
+          title: 'Item Added',
+          message: `We automatically added 1 unit of "${matchingGroup.name}" to your request list because it was available in stock.`
+        };
       }
     }
   }
@@ -226,14 +226,14 @@ export class PartRequestWizardComponent implements OnInit {
   getPartStatus(item: any): string {
     const s = (item.status || '').toLowerCase().trim();
     const shelf = (item.shelfId || '').trim();
-    
+
     // 1. HARD BLOCK: If status is installed, assigned, or allocated, it is UNAVAILABLE
     // We use keyword matching to be extra safe
-    if (s.includes('install') || s.includes('assign') || s.includes('allocat') || 
-        s === 'broken' || s === 'maintenance' || s === 'out of stock') {
+    if (s.includes('install') || s.includes('assign') || s.includes('allocat') ||
+      s === 'broken' || s === 'maintenance' || s === 'out of stock') {
       return 'Unavailable';
     }
-    
+
     // 2. HARD BLOCK: If it's linked to another piece of equipment, it's UNAVAILABLE
     if (item.installedIn) {
       return 'Unavailable';
@@ -243,12 +243,12 @@ export class PartRequestWizardComponent implements OnInit {
     if (!shelf || shelf === '' || shelf === 'OUT_OF_STOCK') {
       return 'Unavailable';
     }
-    
+
     // 4. Only 'available' or 'in stock' items with a valid shelf are Allowed
     if (s === 'available' || s === 'in stock' || s === '') {
       return 'Available';
     }
-    
+
     return 'Unavailable';
   }
 
@@ -348,7 +348,7 @@ export class PartRequestWizardComponent implements OnInit {
     filtered.forEach(item => {
       const eName = (item.equipmentName || item.type || '').trim();
       const eBrand = (item.brand || 'No Brand').trim();
-      
+
       let eSpec = '';
       if (item.specifications && typeof item.specifications === 'object') {
         eSpec = Object.entries(item.specifications)
@@ -523,7 +523,7 @@ export class PartRequestWizardComponent implements OnInit {
 
   validateCartQuantity(item: CartItem): void {
     if (item.isManual) return;
-    
+
     if (item.maxAvailable !== undefined && item.quantity > item.maxAvailable) {
       this.customAlert = {
         title: 'Quantity Exceeded',

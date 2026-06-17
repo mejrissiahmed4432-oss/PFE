@@ -39,6 +39,7 @@ public class EmployeeService {
                     employee.setFirstName(updatedEmployee.getFirstName());
                     employee.setLastName(updatedEmployee.getLastName());
                     employee.setEmail(updatedEmployee.getEmail());
+                    employee.setCin(updatedEmployee.getCin());
                     employee.setPhone(updatedEmployee.getPhone());
                     employee.setJobTitle(updatedEmployee.getJobTitle());
                     employee.setDepartment(updatedEmployee.getDepartment());
@@ -58,14 +59,12 @@ public class EmployeeService {
                     // Link via employeeId or email
                     Criteria criteria = new Criteria().orOperator(
                             Criteria.where("employeeId").is(savedEmployee.getId()),
-                            Criteria.where("email").is(savedEmployee.getEmail())
-                    );
+                            Criteria.where("email").is(savedEmployee.getEmail()));
                     if (savedEmployee.getUserId() != null && !savedEmployee.getUserId().isEmpty()) {
                         criteria = new Criteria().orOperator(
                                 Criteria.where("employeeId").is(savedEmployee.getId()),
                                 Criteria.where("email").is(savedEmployee.getEmail()),
-                                Criteria.where("_id").is(savedEmployee.getUserId())
-                        );
+                                Criteria.where("_id").is(savedEmployee.getUserId()));
                     }
 
                     Query query = new Query(criteria);

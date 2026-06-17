@@ -256,6 +256,18 @@ body {
   @apply bg-red-500 text-white shadow-lg shadow-red-500/20;
 }
 
+.authors-status-badge.allocated {
+  background: #ea580c;
+  color: white;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+}
+
+.authors-status-badge.assigned {
+  background: #4f46e5;
+  color: white;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
 .authors-status-badge-mini {
   @apply px-2 py-0.5 rounded-md font-bold text-[9px] uppercase tracking-tight;
 }
@@ -280,6 +292,14 @@ body {
 .authors-status-badge-mini.expired,
 .authors-status-badge-mini.broken {
   @apply bg-red-100 text-red-600;
+}
+
+.authors-status-badge-mini.allocated {
+  @apply bg-orange-100 text-orange-700;
+}
+
+.authors-status-badge-mini.assigned {
+  @apply bg-indigo-100 text-indigo-700;
 }
 
 .authors-edit-link {

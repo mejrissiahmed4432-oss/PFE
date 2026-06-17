@@ -131,8 +131,8 @@ export class ScheduleComponent implements OnInit, OnDestroy {
   processTask(t: Task): void {
     const todayStr = this.formatDateKey(this.today);
     
-    // If the task already has an original due date, it means it was rolled over before
-    if (t.originalDueDate) {
+    // If the task already has an original due date that is different from current, it was rolled over
+    if (t.originalDueDate && t.originalDueDate < t.dueDate) {
       (t as any).isOverdue = true;
     }
 

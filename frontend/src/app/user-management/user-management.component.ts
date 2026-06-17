@@ -59,12 +59,26 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   private stompClient: Client | null = null;
 
   readonly ROLES = [
-    { value: 'TECHNICIAN', label: 'Technician', icon: '🔧' },
-    { value: 'STOCK_MANAGER', label: 'Stock Manager', icon: '📦' },
-    { value: 'HR', label: 'HR', icon: '👥' },
-    { value: 'IT_MANAGER', label: 'IT Manager', icon: '💻' },
-    { value: 'ADMIN', label: 'Admin', icon: '⚙️' },
+    { value: 'TECHNICIAN', label: 'Technician', icon: 'wrench' },
+    { value: 'STOCK_MANAGER', label: 'Stock Manager', icon: 'box' },
+    { value: 'USER', label: 'User', icon: 'users' },
+    { value: 'IT_MANAGER', label: 'IT Manager', icon: 'laptop' },
+    { value: 'ADMIN', label: 'Admin', icon: 'settings' },
   ];
+
+  getAvailableRoles(currentUserId?: string) {
+    const assignedRoles = new Set(
+      this.systemUsers
+        .filter(u => u.status !== 'INACTIVE' && u.id !== currentUserId)
+        .map(u => u.role)
+    );
+    return this.ROLES.filter(r => {
+      if (['ADMIN', 'IT_MANAGER', 'STOCK_MANAGER'].includes(r.value)) {
+        return !assignedRoles.has(r.value);
+      }
+      return true;
+    });
+  }
 
   constructor(
     private itManagerService: ItManagerService
@@ -193,7 +207,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   // ── Grant Modal ───────────────────────────────
   openGrantModal(emp: Employee): void {
     this.selectedEmployee = emp;
-    this.selectedRole = 'TECHNICIAN';
+    const available = this.getAvailableRoles();
+    this.selectedRole = available.length > 0 ? available[0].value : 'TECHNICIAN';
     this.showGrantModal = true;
   }
 
@@ -229,7 +244,11 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   // ── Role Modal ────────────────────────────────
   openRoleModal(user: SystemUser): void {
     this.selectedUser = user;
+    const available = this.getAvailableRoles(user.id);
     this.newRole = user.role;
+    if (!available.find(r => r.value === this.newRole) && available.length > 0) {
+      this.newRole = available[0].value;
+    }
     this.showRoleModal = true;
   }
 

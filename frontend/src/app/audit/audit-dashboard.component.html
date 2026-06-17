@@ -6,31 +6,33 @@
       <div class="audit-header-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
-          <polyline points="13 2 13 9 20 9"/>
-          <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-          <polyline points="10 9 9 9 8 9"/>
+          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+          <polyline points="13 2 13 9 20 9" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+          <polyline points="10 9 9 9 8 9" />
         </svg>
       </div>
       <div>
         <h1 class="audit-page-title">Blockchain Audit Explorer</h1>
-        <p class="audit-page-sub">Journaux d'audit immuables • Réseau Ganache Local • Source de vérité absolue</p>
+        <p class="audit-page-sub">Immutable Audit Logs • Local Ganache Network • Single Source of Truth</p>
       </div>
     </div>
     <div class="audit-header-right">
-      <div class="audit-network-badge">
-        <span class="audit-network-dot"></span>
-        Ganache Local
+      <div class="audit-network-badge" [ngClass]="blockchainOnline === false ? 'badge-offline' : 'badge-online'">
+        <span class="audit-network-dot" [ngClass]="blockchainOnline === false ? 'dot-offline' : 'dot-online'"></span>
+        <span *ngIf="blockchainOnline === false">Ganache Offline</span>
+        <span *ngIf="blockchainOnline !== false">Local Ganache</span>
       </div>
       <button class="audit-btn-refresh" (click)="loadLogs()">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-          <path d="M21 3v5h-5"/>
-          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-          <path d="M3 21v-5h5"/>
+          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+          <path d="M21 3v5h-5" />
+          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+          <path d="M3 21v-5h5" />
         </svg>
-        Actualiser
+        Refresh
       </button>
     </div>
   </div>
@@ -41,136 +43,137 @@
       <div class="audit-stat-icon stat-total">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
         </svg>
       </div>
       <div class="audit-stat-content">
         <span class="audit-stat-value">{{ totalLogs }}</span>
-        <span class="audit-stat-label">Total des blocs enregistrés</span>
+        <span class="audit-stat-label">Total Saved Blocks</span>
       </div>
     </div>
   </div>
 
   <!-- ── Search ────────────────────────────────────────────────────── -->
-  <div class="audit-search-row">
-    <div class="audit-search-box">
+  <div class="audit-search-row" style="display: flex; gap: 1rem;">
+    <div class="audit-search-box" style="flex: 1;">
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.35-4.35" />
       </svg>
       <input type="text" [(ngModel)]="searchTerm" (input)="filterLogs()"
-        placeholder="Rechercher action, utilisateur, CIN…" id="audit-search-input">
+        placeholder="Search action, user, ID…" id="audit-search-input">
+    </div>
+    <div class="audit-search-box" style="width: 200px; padding-left: 1rem;">
+      <input type="date" [(ngModel)]="dateFilter" (change)="filterLogs()"
+        id="audit-date-filter" style="border: none; outline: none; background: transparent; font-family: inherit; color: inherit; width: 100%;">
     </div>
   </div>
 
   <!-- ── Loading ────────────────────────────────────────────────────── -->
   <div *ngIf="loading" class="audit-loading">
     <div class="audit-spinner"></div>
-    <p>Lecture de la blockchain en cours…</p>
+    <p>Reading blockchain...</p>
   </div>
 
   <!-- ── Table ──────────────────────────────────────────────────────── -->
   <div *ngIf="!loading" class="audit-table-card">
     <div class="audit-table-scroll">
-    <table class="audit-table">
-      <thead>
-        <tr>
-          <th>Bloc</th>
-          <th>Horodatage</th>
-          <th>Action</th>
-          <th>Détails</th>
-          <th>Utilisateur</th>
-          <th>Rôle</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let log of filteredLogs; let i = index" class="audit-row">
+      <table class="audit-table">
+        <thead>
+          <tr>
+            <th>Block</th>
+            <th>Timestamp</th>
+            <th>Action</th>
+            <th>User</th>
+            <th>Role</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of filteredLogs; let i = index" class="audit-row">
 
-          <!-- Block Number -->
-          <td>
-            <span class="audit-block-num"># {{ totalLogs - i }}</span>
-          </td>
+            <!-- Block Number -->
+            <td>
+              <span class="audit-block-num"># {{ totalLogs - i }}</span>
+            </td>
 
-          <!-- Timestamp -->
-          <td>
-            <div class="audit-time-cell">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-              </svg>
-              {{ formatDate(log.timestamp) }}
-            </div>
-          </td>
-
-          <!-- Action -->
-          <td>
-            <span class="audit-action-badge" [ngClass]="getActionClass(log.action)">
-              {{ log.action }}
-            </span>
-          </td>
-
-          <!-- Details -->
-          <td>
-            <span class="audit-details-text">{{ log.details || '—' }}</span>
-          </td>
-
-          <!-- User -->
-          <td>
-            <div class="audit-user-cell">
-              <div class="audit-user-avatar">{{ (log.userName || '?').charAt(0).toUpperCase() }}</div>
-              <div>
-                <div class="audit-user-name">{{ log.userName || 'Inconnu' }}</div>
-                <div class="audit-user-cin">{{ log.userId || '—' }}</div>
-              </div>
-            </div>
-          </td>
-
-          <!-- Role -->
-          <td>
-            <span class="audit-role-badge" [ngClass]="getRoleClass(log.userRole)">
-              {{ log.userRole || 'N/A' }}
-            </span>
-          </td>
-
-          <!-- View Details -->
-          <td>
-            <button class="audit-btn-view" (click)="openDetail(log)" title="Voir le bloc">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-            </button>
-          </td>
-
-        </tr>
-
-        <!-- Empty State -->
-        <tr *ngIf="filteredLogs.length === 0">
-          <td colspan="7">
-            <div class="audit-empty">
-              <div class="audit-empty-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                  <line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            <!-- Timestamp -->
+            <td>
+              <div class="audit-time-cell">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
                 </svg>
+                {{ formatDate(log.timestamp) }}
               </div>
-              <h3>Aucun bloc trouvé</h3>
-              <p *ngIf="searchTerm || activeFilter !== 'ALL'">Essayez de modifier votre filtre ou recherche.</p>
-              <p *ngIf="!searchTerm && activeFilter === 'ALL'">La blockchain est vide ou hors-ligne.</p>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+
+            <!-- Action -->
+            <td>
+              <span class="audit-action-badge" [ngClass]="getActionClass(log.action)">
+                {{ log.action }}
+              </span>
+            </td>
+
+            <!-- User -->
+            <td>
+              <div class="audit-user-cell">
+                <div class="audit-user-avatar">{{ (log.userName || '?').charAt(0).toUpperCase() }}</div>
+                <div>
+                  <div class="audit-user-name">{{ log.userName || 'Unknown' }}</div>
+                  <div class="audit-user-cin">{{ log.userId || '—' }}</div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Role -->
+            <td>
+              <span class="audit-role-badge" [ngClass]="getRoleClass(log.userRole)">
+                {{ log.userRole || 'N/A' }}
+              </span>
+            </td>
+
+            <!-- View Details -->
+            <td>
+              <button class="audit-btn-view" (click)="openDetail(log)" title="View block">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            </td>
+
+          </tr>
+
+          <!-- Empty State -->
+          <tr *ngIf="filteredLogs.length === 0">
+            <td colspan="6">
+              <div class="audit-empty">
+                <div class="audit-empty-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                    <line x1="8" y1="21" x2="16" y2="21" />
+                    <line x1="12" y1="17" x2="12" y2="21" />
+                  </svg>
+                </div>
+                <h3>No blocks found</h3>
+                <p *ngIf="searchTerm || activeFilter !== 'ALL'">Try modifying your filter or search.</p>
+                <p *ngIf="!searchTerm && activeFilter === 'ALL'">The blockchain is empty or offline.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Count Footer -->
     <div class="audit-table-footer" *ngIf="filteredLogs.length > 0">
-      <span>{{ filteredLogs.length }} bloc(s) affiché(s) sur {{ totalLogs }} total</span>
+      <span>Showing {{ filteredLogs.length }} block(s) out of {{ totalLogs }} total</span>
     </div>
   </div>
 
@@ -186,19 +189,20 @@
         <div class="audit-modal-icon" [ngClass]="getActionClass(selectedLog.action)">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
           </svg>
         </div>
         <div>
-          <h2 class="audit-modal-title">Détail du Bloc</h2>
-          <p class="audit-modal-sub">Registre immuable Blockchain</p>
+          <h2 class="audit-modal-title">Block Details</h2>
+          <p class="audit-modal-sub">Immutable Blockchain Ledger</p>
         </div>
       </div>
       <button class="audit-modal-close" (click)="closeDetail()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
         </svg>
       </button>
     </div>
@@ -216,27 +220,24 @@
       <!-- Info Grid -->
       <div class="audit-modal-grid">
         <div class="audit-modal-item">
-          <span class="audit-modal-label">Horodatage</span>
+          <span class="audit-modal-label">Timestamp</span>
           <span class="audit-modal-value">{{ formatDate(selectedLog.timestamp) }}</span>
         </div>
         <div class="audit-modal-item">
-          <span class="audit-modal-label">Rôle</span>
-          <span class="audit-role-badge" [ngClass]="getRoleClass(selectedLog.userRole)">{{ selectedLog.userRole }}</span>
+          <span class="audit-modal-label">Role</span>
+          <span class="audit-role-badge" [ngClass]="getRoleClass(selectedLog.userRole)">{{ selectedLog.userRole
+            }}</span>
         </div>
-        <div class="audit-modal-item">
-          <span class="audit-modal-label">Nom Utilisateur</span>
+        <div class="audit-modal-item full">
+          <span class="audit-modal-label">User Name</span>
           <span class="audit-modal-value">{{ selectedLog.userName || '—' }}</span>
         </div>
-        <div class="audit-modal-item">
+        <div class="audit-modal-item full">
           <span class="audit-modal-label">CIN / ID</span>
           <span class="audit-modal-value mono">{{ selectedLog.userId || '—' }}</span>
         </div>
-        <div class="audit-modal-item full">
-          <span class="audit-modal-label">Détails</span>
-          <span class="audit-modal-value">{{ selectedLog.details || '—' }}</span>
-        </div>
         <div class="audit-modal-item full" *ngIf="selectedLog.ipAddress">
-          <span class="audit-modal-label">Adresse IP</span>
+          <span class="audit-modal-label">IP Address</span>
           <span class="audit-modal-value mono">{{ selectedLog.ipAddress }}</span>
         </div>
         <div class="audit-modal-item full" *ngIf="selectedLog.blockchainTxHash">
@@ -249,16 +250,16 @@
       <div class="audit-notice">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
-        Ce bloc est immuable et ne peut pas être modifié ni supprimé.
+        This block is immutable and cannot be modified or deleted.
       </div>
     </div>
 
     <!-- Footer -->
     <div class="audit-modal-footer">
-      <button class="audit-btn-close-modal" (click)="closeDetail()">Fermer</button>
+      <button class="audit-btn-close-modal" (click)="closeDetail()">Close</button>
     </div>
 
   </div>

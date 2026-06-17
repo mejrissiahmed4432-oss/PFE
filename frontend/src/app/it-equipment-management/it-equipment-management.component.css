@@ -16,6 +16,14 @@
   @apply bg-emerald-50 text-emerald-700 border-emerald-200;
 }
 
+.badge-installed {
+  @apply bg-indigo-50 text-indigo-700 border-indigo-200;
+}
+
+.badge-allocated {
+  @apply bg-orange-50 text-orange-700 border-orange-200;
+}
+
 .badge-default {
   @apply bg-slate-50 text-slate-600 border-slate-200;
 }

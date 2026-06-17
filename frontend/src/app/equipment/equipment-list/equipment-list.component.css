@@ -215,13 +215,15 @@
 }
 
 .status-chip-mini.allocated {
-  background: #ffedd5;
+  background: #fff7ed;
   color: #c2410c;
+  border: 1px solid #fed7aa;
 }
 
 .status-chip-mini.assigned {
-  background: #e0e7ff;
-  color: #4338ca;
+  background: #eef2ff;
+  color: #4f46e5;
+  border: 1px solid #c7d2fe;
 }
 
 .status-chip {
@@ -260,13 +262,15 @@
 }
 
 .status-chip.allocated {
-  background: #ffedd5;
+  background: #fff7ed;
   color: #c2410c;
+  border: 1px solid #fed7aa;
 }
 
 .status-chip.assigned {
-  background: #e0e7ff;
-  color: #4338ca;
+  background: #eef2ff;
+  color: #4f46e5;
+  border: 1px solid #c7d2fe;
 }
 
 .actions-mini {

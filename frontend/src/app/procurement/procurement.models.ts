@@ -66,12 +66,22 @@ export interface EquipmentRequest {
   updatedAt?: string;
 }
 
+export interface SupplierDeliveryStatus {
+  supplierId: string;
+  supplierEmail: string;
+  supplierName: string;
+  status: 'SENT' | 'FAILED';
+  errorReason?: string;
+}
+
 export interface RFQ {
   id?: string;
   requestId: string;
   supplierIds: string[];
   supplierEmails: string[];
   pdfFilePath?: string;
+  status?: string; // 'SENT' | 'FAILED'
+  deliveryStatuses?: SupplierDeliveryStatus[];
   sentAt?: string;
   createdAt?: string;
   updatedAt?: string;

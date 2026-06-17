@@ -23,7 +23,49 @@ public class RFQ {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private String status; // e.g. "SENT", "FAILED"
+    private List<SupplierDeliveryStatus> deliveryStatuses; // Tracks email status per supplier
+
+    public static class SupplierDeliveryStatus {
+        private String supplierId;
+        private String supplierEmail;
+        private String supplierName;
+        private String status; // "SENT", "FAILED"
+        private String errorReason;
+
+        public SupplierDeliveryStatus() {}
+
+        public SupplierDeliveryStatus(String supplierId, String supplierEmail, String supplierName, String status, String errorReason) {
+            this.supplierId = supplierId;
+            this.supplierEmail = supplierEmail;
+            this.supplierName = supplierName;
+            this.status = status;
+            this.errorReason = errorReason;
+        }
+
+        public String getSupplierId() { return supplierId; }
+        public void setSupplierId(String supplierId) { this.supplierId = supplierId; }
+
+        public String getSupplierEmail() { return supplierEmail; }
+        public void setSupplierEmail(String supplierEmail) { this.supplierEmail = supplierEmail; }
+
+        public String getSupplierName() { return supplierName; }
+        public void setSupplierName(String supplierName) { this.supplierName = supplierName; }
+
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
+
+        public String getErrorReason() { return errorReason; }
+        public void setErrorReason(String errorReason) { this.errorReason = errorReason; }
+    }
+
     public RFQ() {}
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public List<SupplierDeliveryStatus> getDeliveryStatuses() { return deliveryStatuses; }
+    public void setDeliveryStatuses(List<SupplierDeliveryStatus> deliveryStatuses) { this.deliveryStatuses = deliveryStatuses; }
 
     public List<Integer> getSelectedItemIndices() { return selectedItemIndices; }
     public void setSelectedItemIndices(List<Integer> selectedItemIndices) { this.selectedItemIndices = selectedItemIndices; }

@@ -21,4 +21,5 @@ com\example\technicianmicroservice\model\PendingAuditLog.class
 com\example\technicianmicroservice\repository\PartRequestRepository.class
 com\example\technicianmicroservice\client\UserClient.class
 com\example\technicianmicroservice\client\StockManagerClientFallback.class
+com\example\technicianmicroservice\config\FeignClientInterceptor.class
 com\example\technicianmicroservice\client\AuditClientFallback.class

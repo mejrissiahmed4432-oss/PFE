@@ -50,10 +50,9 @@
 .status-badge { display:inline-flex; align-items:center; gap:5px; padding:5px 11px; border-radius:20px; font-size:.72rem; font-weight:700; white-space:nowrap; }
 .status-badge.lg { font-size:.82rem; padding:7px 16px; }
 .sbdot { width:7px; height:7px; border-radius:50%; }
-.badge-up      { background:#dcfce7; color:#166534; } .badge-up      .sbdot { background:#16a34a; }
-.badge-warning { background:#ffedd5; color:#9a3412; } .badge-warning .sbdot { background:#f97316; }
-.badge-down    { background:#fee2e2; color:#991b1b; } .badge-down    .sbdot { background:#ef4444; }
-.badge-unknown { background:#f1f5f9; color:#64748b; } .badge-unknown .sbdot { background:#94a3b8; }
+.badge-up { background:#dcfce7; color:#166534; } .badge-up .sbdot { background:#22c55e; }
+.badge-down { background:#fee2e2; color:#991b1b; } .badge-down .sbdot { background:#ef4444; }
+.badge-unknown { background:#f1f5f9; color:#475569; } .badge-unknown .sbdot { background:#94a3b8; }
 
 .actions-wrap { display:flex; gap:6px; }
 .action-icon { background:transparent; border:none; color:#94a3b8; padding:6px; border-radius:8px; cursor:pointer; display:flex; align-items:center; transition:all .2s; }

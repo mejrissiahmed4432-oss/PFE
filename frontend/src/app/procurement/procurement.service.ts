@@ -108,6 +108,12 @@ export class ProcurementService {
     return this.http.get<RFQ>(`${this.base}/rfq/request/${requestId}`);
   }
 
+  resendRfq(rfqId: string, supplierIds: string[]): Observable<RFQ> {
+    return this.http.post<RFQ>(`${this.base}/rfq/${rfqId}/resend`, { supplierIds }).pipe(
+      tap(() => this.requestCreatedSource.next())
+    );
+  }
+
   // ─── Supplier Responses ───────────────────────────────────────────────────
 
   uploadResponse(formData: FormData): Observable<SupplierResponse> {

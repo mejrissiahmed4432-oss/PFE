@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/employees/audit")
@@ -29,5 +30,17 @@ public class AuditController {
     @GetMapping("/logs")
     public ResponseEntity<List<AuditLogEntry>> getAllLogs() {
         return ResponseEntity.ok(auditService.getAllBlockchainLogs());
+    }
+
+    /**
+     * Retourne l'état de la connexion Ganache (online/offline).
+     */
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, Object>> getStatus() {
+        boolean available = auditService.isAvailable();
+        return ResponseEntity.ok(Map.of(
+            "online", available,
+            "network", "Local Ganache"
+        ));
     }
 }

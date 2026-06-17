@@ -59,4 +59,21 @@ public class RFQController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    /** POST /api/procurement/rfq/{id}/resend — Resend RFQ to selected suppliers */
+    @BlockchainTraceable(action = "Resend RFQ")
+    @PostMapping("/{id}/resend")
+    public ResponseEntity<?> resendRFQ(@PathVariable String id, @RequestBody Map<String, Object> body) {
+        try {
+            @SuppressWarnings("unchecked")
+            List<String> supplierIds = (List<String>) body.get("supplierIds");
+            if (supplierIds == null || supplierIds.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "No suppliers selected for resend"));
+            }
+            RFQ rfq = rfqService.resendFailedRfq(id, supplierIds);
+            return ResponseEntity.ok(rfq);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
+        }
+    }
 }

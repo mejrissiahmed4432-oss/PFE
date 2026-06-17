@@ -142,6 +142,7 @@ export class AdminDashboardComponent implements OnInit {
       this.deptFormError = 'Department name is required.';
       return;
     }
+    if (this.deptNameExists) return;
     this.isSavingDept = true;
     this.deptFormError = '';
     if (this.editingDept?.id) {
@@ -155,6 +156,14 @@ export class AdminDashboardComponent implements OnInit {
         error: () => { this.deptFormError = 'Failed to create department.'; this.isSavingDept = false; }
       });
     }
+  }
+
+  get deptNameExists(): boolean {
+    if (!this.deptForm.name) return false;
+    const nameToCheck = this.deptForm.name.trim().toLowerCase();
+    return this.departments.some(d =>
+      d.name.toLowerCase() === nameToCheck && d.id !== this.editingDept?.id
+    );
   }
 
   confirmDeleteDept(dept: Department): void {
@@ -284,10 +293,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   saveEmp(): void {
-    if (!this.empForm.firstName?.trim() || !this.empForm.lastName?.trim() || !this.empForm.email?.trim()) {
-      this.empFormError = 'First name, last name and email are required.';
-      return;
-    }
+    if (!this.isEmpFormValid) return;
     this.isSavingEmp = true;
     this.empFormError = '';
     if (this.editingEmp?.id) {
@@ -301,6 +307,62 @@ export class AdminDashboardComponent implements OnInit {
         error: () => { this.empFormError = 'Failed to create employee.'; this.isSavingEmp = false; }
       });
     }
+  }
+
+  get empEmailExists(): boolean {
+    if (!this.empForm.email) return false;
+    const emailToCheck = this.empForm.email.trim().toLowerCase();
+    if (this.editingEmp && this.editingEmp.email && this.editingEmp.email.toLowerCase() === emailToCheck) {
+      return false;
+    }
+    return this.employees.some(e =>
+      e.email && e.email.toLowerCase() === emailToCheck && e.id !== this.editingEmp?.id
+    );
+  }
+
+  get empCinExists(): boolean {
+    if (!this.empForm.cin) return false;
+    const cinToCheck = this.empForm.cin.trim().toLowerCase();
+    if (this.editingEmp && this.editingEmp.cin && this.editingEmp.cin.toLowerCase() === cinToCheck) {
+      return false;
+    }
+    return this.employees.some(e =>
+      e.cin && e.cin.toLowerCase() === cinToCheck && e.id !== this.editingEmp?.id
+    );
+  }
+
+  get empEmailInvalid(): boolean {
+    if (!this.empForm.email) return false;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return !emailRegex.test(this.empForm.email.trim());
+  }
+
+  get empCinInvalid(): boolean {
+    if (!this.empForm.cin) return false;
+    return !/^\d{8}$/.test(this.empForm.cin.trim());
+  }
+
+  get empPhoneInvalid(): boolean {
+    if (!this.empForm.phone) return false;
+    return !/^\d{8}$/.test(this.empForm.phone.trim());
+  }
+
+  get isEmpFormValid(): boolean {
+    return !!(
+      this.empForm.firstName?.trim() &&
+      this.empForm.lastName?.trim() &&
+      this.empForm.email?.trim() &&
+      this.empForm.phone?.trim() &&
+      this.empForm.jobTitle?.trim() &&
+      this.empForm.department?.trim() &&
+      this.empForm.employmentStatus?.trim() &&
+      this.empForm.cin?.trim() &&
+      !this.empEmailExists &&
+      !this.empEmailInvalid &&
+      !this.empCinExists &&
+      !this.empCinInvalid &&
+      !this.empPhoneInvalid
+    );
   }
 
   confirmDeleteEmp(emp: Employee): void {

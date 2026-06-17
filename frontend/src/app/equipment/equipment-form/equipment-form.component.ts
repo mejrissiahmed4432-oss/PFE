@@ -350,7 +350,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
   }
 
   private performSNUniquenessCheck(sn: string): void {
-    if (!sn || sn.length !== 15) return;
+    if (!sn || sn.length < 5) return;
 
     this.isCheckingSN = true;
     const excludeId = this.equipment?.id || undefined;
@@ -370,7 +370,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   get isSNInvalidLength(): boolean {
     const sn = this.formData.serialNumber || '';
-    return sn.length > 0 && sn.length !== 15;
+    return sn.length > 0 && sn.length < 5;
   }
 
   get isSNInvalidFormat(): boolean {
@@ -381,7 +381,7 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
 
   get isSNMissingChars(): boolean {
     const sn = this.formData.serialNumber || '';
-    if (sn.length !== 15 || this.isSNInvalidFormat) return false;
+    if (sn.length < 5 || this.isSNInvalidFormat) return false;
     return !/[a-zA-Z]/.test(sn) || !/\d/.test(sn);
   }
 
@@ -389,12 +389,12 @@ export class EquipmentFormComponent implements OnInit, AfterViewInit {
     const sn = this.formData.serialNumber || '';
     if (!sn) return false;
 
-    const hasExactLength = sn.length === 15;
+    const hasMinLength = sn.length >= 5;
     const onlyAlphanumeric = /^[a-zA-Z0-9]+$/.test(sn);
     const hasLetter = /[a-zA-Z]/.test(sn);
     const hasDigit = /\d/.test(sn);
 
-    return hasExactLength && onlyAlphanumeric && hasLetter && hasDigit;
+    return hasMinLength && onlyAlphanumeric && hasLetter && hasDigit;
   }
 
   get isFormInvalid(): boolean {

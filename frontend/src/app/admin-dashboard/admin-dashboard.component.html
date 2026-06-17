@@ -226,8 +226,9 @@
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label>Department Name *</label>
-        <input type="text" class="form-input" [(ngModel)]="deptForm.name" placeholder="e.g. Engineering, Sales...">
+        <label>Department Name <span class="text-red">*</span></label>
+        <input type="text" class="form-input" [class.input-error]="deptNameExists" [(ngModel)]="deptForm.name" placeholder="e.g. Engineering, Sales...">
+        <div class="field-error" *ngIf="deptNameExists">This department name already exists.</div>
       </div>
       <div class="form-group">
         <label>Description</label>
@@ -241,8 +242,8 @@
       <div class="error-msg" *ngIf="deptFormError">{{ deptFormError }}</div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="showDeptForm = false">Cancel</button>
-      <button class="btn btn-primary" [disabled]="isSavingDept" (click)="saveDept()">
+      <button class="btn btn-danger" (click)="showDeptForm = false">Close</button>
+      <button class="btn btn-primary" [disabled]="isSavingDept || deptNameExists || !deptForm.name || !deptForm.name.trim()" (click)="saveDept()">
         <span class="loader" *ngIf="isSavingDept"></span>
         <span *ngIf="!isSavingDept">{{ editingDept ? 'Save Changes' : 'Create Department' }}</span>
       </button>
@@ -260,50 +261,65 @@
     <div class="modal-body">
       <div class="form-grid">
         <div class="form-group">
-          <label>First Name *</label>
+          <label>First Name <span *ngIf="!isEmpViewOnly" class="text-red">*</span></label>
           <input type="text" class="form-input" [(ngModel)]="empForm.firstName" [readonly]="isEmpViewOnly">
         </div>
         <div class="form-group">
-          <label>Last Name *</label>
+          <label>Last Name <span *ngIf="!isEmpViewOnly" class="text-red">*</span></label>
           <input type="text" class="form-input" [(ngModel)]="empForm.lastName" [readonly]="isEmpViewOnly">
         </div>
         <div class="form-group">
-          <label>Email *</label>
-          <input type="email" class="form-input" [(ngModel)]="empForm.email" [readonly]="isEmpViewOnly">
+          <label>Email <span *ngIf="!isEmpViewOnly" class="text-red">*</span></label>
+          <input type="email" class="form-input"
+            [class.input-error]="!isEmpViewOnly && (empEmailExists || empEmailInvalid)"
+            [(ngModel)]="empForm.email" [readonly]="isEmpViewOnly">
+          <div class="field-error" *ngIf="!isEmpViewOnly && empEmailExists">This email is already in use.</div>
+          <div class="field-error" *ngIf="!isEmpViewOnly && !empEmailExists && empEmailInvalid">Please enter a valid email address.</div>
         </div>
         <div class="form-group">
-          <label>Phone</label>
-          <input type="text" class="form-input" [(ngModel)]="empForm.phone" [readonly]="isEmpViewOnly">
+          <label>CIN / ID <span *ngIf="!isEmpViewOnly" class="text-red">*</span></label>
+          <input type="text" class="form-input" maxlength="8"
+            [class.input-error]="!isEmpViewOnly && (empCinExists || empCinInvalid)"
+            [(ngModel)]="empForm.cin" [readonly]="isEmpViewOnly">
+          <div class="field-error" *ngIf="!isEmpViewOnly && empCinExists">This CIN is already assigned.</div>
+          <div class="field-error" *ngIf="!isEmpViewOnly && !empCinExists && empCinInvalid">CIN must be exactly 8 digits.</div>
         </div>
         <div class="form-group">
-          <label>Job Title</label>
+          <label>Phone <span *ngIf="!isEmpViewOnly" class="text-red">*</span></label>
+          <input type="text" class="form-input" maxlength="8"
+            [class.input-error]="!isEmpViewOnly && empPhoneInvalid"
+            [(ngModel)]="empForm.phone" [readonly]="isEmpViewOnly">
+          <div class="field-error" *ngIf="!isEmpViewOnly && empPhoneInvalid">Phone must be exactly 8 digits.</div>
+        </div>
+        <div class="form-group">
+          <label>Job Title <span *ngIf="!isEmpViewOnly" class="text-red">*</span></label>
           <input type="text" class="form-input" [(ngModel)]="empForm.jobTitle" [readonly]="isEmpViewOnly">
         </div>
         <div class="form-group">
-          <label>Department</label>
+          <label>Department <span *ngIf="!isEmpViewOnly" class="text-red">*</span></label>
           <select class="form-input" [(ngModel)]="empForm.department" [disabled]="isEmpViewOnly">
             <option value="">Select department...</option>
             <option *ngFor="let d of departments" [value]="d.name">{{ d.name }}</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Employment Status</label>
+          <label>Employment Status <span *ngIf="!isEmpViewOnly" class="text-red">*</span></label>
           <select class="form-input" [(ngModel)]="empForm.employmentStatus" [disabled]="isEmpViewOnly">
             <option value="Active">Active</option>
             <option value="On Leave">On Leave</option>
             <option value="Terminated">Terminated</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>CIN</label>
-          <input type="text" class="form-input" [(ngModel)]="empForm.cin" [readonly]="isEmpViewOnly">
+        <div class="form-group" *ngIf="isEmpViewOnly">
+          <label>Hire Date</label>
+          <input type="text" class="form-input" [value]="empForm.hireDate | date:'mediumDate'" readonly>
         </div>
       </div>
       <div class="error-msg" *ngIf="empFormError">{{ empFormError }}</div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="showEmpForm = false">{{ isEmpViewOnly ? 'Close' : 'Cancel' }}</button>
-      <button class="btn btn-primary" *ngIf="!isEmpViewOnly" [disabled]="isSavingEmp" (click)="saveEmp()">
+      <button class="btn btn-danger" (click)="showEmpForm = false">Close</button>
+      <button class="btn btn-primary" *ngIf="!isEmpViewOnly" [disabled]="isSavingEmp || !isEmpFormValid" (click)="saveEmp()">
         <span class="loader" *ngIf="isSavingEmp"></span>
         <span *ngIf="!isSavingEmp">{{ editingEmp ? 'Save Changes' : 'Create Employee' }}</span>
       </button>

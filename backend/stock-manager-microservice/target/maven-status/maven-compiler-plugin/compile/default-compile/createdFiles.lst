@@ -41,6 +41,7 @@ com\example\stockmanagermicroservice\procurement\controller\SupplierResponseCont
 com\example\stockmanagermicroservice\model\Software.class
 com\example\stockmanagermicroservice\model\LicenseModel.class
 com\example\stockmanagermicroservice\controller\EquipmentController$InstallPartRequest.class
+com\example\stockmanagermicroservice\service\LicenseAlertScheduler.class
 com\example\stockmanagermicroservice\procurement\model\EquipmentRequest.class
 com\example\stockmanagermicroservice\procurement\repository\SupplierResponseRepository.class
 com\example\stockmanagermicroservice\controller\EquipmentController$PartAllocateRequest.class
@@ -101,6 +102,7 @@ com\example\stockmanagermicroservice\repository\ResourceRepository.class
 com\example\stockmanagermicroservice\service\LicensePoolService.class
 com\example\stockmanagermicroservice\procurement\controller\PurchaseOrderController.class
 com\example\stockmanagermicroservice\config\SecurityConfig.class
+com\example\stockmanagermicroservice\procurement\model\RFQ$SupplierDeliveryStatus.class
 com\example\stockmanagermicroservice\service\EmailService.class
 com\example\stockmanagermicroservice\dto\LicensePoolDTO.class
 com\example\stockmanagermicroservice\seeder\CatalogSeeder.class

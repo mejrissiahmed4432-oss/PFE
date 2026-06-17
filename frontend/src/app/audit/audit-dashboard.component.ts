@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuditService, AuditLog } from './audit.service';
+import { AuditService, AuditLog, BlockchainStatus } from './audit.service';
 import { FormsModule } from '@angular/forms';
+import { interval, Subscription } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-audit-dashboard',
@@ -10,7 +13,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './audit-dashboard.component.html',
   styleUrls: ['./audit-dashboard.component.css']
 })
-export class AuditDashboardComponent implements OnInit {
+export class AuditDashboardComponent implements OnInit, OnDestroy {
 
   logs: AuditLog[] = [];
   filteredLogs: AuditLog[] = [];
@@ -18,11 +21,35 @@ export class AuditDashboardComponent implements OnInit {
   loading = true;
   selectedLog: AuditLog | null = null;
   activeFilter: string = 'ALL';
+  dateFilter: string = '';
+  blockchainOnline: boolean | null = null;
+  private statusPolling?: Subscription;
 
   constructor(private auditService: AuditService) {}
 
   ngOnInit(): void {
     this.loadLogs();
+    this.checkStatus();
+    // Poll status every 15 seconds
+    this.statusPolling = interval(15000).pipe(
+      switchMap(() => this.auditService.getStatus().pipe(
+        catchError(() => of({ online: false, network: 'Local Ganache' }))
+      ))
+    ).subscribe(status => {
+      this.blockchainOnline = status.online;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.statusPolling?.unsubscribe();
+  }
+
+  checkStatus(): void {
+    this.auditService.getStatus().pipe(
+      catchError(() => of({ online: false, network: 'Local Ganache' }))
+    ).subscribe(status => {
+      this.blockchainOnline = status.online;
+    });
   }
 
   loadLogs(): void {
@@ -34,7 +61,7 @@ export class AuditDashboardComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error('[AuditDashboard] Erreur :', err);
+        console.error('[AuditDashboard] Error :', err);
         this.loading = false;
       }
     });
@@ -64,6 +91,14 @@ export class AuditDashboardComponent implements OnInit {
         log.userId?.toLowerCase().includes(term) ||
         log.details?.toLowerCase().includes(term)
       );
+    }
+
+    if (this.dateFilter) {
+      result = result.filter(log => {
+        if (!log.timestamp) return false;
+        const logDateStr = new Date(log.timestamp).toISOString().split('T')[0];
+        return logDateStr === this.dateFilter;
+      });
     }
 
     this.filteredLogs = result;
@@ -112,8 +147,8 @@ export class AuditDashboardComponent implements OnInit {
   formatDate(d: string): string {
     if (!d) return '—';
     const dt = new Date(d);
-    return dt.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
-      + ' — ' + dt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    return dt.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })
+      + ' — ' + dt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   }
 
   get totalLogs() { return this.logs.length; }

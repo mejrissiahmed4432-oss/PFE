@@ -17,12 +17,12 @@ export class RequestManagerComponent implements OnInit {
   user: any;
   allRequests: PartRequest[] = [];
   filteredRequests: PartRequest[] = [];
-  
+
   activeTab: 'PENDING' | 'PROCESSED' = 'PENDING';
   searchQuery: string = '';
   expandedRequestId: string | null = null;
   processingId: string | null = null;
-  
+
   // Pick List State
   availableStockByItem: Map<string, any[]> = new Map();
   pickedEquipmentByItem: Map<string, any[]> = new Map();
@@ -37,17 +37,17 @@ export class RequestManagerComponent implements OnInit {
     message: string;
     type: 'warning' | 'error' | 'success';
   } = {
-    show: false,
-    title: '',
-    message: '',
-    type: 'warning'
-  };
+      show: false,
+      title: '',
+      message: '',
+      type: 'warning'
+    };
 
   constructor(
     private partRequestService: PartRequestService,
     private authService: AuthService,
     private equipmentService: EquipmentService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.authService.user$.subscribe(user => {
@@ -60,7 +60,7 @@ export class RequestManagerComponent implements OnInit {
 
   loadAllRequests(): void {
     this.partRequestService.getAllRequests().subscribe(requests => {
-      this.allRequests = requests.sort((a, b) => 
+      this.allRequests = requests.sort((a, b) =>
         new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
       );
       this.filterRequests();
@@ -86,7 +86,7 @@ export class RequestManagerComponent implements OnInit {
     // Search Filter
     if (this.searchQuery.trim()) {
       const q = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(r => 
+      filtered = filtered.filter(r =>
         (r.requesterName || '').toLowerCase().includes(q) ||
         (r.description || '').toLowerCase().includes(q) ||
         (r.id || '').toLowerCase().includes(q) ||
@@ -156,11 +156,11 @@ export class RequestManagerComponent implements OnInit {
 
     this.showPickerForItem = key;
     this.isLoadingStock = true;
-    
+
     // Load equipment matching the type/category
     this.equipmentService.getAllEquipment().subscribe(all => {
-      const matching = all.filter(e => 
-        e.type === item.type && 
+      const matching = all.filter(e =>
+        e.type === item.type &&
         e.category === item.category &&
         (e.status === 'Available' || e.status === 'In stock')
       );
@@ -178,7 +178,7 @@ export class RequestManagerComponent implements OnInit {
   pickEquipment(request: PartRequest, itemIndex: number, equipment: any): void {
     const key = this.getItemKey(request, itemIndex);
     let picked = this.pickedEquipmentByItem.get(key) || [];
-    
+
     const requestItem = request.items[itemIndex];
     if (picked.length >= requestItem.quantity) {
       if (requestItem.quantity === 1) {
@@ -283,7 +283,7 @@ export class RequestManagerComponent implements OnInit {
   }
 
   isAllChecked(request: PartRequest): boolean {
-    return (request.items || []).every((item, idx) => 
+    return (request.items || []).every((item, idx) =>
       this.isItemAlreadyProcessed(item) || this.isItemChecked(request, idx)
     );
   }
@@ -348,7 +348,7 @@ export class RequestManagerComponent implements OnInit {
     // Collect all accepted items
     const allAccepted: any[] = [];
     let allChecked = true;
-    
+
     // We'll also update the request's items with matched IDs to clear 'Custom' label
     const updatedItems = [...(request.items || [])];
 
@@ -367,7 +367,7 @@ export class RequestManagerComponent implements OnInit {
       if (item.equipmentId) {
         // Already in stock, mark as processed
         updatedItems[idx] = { ...item, processed: true };
-        
+
         allAccepted.push({
           name: item.partName,
           brand: item.brand,
@@ -461,10 +461,10 @@ export class RequestManagerComponent implements OnInit {
 
   resetProcessedItem(request: PartRequest, index: number): void {
     if (!request.id) return;
-    
+
     const updatedItems = [...request.items];
     updatedItems[index] = { ...updatedItems[index], processed: false };
-    
+
     this.partRequestService.updateRequest(request.id, { items: updatedItems }).subscribe({
       next: () => {
         request.items = updatedItems;

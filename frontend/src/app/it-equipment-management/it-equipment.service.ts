@@ -58,7 +58,7 @@ export interface AssignRequest {
 
 @Injectable({ providedIn: 'root' })
 export class ItEquipmentService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAvailableInStock(): Observable<ItEquipment[]> {
     return this.http.get<ItEquipment[]>(`${BASE}/it-available`);

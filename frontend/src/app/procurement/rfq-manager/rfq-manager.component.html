@@ -1,15 +1,31 @@
 <div class="bg-white dark:bg-slate-900 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-[2.5rem] p-10 shadow-sm dark:shadow-2xl transition-colors duration-300">
-  <div class="flex items-center gap-6 mb-10 pb-8 border-b border-slate-100 dark:border-white/5">
-    <div class="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-100 dark:border-blue-500/20 shadow-inner">
-      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+  <div class="flex items-center justify-between mb-10 pb-8 border-b border-slate-100 dark:border-white/5">
+    <div class="flex items-center gap-6">
+      <div class="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-100 dark:border-blue-500/20 shadow-inner">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+      </div>
+      <div>
+        <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tighter m-0">Direct Email RFQ</h2>
+        <p class="text-sm text-slate-500 mt-1 font-medium italic">Suppliers will receive the request via email. No login required for them.</p>
+      </div>
     </div>
-    <div>
-      <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tighter m-0">Direct Email RFQ</h2>
-      <p class="text-sm text-slate-500 mt-1 font-medium italic">Suppliers will receive the request via email. No login required for them.</p>
+    
+    <div class="flex bg-slate-100 dark:bg-white/5 p-1 rounded-xl">
+      <button (click)="viewMode = 'pending'; selectedFailedRfq = null" 
+              class="px-4 py-2 text-xs font-bold rounded-lg transition-all"
+              [ngClass]="viewMode === 'pending' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'">
+        Pending Requests
+      </button>
+      <button (click)="viewMode = 'failed'; selectedRequest = null" 
+              class="px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center gap-2"
+              [ngClass]="viewMode === 'failed' ? 'bg-white dark:bg-slate-800 text-red-600 dark:text-red-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'">
+        Failed RFQs
+        <span *ngIf="failedRfqs.length > 0" class="w-4 h-4 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center text-[9px]">{{failedRfqs.length}}</span>
+      </button>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+  <div *ngIf="viewMode === 'pending'" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
     <!-- Approved Requests waiting for RFQ -->
     <div class="flex flex-col gap-6">
       <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-2">Requests Buffer Pool</h3>
@@ -104,4 +120,76 @@
       </button>
     </div>
   </div>
+
+  <!-- Failed RFQs View -->
+  <div *ngIf="viewMode === 'failed'" class="grid grid-cols-1 lg:grid-cols-2 gap-12 animate-in fade-in duration-500">
+    <div class="flex flex-col gap-6">
+      <h3 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-2">Failed Delivery Queue</h3>
+      <div class="flex flex-col gap-4">
+        <div *ngFor="let rfq of failedRfqs" 
+             class="p-6 border rounded-[2rem] transition-all cursor-pointer group relative overflow-hidden"
+             [ngClass]="selectedFailedRfq?.id === rfq.id ? 'border-red-600 bg-red-50/30 dark:bg-red-600/5' : 'border-slate-100 dark:border-white/5 bg-slate-50/30 dark:bg-black/20 hover:border-red-300 dark:hover:border-red-500/30'"
+             (click)="selectFailedRfq(rfq)">
+          <div class="flex justify-between items-center mb-4">
+            <span class="px-3 py-1 bg-red-100 dark:bg-red-600/10 text-red-600 dark:text-red-400 rounded-lg text-[10px] font-black uppercase tracking-widest">RFQ-{{ rfq.id?.substring(0, 8) | uppercase }}</span>
+            <span class="text-[10px] text-slate-400 dark:text-slate-600 font-bold uppercase tracking-tighter">{{ formatDate(rfq.createdAt) }}</span>
+          </div>
+          <div class="text-sm font-black text-slate-800 dark:text-slate-200 mb-2 leading-relaxed">
+            Request Ref: {{ rfq.requestId.substring(0, 8) | uppercase }}
+          </div>
+          <div class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-red-500"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <p class="text-[10px] font-bold text-red-500 dark:text-red-400">Some or all emails failed to send</p>
+          </div>
+        </div>
+        <div *ngIf="failedRfqs.length === 0" class="flex flex-col items-center justify-center p-20 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] bg-slate-50/50 dark:bg-black/10">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-4 text-emerald-400" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-600 italic">No failed RFQs. All emails are sending properly.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Failed RFQ Details -->
+    <div *ngIf="selectedFailedRfq" class="flex flex-col gap-8 p-10 bg-slate-50 dark:bg-black/40 rounded-[3rem] border border-slate-200 dark:border-white/5 shadow-inner animate-in slide-in-from-right-6 duration-500">
+      <div class="flex flex-col gap-4">
+        <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Supplier Delivery Status</h4>
+        <div class="flex flex-col gap-3 max-h-96 overflow-y-auto pr-3 custom-scrollbar">
+          <label *ngFor="let s of selectedFailedRfq.deliveryStatuses" 
+                 class="flex items-center gap-5 p-5 bg-white dark:bg-black/60 border rounded-2xl transition-all group"
+                 [ngClass]="s.status === 'FAILED' ? (selectedFailedSupplierIds.includes(s.supplierId) ? 'border-red-600 bg-red-50/10 cursor-pointer' : 'border-red-200 cursor-pointer') : 'border-slate-100 opacity-60 cursor-not-allowed'">
+            
+            <!-- Checkbox only for failed -->
+            <input *ngIf="s.status === 'FAILED'" type="checkbox" 
+                   [checked]="selectedFailedSupplierIds.includes(s.supplierId)"
+                   (change)="toggleFailedSupplierSelection(s.supplierId)"
+                   class="w-5 h-5 text-red-600 rounded-lg border-slate-300 focus:ring-red-500 cursor-pointer">
+            
+            <div *ngIf="s.status !== 'FAILED'" class="w-5 h-5 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" class="text-emerald-500" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+
+            <div class="flex-1">
+              <div class="flex justify-between items-center mb-1">
+                <div class="font-black text-slate-900 dark:text-white text-sm tracking-tight">{{ s.supplierName }}</div>
+                <span *ngIf="s.status === 'SENT'" class="text-[9px] font-black px-2 py-0.5 rounded text-emerald-600 bg-emerald-100">SENT</span>
+                <span *ngIf="s.status === 'FAILED'" class="text-[9px] font-black px-2 py-0.5 rounded text-red-600 bg-red-100">FAILED</span>
+              </div>
+              <div class="text-[10px] text-slate-500 font-bold opacity-70">{{ s.supplierEmail }}</div>
+             
+            </div>
+          </label>
+        </div>
+        <p class="text-[10px] text-slate-400 dark:text-slate-600 font-bold italic mt-2 opacity-60">Select the failed suppliers and click resend to retry sending the email.</p>
+      </div>
+
+      <button (click)="resendFailedRfq()" 
+              [disabled]="selectedFailedSupplierIds.length === 0 || isProcessing"
+              class="w-full py-5 bg-gradient-to-br from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 disabled:opacity-30 text-white font-black text-[10px] uppercase tracking-[0.3em] rounded-2xl transition-all shadow-xl shadow-red-500/25 hover:shadow-red-500/35 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-4 active:scale-95 group">
+        <span *ngIf="isProcessing" class="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></span>
+        <svg *ngIf="!isProcessing" class="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
+        {{ isProcessing ? 'Resending...' : 'Resend Failed RFQs' }}
+      </button>
+    </div>
+  </div>
+
 </div>

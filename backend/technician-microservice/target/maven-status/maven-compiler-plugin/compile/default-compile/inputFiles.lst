@@ -1,10 +1,10 @@
-<<<<<<< HEAD
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\service\NotificationService.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\client\UserClient.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\service\AlertService.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\model\PendingAuditLog.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\service\PartRequestService.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\client\UserClientFallback.java
+C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\config\FeignClientInterceptor.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\config\RestTemplateConfig.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\repository\PartRequestRepository.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\client\AuditClientFallback.java
@@ -22,21 +22,3 @@ C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\config\BlockchainTraceable.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\config\SecurityConfig.java
 C:\pfe-project\Test\pfe_v2\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\client\StockManagerClientFallback.java
-=======
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\config\SecurityConfig.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\client\StockManagerClientFallback.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\service\PartRequestService.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\model\PartRequest.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\controller\PartRequestController.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\model\PartRequestItem.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\TechnicianMicroserviceApplication.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\service\AlertService.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\service\NotificationService.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\client\UserClient.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\service\RequestAlertScheduler.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\client\UserClientFallback.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\client\StockManagerClient.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\config\RestTemplateConfig.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\controller\CapabilityController.java
-C:\Users\Asus\Desktop\pfe final version\PFE\backend\technician-microservice\src\main\java\com\example\technicianmicroservice\repository\PartRequestRepository.java
->>>>>>> 78fed08eca10eb6ec0424d8312a27db3581c917e

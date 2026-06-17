@@ -17,6 +17,7 @@ import org.web3j.protocol.http.HttpService;
 import com.example.employeemicroservice.model.PendingAuditLog;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.scheduling.annotation.Scheduled;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,6 +47,10 @@ public class BlockchainAuditService {
     private Credentials credentials;
     private boolean isBlockchainAvailable = false;
 
+    public boolean isAvailable() {
+        return isBlockchainAvailable;
+    }
+
     @jakarta.annotation.PostConstruct
     public void init() {
         try {
@@ -63,6 +68,29 @@ public class BlockchainAuditService {
             }
         } catch (Exception e) {
             logger.error("Impossible de se connecter à Ganache sur {}", ganacheUrl, e);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Health check toutes les 30 secondes (détecte si Ganache tombe)
+    // ─────────────────────────────────────────────────────────────────
+    @Scheduled(fixedDelay = 30000)
+    public void checkGanacheHealth() {
+        if (web3j == null)
+            return;
+        try {
+            web3j.web3ClientVersion().send().getWeb3ClientVersion();
+            if (!isBlockchainAvailable && privateKey != null && !privateKey.isEmpty()
+                    && contractAddress != null && !contractAddress.isEmpty()) {
+                credentials = Credentials.create(privateKey);
+                isBlockchainAvailable = true;
+                logger.info("[HealthCheck] Ganache est de nouveau en ligne !");
+            }
+        } catch (Exception e) {
+            if (isBlockchainAvailable) {
+                isBlockchainAvailable = false;
+                logger.warn("[HealthCheck] Ganache est hors-ligne ! Badge passé en rouge.");
+            }
         }
     }
 
@@ -94,16 +122,15 @@ public class BlockchainAuditService {
                                 new Utf8String(request.getUserName() != null ? request.getUserName() : "unknown"),
                                 new Utf8String(request.getUserRole() != null ? request.getUserRole() : "unknown"),
                                 new Utf8String(request.getAction()),
-                                new Utf8String(request.getDetails() != null ? request.getDetails() : "")
-                        ),
-                        Collections.emptyList()
-                );
+                                new Utf8String(request.getDetails() != null ? request.getDetails() : "")),
+                        Collections.emptyList());
 
                 String encodedFunction = FunctionEncoder.encode(function);
 
-                org.web3j.protocol.core.methods.response.EthGetTransactionCount ethGetTransactionCount =
-                        web3j.ethGetTransactionCount(credentials.getAddress(),
-                                org.web3j.protocol.core.DefaultBlockParameterName.LATEST).send();
+                org.web3j.protocol.core.methods.response.EthGetTransactionCount ethGetTransactionCount = web3j
+                        .ethGetTransactionCount(credentials.getAddress(),
+                                org.web3j.protocol.core.DefaultBlockParameterName.LATEST)
+                        .send();
                 java.math.BigInteger nonce = ethGetTransactionCount.getTransactionCount();
 
                 org.web3j.crypto.RawTransaction rawTransaction = org.web3j.crypto.RawTransaction.createTransaction(
@@ -111,8 +138,7 @@ public class BlockchainAuditService {
                         java.math.BigInteger.valueOf(20_000_000_000L),
                         java.math.BigInteger.valueOf(3_000_000L),
                         contractAddress.trim(),
-                        encodedFunction
-                );
+                        encodedFunction);
 
                 byte[] signedMessage = org.web3j.crypto.TransactionEncoder.signMessage(rawTransaction, credentials);
                 String hexValue = org.web3j.utils.Numeric.toHexString(signedMessage);
@@ -131,7 +157,8 @@ public class BlockchainAuditService {
                 saveToPendingLogs(request);
             }
         } else {
-            logger.warn("Blockchain indisponible (Ganache éteint). Sauvegarde dans la file d'attente pending_audit_logs.");
+            logger.warn(
+                    "Blockchain indisponible (Ganache éteint). Sauvegarde dans la file d'attente pending_audit_logs.");
             saveToPendingLogs(request);
         }
 
@@ -141,8 +168,7 @@ public class BlockchainAuditService {
                 request.getUserRole(),
                 request.getAction(),
                 request.getDetails(),
-                LocalDateTime.now()
-        );
+                LocalDateTime.now());
     }
 
     public boolean retryLogToBlockchain(PendingAuditLog pendingLog) {
@@ -158,15 +184,14 @@ public class BlockchainAuditService {
                             new Utf8String(pendingLog.getUserName() != null ? pendingLog.getUserName() : "unknown"),
                             new Utf8String(pendingLog.getUserRole() != null ? pendingLog.getUserRole() : "unknown"),
                             new Utf8String(pendingLog.getAction()),
-                            new Utf8String(pendingLog.getDetails() != null ? pendingLog.getDetails() : "")
-                    ),
-                    Collections.emptyList()
-            );
+                            new Utf8String(pendingLog.getDetails() != null ? pendingLog.getDetails() : "")),
+                    Collections.emptyList());
 
             String encodedFunction = FunctionEncoder.encode(function);
-            org.web3j.protocol.core.methods.response.EthGetTransactionCount ethGetTransactionCount =
-                    web3j.ethGetTransactionCount(credentials.getAddress(),
-                            org.web3j.protocol.core.DefaultBlockParameterName.LATEST).send();
+            org.web3j.protocol.core.methods.response.EthGetTransactionCount ethGetTransactionCount = web3j
+                    .ethGetTransactionCount(credentials.getAddress(),
+                            org.web3j.protocol.core.DefaultBlockParameterName.LATEST)
+                    .send();
             java.math.BigInteger nonce = ethGetTransactionCount.getTransactionCount();
 
             org.web3j.crypto.RawTransaction rawTransaction = org.web3j.crypto.RawTransaction.createTransaction(
@@ -174,8 +199,7 @@ public class BlockchainAuditService {
                     java.math.BigInteger.valueOf(20_000_000_000L),
                     java.math.BigInteger.valueOf(3_000_000L),
                     contractAddress.trim(),
-                    encodedFunction
-            );
+                    encodedFunction);
 
             byte[] signedMessage = org.web3j.crypto.TransactionEncoder.signMessage(rawTransaction, credentials);
             String hexValue = org.web3j.utils.Numeric.toHexString(signedMessage);
@@ -228,21 +252,24 @@ public class BlockchainAuditService {
 
             // 1. Nombre de logs dans le Smart Contract
             Function getLogCountFunc = new Function("getLogCount", Collections.emptyList(),
-                    Arrays.asList(new org.web3j.abi.TypeReference<org.web3j.abi.datatypes.generated.Uint256>() {}));
+                    Arrays.asList(new org.web3j.abi.TypeReference<org.web3j.abi.datatypes.generated.Uint256>() {
+                    }));
             String encodedCount = FunctionEncoder.encode(getLogCountFunc);
-            org.web3j.protocol.core.methods.request.Transaction txCount =
-                    org.web3j.protocol.core.methods.request.Transaction
-                            .createEthCallTransaction(null, contract, encodedCount);
-            org.web3j.protocol.core.methods.response.EthCall countResp =
-                    web3j.ethCall(txCount, org.web3j.protocol.core.DefaultBlockParameterName.LATEST).send();
+            org.web3j.protocol.core.methods.request.Transaction txCount = org.web3j.protocol.core.methods.request.Transaction
+                    .createEthCallTransaction(null, contract, encodedCount);
+            org.web3j.protocol.core.methods.response.EthCall countResp = web3j
+                    .ethCall(txCount, org.web3j.protocol.core.DefaultBlockParameterName.LATEST).send();
 
-            if (countResp.hasError()) throw new Exception("RPC error: " + countResp.getError().getMessage());
+            if (countResp.hasError())
+                throw new Exception("RPC error: " + countResp.getError().getMessage());
             String rawCount = countResp.getValue();
-            if (rawCount == null || "0x".equals(rawCount)) return logs;
+            if (rawCount == null || "0x".equals(rawCount))
+                return logs;
 
-            List<org.web3j.abi.datatypes.Type> countResults =
-                    org.web3j.abi.FunctionReturnDecoder.decode(rawCount, getLogCountFunc.getOutputParameters());
-            if (countResults.isEmpty()) return logs;
+            List<org.web3j.abi.datatypes.Type> countResults = org.web3j.abi.FunctionReturnDecoder.decode(rawCount,
+                    getLogCountFunc.getOutputParameters());
+            if (countResults.isEmpty())
+                return logs;
 
             long total = ((org.web3j.abi.datatypes.generated.Uint256) countResults.get(0)).getValue().longValue();
 
@@ -251,38 +278,43 @@ public class BlockchainAuditService {
                 Function getLogFunc = new Function("getLog",
                         Arrays.asList(new org.web3j.abi.datatypes.generated.Uint256(i)),
                         Arrays.asList(
-                                new org.web3j.abi.TypeReference<org.web3j.abi.datatypes.generated.Uint256>() {}, // id
-                                new org.web3j.abi.TypeReference<Utf8String>() {},   // userId
-                                new org.web3j.abi.TypeReference<Utf8String>() {},   // userName
-                                new org.web3j.abi.TypeReference<Utf8String>() {},   // userRole
-                                new org.web3j.abi.TypeReference<Utf8String>() {},   // action
-                                new org.web3j.abi.TypeReference<Utf8String>() {},   // details
-                                new org.web3j.abi.TypeReference<org.web3j.abi.datatypes.generated.Uint256>() {} // timestamp
+                                new org.web3j.abi.TypeReference<org.web3j.abi.datatypes.generated.Uint256>() {
+                                }, // id
+                                new org.web3j.abi.TypeReference<Utf8String>() {
+                                }, // userId
+                                new org.web3j.abi.TypeReference<Utf8String>() {
+                                }, // userName
+                                new org.web3j.abi.TypeReference<Utf8String>() {
+                                }, // userRole
+                                new org.web3j.abi.TypeReference<Utf8String>() {
+                                }, // action
+                                new org.web3j.abi.TypeReference<Utf8String>() {
+                                }, // details
+                                new org.web3j.abi.TypeReference<org.web3j.abi.datatypes.generated.Uint256>() {
+                                } // timestamp
                         ));
 
                 String encodedGetLog = FunctionEncoder.encode(getLogFunc);
-                org.web3j.protocol.core.methods.request.Transaction txGet =
-                        org.web3j.protocol.core.methods.request.Transaction
-                                .createEthCallTransaction(null, contract, encodedGetLog);
-                org.web3j.protocol.core.methods.response.EthCall getResp =
-                        web3j.ethCall(txGet, org.web3j.protocol.core.DefaultBlockParameterName.LATEST).send();
+                org.web3j.protocol.core.methods.request.Transaction txGet = org.web3j.protocol.core.methods.request.Transaction
+                        .createEthCallTransaction(null, contract, encodedGetLog);
+                org.web3j.protocol.core.methods.response.EthCall getResp = web3j
+                        .ethCall(txGet, org.web3j.protocol.core.DefaultBlockParameterName.LATEST).send();
 
-                List<org.web3j.abi.datatypes.Type> r =
-                        org.web3j.abi.FunctionReturnDecoder.decode(getResp.getValue(), getLogFunc.getOutputParameters());
+                List<org.web3j.abi.datatypes.Type> r = org.web3j.abi.FunctionReturnDecoder.decode(getResp.getValue(),
+                        getLogFunc.getOutputParameters());
 
                 if (!r.isEmpty()) {
-                    String bcUserId   = ((Utf8String) r.get(1)).getValue();
+                    String bcUserId = ((Utf8String) r.get(1)).getValue();
                     String bcUserName = ((Utf8String) r.get(2)).getValue();
-                    String bcRole     = ((Utf8String) r.get(3)).getValue();
-                    String bcAction   = ((Utf8String) r.get(4)).getValue();
-                    String bcDetails  = ((Utf8String) r.get(5)).getValue();
-                    long   tsSecs     = ((org.web3j.abi.datatypes.generated.Uint256) r.get(6)).getValue().longValue();
+                    String bcRole = ((Utf8String) r.get(3)).getValue();
+                    String bcAction = ((Utf8String) r.get(4)).getValue();
+                    String bcDetails = ((Utf8String) r.get(5)).getValue();
+                    long tsSecs = ((org.web3j.abi.datatypes.generated.Uint256) r.get(6)).getValue().longValue();
 
                     logs.add(new AuditLogEntry(
                             bcUserId, bcUserName, bcRole,
                             bcAction, bcDetails,
-                            LocalDateTime.ofEpochSecond(tsSecs, 0, java.time.ZoneOffset.UTC)
-                    ));
+                            LocalDateTime.ofEpochSecond(tsSecs, 0, java.time.ZoneOffset.UTC)));
                 }
             }
 

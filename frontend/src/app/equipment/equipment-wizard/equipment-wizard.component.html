@@ -334,14 +334,14 @@
                       (change)="onUnitSyncCheck(i, 'specs')"></td>
                   <td class="col-unit"><span class="unit-badge">{{ i + 1 }}</span></td>
                   <td>
-                    <input class="tbl-input mono" [maxlength]="15"
+                    <input class="tbl-input mono"
                       [class.field-error]="u.serialNumber && (!isValidSerialNumber(u.serialNumber) || !isSNUnique(u.serialNumber))"
                       [(ngModel)]="u.serialNumber" (ngModelChange)="onSNChange($event, i)" placeholder="Serial">
                     <!-- Error messages -->
                     <div *ngIf="isSNChecking(u.serialNumber)" style="font-size: 10px; color: #3b82f6;">Checking...</div>
-                    <div *ngIf="u.serialNumber && u.serialNumber.length !== 15"
-                      style="font-size: 10px; color: #ef4444;">15 chars req.</div>
-                    <div *ngIf="u.serialNumber && u.serialNumber.length === 15 && !isValidSerialNumber(u.serialNumber)"
+                    <div *ngIf="u.serialNumber && u.serialNumber.length < 5"
+                      style="font-size: 10px; color: #ef4444;">Min 5 chars.</div>
+                    <div *ngIf="u.serialNumber && u.serialNumber.length >= 5 && !isValidSerialNumber(u.serialNumber)"
                       style="font-size: 10px; color: #ef4444;">Must mix A-Z & 0-9</div>
                     <div *ngIf="!isSNUnique(u.serialNumber) && !isSNChecking(u.serialNumber)"
                       style="font-size: 10px; color: #ef4444;">{{ getSNError(u.serialNumber) || 'Not unique' }}</div>
@@ -393,7 +393,7 @@
           </div>
           <div class="field-group">
             <label class="field-label">Serial Number <span class="req">*</span></label>
-            <input class="field-input mono" [maxlength]="15"
+            <input class="field-input mono"
               [class.field-error]="sharedSerial && (!isValidSerialNumber(sharedSerial) || !isSNUnique(sharedSerial))"
               [(ngModel)]="sharedSerial" (ngModelChange)="onSNChange($event)" placeholder="e.g. SN2024A1">
 
@@ -402,12 +402,12 @@
               <i class="fas fa-spinner fa-spin"></i> Checking availability...
             </div>
 
-            <div *ngIf="sharedSerial && sharedSerial.length !== 15"
+            <div *ngIf="sharedSerial && sharedSerial.length < 5"
               style="font-size: 11px; color: #ef4444; margin-top: 4px;">
-              Exactly 15 characters required.
+              Minimum 5 characters required.
             </div>
 
-            <div *ngIf="sharedSerial && sharedSerial.length === 15 && !isValidSerialNumber(sharedSerial)"
+            <div *ngIf="sharedSerial && sharedSerial.length >= 5 && !isValidSerialNumber(sharedSerial)"
               style="font-size: 11px; color: #ef4444; margin-top: 4px;">
               Must contain at least 1 letter and 1 digit (alphanumeric).
             </div>
@@ -452,14 +452,14 @@
                   <td style="text-align: center;"><input type="checkbox" [(ngModel)]="u.selectedForSN"></td>
                   <td class="col-unit"><span class="unit-badge">{{ i + 1 }}</span></td>
                   <td>
-                    <input class="tbl-input mono" [maxlength]="15"
+                    <input class="tbl-input mono"
                       [class.field-error]="u.serialNumber && (!isValidSerialNumber(u.serialNumber) || !isSNUnique(u.serialNumber))"
                       [(ngModel)]="u.serialNumber" (ngModelChange)="onSNChange($event, i)" placeholder="Serial">
                     <!-- Error messages -->
                     <div *ngIf="isSNChecking(u.serialNumber)" style="font-size: 10px; color: #3b82f6;">Checking...</div>
-                    <div *ngIf="u.serialNumber && u.serialNumber.length !== 15"
-                      style="font-size: 10px; color: #ef4444;">15 chars req.</div>
-                    <div *ngIf="u.serialNumber && u.serialNumber.length === 15 && !isValidSerialNumber(u.serialNumber)"
+                    <div *ngIf="u.serialNumber && u.serialNumber.length < 5"
+                      style="font-size: 10px; color: #ef4444;">Min 5 chars.</div>
+                    <div *ngIf="u.serialNumber && u.serialNumber.length >= 5 && !isValidSerialNumber(u.serialNumber)"
                       style="font-size: 10px; color: #ef4444;">Must mix A-Z & 0-9</div>
                     <div *ngIf="!isSNUnique(u.serialNumber) && !isSNChecking(u.serialNumber)"
                       style="font-size: 10px; color: #ef4444;">{{ getSNError(u.serialNumber) || 'Not unique' }}</div>
