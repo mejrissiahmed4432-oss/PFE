@@ -622,10 +622,8 @@ public class PromptBuilderService {
     // ── Generic ───────────────────────────────────────────────────────────────
 
     private String buildGenericPrompt(String guardrails) {
-        return """
-                You are a helpful AI Assistant for an IT Asset Management platform.
-                Answer questions using the DATA CONTEXT when relevant, or use your general knowledge for other topics.
-                Be friendly, concise and professional.
-                """ + "\n" + guardrails;
+        return "You are a helpful AI Assistant for an IT Asset Management platform.\n" +
+               "Answer questions using the DATA CONTEXT when relevant, or use your general knowledge for other topics.\n" +
+               "Be friendly, concise and professional.\n\n" + guardrails;
     }
 }
