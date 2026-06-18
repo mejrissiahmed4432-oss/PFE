@@ -9,7 +9,7 @@ import { PartRequest } from './part-request.model';
 export class PartRequestService {
   private apiUrl = '/api/part-requests';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   createRequest(request: PartRequest): Observable<PartRequest> {
     return this.http.post<PartRequest>(this.apiUrl, request);

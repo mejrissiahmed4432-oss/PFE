@@ -6,15 +6,18 @@ Get-Content .env | Where-Object { $_ -notmatch "^#" -and $_ -ne "" } | ForEach-O
 
 Write-Host "✅ Variables .env chargées" -ForegroundColor Green
 
+# 2. Démarrer Config Server
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd backend/config-server; mvn spring-boot:run"
+Write-Host "🚀 Config Server démarré (port 8888)" -ForegroundColor Cyan
+Start-Sleep -Seconds 15
+
+
 # 1. Démarrer Eureka
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd backend/eureka-server; mvn spring-boot:run"
 Write-Host "🚀 Eureka Server démarré (port 8761)" -ForegroundColor Cyan
 Start-Sleep -Seconds 15
 
-# 2. Démarrer Config Server
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd backend/config-server; mvn spring-boot:run"
-Write-Host "🚀 Config Server démarré (port 8888)" -ForegroundColor Cyan
-Start-Sleep -Seconds 15
+
 
 # 3. Démarrer les microservices
 $services = @("usermicroservice","employee-microservice","it-manager-microservice","stock-manager-microservice","technician-microservice","ai-service","api-gateway")

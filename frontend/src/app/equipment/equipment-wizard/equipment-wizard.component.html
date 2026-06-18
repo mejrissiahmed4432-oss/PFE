@@ -1131,9 +1131,9 @@
   </div><!-- /wizard-panel -->
 
   <!-- ════════ UNASSIGNED WARNING MODAL ════════ -->
-  <div *ngIf="showUnassignedWarning"
+  <div *ngIf="showUnassignedWarning" (click)="$event.stopPropagation()"
     style="position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(15,23,42,0.55); backdrop-filter: blur(4px);">
-    <div style="background: #fff; border-radius: 20px; padding: 32px 36px; max-width: 420px; width: 90%; box-shadow: 0 25px 60px rgba(0,0,0,0.25); text-align: center;">
+    <div style="background: #fff; border-radius: 20px; padding: 32px 36px; max-width: 420px; width: 90%; box-shadow: 0 25px 60px rgba(0,0,0,0.25); text-align: center;" (click)="$event.stopPropagation()">
 
       <!-- Warning icon -->
       <div style="width: 64px; height: 64px; border-radius: 50%; background: #fffbeb; border: 2px solid #fcd34d; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
@@ -1156,13 +1156,13 @@
 
       <p style="font-size: 0.82rem; color: #94a3b8; margin: 0 0 24px;">You can assign a shelf later from the equipment management page.</p>
 
-      <button (click)="confirmUnassigned()"
+      <button type="button" (click)="confirmUnassigned()"
         style="width: 100%; padding: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; letter-spacing: 0.3px; transition: opacity 0.2s;"
         onmouseenter="this.style.opacity='0.9'" onmouseleave="this.style.opacity='1'">
         Understood, Continue Anyway
       </button>
 
-      <button (click)="showUnassignedWarning = false"
+      <button type="button" (click)="showUnassignedWarning = false"
         style="width: 100%; padding: 10px; margin-top: 10px; background: none; color: #64748b; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.9rem; cursor: pointer; font-weight: 500;">
         Go Back &amp; Assign
       </button>
