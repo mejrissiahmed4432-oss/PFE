@@ -98,7 +98,6 @@ export class BoardComponent implements OnInit {
   private procSub: Subscription | undefined;
 
   isNotificationsOpen: boolean = false;
-  isLanguageOpen: boolean = false;
   notificationsList: any[] = [];
   unreadNotificationsCount: number = 0;
 
@@ -131,9 +130,6 @@ export class BoardComponent implements OnInit {
     if (!target.closest('.notif-container') && !target.closest('.notif-dropdown')) {
       this.isNotificationsOpen = false;
     }
-    if (!target.closest('.lang-switcher-container')) {
-      this.isLanguageOpen = false;
-    }
   }
 
   ngOnInit(): void {
@@ -145,13 +141,8 @@ export class BoardComponent implements OnInit {
       if (!this.user) {
         this.router.navigate(['/login']);
       } else {
-        if (this.user.role === 'TECHNICIAN') {
-          this.activeTab = 'departments';
-        } else if (this.user.role === 'IT_MANAGER') {
-          this.activeTab = 'user-management';
-        } else if (this.user.role === 'ADMIN') {
-          this.activeTab = 'admin-dashboard';
-        }
+        // Everyone defaults to 'dashboard' active tab now
+        this.activeTab = 'dashboard';
         this.loadUnreadCount();
 
         // 1. WebSocket Subscription for instant message updates
@@ -198,13 +189,6 @@ export class BoardComponent implements OnInit {
         });
       }
     });
-
-    // Theme initialization
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      this.isDarkMode = true;
-      document.body.classList.add('dark-mode');
-    }
   }
 
   ngOnDestroy(): void {
@@ -329,17 +313,7 @@ export class BoardComponent implements OnInit {
     this.notificationService.deleteAllNotifications().subscribe();
   }
 
-  selectLanguage(lang: 'en' | 'fr'): void {
-    this.selectedLanguage = lang;
-    this.ts.setLanguage(lang);
-    this.isLanguageOpen = false;
-  }
-
-  toggleLanguage(event: Event): void {
-    event.stopPropagation();
-    this.isLanguageOpen = !this.isLanguageOpen;
-    this.isNotificationsOpen = false; // Close other dropdowns
-  }
+  // Removed language toggles
 
   t(key: string): string {
     return this.ts.translate(key);
@@ -358,7 +332,6 @@ export class BoardComponent implements OnInit {
   toggleNotifications(event: Event): void {
     event.stopPropagation();
     this.isNotificationsOpen = !this.isNotificationsOpen;
-    this.isLanguageOpen = false; // Close other dropdowns
   }
 
   getPageTitle(): string {
@@ -464,15 +437,6 @@ export class BoardComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  toggleDarkMode(): void {
-    this.isDarkMode = !this.isDarkMode;
-    if (this.isDarkMode) {
-      document.body.classList.add('dark-mode');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.body.classList.remove('dark-mode');
-      localStorage.setItem('theme', 'light');
-    }
-  }
+  // Removed dark mode toggle
 
 }

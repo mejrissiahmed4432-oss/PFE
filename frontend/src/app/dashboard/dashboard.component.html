@@ -6,63 +6,47 @@
   </div>
 
   <!-- Dashboard Content -->
-  <div *ngIf="!isLoading && stats" class="dashboard-content">
+  <div *ngIf="!isLoading" class="dashboard-content">
     <div class="dashboard-header-modern">
       <div class="welcome-text">
         <h1 class="main-title">Dashboard Overview</h1>
-        <p class="subtitle">Welcome back! Here's what's happening with your inventory today.</p>
-      </div>
-      <div class="header-actions">
-        <button class="action-btn-outline">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span>Last 30 Days</span>
-        </button>
+        <p class="subtitle">Welcome back! Here's what's happening today.</p>
       </div>
     </div>
-    <!-- Stat Cards Row -->
+
+    <!-- UNIVERSAL STATS ROW -->
+    <h3 class="section-title">Personal Overview</h3>
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-content">
-          <span class="stat-label">Total Assets</span>
-          <div class="stat-main-row">
-            <h3 class="stat-number">{{ stats.totalEquipment }}</h3>
-            <span class="stat-percent positive">+55%</span>
-          </div>
+          <span class="stat-label">Active Tasks</span>
+          <div class="stat-main-row"><h3 class="stat-number">{{ totalTasksCount }}</h3></div>
         </div>
         <div class="stat-icon-box blue">
-          <!-- Inventory / Assets icon -->
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h8"/><path d="M10 9H8"/>
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/>
           </svg>
         </div>
       </div>
 
-      <div class="stat-card">
+      <div class="stat-card" *ngIf="userRole === 'TECHNICIAN'">
         <div class="stat-content">
-          <span class="stat-label">Verified Suppliers</span>
-          <div class="stat-main-row">
-            <h3 class="stat-number">{{ stats.totalSuppliers }}</h3>
-            <span class="stat-percent positive">+5%</span>
-          </div>
+          <span class="stat-label">Number of Parts</span>
+          <div class="stat-main-row"><h3 class="stat-number">{{ technicianPartsCount }}</h3></div>
         </div>
         <div class="stat-icon-box emerald">
-          <!-- Suppliers icon -->
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
           </svg>
         </div>
       </div>
-
+      
       <div class="stat-card">
         <div class="stat-content">
-          <span class="stat-label">Active Alerts</span>
-          <div class="stat-main-row">
-            <h3 class="stat-number">{{ stats.lowStockAlerts }}</h3>
-            <span class="stat-percent negative" *ngIf="stats.lowStockAlerts > 0">-{{ stats.lowStockAlerts * 2 }}%</span>
-          </div>
+          <span class="stat-label">Total Tickets</span>
+          <div class="stat-main-row"><h3 class="stat-number">{{ totalTicketsCount }}</h3></div>
         </div>
         <div class="stat-icon-box amber">
-          <!-- Support Tickets / Tasks icon -->
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
           </svg>
@@ -71,31 +55,151 @@
 
       <div class="stat-card">
         <div class="stat-content">
-          <span class="stat-label">Software Assets</span>
-          <div class="stat-main-row">
-            <h3 class="stat-number">{{ stats.totalSoftware }}</h3>
-            <span class="stat-percent positive">+12%</span>
-          </div>
+          <span class="stat-label">Critical Events</span>
+          <div class="stat-main-row"><h3 class="stat-number">{{ criticalEventsCount }}</h3></div>
+        </div>
+        <div class="stat-icon-box red">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-content">
+          <span class="stat-label">Pending Requests</span>
+          <div class="stat-main-row"><h3 class="stat-number">{{ personalRequestsCount }}</h3></div>
         </div>
         <div class="stat-icon-box purple">
-          <!-- Software icon -->
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
           </svg>
         </div>
       </div>
     </div>
 
+    <!-- IT MANAGER STATS ROW -->
+    <ng-container *ngIf="['IT_MANAGER', 'ADMIN'].includes(userRole)">
+      <h3 class="section-title">IT Management Overview</h3>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-content">
+            <span class="stat-label">Total Suppliers</span>
+            <div class="stat-main-row"><h3 class="stat-number">{{ suppliersCount }}</h3></div>
+          </div>
+          <div class="stat-icon-box emerald">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-content">
+            <span class="stat-label">Equipment In Use</span>
+            <div class="stat-main-row"><h3 class="stat-number">{{ equipmentInUseCount }}</h3></div>
+          </div>
+          <div class="stat-icon-box blue">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-content">
+            <span class="stat-label">Available Equipment</span>
+            <div class="stat-main-row"><h3 class="stat-number">{{ equipmentAvailableCount }}</h3></div>
+          </div>
+          <div class="stat-icon-box amber">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></svg>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-content">
+            <span class="stat-label">Total Users</span>
+            <div class="stat-main-row"><h3 class="stat-number">{{ usersCount }}</h3></div>
+          </div>
+          <div class="stat-icon-box purple">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- STOCK MANAGER STATS ROW -->
+    <ng-container *ngIf="['STOCK_MANAGER', 'ADMIN'].includes(userRole)">
+      <h3 class="section-title">Inventory Overview</h3>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-content">
+            <span class="stat-label">Total Categories</span>
+            <div class="stat-main-row"><h3 class="stat-number">{{ categoriesCount }}</h3></div>
+          </div>
+          <div class="stat-icon-box blue">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-content">
+            <span class="stat-label">Total Shelves</span>
+            <div class="stat-main-row"><h3 class="stat-number">{{ shelvesCount }}</h3></div>
+          </div>
+          <div class="stat-icon-box amber">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-content">
+            <span class="stat-label">Tracked Assets</span>
+            <div class="stat-main-row"><h3 class="stat-number">{{ assetsCount }}</h3></div>
+          </div>
+          <div class="stat-icon-box purple">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          </div>
+        </div>
+        <div class="stat-card" style="visibility: hidden;"></div>
+      </div>
+    </ng-container>
+
+    <!-- ADMIN STATS ROW -->
+    <ng-container *ngIf="userRole === 'ADMIN'">
+      <h3 class="section-title">Organization Overview</h3>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-content">
+            <span class="stat-label">Departments</span>
+            <div class="stat-main-row"><h3 class="stat-number">{{ departmentsCount }}</h3></div>
+          </div>
+          <div class="stat-icon-box blue">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-content">
+            <span class="stat-label">Employees</span>
+            <div class="stat-main-row"><h3 class="stat-number">{{ employeesCount }}</h3></div>
+          </div>
+          <div class="stat-icon-box emerald">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+        </div>
+        <div class="stat-card" style="visibility: hidden;">
+          <!-- Empty spacer to align cards beautifully -->
+        </div>
+        <div class="stat-card" style="visibility: hidden;">
+          <!-- Empty spacer -->
+        </div>
+      </div>
+    </ng-container>
+
     <!-- Promo Cards Row -->
-    <div class="promo-row">
-      <div class="promo-card main-promo">
+    <div class="promo-row" style="margin-top: 2rem;">
+      <div class="promo-card main-promo" style="width: 100%;">
         <div class="promo-text-side">
           <p class="promo-sub">Built for MedinaFlux</p>
-          <h2 class="promo-title">Advanced Inventory Dashboard</h2>
+          <h2 class="promo-title" style="text-transform: capitalize;">{{ userRole.replace('_', ' ') }} Dashboard</h2>
           <p class="promo-desc">
-            Seamlessly track your assets, manage suppliers, and monitor maintenance schedules with our unified IT management platform.
+            <span *ngIf="userRole === 'ADMIN'">Manage all system logs, departments, and employees from the sidebar. You have full access to all system features.</span>
+            <span *ngIf="userRole === 'IT_MANAGER'">Approve equipment requests and manage users and suppliers efficiently. Track pending software allocations.</span>
+            <span *ngIf="userRole === 'STOCK_MANAGER'">Oversee hardware inventory and manage stock levels safely. Handle inbound equipment from approved requests.</span>
+            <span *ngIf="userRole === 'TECHNICIAN'">Your service queue is active. Check your assigned tickets and utilize the Live Workbench.</span>
+            <span *ngIf="userRole === 'USER'">Submit tickets for technical issues or request new equipment easily via the sidebar.</span>
           </p>
-          <button class="promo-link">Read more <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
         </div>
         <div class="promo-visual-side">
           <div class="visual-pill">
@@ -104,65 +208,15 @@
           </div>
         </div>
       </div>
-
-      <div class="promo-card second-promo">
-        <div class="promo-overlay">
-          <h3 class="promo-overlay-title">Maximize Productivity</h3>
-          <p class="promo-overlay-desc">System health is at 98.4%. No critical failures detected today.</p>
-          <button class="promo-overlay-btn">Check Report <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
-        </div>
-      </div>
     </div>
 
-    <!-- Analytics Row -->
-    <div class="analytics-row">
-      <div class="analytics-card dark active-assets">
-        <div class="mini-chart-box">
-          <canvas baseChart
-            [data]="miniBarChartData"
-            [options]="miniBarChartOptions"
-            [type]="miniBarChartType">
-          </canvas>
-        </div>
-        <div class="analytics-header">
-          <h3 class="analytics-title">Active Assets</h3>
-          <p class="analytics-subtitle">(+{{ (stats.totalEquipment * 0.1) | number:'1.0-0' }}) than last week</p>
-        </div>
-        <div class="analytics-metrics">
-          <div class="metric">
-            <div class="metric-icon blue"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg></div>
-            <span class="metric-val">{{ stats.totalEquipment }}</span>
-            <span class="metric-label">Items</span>
-          </div>
-          <div class="metric">
-            <div class="metric-icon emerald"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-            <span class="metric-val">{{ stats.totalSuppliers }}</span>
-            <span class="metric-label">Suppliers</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="analytics-card trend-analytics">
-        <div class="trend-header">
-          <h3 class="trend-title">Inventory Overview</h3>
-          <p class="trend-subtitle">(+5%) more than last month</p>
-        </div>
-        <div class="chart-container-large">
-          <canvas baseChart
-            [data]="barChartData"
-            [options]="barChartOptions"
-            [type]="barChartType">
-          </canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- Final Row: Projects Table & Timeline -->
-    <div class="bottom-grid-row">
-      <div class="content-card project-card">
+    <!-- Final Row: Projects Table -->
+    <div class="bottom-grid-row" *ngIf="stats">
+      <!-- Admin / Stock Manager View: Recent Assets -->
+      <div class="content-card project-card" *ngIf="['ADMIN', 'STOCK_MANAGER'].includes(userRole)">
         <div class="card-header-main">
           <h3 class="card-main-title">Recently Added Assets</h3>
-          <p class="card-main-subtitle">{{ stats.recentEquipment.length }} new items identified</p>
+          <p class="card-main-subtitle">{{ stats!.recentEquipment.length }} new items identified</p>
         </div>
         <div class="table-modern-wrapper">
           <table class="modern-table">
@@ -171,44 +225,35 @@
                 <th>RESOURCE</th>
                 <th>LOCATION</th>
                 <th>CATEGORY</th>
-                <th>STATUS</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let eq of stats.recentEquipment">
+              <tr *ngFor="let eq of stats!.recentEquipment">
                 <td>
                   <div class="modern-cell-main">
-                    <div class="logo-circle" [ngClass]="{'blue': eq.category === 'Laptop', 'emerald': eq.category === 'Desktop', 'amber': eq.category === 'Tablet'}">
+                    <div class="logo-circle"
+                      [ngClass]="{'blue': eq.category === 'Laptop', 'emerald': eq.category === 'Desktop', 'amber': eq.category === 'Tablet'}">
                       {{ (eq.equipmentName || '?').charAt(0) }}
                     </div>
                     <div class="cell-text-stack">
-                       <span class="cell-title">{{ eq.equipmentName }}</span>
-                       <span class="cell-sub">{{ eq.brand }}</span>
+                      <span class="cell-title">{{ eq.equipmentName }}</span>
+                      <span class="cell-sub">{{ eq.brand }}</span>
                     </div>
                   </div>
                 </td>
-                <td>
-                  <span class="location-tag">{{ eq.location }}</span>
-                </td>
-                <td>
-                  <span class="category-chip">{{ eq.category }}</span>
-                </td>
-                <td>
-                  <div class="progress-box">
-                    <span class="progress-val">100%</span>
-                    <div class="progress-track"><div class="progress-fill" style="width: 100%"></div></div>
-                  </div>
-                </td>
+                <td><span class="location-tag">{{ eq.location }}</span></td>
+                <td><span class="category-chip">{{ eq.category }}</span></td>
               </tr>
-              <tr *ngIf="stats.recentEquipment.length === 0">
-                <td colspan="4" class="empty-row">No recent assets found.</td>
+              <tr *ngIf="stats!.recentEquipment.length === 0">
+                <td colspan="3" class="empty-row">No recent assets found.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <div class="content-card project-card">
+      <!-- Admin / IT Manager View: Software -->
+      <div class="content-card project-card" *ngIf="['ADMIN', 'IT_MANAGER'].includes(userRole)">
         <div class="card-header-main">
           <h3 class="card-main-title">Top Software Assets</h3>
           <p class="card-main-subtitle">{{ softwareList.length }} premium software tracked</p>
@@ -221,29 +266,24 @@
                 <th>VENDOR</th>
                 <th>TYPE</th>
                 <th>SEATS</th>
-                <th>VERSION</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let sw of softwareList">
                 <td>
                   <div class="modern-cell-main">
-                    <div class="logo-circle purple">
-                      {{ sw.name.charAt(0) }}
-                    </div>
-                    <div class="cell-text-stack">
-                       <span class="cell-title">{{ sw.name }}</span>
-                    </div>
+                    <div class="logo-circle purple">{{ sw.name.charAt(0) }}</div>
+                    <div class="cell-text-stack"><span class="cell-title">{{ sw.name }}</span></div>
                   </div>
                 </td>
                 <td>{{ sw.vendor }}</td>
                 <td><span class="category-chip">{{ sw.type }}</span></td>
                 <td>
-                  <span class="font-bold text-[11px]" [class.text-emerald-600]="(sw.availableSeats || 0) > 0" [class.text-red-500]="(sw.availableSeats || 0) <= 0">
+                  <span class="font-bold text-[11px]" [class.text-emerald-600]="(sw.availableSeats || 0) > 0"
+                    [class.text-red-500]="(sw.availableSeats || 0) <= 0">
                     {{ sw.availableSeats || 0 }} / {{ sw.totalSeats || 0 }}
                   </span>
                 </td>
-                <td><span class="location-tag">{{ sw.version || 'N/A' }}</span></td>
               </tr>
               <tr *ngIf="softwareList.length === 0">
                 <td colspan="4" class="empty-row">No software assets found.</td>
@@ -252,7 +292,150 @@
           </table>
         </div>
       </div>
-    </div>
 
+      <!-- Stock Manager View: Full Shelves -->
+      <div class="content-card project-card" *ngIf="['STOCK_MANAGER', 'ADMIN'].includes(userRole)">
+        <div class="card-header-main">
+          <h3 class="card-main-title">Full Shelves</h3>
+          <p class="card-main-subtitle">Shelves currently at or above max capacity</p>
+        </div>
+        <div class="table-modern-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>SHELF NUMBER</th>
+                <th>EQUIPMENT TYPE</th>
+                <th>CAPACITY</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let shelf of fullShelves">
+                <td>
+                  <div class="modern-cell-main">
+                    <div class="logo-circle amber">S</div>
+                    <div class="cell-text-stack"><span class="cell-title">{{ shelf.nb }}</span></div>
+                  </div>
+                </td>
+                <td>{{ shelf.equipmentType }}</td>
+                <td>{{ shelf.currentQte }} / {{ shelf.maxQte }}</td>
+                <td><span class="category-chip" style="color: #d97706; border-color: #d97706;">{{ shelf.status }}</span></td>
+              </tr>
+              <tr *ngIf="fullShelves.length === 0">
+                <td colspan="4" class="empty-row">No full shelves found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Active Tickets (All Roles including Admin) -->
+      <div class="content-card project-card">
+        <div class="card-header-main">
+          <h3 class="card-main-title">Active Tickets</h3>
+          <p class="card-main-subtitle">{{ myTickets.length }} tickets needing attention</p>
+        </div>
+        <div class="table-modern-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>TICKET TITLE</th>
+                <th>ASSIGNED TO</th>
+                <th>DATE CREATED</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let t of myTickets">
+                <td>
+                  <div class="modern-cell-main">
+                    <div class="logo-circle amber">{{ t.title.charAt(0) }}</div>
+                    <div class="cell-text-stack"><span class="cell-title">{{ t.title }}</span></div>
+                  </div>
+                </td>
+                <td>{{ t.assignedToUserName || t.assignedToTechnicianName || 'Unassigned' }}</td>
+                <td>{{ t.createdAt | date:'MMM d, yyyy' }}</td>
+                <td><span class="category-chip">{{ t.status }}</span></td>
+              </tr>
+              <tr *ngIf="myTickets.length === 0">
+                <td colspan="4" class="empty-row">No active tickets found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Critical Events (All Roles including Admin) -->
+      <div class="content-card project-card">
+        <div class="card-header-main">
+          <h3 class="card-main-title">Critical Events</h3>
+          <p class="card-main-subtitle">Recent unread system alerts</p>
+        </div>
+        <div class="table-modern-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>ALERT TITLE</th>
+                <th>DATE</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let alert of recentAlerts">
+                <td>
+                  <div class="modern-cell-main">
+                    <div class="logo-circle red">!</div>
+                    <div class="cell-text-stack"><span class="cell-title">{{ alert.title || alert.message }}</span></div>
+                  </div>
+                </td>
+                <td>{{ alert.createdAt | date:'MMM d, HH:mm' }}</td>
+                <td><span class="category-chip" style="color: #ef4444; border-color: #ef4444;">{{ alert.status }}</span></td>
+              </tr>
+              <tr *ngIf="recentAlerts.length === 0">
+                <td colspan="3" class="empty-row">No critical events found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Users View (Except Admin): Personal Requests -->
+      <div class="content-card project-card" *ngIf="userRole !== 'ADMIN'">
+        <div class="card-header-main">
+          <h3 class="card-main-title">Recent Personal Requests</h3>
+          <p class="card-main-subtitle">Your latest equipment/software requests</p>
+        </div>
+        <div class="table-modern-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>REQUESTED ITEMS</th>
+                <th>DATE</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let req of recentRequests">
+                <td>
+                  <div class="modern-cell-main">
+                    <div class="logo-circle purple">R</div>
+                    <div class="cell-text-stack">
+                      <span class="cell-title" *ngIf="req.requestedItems?.length > 0">{{ req.requestedItems[0].itemName }} <span *ngIf="req.requestedItems.length > 1">+{{ req.requestedItems.length - 1 }} more</span></span>
+                      <span class="cell-title" *ngIf="!req.requestedItems || req.requestedItems.length === 0">Request #{{ req.id | slice:-4 }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ req.createdAt | date:'MMM d, yyyy' }}</td>
+                <td><span class="category-chip">{{ req.status }}</span></td>
+              </tr>
+              <tr *ngIf="recentRequests.length === 0">
+                <td colspan="3" class="empty-row">No recent requests found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
