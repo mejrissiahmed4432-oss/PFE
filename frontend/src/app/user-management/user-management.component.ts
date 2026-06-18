@@ -96,7 +96,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   // ── WebSocket ─────────────────────────────────
   connectWebSocket(): void {
     this.stompClient = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8000/ws'),
+      webSocketFactory: () => new SockJS('/ws'),
       reconnectDelay: 5000,
       onConnect: () => {
         // Subscribe to user status changes broadcast by the backend
@@ -336,3 +336,5 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     setTimeout(() => { this.toast = null; }, 4000);
   }
 }
+
+

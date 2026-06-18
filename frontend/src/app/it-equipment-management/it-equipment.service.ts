@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-const BASE = 'http://localhost:8000/api/equipment';
-const USERS_API = 'http://localhost:8000/api/users';
-const EMPLOYEES_API = 'http://localhost:8000/api/employees';
-const SHELVES_API = 'http://localhost:8000/api/shelves';
-const DEPARTMENTS_API = 'http://localhost:8000/api/departments';
+const BASE = '/api/equipment';
+const USERS_API = '/api/users';
+const EMPLOYEES_API = '/api/employees';
+const SHELVES_API = '/api/shelves';
+const DEPARTMENTS_API = '/api/departments';
 
 export interface ItEquipment {
   id: string;
@@ -116,3 +116,5 @@ export class ItEquipmentService {
     return this.http.get<any[]>(SHELVES_API);
   }
 }
+
+

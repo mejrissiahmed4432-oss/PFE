@@ -3,13 +3,20 @@
     "target": "http://127.0.0.1:8000",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug"
+    "logLevel": "silent"
   },
   "/ws": {
     "target": "http://127.0.0.1:8000",
     "secure": false,
     "changeOrigin": true,
     "ws": true,
-    "logLevel": "debug"
+    "logLevel": "silent"
+  },
+  "/ws-monitoring": {
+    "target": "http://127.0.0.1:8000",
+    "secure": false,
+    "changeOrigin": true,
+    "ws": true,
+    "logLevel": "silent"
   }
 }

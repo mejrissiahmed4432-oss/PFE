@@ -45,6 +45,22 @@ export class LoginComponent implements OnInit {
         });
     }
 
+    get hasMinLength(): boolean {
+        return this.newPassword.length >= 8;
+    }
+
+    get hasUpperAndLower(): boolean {
+        return /[a-z]/.test(this.newPassword) && /[A-Z]/.test(this.newPassword);
+    }
+
+    get hasNumber(): boolean {
+        return /[0-9]/.test(this.newPassword);
+    }
+
+    get isPasswordValid(): boolean {
+        return this.hasMinLength && this.hasUpperAndLower && this.hasNumber;
+    }
+
     togglePasswordVisibility(): void {
         this.showPassword = !this.showPassword;
     }
@@ -65,8 +81,12 @@ export class LoginComponent implements OnInit {
 
     onBackToLogin(): void {
         this.isForgotPassword = false;
+        this.isResetPassword = false;
         this.errorMessage = '';
         this.successMessage = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+        this.router.navigate(['/login'], { queryParams: {} });
     }
 
     onSendResetLink(): void {
@@ -95,6 +115,11 @@ export class LoginComponent implements OnInit {
     onResetPassword(): void {
         if (this.newPassword !== this.confirmPassword) {
             this.errorMessage = 'Passwords do not match.';
+            return;
+        }
+
+        if (!this.isPasswordValid) {
+            this.errorMessage = 'Please ensure your password meets all requirements.';
             return;
         }
 

@@ -7,7 +7,7 @@ import { OperatingSystem, InstallOSRequest, EquipmentSoftware } from './os.model
   providedIn: 'root'
 })
 export class OsService {
-  private apiUrl = 'http://localhost:8000/api/os'; 
+  private apiUrl = '/api/os'; 
 
   constructor(private http: HttpClient) {}
 
@@ -35,3 +35,5 @@ export class OsService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
+
+

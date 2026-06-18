@@ -35,7 +35,7 @@ export class PredictiveMaintenanceComponent implements OnInit {
 
   fetchPredictions() {
     this.loading = true;
-    this.http.get<Prediction[]>('http://localhost:8000/api/monitoring/predictions')
+    this.http.get<Prediction[]>('/api/monitoring/predictions')
       .subscribe({
         next: (data) => {
           this.predictions = data.sort((a, b) => b.riskScore - a.riskScore);
@@ -81,3 +81,5 @@ export class PredictiveMaintenanceComponent implements OnInit {
     });
   }
 }
+
+

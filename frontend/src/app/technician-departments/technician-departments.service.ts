@@ -24,7 +24,7 @@ export interface DeptPcSummary {
 
 @Injectable({ providedIn: 'root' })
 export class TechnicianDeptService {
-  private readonly API = 'http://localhost:8000/api/monitoring/dept-pc-status';
+  private readonly API = '/api/monitoring/dept-pc-status';
 
   constructor(private http: HttpClient) {}
 
@@ -32,3 +32,5 @@ export class TechnicianDeptService {
     return this.http.get<DeptPcSummary[]>(this.API);
   }
 }
+
+

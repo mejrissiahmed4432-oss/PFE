@@ -81,15 +81,37 @@
                 <svg *ngIf="!showNew" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
               </button>
             </div>
-            <div class="strength-meter" *ngIf="newPassword">
-              <div class="strength-bars">
-                <div class="bar" [class.filled]="passwordStrength >= 1" [class]="passwordStrength >= 1 ? strengthClass : ''"></div>
-                <div class="bar" [class.filled]="passwordStrength >= 2" [class]="passwordStrength >= 2 ? strengthClass : ''"></div>
-                <div class="bar" [class.filled]="passwordStrength >= 3" [class]="passwordStrength >= 3 ? strengthClass : ''"></div>
-                <div class="bar" [class.filled]="passwordStrength >= 4" [class]="passwordStrength >= 4 ? strengthClass : ''"></div>
+
+            <!-- Rules checklist: only show when passwords match but rules fail -->
+            <div *ngIf="confirmPassword && confirmPassword === newPassword && !isNewPasswordValid"
+              style="margin-top:10px; padding:12px 14px; background:#fff; border:1px solid #e8eef6; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.08em;">Password Strength</span>
+                <span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:#fef3c7; color:#d97706; border:1px solid #fde68a;">Weak</span>
               </div>
-              <span class="strength-label" [class]="strengthClass">{{ strengthLabel }}</span>
+              <div style="display:flex; flex-direction:column; gap:7px;">
+                <div style="display:flex; align-items:center; gap:8px;" [ngStyle]="{'color': hasMinLength ? '#059669' : '#64748b'}">
+                  <div style="width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; transition:all .2s;" [ngStyle]="{'background': hasMinLength ? '#d1fae5' : '#f1f5f9'}">
+                    <span *ngIf="hasMinLength">✓</span><span *ngIf="!hasMinLength">–</span>
+                  </div>
+                  <span style="font-size:13px; font-weight:500;">At least 8 characters</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;" [ngStyle]="{'color': hasUpperAndLower ? '#059669' : '#64748b'}">
+                  <div style="width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; transition:all .2s;" [ngStyle]="{'background': hasUpperAndLower ? '#d1fae5' : '#f1f5f9'}">
+                    <span *ngIf="hasUpperAndLower">✓</span><span *ngIf="!hasUpperAndLower">–</span>
+                  </div>
+                  <span style="font-size:13px; font-weight:500;">Uppercase & lowercase letters</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;" [ngStyle]="{'color': hasNumber ? '#059669' : '#64748b'}">
+                  <div style="width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; transition:all .2s;" [ngStyle]="{'background': hasNumber ? '#d1fae5' : '#f1f5f9'}">
+                    <span *ngIf="hasNumber">✓</span><span *ngIf="!hasNumber">–</span>
+                  </div>
+                  <span style="font-size:13px; font-weight:500;">At least one number</span>
+                </div>
+              </div>
             </div>
+
+            
           </div>
 
           <div class="field-group">
@@ -101,11 +123,16 @@
                 <svg *ngIf="!showConfirm" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
               </button>
             </div>
+            <!-- Mismatch error -->
+            <p *ngIf="confirmPassword && newPassword !== confirmPassword" style="color:#ef4444; font-size:12px; margin:6px 0 0; font-weight:500;">
+              Passwords do not match
+            </p>
           </div>
         </div>
 
         <div class="section-actions">
-          <button class="btn-primary" (click)="changePassword()" [disabled]="isSavingPassword">
+          <button class="btn-primary" (click)="changePassword()" 
+                  [disabled]="isSavingPassword || !currentPassword || !newPassword || !confirmPassword || newPassword !== confirmPassword || !isNewPasswordValid">
             <span *ngIf="!isSavingPassword">Save Password</span>
             <span *ngIf="isSavingPassword" class="saving-spinner"></span>
           </button>

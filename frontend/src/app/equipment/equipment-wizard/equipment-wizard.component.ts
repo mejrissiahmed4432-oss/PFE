@@ -63,6 +63,10 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   capacityError: string = '';
   isCheckingCapacity: boolean = false;
 
+  // ── Unassigned warning modal ───────────────────────────────────────────
+  showUnassignedWarning: boolean = false;
+  unassignedCount: number = 0;
+
   // Serial Number Uniqueness State
   snStatusMap: Map<string, { checking: boolean, unique: boolean, error?: string }> = new Map();
   private snSubject = new Subject<{ sn: string, index?: number }>();
@@ -624,7 +628,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   // ── Validation ────────────────────────────────────────────────────────
   isStepValid(): boolean {
     switch (this.currentStep) {
-      case 0: return !!this.type && this.quantity >= 1 && !this.capacityError && !this.isCheckingCapacity;
+      case 0: return !!this.type && this.quantity >= 1;
       case 1: return this.configMode === 'same'
         ? !!this.sharedName && !!this.sharedBrand
         : this.units.every(u => !!u.name && !!u.brand);
@@ -642,7 +646,7 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         : this.units.every(u => !!u.supplierId && !!u.purchaseDate);
       case 5: return true; // warranty optional
       case 6:
-        return this.getTotalAssigned() === (Number(this.quantity) || 1);
+        return true; // warning shown on next if partially assigned
       case 7: return true;
       default: return true;
     }
@@ -664,11 +668,27 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         this.currentStep = 4; return;
       }
     }
+    // On leaving Storage Assignment step, check for unassigned items
+    if (this.currentStep === 6) {
+      const totalQty = Number(this.quantity) || 1;
+      const assigned = this.getTotalAssigned();
+      const unassigned = totalQty - assigned;
+      if (unassigned > 0) {
+        this.unassignedCount = unassigned;
+        this.showUnassignedWarning = true;
+        return; // wait for user to confirm
+      }
+    }
     // Warranty is now accessible for all categories so we no longer jump from 4 to 6.
     if (this.currentStep < 7) {
       this.currentStep++;
       if (this.currentStep === 6) this.loadShelves();
     }
+  }
+
+  confirmUnassigned(): void {
+    this.showUnassignedWarning = false;
+    this.currentStep = 7;
   }
 
   prevStep(): void {
@@ -840,6 +860,10 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
         unitIndex++;
       }
     }
+    // Any remaining items without a shelf assignment get 'Unassigned'
+    for (let i = unitIndex; i < payloads.length; i++) {
+      payloads[i].shelfId = 'Unassigned';
+    }
 
     return payloads;
   }
@@ -905,6 +929,8 @@ export class EquipmentWizardComponent implements OnInit, OnChanges {
   }
 
   private reset(): void {
+    this.showUnassignedWarning = false;
+    this.unassignedCount = 0;
     this.currentStep = 0; this.quantity = 1; this.category = 'Asset';
     this.type = ''; this.configMode = 'same'; this.specMode = 'same';
     this.sharedName = ''; this.sharedBrand = ''; this.sharedModel = ''; this.sharedNotes = '';

@@ -54,7 +54,7 @@ export class SocketService {
     
     this.currentUserId = userId;
 
-    this.stompClient = Stomp.over(() => new SockJS('http://localhost:8000/ws'));
+    this.stompClient = Stomp.over(() => new SockJS('/ws'));
 
     this.stompClient.onConnect = (frame: any) => {
       this.connectionStatus.next(true);
@@ -148,3 +148,5 @@ export class SocketService {
     return this.connectionStatus.asObservable();
   }
 }
+
+

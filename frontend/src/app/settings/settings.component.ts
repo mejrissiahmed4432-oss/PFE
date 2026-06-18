@@ -63,6 +63,12 @@ export class SettingsComponent implements OnInit {
     return classes[this.passwordStrength] || '';
   }
 
+  // Password validation rules
+  get hasMinLength(): boolean { return this.newPassword.length >= 8; }
+  get hasUpperAndLower(): boolean { return /[a-z]/.test(this.newPassword) && /[A-Z]/.test(this.newPassword); }
+  get hasNumber(): boolean { return /[0-9]/.test(this.newPassword); }
+  get isNewPasswordValid(): boolean { return this.hasMinLength && this.hasUpperAndLower && this.hasNumber; }
+
   constructor(
     private authService: AuthService, 
     private http: HttpClient,
@@ -115,12 +121,14 @@ export class SettingsComponent implements OnInit {
       this.showNotification('Please fill in all password fields.', 'error');
       return;
     }
+    // 1) Check match first
     if (this.newPassword !== this.confirmPassword) {
       this.showNotification('New passwords do not match.', 'error');
       return;
     }
-    if (this.newPassword.length < 8) {
-      this.showNotification('Password must be at least 8 characters.', 'error');
+    // 2) Then check rules
+    if (!this.isNewPasswordValid) {
+      this.showNotification('Password must respect defined rules (8+ chars, uppercase, lowercase, number).', 'error');
       return;
     }
 

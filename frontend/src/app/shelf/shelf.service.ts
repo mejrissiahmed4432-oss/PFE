@@ -7,7 +7,7 @@ import { Shelf } from './shelf.model';
   providedIn: 'root'
 })
 export class ShelfService {
-  private apiUrl = 'http://localhost:8000/api/shelves';
+  private apiUrl = '/api/shelves';
 
   constructor(private http: HttpClient) {}
 
@@ -35,3 +35,5 @@ export class ShelfService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
+
+

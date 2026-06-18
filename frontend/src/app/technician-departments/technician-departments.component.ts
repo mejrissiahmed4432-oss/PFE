@@ -62,7 +62,7 @@ export class TechnicianDepartmentsComponent implements OnInit, OnDestroy {
   deptSearch = '';
 
   private stompClient!: Client;
-  private readonly WS_URL = 'http://localhost:8000/ws-monitoring';
+  private readonly WS_URL = '/ws-monitoring';
 
   ngOnInit(): void { this.connect(); }
   ngOnDestroy(): void { this.stompClient?.deactivate(); }
@@ -117,3 +117,5 @@ export class TechnicianDepartmentsComponent implements OnInit, OnDestroy {
     return palette[Math.abs(h) % palette.length];
   }
 }
+
+

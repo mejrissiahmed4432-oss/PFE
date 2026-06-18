@@ -110,28 +110,73 @@
             <form (ngSubmit)="onResetPassword()" #resetForm="ngForm" class="login-form" novalidate>
                 <div class="form-group relative group">
                     <label class="form-label">New Password</label>
-                    <div class="relative w-full">
+                    <div class="input-container relative w-full">
                         <input [type]="showNewPassword ? 'text' : 'password'" class="form-input bg-gray-50 border border-transparent focus:bg-white focus:border-blue-400 shadow-inner transition-all duration-300 w-full" placeholder="New password"
-                            [(ngModel)]="newPassword" name="newPassword" required minlength="6" #newPwdRef="ngModel"
-                            [class.input-error]="newPwdRef.invalid && (newPwdRef.dirty || newPwdRef.touched)" />
+                            [(ngModel)]="newPassword" name="newPassword" required #newPwdRef="ngModel"
+                            [class.input-error]="confirmPassword && confirmPassword === newPassword && !isPasswordValid" />
+                        <button type="button" class="password-toggle" (click)="toggleNewPasswordVisibility()">
+                            <i class="bi" [class.bi-eye]="!showNewPassword" [class.bi-eye-slash]="showNewPassword"></i>
+                        </button>
                     </div>
-                    @if (newPwdRef.invalid && (newPwdRef.dirty || newPwdRef.touched)) {
-                    <div class="error-msg">Password must be at least 6 characters</div>
+                    @if (confirmPassword && confirmPassword === newPassword && !isPasswordValid) {
+                    <div class="error-msg">Password must respect defined rules</div>
                     }
+
+                    <!-- Password Rules Checklist -->
+                    <div class="mt-4 p-4 bg-white border border-slate-100 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all duration-300" *ngIf="confirmPassword && confirmPassword === newPassword && !isPasswordValid">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Password Strength</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors duration-300" 
+                                  [ngClass]="isPasswordValid ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-amber-50 text-amber-600 border border-amber-100'">
+                                {{ isPasswordValid ? 'Strong' : 'Weak' }}
+                            </span>
+                        </div>
+                        
+                        <div class="space-y-2.5">
+                            <div class="flex items-center gap-3 transition-colors duration-300" [ngClass]="hasMinLength ? 'text-emerald-600' : 'text-slate-500'">
+                                <div class="w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300"
+                                     [ngClass]="hasMinLength ? 'bg-emerald-100 scale-110' : 'bg-slate-50'">
+                                    <i class="bi text-[11px]" [ngClass]="hasMinLength ? 'bi-check-lg' : 'bi-dash'"></i>
+                                </div>
+                                <span class="text-[13px] font-medium tracking-tight">At least 8 characters</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 transition-colors duration-300" [ngClass]="hasUpperAndLower ? 'text-emerald-600' : 'text-slate-500'">
+                                <div class="w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300"
+                                     [ngClass]="hasUpperAndLower ? 'bg-emerald-100 scale-110' : 'bg-slate-50'">
+                                    <i class="bi text-[11px]" [ngClass]="hasUpperAndLower ? 'bi-check-lg' : 'bi-dash'"></i>
+                                </div>
+                                <span class="text-[13px] font-medium tracking-tight">Uppercase & lowercase letters</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-3 transition-colors duration-300" [ngClass]="hasNumber ? 'text-emerald-600' : 'text-slate-500'">
+                                <div class="w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300"
+                                     [ngClass]="hasNumber ? 'bg-emerald-100 scale-110' : 'bg-slate-50'">
+                                    <i class="bi text-[11px]" [ngClass]="hasNumber ? 'bi-check-lg' : 'bi-dash'"></i>
+                                </div>
+                                <span class="text-[13px] font-medium tracking-tight">At least one number</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group relative group">
                     <label class="form-label">Confirm Password</label>
-                    <div class="relative w-full">
+                    <div class="input-container relative w-full">
                         <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-input bg-gray-50 border border-transparent focus:bg-white focus:border-blue-400 shadow-inner transition-all duration-300 w-full" placeholder="Confirm password"
                             [(ngModel)]="confirmPassword" name="confirmPassword" required #confPwdRef="ngModel"
-                            [class.input-error]="confPwdRef.invalid && (confPwdRef.dirty || confPwdRef.touched)" />
+                            [class.input-error]="(confPwdRef.invalid || (confirmPassword && confirmPassword !== newPassword)) && (confPwdRef.dirty || confPwdRef.touched)" />
+                        <button type="button" class="password-toggle" (click)="toggleConfirmPasswordVisibility()">
+                            <i class="bi" [class.bi-eye]="!showConfirmPassword" [class.bi-eye-slash]="showConfirmPassword"></i>
+                        </button>
                     </div>
                     @if (confPwdRef.invalid && (confPwdRef.dirty || confPwdRef.touched)) {
                     <div class="error-msg">Please confirm your password</div>
+                    } @else if (confirmPassword && confirmPassword !== newPassword && (confPwdRef.dirty || confPwdRef.touched)) {
+                    <div class="error-msg">Passwords do not match</div>
                     }
                 </div>
                 <button type="submit" class="login-btn relative overflow-hidden transition-all duration-300 hover:-translate-y-[1px] active:translate-y-[1px] shadow-[0_4px_14px_rgba(37,99,235,0.3)] hover:shadow-[0_8px_20px_rgba(37,99,235,0.4)]
-                                             before:absolute before:inset-0 before:bg-white/20 before:opacity-0 hover:before:opacity-100 before:transition-opacity" [disabled]="isLoading">{{ isInvitation ? 'SET PASSWORD' : 'UPDATE PASSWORD' }}</button>
+                                             before:absolute before:inset-0 before:bg-white/20 before:opacity-0 hover:before:opacity-100 before:transition-opacity disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:shadow-none" [disabled]="isLoading || !isPasswordValid || !confirmPassword || newPassword !== confirmPassword">{{ isInvitation ? 'SET PASSWORD' : 'UPDATE PASSWORD' }}</button>
                 <button type="button" class="back-link" (click)="onBackToLogin()">Back to Login</button>
             </form>
             }

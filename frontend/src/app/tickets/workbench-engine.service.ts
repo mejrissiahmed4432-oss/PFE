@@ -10,7 +10,7 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class WorkbenchEngineService {
-  private apiUrl = 'http://localhost:8000/api/capabilities';
+  private apiUrl = '/api/capabilities';
 
   constructor(private http: HttpClient) {}
 
@@ -170,3 +170,5 @@ export class WorkbenchEngineService {
     return map[category] || '#6366f1';
   }
 }
+
+

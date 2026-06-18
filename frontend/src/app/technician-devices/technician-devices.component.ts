@@ -48,7 +48,7 @@ export class TechnicianDevicesComponent implements OnInit, OnDestroy, OnChanges 
   private historyMap = new Map<string, MetricPoint[]>();
 
   private stompClient!: Client;
-  private readonly WS_URL = 'http://localhost:8000/ws-monitoring';
+  private readonly WS_URL = '/ws-monitoring';
 
   ngOnInit(): void {
     this.syncInputFilter();
@@ -364,3 +364,5 @@ export class TechnicianDevicesComponent implements OnInit, OnDestroy, OnChanges 
     return device.equipmentId || device.serialNumber;
   }
 }
+
+

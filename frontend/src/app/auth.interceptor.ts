@@ -4,7 +4,7 @@ import { HttpClient, HttpBackend } from '@angular/common/http';
 import { catchError, switchMap, filter, take, throwError, BehaviorSubject } from 'rxjs';
 import { GlobalErrorService } from './core/services/global-error.service';
 
-const GATEWAY_URL = 'http://localhost:8000';
+const GATEWAY_URL = '';
 
 let isRefreshing = false;
 let refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
@@ -129,3 +129,5 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
     })
   );
 };
+
+

@@ -7,7 +7,7 @@ import { PartRequest } from './part-request.model';
   providedIn: 'root'
 })
 export class PartRequestService {
-  private apiUrl = 'http://localhost:8000/api/part-requests';
+  private apiUrl = '/api/part-requests';
 
   constructor(private http: HttpClient) {}
 
@@ -63,3 +63,5 @@ export class PartRequestService {
     return this.http.post(`${this.apiUrl}/restore-parts/${requesterId}`, parts);
   }
 }
+
+
